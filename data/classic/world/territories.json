@@ -1,0 +1,196 @@
+[
+  { "id": "LON", "name": "London", "type": "land", "supply_center": true },
+  { "id": "WAL", "name": "Wales", "type": "land", "supply_center": false },
+  { "id": "YOR", "name": "York", "type": "land", "supply_center": false },
+  { "id": "CLY", "name": "Clyde", "type": "land", "supply_center": false },
+  { "id": "EDI", "name": "Edinburgh", "type": "land", "supply_center": true },
+  { "id": "LVP", "name": "Liverpool", "type": "land", "supply_center": true },
+  {
+    "id": "SPA",
+    "name": "Spain",
+    "type": "land",
+    "supply_center": true,
+    "coasts": ["SPA/NC", "SPA/SC"]
+  },
+  {
+    "id": "SPA/NC",
+    "name": "Spain (North Coast)",
+    "type": "coast",
+    "supply_center": false,
+    "parent": "SPA"
+  },
+  {
+    "id": "SPA/SC",
+    "name": "Spain (South Coast)",
+    "type": "coast",
+    "supply_center": false,
+    "parent": "SPA"
+  },
+  { "id": "POR", "name": "Portugal", "type": "land", "supply_center": true },
+  { "id": "MAR", "name": "Marseilles", "type": "land", "supply_center": true },
+  { "id": "GAS", "name": "Gascony", "type": "land", "supply_center": false },
+  { "id": "BRE", "name": "Brest", "type": "land", "supply_center": true },
+  { "id": "PAR", "name": "Paris", "type": "land", "supply_center": true },
+  { "id": "BUR", "name": "Burgundy", "type": "land", "supply_center": false },
+  { "id": "PIC", "name": "Picardy", "type": "land", "supply_center": false },
+  { "id": "BEL", "name": "Belgium", "type": "land", "supply_center": true },
+  { "id": "HOL", "name": "Holland", "type": "land", "supply_center": true },
+  { "id": "RUH", "name": "Ruhr", "type": "land", "supply_center": false },
+  { "id": "KIE", "name": "Kiel", "type": "land", "supply_center": true },
+  { "id": "MUN", "name": "Munich", "type": "land", "supply_center": true },
+  { "id": "BER", "name": "Berlin", "type": "land", "supply_center": true },
+  { "id": "DEN", "name": "Denmark", "type": "land", "supply_center": true },
+  { "id": "SWE", "name": "Sweden", "type": "land", "supply_center": true },
+  { "id": "NOR", "name": "Norway", "type": "land", "supply_center": true },
+  {
+    "id": "STP",
+    "name": "St. Petersburg",
+    "type": "land",
+    "supply_center": true,
+    "coasts": ["STP/NC", "STP/SC"]
+  },
+  {
+    "id": "STP/NC",
+    "name": "St. Petersburg (North Coast)",
+    "type": "coast",
+    "supply_center": false,
+    "parent": "STP"
+  },
+  {
+    "id": "STP/SC",
+    "name": "St. Petersburg (South Coast)",
+    "type": "coast",
+    "supply_center": false,
+    "parent": "STP"
+  },
+  { "id": "FIN", "name": "Finland", "type": "land", "supply_center": false },
+  { "id": "LVN", "name": "Livonia", "type": "land", "supply_center": false },
+  { "id": "PRU", "name": "Prussia", "type": "land", "supply_center": false },
+  { "id": "UKR", "name": "Ukraine", "type": "land", "supply_center": false },
+  { "id": "MOS", "name": "Moscow", "type": "land", "supply_center": true },
+  { "id": "SEV", "name": "Sevastopol", "type": "land", "supply_center": true },
+  { "id": "WAR", "name": "Warsaw", "type": "land", "supply_center": true },
+  { "id": "GAL", "name": "Galicia", "type": "land", "supply_center": false },
+  { "id": "BOH", "name": "Bohemia", "type": "land", "supply_center": false },
+  { "id": "VIE", "name": "Vienna", "type": "land", "supply_center": true },
+  { "id": "BUD", "name": "Budapest", "type": "land", "supply_center": true },
+  { "id": "TRI", "name": "Trieste", "type": "land", "supply_center": true },
+  { "id": "TYR", "name": "Tyrolia", "type": "land", "supply_center": false },
+  { "id": "VEN", "name": "Venice", "type": "land", "supply_center": true },
+  { "id": "PIE", "name": "Piedmont", "type": "land", "supply_center": false },
+  { "id": "ROM", "name": "Rome", "type": "land", "supply_center": true },
+  { "id": "NAP", "name": "Naples", "type": "land", "supply_center": true },
+  { "id": "APU", "name": "Apulia", "type": "land", "supply_center": false },
+  { "id": "TUS", "name": "Tuscany", "type": "land", "supply_center": false },
+  {
+    "id": "BUL",
+    "name": "Bulgaria",
+    "type": "land",
+    "supply_center": true,
+    "coasts": ["BUL/EC", "BUL/SC"]
+  },
+  {
+    "id": "BUL/EC",
+    "name": "Bulgaria (East Coast)",
+    "type": "coast",
+    "supply_center": false,
+    "parent": "BUL"
+  },
+  {
+    "id": "BUL/SC",
+    "name": "Bulgaria (South Coast)",
+    "type": "coast",
+    "supply_center": false,
+    "parent": "BUL"
+  },
+  { "id": "GRE", "name": "Greece", "type": "land", "supply_center": true },
+  { "id": "SER", "name": "Serbia", "type": "land", "supply_center": true },
+  { "id": "ALB", "name": "Albania", "type": "land", "supply_center": false },
+  {
+    "id": "CON",
+    "name": "Constantinople",
+    "type": "land",
+    "supply_center": true
+  },
+  { "id": "ANK", "name": "Ankara", "type": "land", "supply_center": true },
+  { "id": "SMY", "name": "Smyrna", "type": "land", "supply_center": true },
+  { "id": "ARM", "name": "Armenia", "type": "land", "supply_center": false },
+  { "id": "SYR", "name": "Syria", "type": "land", "supply_center": false },
+  {
+    "id": "NAO",
+    "name": "North Atlantic Ocean",
+    "type": "sea",
+    "supply_center": false
+  },
+  {
+    "id": "NWG",
+    "name": "Norwegian Sea",
+    "type": "sea",
+    "supply_center": false
+  },
+  { "id": "BAR", "name": "Barents Sea", "type": "sea", "supply_center": false },
+  { "id": "SKA", "name": "Skagerrak", "type": "sea", "supply_center": false },
+  {
+    "id": "HEL",
+    "name": "Heligoland Bight",
+    "type": "sea",
+    "supply_center": false
+  },
+  { "id": "NTH", "name": "North Sea", "type": "sea", "supply_center": false },
+  {
+    "id": "ENG",
+    "name": "English Channel",
+    "type": "sea",
+    "supply_center": false
+  },
+  { "id": "IRI", "name": "Irish Sea", "type": "sea", "supply_center": false },
+  {
+    "id": "MAO",
+    "name": "Mid-Atlantic Ocean",
+    "type": "sea",
+    "supply_center": false
+  },
+  { "id": "BOT", "name": "Baltic Sea", "type": "sea", "supply_center": false },
+  {
+    "id": "BAL",
+    "name": "Gulf of Bothnia",
+    "type": "sea",
+    "supply_center": false
+  },
+  {
+    "id": "ADR",
+    "name": "Adriatic Sea",
+    "type": "sea",
+    "supply_center": false
+  },
+  { "id": "AEG", "name": "Aegean Sea", "type": "sea", "supply_center": false },
+  {
+    "id": "EAS",
+    "name": "Eastern Mediterranean",
+    "type": "sea",
+    "supply_center": false
+  },
+  { "id": "ION", "name": "Ionian Sea", "type": "sea", "supply_center": false },
+  {
+    "id": "TYS",
+    "name": "Tyrrhenian Sea",
+    "type": "sea",
+    "supply_center": false
+  },
+  {
+    "id": "WES",
+    "name": "Western Mediterranean",
+    "type": "sea",
+    "supply_center": false
+  },
+  { "id": "BLA", "name": "Black Sea", "type": "sea", "supply_center": false },
+  { "id": "SIL", "name": "Silesia", "type": "land", "supply_center": false },
+  { "id": "TUN", "name": "Tunisia", "type": "land", "supply_center": true },
+  {
+    "id": "NAF",
+    "name": "North Africa",
+    "type": "land",
+    "supply_center": false
+  },
+  { "id": "RUM", "name": "Rumania", "type": "land", "supply_center": true }
+]

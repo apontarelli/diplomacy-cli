@@ -1,0 +1,912 @@
+[
+  {
+    "from": "LON",
+    "to": "WAL",
+    "type": "both"
+  },
+  {
+    "from": "LON",
+    "to": "YOR",
+    "type": "land"
+  },
+  {
+    "from": "LON",
+    "to": "ENG",
+    "type": "sea"
+  },
+  {
+    "from": "WAL",
+    "to": "YOR",
+    "type": "land"
+  },
+  {
+    "from": "WAL",
+    "to": "LVP",
+    "type": "land"
+  },
+  {
+    "from": "CLY",
+    "to": "EDI",
+    "type": "land"
+  },
+  {
+    "from": "CLY",
+    "to": "LVP",
+    "type": "land"
+  },
+  {
+    "from": "CLY",
+    "to": "NAO",
+    "type": "sea"
+  },
+  {
+    "from": "CLY",
+    "to": "NWG",
+    "type": "sea"
+  },
+  {
+    "from": "EDI",
+    "to": "NTH",
+    "type": "sea"
+  },
+  {
+    "from": "EDI",
+    "to": "NWG",
+    "type": "sea"
+  },
+  {
+    "from": "LVP",
+    "to": "IRI",
+    "type": "sea"
+  },
+  {
+    "from": "LVP",
+    "to": "NAO",
+    "type": "sea"
+  },
+  {
+    "from": "LVP",
+    "to": "YOR",
+    "type": "land"
+  },
+  {
+    "from": "SPA",
+    "to": "POR",
+    "type": "land"
+  },
+  {
+    "from": "SPA",
+    "to": "GAS",
+    "type": "land"
+  },
+  {
+    "from": "SPA",
+    "to": "MAR",
+    "type": "land"
+  },
+  {
+    "from": "SPA/NC",
+    "to": "GAS",
+    "type": "sea"
+  },
+  {
+    "from": "SPA/NC",
+    "to": "POR",
+    "type": "sea"
+  },
+  {
+    "from": "SPA/NC",
+    "to": "MAO",
+    "type": "sea"
+  },
+  {
+    "from": "SPA/SC",
+    "to": "MAR",
+    "type": "sea"
+  },
+  {
+    "from": "SPA/SC",
+    "to": "WES",
+    "type": "sea"
+  },
+  {
+    "from": "POR",
+    "to": "MAO",
+    "type": "sea"
+  },
+  {
+    "from": "MAR",
+    "to": "GAS",
+    "type": "land"
+  },
+  {
+    "from": "MAR",
+    "to": "PIE",
+    "type": "land"
+  },
+  {
+    "from": "MAR",
+    "to": "WES",
+    "type": "sea"
+  },
+  {
+    "from": "GAS",
+    "to": "BRE",
+    "type": "land"
+  },
+  {
+    "from": "GAS",
+    "to": "PAR",
+    "type": "land"
+  },
+  {
+    "from": "GAS",
+    "to": "BUR",
+    "type": "land"
+  },
+  {
+    "from": "GAS",
+    "to": "MAO",
+    "type": "sea"
+  },
+  {
+    "from": "BRE",
+    "to": "PAR",
+    "type": "land"
+  },
+  {
+    "from": "BRE",
+    "to": "PIC",
+    "type": "land"
+  },
+  {
+    "from": "BRE",
+    "to": "ENG",
+    "type": "sea"
+  },
+  {
+    "from": "PAR",
+    "to": "BUR",
+    "type": "land"
+  },
+  {
+    "from": "PAR",
+    "to": "PIC",
+    "type": "land"
+  },
+  {
+    "from": "BUR",
+    "to": "PIC",
+    "type": "land"
+  },
+  {
+    "from": "BUR",
+    "to": "BEL",
+    "type": "land"
+  },
+  {
+    "from": "BUR",
+    "to": "RUH",
+    "type": "land"
+  },
+  {
+    "from": "BUR",
+    "to": "MUN",
+    "type": "land"
+  },
+  {
+    "from": "PIC",
+    "to": "BEL",
+    "type": "land"
+  },
+  {
+    "from": "PIC",
+    "to": "ENG",
+    "type": "sea"
+  },
+  {
+    "from": "BEL",
+    "to": "HOL",
+    "type": "land"
+  },
+  {
+    "from": "BEL",
+    "to": "RUH",
+    "type": "land"
+  },
+  {
+    "from": "BEL",
+    "to": "NTH",
+    "type": "sea"
+  },
+  {
+    "from": "BEL",
+    "to": "ENG",
+    "type": "sea"
+  },
+  {
+    "from": "HOL",
+    "to": "RUH",
+    "type": "land"
+  },
+  {
+    "from": "HOL",
+    "to": "KIE",
+    "type": "land"
+  },
+  {
+    "from": "HOL",
+    "to": "NTH",
+    "type": "sea"
+  },
+  {
+    "from": "HOL",
+    "to": "HEL",
+    "type": "sea"
+  },
+  {
+    "from": "RUH",
+    "to": "KIE",
+    "type": "land"
+  },
+  {
+    "from": "RUH",
+    "to": "MUN",
+    "type": "land"
+  },
+  {
+    "from": "KIE",
+    "to": "MUN",
+    "type": "land"
+  },
+  {
+    "from": "KIE",
+    "to": "BER",
+    "type": "land"
+  },
+  {
+    "from": "KIE",
+    "to": "DEN",
+    "type": "land"
+  },
+  {
+    "from": "KIE",
+    "to": "HEL",
+    "type": "sea"
+  },
+  {
+    "from": "KIE",
+    "to": "BAL",
+    "type": "sea"
+  },
+  {
+    "from": "MUN",
+    "to": "BER",
+    "type": "land"
+  },
+  {
+    "from": "MUN",
+    "to": "BOH",
+    "type": "land"
+  },
+  {
+    "from": "MUN",
+    "to": "TYR",
+    "type": "land"
+  },
+  {
+    "from": "BER",
+    "to": "PRU",
+    "type": "land"
+  },
+  {
+    "from": "BER",
+    "to": "BAL",
+    "type": "sea"
+  },
+  {
+    "from": "DEN",
+    "to": "SWE",
+    "type": "sea"
+  },
+  {
+    "from": "DEN",
+    "to": "SKA",
+    "type": "sea"
+  },
+  {
+    "from": "DEN",
+    "to": "BAL",
+    "type": "sea"
+  },
+  {
+    "from": "SWE",
+    "to": "NOR",
+    "type": "land"
+  },
+  {
+    "from": "SWE",
+    "to": "FIN",
+    "type": "land"
+  },
+  {
+    "from": "SWE",
+    "to": "BOT",
+    "type": "sea"
+  },
+  {
+    "from": "SWE",
+    "to": "BAL",
+    "type": "sea"
+  },
+  {
+    "from": "NOR",
+    "to": "FIN",
+    "type": "land"
+  },
+  {
+    "from": "NOR",
+    "to": "STP",
+    "type": "land"
+  },
+  {
+    "from": "NOR",
+    "to": "NWG",
+    "type": "sea"
+  },
+  {
+    "from": "NOR",
+    "to": "SKA",
+    "type": "sea"
+  },
+  {
+    "from": "STP",
+    "to": "FIN",
+    "type": "land"
+  },
+  {
+    "from": "STP",
+    "to": "LVN",
+    "type": "land"
+  },
+  {
+    "from": "STP/NC",
+    "to": "FIN",
+    "type": "sea"
+  },
+  {
+    "from": "STP/NC",
+    "to": "BAR",
+    "type": "sea"
+  },
+  {
+    "from": "STP/SC",
+    "to": "LVN",
+    "type": "sea"
+  },
+  {
+    "from": "STP/SC",
+    "to": "BOT",
+    "type": "sea"
+  },
+  {
+    "from": "FIN",
+    "to": "LVN",
+    "type": "land"
+  },
+  {
+    "from": "FIN",
+    "to": "BOT",
+    "type": "sea"
+  },
+  {
+    "from": "LVN",
+    "to": "PRU",
+    "type": "land"
+  },
+  {
+    "from": "LVN",
+    "to": "WAR",
+    "type": "land"
+  },
+  {
+    "from": "LVN",
+    "to": "BOT",
+    "type": "sea"
+  },
+  {
+    "from": "PRU",
+    "to": "WAR",
+    "type": "land"
+  },
+  {
+    "from": "PRU",
+    "to": "BAL",
+    "type": "sea"
+  },
+  {
+    "from": "UKR",
+    "to": "WAR",
+    "type": "land"
+  },
+  {
+    "from": "UKR",
+    "to": "MOS",
+    "type": "land"
+  },
+  {
+    "from": "UKR",
+    "to": "SEV",
+    "type": "land"
+  },
+  {
+    "from": "UKR",
+    "to": "GAL",
+    "type": "land"
+  },
+  {
+    "from": "MOS",
+    "to": "WAR",
+    "type": "land"
+  },
+  {
+    "from": "MOS",
+    "to": "SEV",
+    "type": "land"
+  },
+  {
+    "from": "SEV",
+    "to": "ARM",
+    "type": "land"
+  },
+  {
+    "from": "SEV",
+    "to": "BLA",
+    "type": "sea"
+  },
+  {
+    "from": "WAR",
+    "to": "GAL",
+    "type": "land"
+  },
+  {
+    "from": "WAR",
+    "to": "SIL",
+    "type": "land"
+  },
+  {
+    "from": "GAL",
+    "to": "BOH",
+    "type": "land"
+  },
+  {
+    "from": "GAL",
+    "to": "VIE",
+    "type": "land"
+  },
+  {
+    "from": "GAL",
+    "to": "BUD",
+    "type": "land"
+  },
+  {
+    "from": "BOH",
+    "to": "VIE",
+    "type": "land"
+  },
+  {
+    "from": "BOH",
+    "to": "TYR",
+    "type": "land"
+  },
+  {
+    "from": "BOH",
+    "to": "SIL",
+    "type": "land"
+  },
+  {
+    "from": "VIE",
+    "to": "BUD",
+    "type": "land"
+  },
+  {
+    "from": "VIE",
+    "to": "TYR",
+    "type": "land"
+  },
+  {
+    "from": "BUD",
+    "to": "TRI",
+    "type": "land"
+  },
+  {
+    "from": "BUD",
+    "to": "SER",
+    "type": "land"
+  },
+  {
+    "from": "TRI",
+    "to": "VEN",
+    "type": "land"
+  },
+  {
+    "from": "TRI",
+    "to": "SER",
+    "type": "land"
+  },
+  {
+    "from": "TRI",
+    "to": "ADR",
+    "type": "sea"
+  },
+  {
+    "from": "TYR",
+    "to": "VEN",
+    "type": "land"
+  },
+  {
+    "from": "TYR",
+    "to": "PIE",
+    "type": "land"
+  },
+  {
+    "from": "VEN",
+    "to": "PIE",
+    "type": "land"
+  },
+  {
+    "from": "VEN",
+    "to": "TUS",
+    "type": "land"
+  },
+  {
+    "from": "VEN",
+    "to": "ROM",
+    "type": "land"
+  },
+  {
+    "from": "VEN",
+    "to": "ADR",
+    "type": "sea"
+  },
+  {
+    "from": "PIE",
+    "to": "TUS",
+    "type": "land"
+  },
+  {
+    "from": "PIE",
+    "to": "WES",
+    "type": "sea"
+  },
+  {
+    "from": "ROM",
+    "to": "TUS",
+    "type": "land"
+  },
+  {
+    "from": "ROM",
+    "to": "NAP",
+    "type": "land"
+  },
+  {
+    "from": "ROM",
+    "to": "TYS",
+    "type": "sea"
+  },
+  {
+    "from": "NAP",
+    "to": "APU",
+    "type": "land"
+  },
+  {
+    "from": "NAP",
+    "to": "ION",
+    "type": "sea"
+  },
+  {
+    "from": "NAP",
+    "to": "TYS",
+    "type": "sea"
+  },
+  {
+    "from": "APU",
+    "to": "ION",
+    "type": "sea"
+  },
+  {
+    "from": "TUS",
+    "to": "WES",
+    "type": "sea"
+  },
+  {
+    "from": "BUL",
+    "to": "SER",
+    "type": "land"
+  },
+  {
+    "from": "BUL",
+    "to": "GRE",
+    "type": "land"
+  },
+  {
+    "from": "BUL",
+    "to": "CON",
+    "type": "land"
+  },
+  {
+    "from": "BUL/EC",
+    "to": "CON",
+    "type": "sea"
+  },
+  {
+    "from": "BUL/EC",
+    "to": "BLA",
+    "type": "sea"
+  },
+  {
+    "from": "BUL/SC",
+    "to": "GRE",
+    "type": "sea"
+  },
+  {
+    "from": "BUL/SC",
+    "to": "AEG",
+    "type": "sea"
+  },
+  {
+    "from": "GRE",
+    "to": "SER",
+    "type": "land"
+  },
+  {
+    "from": "GRE",
+    "to": "ALB",
+    "type": "land"
+  },
+  {
+    "from": "GRE",
+    "to": "ION",
+    "type": "sea"
+  },
+  {
+    "from": "GRE",
+    "to": "AEG",
+    "type": "sea"
+  },
+  {
+    "from": "SER",
+    "to": "ALB",
+    "type": "land"
+  },
+  {
+    "from": "ALB",
+    "to": "ION",
+    "type": "sea"
+  },
+  {
+    "from": "CON",
+    "to": "ANK",
+    "type": "land"
+  },
+  {
+    "from": "CON",
+    "to": "SMY",
+    "type": "land"
+  },
+  {
+    "from": "CON",
+    "to": "BLA",
+    "type": "sea"
+  },
+  {
+    "from": "CON",
+    "to": "AEG",
+    "type": "sea"
+  },
+  {
+    "from": "ANK",
+    "to": "SMY",
+    "type": "land"
+  },
+  {
+    "from": "ANK",
+    "to": "ARM",
+    "type": "land"
+  },
+  {
+    "from": "ANK",
+    "to": "BLA",
+    "type": "sea"
+  },
+  {
+    "from": "SMY",
+    "to": "ARM",
+    "type": "land"
+  },
+  {
+    "from": "SMY",
+    "to": "SYR",
+    "type": "land"
+  },
+  {
+    "from": "SMY",
+    "to": "AEG",
+    "type": "sea"
+  },
+  {
+    "from": "SMY",
+    "to": "EAS",
+    "type": "sea"
+  },
+  {
+    "from": "ARM",
+    "to": "SYR",
+    "type": "land"
+  },
+  {
+    "from": "ARM",
+    "to": "BLA",
+    "type": "sea"
+  },
+  {
+    "from": "SYR",
+    "to": "EAS",
+    "type": "sea"
+  },
+  {
+    "from": "NAO",
+    "to": "NWG",
+    "type": "sea"
+  },
+  {
+    "from": "NAO",
+    "to": "IRI",
+    "type": "sea"
+  },
+  {
+    "from": "NAO",
+    "to": "MAO",
+    "type": "sea"
+  },
+  {
+    "from": "NWG",
+    "to": "BAR",
+    "type": "sea"
+  },
+  {
+    "from": "NWG",
+    "to": "NTH",
+    "type": "sea"
+  },
+  {
+    "from": "SKA",
+    "to": "NTH",
+    "type": "sea"
+  },
+  {
+    "from": "SKA",
+    "to": "BAL",
+    "type": "sea"
+  },
+  {
+    "from": "HEL",
+    "to": "NTH",
+    "type": "sea"
+  },
+  {
+    "from": "HEL",
+    "to": "BAL",
+    "type": "sea"
+  },
+  {
+    "from": "NTH",
+    "to": "ENG",
+    "type": "sea"
+  },
+  {
+    "from": "ENG",
+    "to": "IRI",
+    "type": "sea"
+  },
+  {
+    "from": "ENG",
+    "to": "MAO",
+    "type": "sea"
+  },
+  {
+    "from": "IRI",
+    "to": "MAO",
+    "type": "sea"
+  },
+  {
+    "from": "BOT",
+    "to": "BAL",
+    "type": "sea"
+  },
+  {
+    "from": "ADR",
+    "to": "ION",
+    "type": "sea"
+  },
+  {
+    "from": "AEG",
+    "to": "EAS",
+    "type": "sea"
+  },
+  {
+    "from": "EAS",
+    "to": "ION",
+    "type": "sea"
+  },
+  {
+    "from": "ION",
+    "to": "TYS",
+    "type": "sea"
+  },
+  {
+    "from": "TYS",
+    "to": "WES",
+    "type": "sea"
+  },
+  {
+    "from": "TUN",
+    "to": "NAF",
+    "type": "land"
+  },
+  {
+    "from": "TUN",
+    "to": "WES",
+    "type": "sea"
+  },
+  {
+    "from": "NAF",
+    "to": "MAO",
+    "type": "sea"
+  },
+  {
+    "from": "NAF",
+    "to": "WES",
+    "type": "sea"
+  },
+  {
+    "from": "RUM",
+    "to": "BUL",
+    "type": "land"
+  },
+  {
+    "from": "RUM",
+    "to": "BLA",
+    "type": "sea"
+  },
+  {
+    "from": "RUM",
+    "to": "SEV",
+    "type": "land"
+  },
+  {
+    "from": "RUM",
+    "to": "UKR",
+    "type": "land"
+  },
+  {
+    "from": "RUM",
+    "to": "GAL",
+    "type": "land"
+  },
+  {
+    "from": "RUM",
+    "to": "SER",
+    "type": "land"
+  },
+  {
+    "from": "KIE",
+    "to": "SKA",
+    "type": "sea"
+  },
+  {
+    "from": "PRU",
+    "to": "BOT",
+    "type": "sea"
+  }
+]

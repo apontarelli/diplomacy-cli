@@ -18,6 +18,28 @@ Data-oriented design
 
 ##  Phase 2: Logic + Testing (in parallel)
 
+[x] Create world and starting state json files
+[] Implement game state logic
+    [] start_game()
+    [] load_state(path)
+	[] load from JSON every turn
+	[] return in-memory dict of players, territories, units, (maybe) orders, game (turn, season)
+    [] print_state(state)
+	[] pretty print the current state
+	[] could allow for different options (units, territories, or a summary)
+	[] could optionally allow for last turns orders
+    [] move_unit(state, unit_id, territory_id)
+    [] advance_turn(state)
+    [] remove_unit(state, unit_id)
+	[] optionally, disband_unit()
+    [] change_territory(state, territory_id, new_owner_id)
+	[] only applies to supply centers
+	[] consider having a method that loops through units in supply centers to call this method to change ownership
+    [] update_player_status(state):
+	[] if player owns no supply centers, mark as eliminated
+	[] also allows for forfeit
+    [] end_game()
+    [] build_unit(state, player_id, territory_id, type)    
 [] Define canonical order JSON structure  
 [] Implement order validator
     [] Syntactic validation (is the structure correct?)
@@ -29,17 +51,6 @@ Data-oriented design
     [] Treat invalid orders as holds
     [] Test basic move + hold resolution
 
-[] Implement game state helpers
-    [] Get/set unit at territory
-    [] Transfer ownership of territories
-    [] Advance turn & phase
-    [] Test state mutation logic
-
-[] Implement load/save functions
-    [] Load from `data/reference/`
-    [] Save to `data/saves/`
-    [] Support multiple game folders
-    [] Test load/save round-trip
 
 ---
 

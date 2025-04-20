@@ -11,7 +11,7 @@ main.py # Entry point
 logic/ # Core game logic
 tests/ # Test files
 data/ # Game data
-data/reference # Immutable data (i.e. starting state)
+data/classic # Immutable data for classic Diplomacy (i.e. starting state)
 data/saves # Active game state folders
 ```
 
