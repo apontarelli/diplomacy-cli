@@ -1,6 +1,9 @@
-# PYthon cache 
+# Python cache 
 __pycache__/
 *.py[cod]
 
 # macOS system file
 .DS_Store
+
+# Save folder
+data/saves/

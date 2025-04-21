@@ -1,12 +1,10 @@
-from logic import load, save, validator, engine, state
+from logic import start_game, load, save, validator, engine, state
 
 def main():
 
     print("Starting game loop")
-    load()
+    start_game()
     validator()
     engine()
-    state()
-    save()
 
 main()

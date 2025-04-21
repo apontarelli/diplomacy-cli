@@ -19,8 +19,9 @@ Data-oriented design
 ##  Phase 2: Logic + Testing (in parallel)
 
 [x] Create world and starting state json files
+[x] Create game storage interface
 [] Implement game state logic
-    [] start_game()
+    [x] start_game()
     [] load_state(path)
 	[] load from JSON every turn
 	[] return in-memory dict of players, territories, units, (maybe) orders, game (turn, season)
@@ -54,17 +55,7 @@ Data-oriented design
 
 ---
 
-##  Phase 3: Reference Game Data
-
-[] Define reference data (stored in `data/reference/classic/`)
-    [] `territories.json` – ID, name, type, supply center
-    [] `edges.json` – bidirectional connections, typed
-    [] `nations.json` – list of major powers
-    [] `starting_units.json` – unit type, nation_id, territory_id
-
----
-
-##  Phase 4: UX & Input
+##  Phase 3: UX & Input
 
 [] Update `main.py` / loader:
     [] List available saves
