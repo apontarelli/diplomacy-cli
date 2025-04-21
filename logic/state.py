@@ -19,3 +19,13 @@ def start_game(variant = "classic", game_id = "new_game"):
         "status": "active"
     }
     save(game, f"{save_path}/game.json")
+
+def load_state(game_id):
+    print(f"Loading {game_id} game state")
+    path = f"{DEFAULT_SAVES_DIR}/{game_id}"
+    return {
+        "game": load(f"{path}/game.json"),
+        "players": load(f"{path}/players.json"),
+        "territory_state": load(f"{path}/territory_state.json"),
+        "units": load(f"{path}/units.json")
+    }

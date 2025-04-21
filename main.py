@@ -1,9 +1,9 @@
-from logic import start_game, load, save, validator, engine, state
+from logic import start_game, load_state, save, validator, engine, state
 
 def main():
 
     print("Starting game loop")
-    start_game()
+    print(load_state("new_game"))
     validator()
     engine()
 

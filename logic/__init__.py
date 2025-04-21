@@ -1,4 +1,4 @@
 from .storage import load, save
 from .validator import validator
 from .engine import engine
-from .state import start_game
+from .state import start_game, load_state
