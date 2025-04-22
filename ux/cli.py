@@ -1,6 +1,7 @@
 import os
 from logic.state import start_game, load_state
 from logic.storage import load, list_saved_games, delete_game
+from ux.pretty import format_state
 
 def main_menu():
     while True:
@@ -9,6 +10,7 @@ def main_menu():
         print("2. View saved games")
         print("3. Exit")
 
+        print("--------------------")
         choice = input("Choose an option: ").strip()
         if choice == "1":
             start_new_game()
@@ -21,6 +23,7 @@ def main_menu():
             print("Invalid choice.")
 
 def start_new_game():
+    print("--------------------")
     game_id = input("Enter a game name: ").strip()
     variant = "classic"
     if game_id:
@@ -34,12 +37,14 @@ def view_saved_games():
         if not games:
             print("No saved games")
             return
-
+        
+        print("\n--- Saved games ---")
         for i, game in enumerate(games):
             print(f"{i + 1}. {game}")
         print(f"0. Back to menu")
 
         try:
+            print("--------------------")
             selection = int(input("Select a save: "))
             if selection == 0:
                 return
@@ -52,15 +57,15 @@ def view_saved_games():
 
 def manage_save(game_id):
     while True:
-        print(f"--- {game_id} ---")
+        print(f"\n--- {game_id} ---")
         print("1. Print state")
         print("2. Delete game")
         print("0. Back to menu")
-
+        print("--------------------")
         choice = input("Choose an option: ").strip()
         if choice == "1":
             state = load_state(game_id)
-            print(state)
+            print(format_state(state))
         elif choice == "2":
             confirm = input(f"Type exact game_id {game_id} to confirm delete: ").strip()
             if confirm == game_id:
