@@ -1,10 +1,7 @@
-from logic import start_game, load_state, save, validator, engine, state
+from ux.cli import main_menu
 
 def main():
 
-    print("Starting game loop")
-    print(load_state("new_game"))
-    validator()
-    engine()
+    main_menu()
 
 main()

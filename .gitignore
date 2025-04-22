@@ -7,3 +7,6 @@ __pycache__/
 
 # Save folder
 data/saves/
+
+# Virtual python environment
+venv

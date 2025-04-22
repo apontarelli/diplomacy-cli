@@ -20,17 +20,27 @@ Data-oriented design
 
 [x] Create world and starting state json files
 [x] Create game storage interface
+[x] Create basic start game, list game, and delete game storage interface
+    [x] menu to choose between starting a new game or view saved games
+	[x] new game prompts for a game_id and calls start_game
+	[x] view saved game lists the current saved games
+	    [x] selecting a game from the list gives two options
+		[x] print state
+		[x] delete game (with a confirmation dialog)  
 [] Implement game state logic
     [x] start_game()
-    [] load_state(path)
-	[] load from JSON every turn
-	[] return in-memory dict of players, territories, units, (maybe) orders, game (turn, season)
+    [x] load_state(game_id)
+	[x] load from JSON
+	[x] return in-memory dict of players, territories, units, game (turn, season)
     [] print_state(state)
 	[] pretty print the current state
 	[] could allow for different options (units, territories, or a summary)
 	[] could optionally allow for last turns orders
     [] move_unit(state, unit_id, territory_id)
     [] advance_turn(state)
+	[] implement turn history
+	    [] compress turn files into single state file
+	    [] create year-phase identifier
     [] remove_unit(state, unit_id)
 	[] optionally, disband_unit()
     [] change_territory(state, territory_id, new_owner_id)
@@ -52,14 +62,10 @@ Data-oriented design
     [] Treat invalid orders as holds
     [] Test basic move + hold resolution
 
-
 ---
 
 ##  Phase 3: UX & Input
 
-[] Update `main.py` / loader:
-    [] List available saves
-    [] Create new game from reference
 
 [] Text-based order input:
     [] Accept raw input (e.g. `A PAR - BUR`)
