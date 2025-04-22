@@ -28,3 +28,23 @@ def load_state(game_id):
         "territory_state": load(f"{path}/territory_state.json"),
         "units": load(f"{path}/units.json")
     }
+
+def apply_unit_movements(state, movements):
+    old_units = state["units"]
+    new_units = {}
+    moved_from = set()
+
+    for move in movements:
+        from_territory = move["from"]
+        to_territory = move["to"]
+        unit = old_units[from_territory]
+
+        new_units[to_territory] = unit
+        moved_from.add(from_territory)
+
+    for territory, unit in old_units.items():
+        if territory not in moved_from:
+            new_units[territory] = unit
+
+    state["units"] = new_units
+    return state

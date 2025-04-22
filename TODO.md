@@ -34,8 +34,9 @@ Data-oriented design
 	[x] return in-memory dict of players, territories, units, game (turn, season)
     [x] format_state(state)
 	[x] pretty print the current state
-    [] move_unit(state, unit_id, territory_id)
+    [x] apply_unit_movements(state, movements)
 	[x] convert units to a territory keyed dictionary
+	[x] write simple unit test
     [] advance_turn(state)
 	[] implement turn history
 	    [] compress turn files into single state file
