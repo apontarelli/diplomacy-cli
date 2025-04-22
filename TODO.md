@@ -32,11 +32,10 @@ Data-oriented design
     [x] load_state(game_id)
 	[x] load from JSON
 	[x] return in-memory dict of players, territories, units, game (turn, season)
-    [] print_state(state)
-	[] pretty print the current state
-	[] could allow for different options (units, territories, or a summary)
-	[] could optionally allow for last turns orders
+    [x] format_state(state)
+	[x] pretty print the current state
     [] move_unit(state, unit_id, territory_id)
+	[x] convert units to a territory keyed dictionary
     [] advance_turn(state)
 	[] implement turn history
 	    [] compress turn files into single state file

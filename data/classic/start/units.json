@@ -1,30 +1,30 @@
-[
-  { "id": 1, "owner_id": "ENG", "type": "fleet", "territory_id": "LON" },
-  { "id": 2, "owner_id": "ENG", "type": "army", "territory_id": "EDI" },
-  { "id": 3, "owner_id": "ENG", "type": "army", "territory_id": "LVP" },
+{
+    "LON": { "owner_id": "ENG", "type": "fleet" },
+    "EDI": { "owner_id": "ENG", "type": "army" },
+    "LVP": { "owner_id": "ENG", "type": "army" },
 
-  { "id": 4, "owner_id": "FRA", "type": "army", "territory_id": "PAR" },
-  { "id": 5, "owner_id": "FRA", "type": "army", "territory_id": "MAR" },
-  { "id": 6, "owner_id": "FRA", "type": "fleet", "territory_id": "BRE" },
+    "PAR": { "owner_id": "FRA", "type": "army" },
+    "MAR": { "owner_id": "FRA", "type": "army" },
+    "BRE": { "owner_id": "FRA", "type": "fleet" },
 
-  { "id": 7, "owner_id": "GER", "type": "army", "territory_id": "BER" },
-  { "id": 8, "owner_id": "GER", "type": "fleet", "territory_id": "KIE" },
-  { "id": 9, "owner_id": "GER", "type": "army", "territory_id": "MUN" },
+    "BER": { "owner_id": "GER", "type": "army" },
+    "KIE": { "owner_id": "GER", "type": "fleet" },
+    "MUN": { "owner_id": "GER", "type": "army" },
 
-  { "id": 10, "owner_id": "ITA", "type": "army", "territory_id": "ROM" },
-  { "id": 11, "owner_id": "ITA", "type": "army", "territory_id": "VEN" },
-  { "id": 12, "owner_id": "ITA", "type": "fleet", "territory_id": "NAP" },
+    "ROM": { "owner_id": "ITA", "type": "army" },
+    "VEN": { "owner_id": "ITA", "type": "army" },
+    "NAP": { "owner_id": "ITA", "type": "fleet" },
 
-  { "id": 13, "owner_id": "AUS", "type": "army", "territory_id": "VIE" },
-  { "id": 14, "owner_id": "AUS", "type": "army", "territory_id": "BUD" },
-  { "id": 15, "owner_id": "AUS", "type": "fleet", "territory_id": "TRI" },
+    "VIE": { "owner_id": "AUS", "type": "army" },
+    "BUD": { "owner_id": "AUS", "type": "army" },
+    "TRI": { "owner_id": "AUS", "type": "fleet" },
 
-  { "id": 16, "owner_id": "RUS", "type": "army", "territory_id": "MOS" },
-  { "id": 17, "owner_id": "RUS", "type": "fleet", "territory_id": "SEV" },
-  { "id": 18, "owner_id": "RUS", "type": "army", "territory_id": "WAR" },
-  { "id": 19, "owner_id": "RUS", "type": "fleet", "territory_id": "STP/SC" },
+    "MOS": { "owner_id": "RUS", "type": "army" },
+    "SEV": { "owner_id": "RUS", "type": "fleet" },
+    "WAR": { "owner_id": "RUS", "type": "army" },
+    "STP/SC": { "owner_id": "RUS", "type": "fleet" },
 
-  { "id": 20, "owner_id": "TUR", "type": "army", "territory_id": "ANK" },
-  { "id": 21, "owner_id": "TUR", "type": "army", "territory_id": "SMY" },
-  { "id": 22, "owner_id": "TUR", "type": "fleet", "territory_id": "CON" }
-]
+    "ANK": { "owner_id": "TUR", "type": "army" },
+    "SMY": { "owner_id": "TUR", "type": "army" },
+    "CON": { "owner_id": "TUR", "type": "fleet" }
+}

@@ -45,7 +45,7 @@ def format_territory_state(territory_state):
 
 def format_units(units):
     output = []
-    by_owner = group_by_owner(units)
+    by_owner = group_by_owner(flatten_units(units))
 
     output.append(f"--- Units ---")
     for owner, units in by_owner.items():
@@ -54,6 +54,12 @@ def format_units(units):
             output.append(f" - {u["type"]} - {u["territory_id"]}")
     
     return "\n".join(output)
+
+def flatten_units(units_dict):
+    return [
+        { "territory_id": territory, **unit }
+        for territory, unit in units_dict.items()
+    ]
 
 def group_by_owner(items):
     grouped = defaultdict(list)
