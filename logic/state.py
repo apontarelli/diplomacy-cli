@@ -48,3 +48,20 @@ def apply_unit_movements(state, movements):
 
     state["units"] = new_units
     return state
+
+def disband_unit(state, territory_id):
+    state["units"].pop(territory_id, None)
+    return state
+
+def build_unit(state, territory_id, type, owner_id):
+    state["units"][territory_id] = {
+            "type": type,
+            "owner_id": owner_id
+            }
+    return state
+
+def set_territory_owner(state, territory_id, owner_id):
+    state["territory_state"][territory_id] = {
+            "owner_id": owner_id
+            }
+    return state

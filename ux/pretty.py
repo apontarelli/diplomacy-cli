@@ -33,19 +33,19 @@ def format_players(players):
 
 def format_territory_state(territory_state):
     output = []
-    by_owner = group_by_owner(territory_state)
+    by_owner = group_territory_state_by_owner(territory_state)
 
     output.append(f"--- Territories ---")
     for owner, owned_territories in by_owner.items():
         output.append(f"\n{owner}")
-        for t in owned_territories:
-            output.append(f" - {t["territory_id"]}")
+        for territory_id in owned_territories:
+            output.append(f" - {territory_id}")
     
     return "\n".join(output)
 
 def format_units(units):
     output = []
-    by_owner = group_by_owner(flatten_units(units))
+    by_owner = group_units_by_owner(flatten_units(units))
 
     output.append(f"--- Units ---")
     for owner, units in by_owner.items():
@@ -61,9 +61,18 @@ def flatten_units(units_dict):
         for territory, unit in units_dict.items()
     ]
 
-def group_by_owner(items):
+def group_territory_state_by_owner(territory_state_dict):
     grouped = defaultdict(list)
-    for item in items:
-        owner = item.get("owner_id", "None")
-        grouped[owner].append(item)
+    for territory_id, data in territory_state_dict.items():
+        owner = data.get("owner_id", "None")
+        grouped[owner].append(territory_id)
     return grouped
+
+def group_units_by_owner(unit_list):
+    grouped = defaultdict(list)
+    for unit in unit_list:
+        owner = unit.get("owner_id", "None")
+        grouped[owner].append(unit)
+    return grouped
+
+

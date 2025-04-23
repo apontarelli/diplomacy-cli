@@ -43,16 +43,24 @@ def view_saved_games():
             print(f"{i + 1}. {game}")
         print(f"0. Back to menu")
 
+        print("--------------------")
+        choice = input("Select a save: ").strip()
         try:
-            print("--------------------")
-            selection = int(input("Select a save: "))
-            if selection == 0:
-                return
-            selected_game = games[selection - 1]
-            manage_save(selected_game)
-            return
-        except (ValueError, IndexError):
+            selection = int(choice)
+        except ValueError:
             print("Invalid selection.")
+            continue
+
+        if selection == 0:
+            return
+
+        if not (1 <= selection <= len(games)):
+            print("Invalid selection.")
+            continue
+
+        selected_game = games[selection - 1]
+        manage_save(selected_game)
+        return
     
 
 def manage_save(game_id):

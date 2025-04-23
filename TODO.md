@@ -37,6 +37,14 @@ Data-oriented design
     [x] apply_unit_movements(state, movements)
 	[x] convert units to a territory keyed dictionary
 	[x] write simple unit test
+    [x] disband_unit(state, territory_id)
+    [x] build_unit(state, territory_id, type, owner)
+    [x] set_territory_owner(state, territory_id, owner)
+    [] refactor game turn, season, phase state to phase_code
+	[] add parse_phase_code
+	[] get_next_phase_code
+	    [] this is likely to be in engine.py
+    [] set_phase_code(state, phase_code)
     [] advance_turn(state)
 	[] implement turn history
 	    [] compress turn files into single state file
