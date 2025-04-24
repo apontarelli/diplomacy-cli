@@ -28,8 +28,8 @@ def load_state(game_id):
         "units": load(f"{path}/units.json")
     }
 
-def apply_unit_movements(state, movements):
-    old_units = state["units"]
+def apply_unit_movements(units, movements):
+    old_units = units
     new_units = {}
     moved_from = set()
 
@@ -45,28 +45,27 @@ def apply_unit_movements(state, movements):
         if territory not in moved_from:
             new_units[territory] = unit
 
-    state["units"] = new_units
-    return state
+    return new_units
 
-def disband_unit(state, territory_id):
-    state["units"].pop(territory_id, None)
-    return state
+def disband_unit(units, territory_id):
+    units.pop(territory_id, None)
+    return units
 
-def build_unit(state, territory_id, type, owner_id):
-    state["units"][territory_id] = {
+def build_unit(units, territory_id, type, owner_id):
+    units[territory_id] = {
             "type": type,
             "owner_id": owner_id
             }
-    return state
+    return units
 
-def set_territory_owner(state, territory_id, owner_id):
-    state["territory_state"][territory_id] = {
+def set_territory_owner(territory_state, territory_id, owner_id):
+    territory_state[territory_id] = {
             "owner_id": owner_id
             }
-    return state
+    return territory_state
 
-def eliminate_player(state, player_id):
-    state["players"][player_id] = {
+def eliminate_player(players, player_id):
+    players[player_id] = {
             "status": "eliminated"
             }
-    return state
+    return players
