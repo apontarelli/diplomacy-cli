@@ -40,6 +40,9 @@ Data-oriented design
     [x] disband_unit(state, territory_id)
     [x] build_unit(state, territory_id, type, owner)
     [x] set_territory_owner(state, territory_id, owner)
+    [] eliminate_player(player_id)
+	[x] turn players from a list of dicts into a dict of dicts
+	[x] update format players in pretty.cli
     [] refactor game turn, season, phase state to phase_code
 	[] add parse_phase_code
 	[] get_next_phase_code
@@ -49,16 +52,10 @@ Data-oriented design
 	[] implement turn history
 	    [] compress turn files into single state file
 	    [] create year-phase identifier
-    [] remove_unit(state, unit_id)
-	[] optionally, disband_unit()
-    [] change_territory(state, territory_id, new_owner_id)
-	[] only applies to supply centers
-	[] consider having a method that loops through units in supply centers to call this method to change ownership
     [] update_player_status(state):
 	[] if player owns no supply centers, mark as eliminated
 	[] also allows for forfeit
     [] end_game()
-    [] build_unit(state, player_id, territory_id, type)    
 [] Define canonical order JSON structure  
 [] Implement order validator
     [] Syntactic validation (is the structure correct?)

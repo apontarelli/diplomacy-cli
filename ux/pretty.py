@@ -26,8 +26,8 @@ def format_game(game):
 def format_players(players):
     output = []
     output.append(f"--- Players ---")
-    for p in players:
-        output.append(f"-id: {p["id"]} - {p["status"]}")
+    for k, v in players.items():
+        output.append(f"{k} - {v["status"]}")
 
     return "\n".join(output)
 
