@@ -1,5 +1,5 @@
 import unittest
-from logic.state import apply_unit_movements, disband_unit, build_unit, set_territory_owner
+from logic.state import apply_unit_movements, disband_unit, build_unit, set_territory_owner, eliminate_player
 
 class TestState(unittest.TestCase):
     def test_apply_movements(self):
@@ -88,6 +88,36 @@ class TestState(unittest.TestCase):
 
         result = set_territory_owner(test_state, "LON", "FRA")
         result = set_territory_owner(result, "EDI", "RUS")
+        self.assertEqual(result, expected)
+
+    def test_eliminate_player(self):
+        test_state = {
+            "players": {
+                "ENG": { "status": "active" },
+                "AUS": { "status": "active" },
+                "GER": { "status": "active" },
+                "FRA": { "status": "active" },
+                "ITA": { "status": "active" },
+                "TUR": { "status": "active" },
+                "RUS": { "status": "active" }
+            }
+        }
+
+        expected = {
+            "players": {
+                "ENG": { "status": "eliminated" },
+                "AUS": { "status": "active" },
+                "GER": { "status": "active" },
+                "FRA": { "status": "active" },
+                "ITA": { "status": "active" },
+                "TUR": { "status": "active" },
+                "RUS": { "status": "active" }
+            }
+        }
+
+
+
+        result = eliminate_player(test_state, "ENG")
         self.assertEqual(result, expected)
 
 if __name__ == '__main__':

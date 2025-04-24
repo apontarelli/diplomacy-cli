@@ -65,3 +65,9 @@ def set_territory_owner(state, territory_id, owner_id):
             "owner_id": owner_id
             }
     return state
+
+def eliminate_player(state, player_id):
+    state["players"][player_id] = {
+            "status": "eliminated"
+            }
+    return state
