@@ -18,7 +18,7 @@ def format_game(game):
     output = []
     output.append(f"--- Game: {game["game_id"]} ---")
     output.append(f"Variant: {game["variant"]}")
-    output.append(f"Turn: {game["turn"]} | {game["season"]} | {game["phase"]}")
+    output.append(f"Turn: {game["turn_code"]}")
     output.append(f"Status: {game["status"]}")
 
     return "\n".join(output)

@@ -1,4 +1,5 @@
 from .storage import load, save, DEFAULT_SAVES_DIR
+from .turn_code import INITIAL_TURN_CODE
 import shutil, os
 
 def start_game(variant = "classic", game_id = "new_game"):
@@ -13,9 +14,7 @@ def start_game(variant = "classic", game_id = "new_game"):
     game = {
         "game_id": game_id,
         "variant": variant,
-        "turn": 1901,
-        "season": "Spring",
-        "phase": "Orders",
+        "turn_code": INITIAL_TURN_CODE,
         "status": "active"
     }
     save(game, f"{save_path}/game.json")

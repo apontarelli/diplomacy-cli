@@ -40,13 +40,11 @@ Data-oriented design
     [x] disband_unit(state, territory_id)
     [x] build_unit(state, territory_id, type, owner)
     [x] set_territory_owner(state, territory_id, owner)
-    [] eliminate_player(player_id)
+    [x] eliminate_player(player_id)
 	[x] turn players from a list of dicts into a dict of dicts
 	[x] update format players in pretty.cli
-    [] refactor game turn, season, phase state to phase_code
-	[] add parse_phase_code
-	[] get_next_phase_code
-	    [] this is likely to be in engine.py
+    [x] refactor game turn, season, phase state to turn_code
+    [] refactor state methods and tests to use sub-dicts not full state dict
     [] set_phase_code(state, phase_code)
     [] advance_turn(state)
 	[] implement turn history
