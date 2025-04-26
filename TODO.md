@@ -44,26 +44,22 @@ Data-oriented design
 	[x] turn players from a list of dicts into a dict of dicts
 	[x] update format players in pretty.cli
     [x] refactor game turn, season, phase state to turn_code
-    [] refactor state methods and tests to use sub-dicts not full state dict
-    [] set_phase_code(state, phase_code)
-    [] advance_turn(state)
-	[] implement turn history
-	    [] compress turn files into single state file
-	    [] create year-phase identifier
-    [] update_player_status(state):
-	[] if player owns no supply centers, mark as eliminated
-	[] also allows for forfeit
-    [] end_game()
-[] Define canonical order JSON structure  
-[] Implement order validator
-    [] Syntactic validation (is the structure correct?)
-    [] Semantic validation (is the move valid for unit, edge, etc.)
-    [] Test all validation logic
-
+    [x] refactor state methods and tests to use sub-dicts not full state dict
+[] Refactor territories
+    [x] Combine edges into territories and refactor into id keyed dict
+    [] Combine home_center into territories
 [] Implement core resolution engine
     [] Run turn using valid/invalid orders
     [] Treat invalid orders as holds
     [] Test basic move + hold resolution
+[] Define canonical order JSON structure  
+    [] data/saves/[game_id]/orders
+    [] Should they be separate files per nation/player?
+    [] How do we compress and save them to history/
+[] Implement order validator
+    [] Syntactic validation (is the structure correct?)
+    [] Semantic validation (is the move valid for unit, edge, etc.)
+    [] Test all validation logic
 
 ---
 
@@ -139,9 +135,9 @@ Data-oriented design
             - orders
             - game_state
 - logic/
-    - load.py
+    - storage.py
     - engine.py
-    - validate.py
+    - turn_code.py
     - state.py
 - tests/
 
