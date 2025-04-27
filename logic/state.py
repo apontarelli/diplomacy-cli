@@ -26,12 +26,11 @@ def start_game(variant = "classic", game_id = "new_game"):
     }
 
     for player in starting_players:
-        state["players"]["nation_id"] = player["nation_id"]
-        state["players"]["status"] = player["status"]
+        state["players"][player["nation_id"] = { "status": player["status"] }
         
-    for ownership in starting_ownerships:
-        territory_id = ownership["territory_id"]
-        owner_id = ownership["owner_id"] 
+    for o in starting_ownerships:
+        territory_id = o["territory_id"]
+        owner_id = o["owner_id"] 
         state["territory_state"] = set_territory_owner(
             state["territory_state"],
             territory_id,
@@ -41,19 +40,15 @@ def start_game(variant = "classic", game_id = "new_game"):
     counters = {}
     territory_to_unit = {}
 
-    for unit in starting_units:
-        owner_id = unit["owner_id"]  
-        unit_type = unit["unit_type"]
-        location_id = unit["location_id"]
+    for u in starting_units:
         state["units"], territory_to_unit, counters = build_unit(
             state["units"],
             territory_to_unit,
             counters,
-            owner_id,
-            unit_type,
-            location_id
+            u["owner_id"],
+            u["unit_type"],
+            u["location_id"]
         ) 
-
 
     os.makedirs(save_path, exist_ok=True)
     save(state["players"], f"{save_path}/players.json")  
@@ -63,7 +58,6 @@ def start_game(variant = "classic", game_id = "new_game"):
     save(state["orders"], f"{save_path}/orders.json")
 
     print(f"Game {game_id} created successfully!")
-
 
 def load_state(game_id):
     path = f"{DEFAULT_SAVES_DIR}/{game_id}"
