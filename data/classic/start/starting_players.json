@@ -1,0 +1,9 @@
+[
+  { "nation_id": "ENG", "status": "active" },
+  { "nation_id": "AUS", "status": "active" },
+  { "nation_id": "GER", "status": "active" },
+  { "nation_id": "FRA", "status": "active" },
+  { "nation_id": "ITA", "status": "active" },
+  { "nation_id": "TUR", "status": "active" },
+  { "nation_id": "RUS", "status": "active" }
+]

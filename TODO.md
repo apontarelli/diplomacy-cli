@@ -51,10 +51,10 @@
 - [x] Create schema validation for territories
 
 ### Refactor Static Starting State to Dynamic Build
-- [ ] Refactor start json files:
-    - [ ] `starting_units.json` (list of owner_id, type, territory_id)
-    - [ ] `starting_ownerships.json` (list of territory_id, owner_id)
-    - [ ] `starting_players.json` (simple dictionary of nation_id → player status)
+- [x] Refactor start json files:
+    - [x] `starting_units.json` (list of owner_id, type, territory_id)
+    - [x] `starting_owners.json` (list of territory_id, owner_id)
+    - [x] `starting_players.json` (simple dictionary of nation_id → player status)
 - [ ] Refactor `start_game`:
     - [ ] Create empty dictionaries:
         - `players`
