@@ -50,6 +50,25 @@
   - [x] Merge home centers
 - [x] Create schema validation for territories
 
+### Refactor Static Starting State to Dynamic Build
+- [ ] Refactor start json files:
+    - [ ] `starting_units.json` (list of owner_id, type, territory_id)
+    - [ ] `starting_ownerships.json` (list of territory_id, owner_id)
+    - [ ] `starting_players.json` (simple dictionary of nation_id → player status)
+- [ ] Refactor `start_game`:
+    - [ ] Create empty dictionaries:
+        - `players`
+        - `units`
+        - `territory_state`
+    - [ ] Load variant start files:
+        - Nations (from immutable `nations.json`)
+        - Starting units
+        - Starting territory ownerships
+        - Starting players
+    - [ ] For each `starting_unit`, call `build_unit`
+    - [ ] For each `starting_territory`, call `set_territory_owner`
+    - [ ] For each `starting_player`, initialize player state
+    - [ ] Save built game state (`players.json`, `units.json`, `territory_state.json`, etc.) to disk
 ### Units and Movement Refactor
 - [ ] Update Unit Data Model
     - Units must have a unit id, not a territory id
