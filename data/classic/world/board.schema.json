@@ -1,0 +1,26 @@
+
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Diplomacy territory file",
+  "type": "object",
+  "patternProperties": {
+    "^[A-Z]{3}(?:/[A-Z]{2})?$": {
+      "type": "object",
+      "properties": {
+        "name":            { "type": "string" },
+        "type":            { "enum": ["land", "sea"] },
+        "is_supply_center":{ "type": "boolean" },
+        "has_coast":       { "type": "boolean" },
+        "coasts": {
+          "type": "array",
+          "items": { "enum": ["NC", "SC", "EC", "WC"] }
+        },
+        "home_country":    { "enum": ["ENG","FRA","GER","ITA","AUS","RUS","TUR"] },
+        "parent":          { "type": "string" }
+      },
+      "required": ["name"],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
