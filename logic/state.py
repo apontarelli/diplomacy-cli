@@ -82,47 +82,47 @@ def build_territory_to_unit(units):
         territory_to_unit[territory_id] = unit_id
     return territory_to_unit
 
-
 def build_counters(units):
     counters = {}
     for unit_id in units.keys():
         parts = unit_id.split("_")
-        if len(parts) != 3
+        if len(parts) != 3:
             continue
         owner, unit_type, number = parts
         key = f"{owner}_{unit_type}"
         counters[key] = max(counters.get(key, 0), int(number))
     return counters
 
-def apply_unit_movements(units, movements):
-    old_units = units
-    new_units = {}
-    moved_from = set()
-
+def apply_unit_movements(units, territory_to_unit, movements):
     for move in movements:
-        from_territory = move["from"]
-        to_territory = move["to"]
-        unit = old_units[from_territory]
+        from_ = move["from"]
+        to = move["to"]
+        unit_id = territory_to_unit[from_]
+        units[unit_id]["territory_id"] = to
+        territory_to_unit[to] = territory_to_unit.pop(from_)
 
-        new_units[to_territory] = unit
-        moved_from.add(from_territory)
+    return units, territory_to_unit
 
-    for territory, unit in old_units.items():
-        if territory not in moved_from:
-            new_units[territory] = unit
+def disband_unit(units, territory_to_unit, territory_id):
+    unit_id = territory_to_unit.pop(territory_id)
+    units.pop(unit_id)
 
-    return new_units
+    return units, territory_to_unit
 
-def disband_unit(units, territory_id):
-    units.pop(territory_id, None)
-    return units
+def build_unit(units, territory_to_unit, counters, territory_id, unit_type, owner_id):
+    key = f"{owner_id}_{unit_type}"
+    next_num = counters.get(key, 0) + 1
+    unit_id = f"{key}_{next_num}"
 
-def build_unit(units, territory_id, type, owner_id):
-    units[territory_id] = {
-            "type": type,
-            "owner_id": owner_id
+    units[unit_id] = {
+            "unit_type": unit_type,
+            "owner_id": owner_id,
+            "territory_id": territory_id
             }
-    return units
+    territory_to_unit[territory_id] = unit_id
+    counters[key] = next_num
+
+    return units, territory_to_unit, counters
 
 def set_territory_owner(territory_state, territory_id, owner_id):
     territory_state[territory_id] = {
