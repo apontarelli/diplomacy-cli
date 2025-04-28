@@ -69,21 +69,21 @@
     - [x] For each `starting_territory`, call `set_territory_owner`
     - [x] For each `starting_player`, initialize player state
     - [x] Save built game state (`players.json`, `units.json`, `territory_state.json`, etc.) to disk
-- [ ] Refactor `load_state`:
+- [x] Refactor `load_state`:
     - Load state from files
     - Call build_territory_to_unit(units)
     - Call build_counters(units)
     - return state, counters, territory_to_units
 
 ### Units and Movement Refactor
-- [ ] Update Unit Data Model
+- [x] Update Unit Data Model
     - Units must have a unit id, not a territory id
-- [ ] Create and maintain a territory-to-unit index
+- [x] Create and maintain a territory-to-unit index
     - In-memory dictionary mapping `territory_id` to `unit_id`
-- [ ] Introduce Unit Counters
+- [x] Introduce Unit Counters
     - Maintain in-memory counters mapping: {owner_id + unit type} → highest number built.
     - Rebuild counters at load time by parsing existing unit_ids.
-- [ ] Refactor state mutators
+- [x] Refactor state mutators
     - apply_unit_movements(units, territory_to_unit, movements)
 	- update units' `teritory_id`
 	- update `territory_to_unit`  mapping
@@ -96,25 +96,44 @@
 	    - FORMAT: `{OWNER}_{UNITTYPE}_{COUNTER}` -- e.g., `ENG_A_1`
 	- insert new unit into `units`
 	- update `territory_to_unit` mapping
-    - Create one-off script to migrate unit data model and create `territory_to_unit` mapping
 
-### Resolution Engine (Planned)
-- [ ] Load rules and world configuration
-- [ ] Ensure bidirectional edge loading
-- [ ] Core resolution:
-  - [ ] Resolve valid moves
-  - [ ] Treat invalid orders as holds
-  - [ ] Test basic move/hold cycle
 
-### Order Handling (Planned)
+### Order Handling
 - [ ] Define canonical order JSON structure:
+  - [ ] Define order schema and spec
+    - [ ] ORDER_FORMAT.md in `docs/ORDER_FORMAT.md`
+    - [ ] `data/order_schema.json`
+    - [ ] update `test_schema.py` to include order schema
+    - [ ] Include postive and negative orders
   - [ ] `data/saves/{game_id}/orders/`
   - [ ] One file per player preferred
   - [ ] Orders compressed into history after resolution
 - [ ] Implement order validator:
-  - [ ] Syntax validation (proper structure)
-  - [ ] Semantic validation (move legality, unit type, adjacency)
+  - [ ] Load rules and world configuration
+    - [ ] create Rules data class in `rules_loader.py`
+    - [ ] Test bidirectional edge loading
+    - [ ] Test for orphans
+    - [ ] returns Rules dataclass
+  - [ ] Syntax validation (proper structure, required fields)
+  - [ ] Semantic validation (move legality, unit type, adjacency, phase legality)
   - [ ] Unit tests for all validator logic
+  - [ ] Validator should return a `valid` bool and a `reason` string
+    - Returns a Validation result class type
+
+### Resolution Engine
+- [ ] Core resolution:
+  - [ ] Resolve valid moves
+  - [ ] Treat invalid orders as holds 
+  - [ ] Test basic move/hold cycle
+  - [ ] Create resolution_report.json to explain what happened
+    - [ ] applied_orders array
+    - [ ] invalid_orders array
+- [ ] Implement and test advanced rules resolution:
+  - [ ] Add Support Strength
+  - [ ] Cut support
+  - [ ] Convoys
+  - [ ] Retreats
+  - [ ] Adjustments (Disband, Builds)
 
 ---
 
