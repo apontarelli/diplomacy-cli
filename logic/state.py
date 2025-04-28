@@ -5,12 +5,12 @@ import shutil, os
 def start_game(variant = "classic", game_id = "new_game"):
     print("Starting new {variant} game")
     variant_path=f"data/{variant}"
-    start_path = f"{variant}/start"
+    start_path = f"data/{variant}/start"
     save_path = f"{DEFAULT_SAVES_DIR}/{game_id}"
 
     starting_units = load(f"{start_path}/starting_units.json")
     starting_ownerships = load(f"{start_path}/starting_ownerships.json")
-    starting_players = load(f"{start_path}/nations.json")
+    starting_players = load(f"{start_path}/starting_players.json")
 
     state = {
         "players": {},
@@ -50,7 +50,9 @@ def start_game(variant = "classic", game_id = "new_game"):
             u["location_id"]
         ) 
 
-    os.makedirs(save_path, exist_ok=True)
+    if os.path.exists(save_path):
+        raise FileExistsError(f"Save directory '{save_path}' already exists.")
+    os.makedirs(save_path)
     save(state["players"], f"{save_path}/players.json")  
     save(state["units"], f"{save_path}/units.json")  
     save(state["territory_state"], f"{save_path}/territory_state.json")  
@@ -67,7 +69,7 @@ def load_state(game_id):
         "players": load(f"{path}/players.json"),
         "territory_state": load(f"{path}/territory_state.json"),
         "units": load(f"{path}/units.json"),
-        "orders": load({f"{path}/orders.json"}),
+        "orders": load(f"{path}/orders.json"),
             }
 
     territory_to_unit = build_territory_to_unit(state["units"])
