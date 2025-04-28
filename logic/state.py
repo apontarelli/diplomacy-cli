@@ -26,7 +26,7 @@ def start_game(variant = "classic", game_id = "new_game"):
     }
 
     for player in starting_players:
-        state["players"][player["nation_id"] = { "status": player["status"] }
+        state["players"][player["nation_id"]] = { "status": player["status"] }
         
     for o in starting_ownerships:
         territory_id = o["territory_id"]
@@ -66,7 +66,7 @@ def load_state(game_id):
         "game": load(f"{path}/game.json"),
         "players": load(f"{path}/players.json"),
         "territory_state": load(f"{path}/territory_state.json"),
-        "units": load(f"{path}/units.json")
+        "units": load(f"{path}/units.json"),
         "orders": load({f"{path}/orders.json"}),
             }
 
