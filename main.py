@@ -1,7 +1,8 @@
 from ux.cli import main_menu
 
-def main():
 
+def main():
     main_menu()
+
 
 main()

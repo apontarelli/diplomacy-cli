@@ -1,4 +1,3 @@
-
 import os
 import shutil
 import tempfile
@@ -7,8 +6,8 @@ from pathlib import Path
 
 from ..logic import state
 
-class TestStateIO(unittest.TestCase):
 
+class TestStateIO(unittest.TestCase):
     def setUp(self):
         self._tmpdir = tempfile.mkdtemp()
         self._old_dir = state.DEFAULT_SAVES_DIR
@@ -27,9 +26,10 @@ class TestStateIO(unittest.TestCase):
             base / "game.json",
             base / "orders.json",
         ]
+
     def test_round_trip_identity(self):
         game_id = "io_test"
-        state.start_game(game_id=game_id)          # uses classic variant by default
+        state.start_game(game_id=game_id)  # uses classic variant by default
 
         for path in self._all_json_files(game_id):
             self.assertTrue(path.exists(), msg=f"{path.name} missing")
@@ -38,16 +38,13 @@ class TestStateIO(unittest.TestCase):
         reloaded_state, t2u, counters = state.load_state(game_id)
 
         saved_players = reloaded_state["players"]
-        saved_units   = reloaded_state["units"]
-        saved_terr    = reloaded_state["territory_state"]
-        saved_game    = reloaded_state["game"]
+        saved_units = reloaded_state["units"]
+        saved_terr = reloaded_state["territory_state"]
+        saved_game = reloaded_state["game"]
 
-        self.assertEqual(saved_players,
-                         state.load(f"{self._tmpdir}/{game_id}/players.json"))
-        self.assertEqual(saved_units,
-                         state.load(f"{self._tmpdir}/{game_id}/units.json"))
-        self.assertEqual(saved_terr,
-                         state.load(f"{self._tmpdir}/{game_id}/territory_state.json"))
+        self.assertEqual(saved_players, state.load(f"{self._tmpdir}/{game_id}/players.json"))
+        self.assertEqual(saved_units, state.load(f"{self._tmpdir}/{game_id}/units.json"))
+        self.assertEqual(saved_terr, state.load(f"{self._tmpdir}/{game_id}/territory_state.json"))
         self.assertEqual(saved_game["game_id"], game_id)
         self.assertEqual(saved_game["turn_code"], state.INITIAL_TURN_CODE)
 

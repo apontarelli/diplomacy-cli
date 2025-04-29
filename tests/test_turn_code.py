@@ -1,5 +1,13 @@
 import unittest
-from logic.turn_code import Season, Phase, parse_turn_code, format_turn_code, advance_turn_tuple, advance_turn_code
+from logic.turn_code import (
+    Season,
+    Phase,
+    parse_turn_code,
+    format_turn_code,
+    advance_turn_tuple,
+    advance_turn_code,
+)
+
 
 class TestTurnCode(unittest.TestCase):
     def test_parse_turn_code(self):
@@ -27,5 +35,6 @@ class TestTurnCode(unittest.TestCase):
         expected = "1910-W-A"
         self.assertEqual(result, expected)
 
-if __name__ == '__main__':
-    unittest.main() 
+
+if __name__ == "__main__":
+    unittest.main()

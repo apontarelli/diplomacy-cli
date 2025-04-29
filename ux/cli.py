@@ -3,6 +3,7 @@ from logic.state import start_game, load_state
 from logic.storage import load, list_saved_games, delete_game
 from ux.pretty import format_state
 
+
 def main_menu():
     while True:
         print("\n--- Diplomacy CLI ---")
@@ -22,6 +23,7 @@ def main_menu():
         else:
             print("Invalid choice.")
 
+
 def start_new_game():
     print("--------------------")
     game_id = input("Enter a game name: ").strip()
@@ -31,13 +33,14 @@ def start_new_game():
     else:
         print("Game name cannot be blank")
 
+
 def view_saved_games():
     while True:
         games = list_saved_games()
         if not games:
             print("No saved games")
             return
-        
+
         print("\n--- Saved games ---")
         for i, game in enumerate(games):
             print(f"{i + 1}. {game}")
@@ -61,7 +64,7 @@ def view_saved_games():
         selected_game = games[selection - 1]
         manage_save(selected_game)
         return
-    
+
 
 def manage_save(game_id):
     while True:
@@ -85,4 +88,4 @@ def manage_save(game_id):
         elif choice == "0":
             return
         else:
-            print("Invalid choice") 
+            print("Invalid choice")

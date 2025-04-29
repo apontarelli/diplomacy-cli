@@ -145,6 +145,16 @@
 
 ---
 
+## Miscellaneous Tasks
+
+### Tooling & Environment 
+- [x] Remove legacy venv / pip workflow
+- [x] Adopt uv for env + locking
+- [x] Integrate Ruff (lint / format)
+- [ ] Integrate Pyright (type checking)
+
+---
+
 ## Core Data Model
 
 ### Entities
