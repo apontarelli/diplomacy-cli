@@ -1,17 +1,24 @@
+import shutil, os
 from .storage import load, save, DEFAULT_SAVES_DIR
 from .turn_code import INITIAL_TURN_CODE
-import shutil, os
+from pathlib import Path
+from importlib import resources
 
+def _variant_resource(variant, filename):
+    pkg = f"diplomacy_cli.data.{variant}.start"
+    with resources.files(pkg).joinpath(filename).open("r", encoding="utf-8") as fp:
+        return fp.read()
 
-def start_game(variant="classic", game_id="new_game"):
-    print("Starting new {variant} game")
-    variant_path = f"data/{variant}"
-    start_path = f"data/{variant}/start"
-    save_path = f"{DEFAULT_SAVES_DIR}/{game_id}"
+def start_game(variant="classic", game_id="new_game", save_dir = None):
+    save_root = Path(save_dir or DEFAULT_SAVES_DIR)
+    save_path = save_root / game_id
+    if os.path.exists(save_path):
+        raise FileExistsError(f"Save directory '{save_path}' already exists.")
+    save_path.mkdir(parents=True, exist_ok=True)
 
-    starting_units = load(f"{start_path}/starting_units.json")
-    starting_ownerships = load(f"{start_path}/starting_ownerships.json")
-    starting_players = load(f"{start_path}/starting_players.json")
+    starting_units = load(_variant_resource(variant, "starting_units.json"))
+    starting_ownerships = load(_variant_resource(variant, "starting_ownerships.json"))
+    starting_players = load(_variant_resource(variant, "starting_players.json"))
 
     state = {
         "players": {},
@@ -49,9 +56,6 @@ def start_game(variant="classic", game_id="new_game"):
             u["location_id"],
         )
 
-    if os.path.exists(save_path):
-        raise FileExistsError(f"Save directory '{save_path}' already exists.")
-    os.makedirs(save_path)
     save(state["players"], f"{save_path}/players.json")
     save(state["units"], f"{save_path}/units.json")
     save(state["territory_state"], f"{save_path}/territory_state.json")
@@ -61,15 +65,16 @@ def start_game(variant="classic", game_id="new_game"):
     print(f"Game {game_id} created successfully!")
 
 
-def load_state(game_id):
-    path = f"{DEFAULT_SAVES_DIR}/{game_id}"
+def load_state(game_id, save_dir = None):
+    save_root = Path(save_dir or DEFAULT_SAVES_DIR)
+    save_path = save_root / game_id
 
     state = {
-        "game": load(f"{path}/game.json"),
-        "players": load(f"{path}/players.json"),
-        "territory_state": load(f"{path}/territory_state.json"),
-        "units": load(f"{path}/units.json"),
-        "orders": load(f"{path}/orders.json"),
+        "game": load(f"{save_path}/game.json"),
+        "players": load(f"{save_path}/players.json"),
+        "territory_state": load(f"{save_path}/territory_state.json"),
+        "units": load(f"{save_path}/units.json"),
+        "orders": load(f"{save_path}/orders.json"),
     }
 
     territory_to_unit = build_territory_to_unit(state["units"])

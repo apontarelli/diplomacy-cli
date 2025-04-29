@@ -150,8 +150,16 @@
 ### Tooling & Environment 
 - [x] Remove legacy venv / pip workflow
 - [x] Adopt uv for env + locking
+- [x] Integrate Hatchling
+    - [x] Add hatchling
+    - [x] Move files to src/diplomacy_cli
+    - [x] Update to platformdirs
+    - [x] Fix failing tests
 - [x] Integrate Ruff (lint / format)
+  - [x] Run initial ruff format
+  - [ ] Run initial ruff check
 - [ ] Integrate Pyright (type checking)
+- [ ] 
 
 ---
 

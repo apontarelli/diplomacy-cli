@@ -5,8 +5,8 @@ __pycache__/
 # macOS system file
 .DS_Store
 
-# Save folder
-data/saves/
+# Python build
+/dist/
 
 # Virtual python environment
 venv

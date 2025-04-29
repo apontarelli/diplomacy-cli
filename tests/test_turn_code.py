@@ -1,5 +1,5 @@
 import unittest
-from logic.turn_code import (
+from diplomacy_cli.core.logic.turn_code import (
     Season,
     Phase,
     parse_turn_code,

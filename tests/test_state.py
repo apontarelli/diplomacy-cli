@@ -1,5 +1,5 @@
 import unittest
-from logic.state import (
+from diplomacy_cli.core.logic.state import (
     build_territory_to_unit,
     build_counters,
     apply_unit_movements,

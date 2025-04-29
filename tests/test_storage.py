@@ -2,7 +2,7 @@ import unittest
 import tempfile
 import os
 import shutil
-from logic.storage import load, save, list_saved_games
+from diplomacy_cli.core.logic.storage import load, save, list_saved_games
 
 
 class TestStorage(unittest.TestCase):

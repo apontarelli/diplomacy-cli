@@ -4,21 +4,20 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from ..logic import state
-
+from diplomacy_cli.core.logic.state import start_game, build_territory_to_unit, build_counters, load_state, INITIAL_TURN_CODE
+from diplomacy_cli.core.logic.storage import load
 
 class TestStateIO(unittest.TestCase):
     def setUp(self):
-        self._tmpdir = tempfile.mkdtemp()
-        self._old_dir = state.DEFAULT_SAVES_DIR
-        state.DEFAULT_SAVES_DIR = self._tmpdir
+        self._tmpdir_obj = tempfile.TemporaryDirectory()
+        self.tmpdir = Path(self._tmpdir_obj.name)
+        self.game_id = "test_game"
 
     def tearDown(self):
-        state.DEFAULT_SAVES_DIR = self._old_dir
-        shutil.rmtree(self._tmpdir)
+        self._tmpdir_obj.cleanup() 
 
     def _all_json_files(self, game_id):
-        base = Path(self._tmpdir) / game_id
+        base = self.tmpdir / game_id
         return [
             base / "players.json",
             base / "units.json",
@@ -29,30 +28,30 @@ class TestStateIO(unittest.TestCase):
 
     def test_round_trip_identity(self):
         game_id = "io_test"
-        state.start_game(game_id=game_id)  # uses classic variant by default
+        start_game(game_id=game_id, save_dir=self.tmpdir) 
 
         for path in self._all_json_files(game_id):
             self.assertTrue(path.exists(), msg=f"{path.name} missing")
             self.assertTrue(path.stat().st_size > 0, msg=f"{path.name} empty")
 
-        reloaded_state, t2u, counters = state.load_state(game_id)
+        reloaded_state, t2u, counters = load_state(game_id, save_dir=self.tmpdir)
 
         saved_players = reloaded_state["players"]
         saved_units = reloaded_state["units"]
         saved_terr = reloaded_state["territory_state"]
         saved_game = reloaded_state["game"]
 
-        self.assertEqual(saved_players, state.load(f"{self._tmpdir}/{game_id}/players.json"))
-        self.assertEqual(saved_units, state.load(f"{self._tmpdir}/{game_id}/units.json"))
-        self.assertEqual(saved_terr, state.load(f"{self._tmpdir}/{game_id}/territory_state.json"))
+        self.assertEqual(saved_players, load(f"{self.tmpdir}/{game_id}/players.json"))
+        self.assertEqual(saved_units, load(f"{self.tmpdir}/{game_id}/units.json"))
+        self.assertEqual(saved_terr, load(f"{self.tmpdir}/{game_id}/territory_state.json"))
         self.assertEqual(saved_game["game_id"], game_id)
-        self.assertEqual(saved_game["turn_code"], state.INITIAL_TURN_CODE)
+        self.assertEqual(saved_game["turn_code"], INITIAL_TURN_CODE)
 
-        self.assertEqual(t2u, state.build_territory_to_unit(saved_units))
-        self.assertEqual(counters, state.build_counters(saved_units))
+        self.assertEqual(t2u, build_territory_to_unit(saved_units))
+        self.assertEqual(counters, build_counters(saved_units))
 
     def test_start_game_overwrite_protection(self):
         game_id = "clobber_me"
-        state.start_game(game_id=game_id)
+        start_game(game_id=game_id, save_dir=self.tmpdir)
         with self.assertRaises(FileExistsError):
-            state.start_game(game_id=game_id)
+            start_game(game_id=game_id)
