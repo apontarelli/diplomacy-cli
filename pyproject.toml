@@ -27,3 +27,10 @@ packages = ["src/diplomacy_cli"]
 line-length	= 100
 target-version	= "py312"
 lint.select	= ["E", "F", "I", "UP"]
+
+[tool.pyright]
+typeCheckingMode = "basic"
+pythonVersion    = "3.12"
+include          = ["src", "tests"]
+venvPath         = "."
+venv             = ".venv"

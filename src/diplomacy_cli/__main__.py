@@ -1,4 +1,4 @@
-from ux.cli import main_menu
+from diplomacy_cli.cli.ux.cli import main_menu
 
 
 def main():

@@ -1,6 +1,7 @@
-from logic.state import load_state, start_game
-from logic.storage import delete_game, list_saved_games
-from ux.pretty import format_state
+from diplomacy_cli.core.logic.state import load_state, start_game
+from diplomacy_cli.core.logic.storage import delete_game, list_saved_games
+
+from .pretty import format_state
 
 
 def main_menu():
@@ -28,7 +29,7 @@ def start_new_game():
     game_id = input("Enter a game name: ").strip()
     variant = "classic"
     if game_id:
-        start_game(variant, game_id)
+        start_game(variant=variant, game_id=game_id)
     else:
         print("Game name cannot be blank")
 
