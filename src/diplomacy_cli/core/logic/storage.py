@@ -1,16 +1,16 @@
-import os
-from pathlib import Path
-from platformdirs import user_data_path
 import json
+import os
 import shutil
+from pathlib import Path
 
-DEFAULT_SAVES_DIR = Path(
-    os.getenv("DCLI_SAVES_DIR", user_data_path("diplomacy-cli"))
-) / "saves"
+from platformdirs import user_data_path
+
+DEFAULT_SAVES_DIR = Path(os.getenv("DCLI_SAVES_DIR", user_data_path("diplomacy-cli"))) / "saves"
 DEFAULT_SAVES_DIR.mkdir(parents=True, exist_ok=True)
 
+
 def load(source):
-    if isinstance(source, (str, bytes)) and (
+    if isinstance(source, str | bytes) and (
         source.lstrip().startswith("{") or source.lstrip().startswith("[")
     ):
         return json.loads(source)

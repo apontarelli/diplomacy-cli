@@ -1,15 +1,18 @@
-import shutil, os
-from .storage import load, save, DEFAULT_SAVES_DIR
-from .turn_code import INITIAL_TURN_CODE
-from pathlib import Path
+import os
 from importlib import resources
+from pathlib import Path
+
+from .storage import DEFAULT_SAVES_DIR, load, save
+from .turn_code import INITIAL_TURN_CODE
+
 
 def _variant_resource(variant, filename):
     pkg = f"diplomacy_cli.data.{variant}.start"
     with resources.files(pkg).joinpath(filename).open("r", encoding="utf-8") as fp:
         return fp.read()
 
-def start_game(variant="classic", game_id="new_game", save_dir = None):
+
+def start_game(variant="classic", game_id="new_game", save_dir=None):
     save_root = Path(save_dir or DEFAULT_SAVES_DIR)
     save_path = save_root / game_id
     if os.path.exists(save_path):
@@ -65,7 +68,7 @@ def start_game(variant="classic", game_id="new_game", save_dir = None):
     print(f"Game {game_id} created successfully!")
 
 
-def load_state(game_id, save_dir = None):
+def load_state(game_id, save_dir=None):
     save_root = Path(save_dir or DEFAULT_SAVES_DIR)
     save_path = save_root / game_id
 

@@ -1,8 +1,9 @@
-import unittest
-import tempfile
 import os
 import shutil
-from diplomacy_cli.core.logic.storage import load, save, list_saved_games
+import tempfile
+import unittest
+
+from diplomacy_cli.core.logic.storage import list_saved_games, load, save
 
 
 class TestStorage(unittest.TestCase):

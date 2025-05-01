@@ -28,7 +28,7 @@ def format_game(game):
 
 def format_players(players):
     output = []
-    output.append(f"--- Players ---")
+    output.append("--- Players ---")
     for k, v in players.items():
         output.append(f"{k} - {v['status']}")
 
@@ -39,7 +39,7 @@ def format_territory_state(territory_state):
     output = []
     by_owner = group_territory_state_by_owner(territory_state)
 
-    output.append(f"--- Territories ---")
+    output.append("--- Territories ---")
     for owner, owned_territories in by_owner.items():
         output.append(f"\n{owner}")
         for territory_id in owned_territories:
@@ -52,7 +52,7 @@ def format_units(units):
     output = []
     by_owner = group_units_by_owner(flatten_units(units))
 
-    output.append(f"--- Units ---")
+    output.append("--- Units ---")
     for owner, units in by_owner.items():
         output.append(f"\n{owner}")
         for u in units:

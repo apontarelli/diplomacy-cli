@@ -1,12 +1,13 @@
 import unittest
+
 from diplomacy_cli.core.logic.state import (
-    build_territory_to_unit,
-    build_counters,
     apply_unit_movements,
-    disband_unit,
+    build_counters,
+    build_territory_to_unit,
     build_unit,
-    set_territory_owner,
+    disband_unit,
     eliminate_player,
+    set_territory_owner,
 )
 
 

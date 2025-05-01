@@ -155,6 +155,7 @@
     - [x] Move files to src/diplomacy_cli
     - [x] Update to platformdirs
     - [x] Fix failing tests
+    - [ ] Update README.md to reflect new structure and build instructions
 - [x] Integrate Ruff (lint / format)
   - [x] Run initial ruff format
   - [ ] Run initial ruff check

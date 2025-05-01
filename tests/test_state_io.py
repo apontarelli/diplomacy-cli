@@ -1,11 +1,16 @@
-import os
-import shutil
 import tempfile
 import unittest
 from pathlib import Path
 
-from diplomacy_cli.core.logic.state import start_game, build_territory_to_unit, build_counters, load_state, INITIAL_TURN_CODE
+from diplomacy_cli.core.logic.state import (
+    INITIAL_TURN_CODE,
+    build_counters,
+    build_territory_to_unit,
+    load_state,
+    start_game,
+)
 from diplomacy_cli.core.logic.storage import load
+
 
 class TestStateIO(unittest.TestCase):
     def setUp(self):
@@ -14,7 +19,7 @@ class TestStateIO(unittest.TestCase):
         self.game_id = "test_game"
 
     def tearDown(self):
-        self._tmpdir_obj.cleanup() 
+        self._tmpdir_obj.cleanup()
 
     def _all_json_files(self, game_id):
         base = self.tmpdir / game_id
@@ -28,7 +33,7 @@ class TestStateIO(unittest.TestCase):
 
     def test_round_trip_identity(self):
         game_id = "io_test"
-        start_game(game_id=game_id, save_dir=self.tmpdir) 
+        start_game(game_id=game_id, save_dir=self.tmpdir)
 
         for path in self._all_json_files(game_id):
             self.assertTrue(path.exists(), msg=f"{path.name} missing")

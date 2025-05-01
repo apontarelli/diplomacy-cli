@@ -1,6 +1,5 @@
-import os
-from logic.state import start_game, load_state
-from logic.storage import load, list_saved_games, delete_game
+from logic.state import load_state, start_game
+from logic.storage import delete_game, list_saved_games
 from ux.pretty import format_state
 
 
@@ -44,7 +43,7 @@ def view_saved_games():
         print("\n--- Saved games ---")
         for i, game in enumerate(games):
             print(f"{i + 1}. {game}")
-        print(f"0. Back to menu")
+        print("0. Back to menu")
 
         print("--------------------")
         choice = input("Select a save: ").strip()

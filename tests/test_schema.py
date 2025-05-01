@@ -1,4 +1,7 @@
-import json, pathlib, unittest
+import json
+import pathlib
+import unittest
+
 from jsonschema import Draft202012Validator
 
 
