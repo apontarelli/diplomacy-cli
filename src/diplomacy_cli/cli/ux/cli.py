@@ -1,5 +1,5 @@
 from diplomacy_cli.core.logic.state import load_state, start_game
-from diplomacy_cli.core.logic.storage import delete_game, list_saved_games
+from diplomacy_cli.core.logic.storage import delete_game, list_games
 
 from .pretty import format_state
 
@@ -8,7 +8,7 @@ def main_menu():
     while True:
         print("\n--- Diplomacy CLI ---")
         print("1. Start new game")
-        print("2. View saved games")
+        print("2. View games")
         print("3. Exit")
 
         print("--------------------")
@@ -16,7 +16,7 @@ def main_menu():
         if choice == "1":
             start_new_game()
         elif choice == "2":
-            view_saved_games()
+            view_games()
         elif choice == "3":
             print("Exiting...")
             break
@@ -34,9 +34,9 @@ def start_new_game():
         print("Game name cannot be blank")
 
 
-def view_saved_games():
+def view_games():
     while True:
-        games = list_saved_games()
+        games = list_games()
         if not games:
             print("No saved games")
             return

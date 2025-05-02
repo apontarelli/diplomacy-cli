@@ -9,8 +9,8 @@ from platformdirs import user_data_path
 
 type Pathish = str | os.PathLike[str]
 
-DEFAULT_SAVES_DIR = Path(os.getenv("DCLI_SAVES_DIR", user_data_path("diplomacy-cli"))) / "saves"
-DEFAULT_SAVES_DIR.mkdir(parents=True, exist_ok=True)
+DEFAULT_GAMES_DIR = Path(os.getenv("DCLI_GAMES_DIR", user_data_path("diplomacy-cli"))) / "games"
+DEFAULT_GAMES_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def load(source: str | bytes | Pathish) -> dict | list:
@@ -41,9 +41,9 @@ def save(data: dict | list, path: Pathish) -> None:
 
 
 def delete_game(game_id: str) -> None:
-    shutil.rmtree(DEFAULT_SAVES_DIR / game_id, ignore_errors=False)
+    shutil.rmtree(DEFAULT_GAMES_DIR / game_id, ignore_errors=False)
 
 
-def list_saved_games(saves_dir: Pathish = DEFAULT_SAVES_DIR) -> list[str]:
-    saves_dir = Path(saves_dir)
-    return [p.name for p in saves_dir.iterdir() if p.is_dir()]
+def list_games(games_dir: Pathish = DEFAULT_GAMES_DIR) -> list[str]:
+    games_dir = Path(games_dir)
+    return [p.name for p in games_dir.iterdir() if p.is_dir()]

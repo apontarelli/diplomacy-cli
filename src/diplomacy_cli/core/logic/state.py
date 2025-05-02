@@ -5,7 +5,7 @@ from importlib import resources
 from pathlib import Path
 from typing import Any
 
-from .storage import DEFAULT_SAVES_DIR, load, save
+from .storage import DEFAULT_GAMES_DIR, load, save
 from .turn_code import INITIAL_TURN_CODE
 
 # --------------------------------------------------------------------------- #
@@ -32,7 +32,7 @@ def start_game(
     game_id: str = "new_game",
     save_dir: str | os.PathLike[str] | None = None,
 ) -> None:
-    save_root = Path(save_dir or DEFAULT_SAVES_DIR)
+    save_root = Path(save_dir or DEFAULT_GAMES_DIR)
     save_path = save_root / game_id
     if save_path.exists():
         raise FileExistsError(f"Save directory '{save_path}' already exists.")
