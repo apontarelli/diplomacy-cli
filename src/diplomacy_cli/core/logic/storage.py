@@ -1,8 +1,7 @@
-from __future__ import annotations
-
 import json
 import os
 import shutil
+from importlib import resources
 from pathlib import Path
 
 from platformdirs import user_data_path
@@ -31,6 +30,12 @@ def load(source: str | bytes | Pathish) -> dict | list:
 
     with source.open("r", encoding="utf-8") as f:
         return json.load(f)
+
+
+def load_variant_json(variant: str, submodule: str, filename: str) -> dict | list:
+    pkg = f"diplomacy_cli.data.{variant}.{submodule}"
+    path = resources.files(pkg).joinpath(filename)
+    return load(path.read_text(encoding="utf-8"))
 
 
 def save(data: dict | list, path: Pathish) -> None:

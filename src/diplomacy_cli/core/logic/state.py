@@ -1,29 +1,19 @@
 from __future__ import annotations
 
 import os
-from importlib import resources
 from pathlib import Path
 from typing import Any
 
-from .storage import DEFAULT_GAMES_DIR, load, save
+from .storage import DEFAULT_GAMES_DIR, load, load_variant_json, save
 from .turn_code import INITIAL_TURN_CODE
 
 # --------------------------------------------------------------------------- #
 # Types
 # --------------------------------------------------------------------------- #
-GameDict = dict[str, Any]  # coarse for now; refine later
+GameDict = dict[str, Any]
 TerritoryToUnit = dict[str, str]
 Counters = dict[str, int]
 StateTuple = tuple[GameDict, TerritoryToUnit, Counters]
-
-
-# --------------------------------------------------------------------------- #
-# Internal helpers
-# --------------------------------------------------------------------------- #
-def _variant_resource(variant: str, filename: str) -> str:
-    pkg = f"diplomacy_cli.data.{variant}.start"
-    with resources.files(pkg).joinpath(filename).open("r", encoding="utf-8") as fp:
-        return fp.read()
 
 
 def start_game(
@@ -38,9 +28,9 @@ def start_game(
         raise FileExistsError(f"Save directory '{save_path}' already exists.")
     save_path.mkdir(parents=True, exist_ok=True)
 
-    starting_units = load(_variant_resource(variant, "starting_units.json"))
-    starting_ownerships = load(_variant_resource(variant, "starting_ownerships.json"))
-    starting_players = load(_variant_resource(variant, "starting_players.json"))
+    starting_units = load_variant_json(variant, "start", "starting_units.json")
+    starting_ownerships = load_variant_json(variant, "start", "starting_ownerships.json")
+    starting_players = load_variant_json(variant, "start", "starting_players.json")
 
     state: GameDict = {
         "players": {},
@@ -92,7 +82,7 @@ def load_state(game_id: str, *, save_dir: str | os.PathLike[str] | None = None) 
 
         (full_state_dict, territory_to_unit_index, counters_index)
     """
-    save_root = Path(save_dir or DEFAULT_SAVES_DIR)
+    save_root = Path(save_dir or DEFAULT_GAMES_DIR)
     save_path = save_root / game_id
 
     state: GameDict = {
