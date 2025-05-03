@@ -1,4 +1,3 @@
-
 # Diplomacy CLI Prototype (Python)
 
 ## Status
@@ -100,13 +99,12 @@
 
 ### Order Handling
 - [ ] Define canonical order JSON structure:
-  - [ ] Define order schema and spec
-    - [ ] ORDER_FORMAT.md in `docs/ORDER_FORMAT.md`
+  - [x] Define order schema and spec
+    - [x] ORDER_FORMAT.md in `docs/ORDER_FORMAT.md`
     - [ ] `data/order_schema.json`
     - [ ] update `test_schema.py` to include order schema
     - [ ] Include postive and negative orders
-  - [ ] `data/saves/{game_id}/orders/`
-  - [ ] One file per player preferred
+  - [ ] One file per player
   - [ ] Orders compressed into history after resolution
 - [ ] Implement order validator:
   - [ ] Load rules and world configuration
@@ -158,9 +156,8 @@
     - [ ] Update README.md to reflect new structure and build instructions
 - [x] Integrate Ruff (lint / format)
   - [x] Run initial ruff format
-  - [ ] Run initial ruff check
-- [ ] Integrate Pyright (type checking)
-- [ ] 
+  - [x] Run initial ruff check
+- [x] Integrate Pyright (type checking)
 
 ---
 
