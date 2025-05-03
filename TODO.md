@@ -98,20 +98,14 @@
 
 
 ### Order Handling
-- [ ] Define canonical order JSON structure:
-  - [x] Define order schema and spec
-    - [x] ORDER_FORMAT.md in `docs/ORDER_FORMAT.md`
-    - [ ] `data/order_schema.json`
-    - [ ] update `test_schema.py` to include order schema
-    - [ ] Include postive and negative orders
-  - [ ] One file per player
-  - [ ] Orders compressed into history after resolution
+- [x] Define canonical order JSON structure:
+  - [x] Define order format spec: ORDER_FORMAT.md in `docs/ORDER_FORMAT.md`
 - [ ] Implement order validator:
   - [ ] Load rules and world configuration
-    - [ ] create Rules data class in `rules_loader.py`
+    - [x] create Rules data class in `rules_loader.py`
+    - [x] returns Rules dataclass
     - [ ] Test bidirectional edge loading
     - [ ] Test for orphans
-    - [ ] returns Rules dataclass
   - [ ] Syntax validation (proper structure, required fields)
   - [ ] Semantic validation (move legality, unit type, adjacency, phase legality)
   - [ ] Unit tests for all validator logic

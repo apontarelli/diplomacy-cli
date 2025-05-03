@@ -26,7 +26,7 @@ def start_game(
     save_path = save_root / game_id
     if save_path.exists():
         raise FileExistsError(f"Save directory '{save_path}' already exists.")
-    save_path.mkdir(parents=True, exist_ok=True)
+    save_path.mkdir(parents=True)
 
     starting_units = load_variant_json(variant, "start", "starting_units.json")
     starting_ownerships = load_variant_json(variant, "start", "starting_ownerships.json")
