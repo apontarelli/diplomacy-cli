@@ -101,21 +101,32 @@
 - [x] Define canonical order JSON structure:
   - [x] Define order format spec: ORDER_FORMAT.md in `docs/ORDER_FORMAT.md`
 - [ ] Implement order validator:
-  - [ ] Load rules and world configuration
+  - [x] Load rules and world configuration
     - [x] create Rules data class in `rules_loader.py`
     - [x] returns Rules dataclass
-    - [ ] Test bidirectional edge loading
-    - [ ] Test for orphans
-  - [ ] Syntax validation (proper structure, required fields)
-  - [ ] Semantic validation (move legality, unit type, adjacency, phase legality)
+    - [x] Test bidirectional edge loading
+  - [x] Define data types in `logic/schema.py`
+    - [x] `Order`
+    - [x] `SyntaxResult`
+    - [x] `SemanticResult`
+    - [x] `ValidationResult`
+  - [ ] Syntax validation (proper structure, required fields) in `validator/syntax.py`
+    - [ ] normalization
+    - [ ] keyword check
+    - [ ] proper format (-)
+  - [ ] Semantic validation (move legality, unit type, adjacency, phase legality) in `semantic.py
+  - [ ] Orchestrate & aggregate results, returning `ValidationReport`
   - [ ] Unit tests for all validator logic
+    - [ ] `syntax.py`
+    - [ ] `semantic.py`
+    - [ ] `orchestrator.py`
   - [ ] Validator should return a `valid` bool and a `reason` string
-    - Returns a Validation result class type
+    - Returns a `ValidationReport` result class type
 
 ### Resolution Engine
 - [ ] Core resolution:
   - [ ] Resolve valid moves
-  - [ ] Treat invalid orders as holds 
+  - [ ] Treat invalid orders as holds
   - [ ] Test basic move/hold cycle
   - [ ] Create resolution_report.json to explain what happened
     - [ ] applied_orders array

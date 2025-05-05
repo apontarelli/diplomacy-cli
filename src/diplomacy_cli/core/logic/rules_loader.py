@@ -1,16 +1,7 @@
-from dataclasses import dataclass
 from typing import cast
 
+from .schema import Rules
 from .storage import load_variant_json
-
-
-@dataclass(frozen=True)
-class Rules:
-    territory_ids: set[str]
-    supply_centers: set[str]
-    parent_territory: dict[str, str]
-    edges: set[tuple[str, str, str]]
-    home_centers: dict[str, set[str]]
 
 
 def load_rules(variant):
