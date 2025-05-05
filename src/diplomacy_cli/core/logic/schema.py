@@ -25,10 +25,12 @@ class Rules:
 class Order:
     origin: str
     order_type: OrderType
-    destination: str | None
-    convoy_destination: str | None
-    support_origin: str | None
-    unit_type: str | None
+    destination: str | None = None
+    convoy_origin: str | None = None
+    convoy_destination: str | None = None
+    support_origin: str | None = None
+    support_destination: str | None = None
+    unit_type: str | None = None
 
 
 @dataclass(frozen=True)
@@ -37,7 +39,7 @@ class SyntaxResult:
     normalized: str
     valid: bool
     errors: list[str]
-    order: Order | None
+    order: Order | None = None
 
 
 @dataclass(frozen=True)
@@ -53,6 +55,6 @@ class SemanticResult:
 class ValidationResult:
     raw: str
     normalized: str
-    order: Order | None
     valid: bool
     errors: list[str]
+    order: Order | None = None

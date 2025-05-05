@@ -118,7 +118,7 @@ A unit supports another unit holding in place.
 
 - Format:
   ```
-  {supporting_province} s {holding_province}
+  {supporting_province} s {support_origin}
   ```
 - Example:
   ```
@@ -133,7 +133,7 @@ A unit supports a move into a province.
 
 - Format:
   ```
-  {supporting_province} s {origin} - {destination}
+  {origin} s {support_origin} - {support_destination}
   ```
 - Example:
   ```
@@ -148,7 +148,7 @@ A fleet convoys an army from one province to another.
 
 - Format:
   ```
-  {fleet_province} c {origin} - {destination}
+  {origin} c {convoy_origin} - {convoy_destination}
   ```
 - Example:
   ```
@@ -178,7 +178,7 @@ A new unit is built in a home supply center (during build phase).
 
 - Format:
   ```
-  build {army|fleet} {province}
+  build {army|fleet} {origin}
   ```
 - Example:
   ```
@@ -193,7 +193,7 @@ A unit is removed from the board (during disband phase).
 
 - Format:
   ```
-  disband {army|fleet} {province}
+  disband {army|fleet} {origin}
   ```
 - Example:
   ```
