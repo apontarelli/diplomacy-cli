@@ -1,15 +1,148 @@
 import re
 
-from ..schema import SyntaxResult
+from ..schema import Order, OrderType, SyntaxResult
 
 
-def normalize_order_string(raw: str):
+class ParseError(Exception):
+    def __init__(self, message: str):
+        super().__init__(message)
+
+
+def normalize_order_string(raw: str) -> str:
     raw = raw.lower()
     raw = raw.strip()
     raw = re.sub(r"[‒–—―−]", "-", raw)
+    raw = re.sub(r"\s*[/]\s*", "/", raw)
     raw = re.sub(r"[^a-z0-9\-/\s]+", "", raw)
     raw = re.sub(r"\s+", " ", raw)
     raw = re.sub(r"\s*-\s*", " - ", raw)
     return raw
 
 
+def expect(tokens, tok):
+    if not tokens or tokens.pop(0) != tok:
+        raise ParseError(f"Expected {tok!r}")
+
+
+def take_province(tokens: list[str]) -> str:
+    if not tokens:
+        raise ParseError("Expected province, but got end of input")
+    prov = tokens.pop(0)
+    return prov
+
+
+def take_unit_type(tokens: list[str]) -> str:
+    if not tokens:
+        raise ParseError("Expected unit type (‘army’ or ‘fleet’), but got end of input")
+    tok = tokens.pop(0)
+    if tok not in ("army", "fleet"):
+        raise ParseError(f"Expected unit type ‘army’ or ‘fleet’, but got {tok!r}")
+    return tok
+
+
+def ensure_no_tokens(tokens: list[str]) -> None:
+    if tokens:
+        raise ParseError(f"Extra tokens: {tokens}")
+
+
+def parse_support_move(tokens: list[str]):
+    origin = take_province(tokens)
+    expect(tokens, "s")
+    support_origin = take_province(tokens)
+    expect(tokens, "-")
+    destination = take_province(tokens)
+    return Order(
+        origin=origin,
+        order_type=OrderType.SUPPORT_MOVE,
+        destination=destination,
+        support_origin=support_origin,
+    )
+
+
+def parse_convoy(tokens: list[str]):
+    origin = take_province(tokens)
+    expect(tokens, "c")
+    convoy_origin = take_province(tokens)
+    expect(tokens, "-")
+    convoy_destination = take_province(tokens)
+    return Order(
+        origin=origin,
+        order_type=OrderType.CONVOY,
+        convoy_origin=convoy_origin,
+        convoy_destination=convoy_destination,
+    )
+
+
+def parse_support_hold(tokens: list[str]):
+    origin = take_province(tokens)
+    expect(tokens, "s")
+    support_origin = take_province(tokens)
+    return Order(origin=origin, order_type=OrderType.SUPPORT_HOLD, support_origin=support_origin)
+
+
+def parse_move(tokens: list[str]):
+    origin = take_province(tokens)
+    expect(tokens, "-")
+    destination = take_province(tokens)
+    ensure_no_tokens(tokens)
+    return Order(origin=origin, order_type=OrderType.MOVE, destination=destination)
+
+
+def parse_hold(tokens: list[str]):
+    origin = take_province(tokens)
+    expect(tokens, "hold")
+    return Order(origin=origin, order_type=OrderType.HOLD)
+
+
+def parse_build(tokens: list[str]):
+    expect(tokens, "build")
+    unit_type = take_unit_type(tokens)
+    origin = take_province(tokens)
+    return Order(origin=origin, unit_type=unit_type, order_type=OrderType.BUILD)
+
+
+def parse_disband(tokens: list[str]):
+    expect(tokens, "disband")
+    unit_type = take_unit_type(tokens)
+    origin = take_province(tokens)
+    return Order(origin=origin, unit_type=unit_type, order_type=OrderType.DISBAND)
+
+
+_PARSERS = [
+    parse_support_move,
+    parse_convoy,
+    parse_support_hold,
+    parse_move,
+    parse_hold,
+    parse_build,
+    parse_disband,
+]
+
+
+def dispatch_parsers(tokens: list[str]):
+    for parser in _PARSERS:
+        try:
+            order = parser(tokens.copy())
+            return order
+        except ParseError:
+            continue
+    raise ParseError(f"Unrecognized order: {' '.join(tokens)}")
+
+
+def parse_syntax(raw: str) -> SyntaxResult:
+    normalized = normalize_order_string(raw)
+    errors: list[str] = []
+    order = None
+
+    try:
+        tokens = normalized.split(" ")
+        order = dispatch_parsers(tokens)
+        valid = True
+    except ParseError as pe:
+        errors.append(str(pe))
+        valid = False
+    except Exception as e:
+        errors.append(f"Internal parse error: {e}")
+        valid = False
+
+    return SyntaxResult(raw=raw, normalized=normalized, valid=valid, errors=errors, order=order)
