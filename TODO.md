@@ -110,10 +110,7 @@
     - [x] `SyntaxResult`
     - [x] `SemanticResult`
     - [x] `ValidationResult`
-  - [ ] Syntax validation (proper structure, required fields) in `validator/syntax.py`
-    - [ ] normalization
-    - [ ] keyword check
-    - [ ] proper format (-)
+  - [x] Syntax validation (proper structure, required fields) in `validator/syntax.py`
   - [ ] Semantic validation (move legality, unit type, adjacency, phase legality) in `semantic.py
   - [ ] Orchestrate & aggregate results, returning `ValidationReport`
   - [ ] Unit tests for all validator logic
@@ -145,6 +142,17 @@
 - [ ] Raw text order input:
   - [ ] Parse strings like `A PAR - BUR` into structured orders
 - [ ] Log invalid orders with human-readable error messages (non-blocking)
+
+---
+
+## Future scope
+
+- [ ] Better syntax ParseErrors
+  - Currently, syntax parser returns a generic error if all parsers fail
+  - Either show all errors for all parsers
+  - Rank parser errors by the parser that made it the farthest before failing, representing the most likely parser to be correct
+
+
 
 ---
 
