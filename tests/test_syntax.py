@@ -4,6 +4,7 @@ from diplomacy_cli.core.logic.validator.syntax import (
     Order,
     OrderType,
     ParseError,
+    dispatch_parsers,
     ensure_no_tokens,
     expect,
     normalize_order_string,
@@ -14,10 +15,9 @@ from diplomacy_cli.core.logic.validator.syntax import (
     parse_move,
     parse_support_hold,
     parse_support_move,
+    parse_syntax,
     take_province,
     take_unit_type,
-    dispatch_parsers,
-    parse_syntax,
 )
 
 
