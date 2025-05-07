@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
 
 class OrderType(str, Enum):
@@ -10,6 +11,26 @@ class OrderType(str, Enum):
     CONVOY = "convoy"
     BUILD = "build"
     DISBAND = "disband"
+
+
+TerritoryToUnit = dict[str, str]
+Counters = dict[str, int]
+
+
+@dataclass(frozen=True)
+class GameState:
+    players: dict[str, Any]
+    units: dict[str, Any]
+    territory_state: dict[str, Any]
+    raw_orders: dict[str, Any]
+    game_meta: dict[str, Any]
+
+
+@dataclass(frozen=True)
+class LoadedState:
+    game: GameState
+    territory_to_unit: TerritoryToUnit
+    counters: Counters
 
 
 @dataclass(frozen=True)

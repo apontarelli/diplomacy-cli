@@ -2,6 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from diplomacy_cli.core.logic.schema import GameState
 from diplomacy_cli.core.logic.state import (
     INITIAL_TURN_CODE,
     build_counters,
@@ -33,18 +34,19 @@ class TestStateIO(unittest.TestCase):
 
     def test_round_trip_identity(self):
         game_id = "io_test"
-        start_game(game_id=game_id, save_dir=self.tmpdir)
+        new_game = start_game(game_id=game_id, save_dir=self.tmpdir)
+        self.assertIsInstance(new_game, GameState)
 
         for path in self._all_json_files(game_id):
             self.assertTrue(path.exists(), msg=f"{path.name} missing")
             self.assertTrue(path.stat().st_size > 0, msg=f"{path.name} empty")
 
-        reloaded_state, t2u, counters = load_state(game_id, save_dir=self.tmpdir)
+        loaded_state = load_state(game_id, save_dir=self.tmpdir)
 
-        saved_players = reloaded_state["players"]
-        saved_units = reloaded_state["units"]
-        saved_terr = reloaded_state["territory_state"]
-        saved_game = reloaded_state["game"]
+        saved_players = loaded_state.game.players
+        saved_units = loaded_state.game.units
+        saved_terr = loaded_state.game.territory_state
+        saved_game = loaded_state.game.game_meta
 
         self.assertEqual(saved_players, load(f"{self.tmpdir}/{game_id}/players.json"))
         self.assertEqual(saved_units, load(f"{self.tmpdir}/{game_id}/units.json"))
@@ -52,8 +54,8 @@ class TestStateIO(unittest.TestCase):
         self.assertEqual(saved_game["game_id"], game_id)
         self.assertEqual(saved_game["turn_code"], INITIAL_TURN_CODE)
 
-        self.assertEqual(t2u, build_territory_to_unit(saved_units))
-        self.assertEqual(counters, build_counters(saved_units))
+        self.assertEqual(loaded_state.territory_to_unit, build_territory_to_unit(saved_units))
+        self.assertEqual(loaded_state.counters, build_counters(saved_units))
 
     def test_start_game_overwrite_protection(self):
         game_id = "clobber_me"

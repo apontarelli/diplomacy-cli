@@ -3,6 +3,7 @@ import os
 import shutil
 from importlib import resources
 from pathlib import Path
+from typing import Any
 
 from platformdirs import user_data_path
 
@@ -12,7 +13,7 @@ DEFAULT_GAMES_DIR = Path(os.getenv("DCLI_GAMES_DIR", user_data_path("diplomacy-c
 DEFAULT_GAMES_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def load(source: str | bytes | Pathish) -> dict | list:
+def load(source: str | bytes | Pathish) -> dict[str, Any]:
     if isinstance(source, str):
         s = source.lstrip()
         if s.startswith(("{", "[")):
@@ -29,7 +30,10 @@ def load(source: str | bytes | Pathish) -> dict | list:
         source = Path(source)
 
     with source.open("r", encoding="utf-8") as f:
-        return json.load(f)
+        raw = json.load(f)
+    if not isinstance(raw, dict):
+        raise ValueError(f"{source!r} is not a JSON object")
+    return raw
 
 
 def load_variant_json(variant: str, submodule: str, filename: str) -> dict | list:

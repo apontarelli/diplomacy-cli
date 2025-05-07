@@ -4,16 +4,9 @@ import os
 from pathlib import Path
 from typing import Any
 
+from .schema import Counters, GameState, LoadedState, TerritoryToUnit
 from .storage import DEFAULT_GAMES_DIR, load, load_variant_json, save
 from .turn_code import INITIAL_TURN_CODE
-
-# --------------------------------------------------------------------------- #
-# Types
-# --------------------------------------------------------------------------- #
-GameDict = dict[str, Any]
-TerritoryToUnit = dict[str, str]
-Counters = dict[str, int]
-StateTuple = tuple[GameDict, TerritoryToUnit, Counters]
 
 
 def start_game(
@@ -21,7 +14,7 @@ def start_game(
     variant: str = "classic",
     game_id: str = "new_game",
     save_dir: str | os.PathLike[str] | None = None,
-) -> None:
+) -> GameState:
     save_root = Path(save_dir or DEFAULT_GAMES_DIR)
     save_path = save_root / game_id
     if save_path.exists():
@@ -32,34 +25,26 @@ def start_game(
     starting_ownerships = load_variant_json(variant, "start", "starting_ownerships.json")
     starting_players = load_variant_json(variant, "start", "starting_players.json")
 
-    state: GameDict = {
-        "players": {},
-        "units": {},
-        "territory_state": {},
-        "orders": {},
-        "game": {
-            "game_id": game_id,
-            "variant": variant,
-            "turn_code": INITIAL_TURN_CODE,
-            "status": "active",
-        },
+    players = {p["nation_id"]: {"status": p["status"]} for p in starting_players}
+    game_meta = {
+        "game_id": game_id,
+        "variant": variant,
+        "turn_code": INITIAL_TURN_CODE,
+        "status": "active",
     }
 
-    for player in starting_players:
-        state["players"][player["nation_id"]] = {"status": player["status"]}
-
+    territory_state = {}
     for o in starting_ownerships:
         territory_id = o["territory_id"]
         owner_id = o["owner_id"]
-        state["territory_state"] = set_territory_owner(
-            state["territory_state"], territory_id, owner_id
-        )
+        territory_state = set_territory_owner(territory_state, territory_id, owner_id)
 
+    units = {}
     counters: Counters = {}
     territory_to_unit: TerritoryToUnit = {}
     for u in starting_units:
-        state["units"], territory_to_unit, counters = build_unit(
-            state["units"],
+        units, territory_to_unit, counters = build_unit(
+            units,
             territory_to_unit,
             counters,
             u["location_id"],
@@ -67,36 +52,40 @@ def start_game(
             u["owner_id"],
         )
 
-    save(state["players"], save_path / "players.json")
-    save(state["units"], save_path / "units.json")
-    save(state["territory_state"], save_path / "territory_state.json")
-    save(state["game"], save_path / "game.json")
-    save(state["orders"], save_path / "orders.json")
+    save(players, save_path / "players.json")
+    save(units, save_path / "units.json")
+    save(territory_state, save_path / "territory_state.json")
+    save(game_meta, save_path / "game.json")
+    save({}, save_path / "orders.json")
+
+    gs = GameState(
+        players=players,
+        units=units,
+        territory_state=territory_state,
+        raw_orders={},
+        game_meta=game_meta,
+    )
 
     print(f"Game {game_id} created successfully!")
+    return gs
 
 
-def load_state(game_id: str, *, save_dir: str | os.PathLike[str] | None = None) -> StateTuple:
-    """
-    Return
-
-        (full_state_dict, territory_to_unit_index, counters_index)
-    """
+def load_state(game_id: str, *, save_dir: str | os.PathLike[str] | None = None) -> LoadedState:
     save_root = Path(save_dir or DEFAULT_GAMES_DIR)
     save_path = save_root / game_id
 
-    state: GameDict = {
-        "game": load(save_path / "game.json"),
-        "players": load(save_path / "players.json"),
-        "territory_state": load(save_path / "territory_state.json"),
-        "units": load(save_path / "units.json"),
-        "orders": load(save_path / "orders.json"),
-    }
+    gs = GameState(
+        game_meta=load(save_path / "game.json"),
+        players=load(save_path / "players.json"),
+        territory_state=load(save_path / "territory_state.json"),
+        units=load(save_path / "units.json"),
+        raw_orders=load(save_path / "orders.json"),
+    )
 
-    territory_to_unit = build_territory_to_unit(state["units"])
-    counters = build_counters(state["units"])
+    territory_to_unit: TerritoryToUnit = build_territory_to_unit(gs.units)
+    counters: Counters = build_counters(gs.units)
 
-    return state, territory_to_unit, counters
+    return LoadedState(game=gs, territory_to_unit=territory_to_unit, counters=counters)
 
 
 def build_territory_to_unit(units: dict[str, dict[str, Any]]) -> TerritoryToUnit:
