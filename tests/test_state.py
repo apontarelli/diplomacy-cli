@@ -17,16 +17,19 @@ class TestState(unittest.TestCase):
     def test_build_territory_to_unit(self):
         test_units = {
             "FRA_army_1": {
+                "id": "FRA_army_1",
                 "owner_id": "FRA",
                 "unit_type": "army",
                 "territory_id": "PAR",
             },
             "FRA_army_2": {
+                "id": "FRA_army_2",
                 "owner_id": "FRA",
                 "unit_type": "army",
                 "territory_id": "MAR",
             },
             "FRA_fleet_1": {
+                "id": "FRA_fleet_1",
                 "owner_id": "FRA",
                 "unit_type": "fleet",
                 "territory_id": "BRE",
@@ -45,16 +48,19 @@ class TestState(unittest.TestCase):
     def test_apply_movements(self):
         test_units = {
             "FRA_army_1": {
+                "id": "FRA_army_1",
                 "owner_id": "FRA",
                 "unit_type": "army",
                 "territory_id": "PAR",
             },
             "FRA_army_2": {
+                "id": "FRA_army_2",
                 "owner_id": "FRA",
                 "unit_type": "army",
                 "territory_id": "MAR",
             },
             "FRA_fleet_1": {
+                "id": "FRA_fleet_1",
                 "owner_id": "FRA",
                 "unit_type": "fleet",
                 "territory_id": "BRE",
@@ -68,16 +74,19 @@ class TestState(unittest.TestCase):
 
         expected = {
             "FRA_army_1": {
+                "id": "FRA_army_1",
                 "owner_id": "FRA",
                 "unit_type": "army",
                 "territory_id": "BRE",
             },
             "FRA_army_2": {
+                "id": "FRA_army_2",
                 "owner_id": "FRA",
                 "unit_type": "army",
                 "territory_id": "SPA",
             },
             "FRA_fleet_1": {
+                "id": "FRA_fleet_1",
                 "owner_id": "FRA",
                 "unit_type": "fleet",
                 "territory_id": "MAO",
@@ -100,16 +109,19 @@ class TestState(unittest.TestCase):
     def test_disband_unit(self):
         test_units = {
             "FRA_army_1": {
+                "id": "FRA_army_1",
                 "owner_id": "FRA",
                 "unit_type": "army",
                 "territory_id": "PAR",
             },
             "FRA_army_2": {
+                "id": "FRA_army_2",
                 "owner_id": "FRA",
                 "unit_type": "army",
                 "territory_id": "MAR",
             },
             "FRA_fleet_1": {
+                "id": "FRA_fleet_1",
                 "owner_id": "FRA",
                 "unit_type": "fleet",
                 "territory_id": "BRE",
@@ -118,11 +130,13 @@ class TestState(unittest.TestCase):
 
         expected = {
             "FRA_army_2": {
+                "id": "FRA_army_2",
                 "owner_id": "FRA",
                 "unit_type": "army",
                 "territory_id": "MAR",
             },
             "FRA_fleet_1": {
+                "id": "FRA_fleet_1",
                 "owner_id": "FRA",
                 "unit_type": "fleet",
                 "territory_id": "BRE",
@@ -139,16 +153,19 @@ class TestState(unittest.TestCase):
     def test_build_unit(self):
         test_units = {
             "FRA_army_1": {
+                "id": "FRA_army_1",
                 "owner_id": "FRA",
                 "unit_type": "army",
-                "territory_id": "PAR",
+                "territory_id": "BRE",
             },
             "FRA_army_2": {
+                "id": "FRA_army_2",
                 "owner_id": "FRA",
                 "unit_type": "army",
-                "territory_id": "PIC",
+                "territory_id": "SPA",
             },
             "FRA_fleet_1": {
+                "id": "FRA_fleet_1",
                 "owner_id": "FRA",
                 "unit_type": "fleet",
                 "territory_id": "MAO",
@@ -157,26 +174,31 @@ class TestState(unittest.TestCase):
 
         expected = {
             "FRA_army_1": {
+                "id": "FRA_army_1",
                 "owner_id": "FRA",
                 "unit_type": "army",
-                "territory_id": "PAR",
+                "territory_id": "BRE",
             },
             "FRA_army_2": {
+                "id": "FRA_army_2",
                 "owner_id": "FRA",
                 "unit_type": "army",
-                "territory_id": "PIC",
+                "territory_id": "SPA",
             },
             "FRA_fleet_1": {
+                "id": "FRA_fleet_1",
                 "owner_id": "FRA",
                 "unit_type": "fleet",
                 "territory_id": "MAO",
             },
             "FRA_fleet_2": {
+                "id": "FRA_fleet_2",
                 "owner_id": "FRA",
                 "unit_type": "fleet",
                 "territory_id": "BRE",
             },
             "GER_army_1": {
+                "id": "GER_army_1",
                 "owner_id": "GER",
                 "unit_type": "army",
                 "territory_id": "MUN",
@@ -184,8 +206,8 @@ class TestState(unittest.TestCase):
         }
 
         expected_t2u = {
-            "PAR": "FRA_army_1",
-            "PIC": "FRA_army_2",
+            "BRE": "FRA_army_1",
+            "SPA": "FRA_army_2",
             "MAO": "FRA_fleet_1",
             "BRE": "FRA_fleet_2",
             "MUN": "GER_army_1",

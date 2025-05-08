@@ -155,6 +155,7 @@ def build_unit(
     unit_id = f"{key}_{next_num}"
 
     units[unit_id] = {
+        "id": unit_id,
         "unit_type": unit_type,
         "owner_id": owner_id,
         "territory_id": territory_id,
