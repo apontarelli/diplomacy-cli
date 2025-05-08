@@ -9,7 +9,9 @@ from platformdirs import user_data_path
 
 type Pathish = str | os.PathLike[str]
 
-DEFAULT_GAMES_DIR = Path(os.getenv("DCLI_GAMES_DIR", user_data_path("diplomacy-cli"))) / "games"
+DEFAULT_GAMES_DIR = (
+    Path(os.getenv("DCLI_GAMES_DIR", user_data_path("diplomacy-cli"))) / "games"
+)
 DEFAULT_GAMES_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -36,7 +38,9 @@ def load(source: str | bytes | Pathish) -> dict[str, Any]:
     return raw
 
 
-def load_variant_json(variant: str, submodule: str, filename: str) -> dict | list:
+def load_variant_json(
+    variant: str, submodule: str, filename: str
+) -> dict | list:
     pkg = f"diplomacy_cli.data.{variant}.{submodule}"
     path = resources.files(pkg).joinpath(filename)
     return load(path.read_text(encoding="utf-8"))

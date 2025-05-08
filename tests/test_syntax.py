@@ -85,11 +85,16 @@ def test_take_unit_type_success():
 def test_take_unit_type_invalid_and_empty():
     with pytest.raises(ParseError) as excinfo:
         take_unit_type(["boat"])
-    assert "Expected unit type ‘army’ or ‘fleet’, but got 'boat'" in str(excinfo.value)
+    assert "Expected unit type ‘army’ or ‘fleet’, but got 'boat'" in str(
+        excinfo.value
+    )
 
     with pytest.raises(ParseError) as excinfo2:
         take_unit_type([])
-    assert "Expected unit type (‘army’ or ‘fleet’), but got end of input" in str(excinfo2.value)
+    assert (
+        "Expected unit type (‘army’ or ‘fleet’), but got end of input"
+        in str(excinfo2.value)
+    )
 
 
 def test_ensure_no_tokens_success_and_failure():

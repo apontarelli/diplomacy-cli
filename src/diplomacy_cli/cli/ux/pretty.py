@@ -62,7 +62,10 @@ def format_units(units):
 
 
 def flatten_units(units_dict):
-    return [{"territory_id": territory, **unit} for territory, unit in units_dict.items()]
+    return [
+        {"territory_id": territory, **unit}
+        for territory, unit in units_dict.items()
+    ]
 
 
 def group_territory_state_by_owner(territory_state_dict):

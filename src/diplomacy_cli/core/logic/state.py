@@ -22,10 +22,16 @@ def start_game(
     save_path.mkdir(parents=True)
 
     starting_units = load_variant_json(variant, "start", "starting_units.json")
-    starting_ownerships = load_variant_json(variant, "start", "starting_ownerships.json")
-    starting_players = load_variant_json(variant, "start", "starting_players.json")
+    starting_ownerships = load_variant_json(
+        variant, "start", "starting_ownerships.json"
+    )
+    starting_players = load_variant_json(
+        variant, "start", "starting_players.json"
+    )
 
-    players = {p["nation_id"]: {"status": p["status"]} for p in starting_players}
+    players = {
+        p["nation_id"]: {"status": p["status"]} for p in starting_players
+    }
     game_meta = {
         "game_id": game_id,
         "variant": variant,
@@ -37,7 +43,9 @@ def start_game(
     for o in starting_ownerships:
         territory_id = o["territory_id"]
         owner_id = o["owner_id"]
-        territory_state = set_territory_owner(territory_state, territory_id, owner_id)
+        territory_state = set_territory_owner(
+            territory_state, territory_id, owner_id
+        )
 
     units = {}
     counters: Counters = {}
@@ -70,7 +78,9 @@ def start_game(
     return gs
 
 
-def load_state(game_id: str, *, save_dir: str | os.PathLike[str] | None = None) -> LoadedState:
+def load_state(
+    game_id: str, *, save_dir: str | os.PathLike[str] | None = None
+) -> LoadedState:
     save_root = Path(save_dir or DEFAULT_GAMES_DIR)
     save_path = save_root / game_id
 
@@ -85,10 +95,14 @@ def load_state(game_id: str, *, save_dir: str | os.PathLike[str] | None = None) 
     territory_to_unit: TerritoryToUnit = build_territory_to_unit(gs.units)
     counters: Counters = build_counters(gs.units)
 
-    return LoadedState(game=gs, territory_to_unit=territory_to_unit, counters=counters)
+    return LoadedState(
+        game=gs, territory_to_unit=territory_to_unit, counters=counters
+    )
 
 
-def build_territory_to_unit(units: dict[str, dict[str, Any]]) -> TerritoryToUnit:
+def build_territory_to_unit(
+    units: dict[str, dict[str, Any]],
+) -> TerritoryToUnit:
     return {unit["territory_id"]: unit_id for unit_id, unit in units.items()}
 
 
@@ -158,6 +172,8 @@ def set_territory_owner(
     return territory_state
 
 
-def eliminate_player(players: dict[str, dict[str, str]], player_id: str) -> dict[str, Any]:
+def eliminate_player(
+    players: dict[str, dict[str, str]], player_id: str
+) -> dict[str, Any]:
     players[player_id] = {"status": "eliminated"}
     return players

@@ -33,10 +33,14 @@ def take_province(tokens: list[str]) -> str:
 
 def take_unit_type(tokens: list[str]) -> str:
     if not tokens:
-        raise ParseError("Expected unit type (‘army’ or ‘fleet’), but got end of input")
+        raise ParseError(
+            "Expected unit type (‘army’ or ‘fleet’), but got end of input"
+        )
     tok = tokens.pop(0)
     if tok not in ("army", "fleet"):
-        raise ParseError(f"Expected unit type ‘army’ or ‘fleet’, but got {tok!r}")
+        raise ParseError(
+            f"Expected unit type ‘army’ or ‘fleet’, but got {tok!r}"
+        )
     return tok
 
 
@@ -77,7 +81,11 @@ def parse_support_hold(tokens: list[str]):
     origin = take_province(tokens)
     expect(tokens, "s")
     support_origin = take_province(tokens)
-    return Order(origin=origin, order_type=OrderType.SUPPORT_HOLD, support_origin=support_origin)
+    return Order(
+        origin=origin,
+        order_type=OrderType.SUPPORT_HOLD,
+        support_origin=support_origin,
+    )
 
 
 def parse_move(tokens: list[str]):
@@ -85,7 +93,11 @@ def parse_move(tokens: list[str]):
     expect(tokens, "-")
     destination = take_province(tokens)
     ensure_no_tokens(tokens)
-    return Order(origin=origin, order_type=OrderType.MOVE, destination=destination)
+    return Order(
+        origin=origin,
+        order_type=OrderType.MOVE,
+        destination=destination,
+    )
 
 
 def parse_hold(tokens: list[str]):
@@ -98,14 +110,22 @@ def parse_build(tokens: list[str]):
     expect(tokens, "build")
     unit_type = take_unit_type(tokens)
     origin = take_province(tokens)
-    return Order(origin=origin, unit_type=unit_type, order_type=OrderType.BUILD)
+    return Order(
+        origin=origin,
+        unit_type=unit_type,
+        order_type=OrderType.BUILD,
+    )
 
 
 def parse_disband(tokens: list[str]):
     expect(tokens, "disband")
     unit_type = take_unit_type(tokens)
     origin = take_province(tokens)
-    return Order(origin=origin, unit_type=unit_type, order_type=OrderType.DISBAND)
+    return Order(
+        origin=origin,
+        unit_type=unit_type,
+        order_type=OrderType.DISBAND,
+    )
 
 
 _PARSERS = [
@@ -145,4 +165,10 @@ def parse_syntax(raw: str) -> SyntaxResult:
         errors.append(f"Internal parse error: {e}")
         valid = False
 
-    return SyntaxResult(raw=raw, normalized=normalized, valid=valid, errors=errors, order=order)
+    return SyntaxResult(
+        raw=raw,
+        normalized=normalized,
+        valid=valid,
+        errors=errors,
+        order=order,
+    )

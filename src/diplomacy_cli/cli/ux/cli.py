@@ -78,7 +78,9 @@ def manage_save(game_id):
             state = load_state(game_id)
             print(format_state(state))
         elif choice == "2":
-            confirm = input(f"Type exact game_id {game_id} to confirm delete: ").strip()
+            confirm = input(
+                f"Type exact game_id {game_id} to confirm delete: "
+            ).strip()
             if confirm == game_id:
                 print("Deleting game")
                 delete_game(game_id)

@@ -48,13 +48,21 @@ class TestStateIO(unittest.TestCase):
         saved_terr = loaded_state.game.territory_state
         saved_game = loaded_state.game.game_meta
 
-        self.assertEqual(saved_players, load(f"{self.tmpdir}/{game_id}/players.json"))
-        self.assertEqual(saved_units, load(f"{self.tmpdir}/{game_id}/units.json"))
-        self.assertEqual(saved_terr, load(f"{self.tmpdir}/{game_id}/territory_state.json"))
+        self.assertEqual(
+            saved_players, load(f"{self.tmpdir}/{game_id}/players.json")
+        )
+        self.assertEqual(
+            saved_units, load(f"{self.tmpdir}/{game_id}/units.json")
+        )
+        self.assertEqual(
+            saved_terr, load(f"{self.tmpdir}/{game_id}/territory_state.json")
+        )
         self.assertEqual(saved_game["game_id"], game_id)
         self.assertEqual(saved_game["turn_code"], INITIAL_TURN_CODE)
 
-        self.assertEqual(loaded_state.territory_to_unit, build_territory_to_unit(saved_units))
+        self.assertEqual(
+            loaded_state.territory_to_unit, build_territory_to_unit(saved_units)
+        )
         self.assertEqual(loaded_state.counters, build_counters(saved_units))
 
     def test_start_game_overwrite_protection(self):
