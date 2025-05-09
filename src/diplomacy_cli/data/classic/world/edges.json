@@ -1,2182 +1,2182 @@
 [
   {
-    "from": "ADR",
-    "to": "ALB",
+    "from": "adr",
+    "to": "alb",
     "mode": "sea"
   },
   {
-    "from": "ADR",
-    "to": "APU",
+    "from": "adr",
+    "to": "apu",
     "mode": "sea"
   },
   {
-    "from": "ADR",
-    "to": "ION",
+    "from": "adr",
+    "to": "ion",
     "mode": "sea"
   },
   {
-    "from": "ADR",
-    "to": "TRI",
+    "from": "adr",
+    "to": "tri",
     "mode": "sea"
   },
   {
-    "from": "ADR",
-    "to": "VEN",
+    "from": "adr",
+    "to": "ven",
     "mode": "sea"
   },
   {
-    "from": "AEG",
-    "to": "BUL/SC",
+    "from": "aeg",
+    "to": "bul_sc",
     "mode": "sea"
   },
   {
-    "from": "AEG",
-    "to": "CON",
+    "from": "aeg",
+    "to": "con",
     "mode": "sea"
   },
   {
-    "from": "AEG",
-    "to": "EAS",
+    "from": "aeg",
+    "to": "eas",
     "mode": "sea"
   },
   {
-    "from": "AEG",
-    "to": "GRE",
+    "from": "aeg",
+    "to": "gre",
     "mode": "sea"
   },
   {
-    "from": "AEG",
-    "to": "ION",
+    "from": "aeg",
+    "to": "ion",
     "mode": "sea"
   },
   {
-    "from": "AEG",
-    "to": "SMY",
+    "from": "aeg",
+    "to": "smy",
     "mode": "sea"
   },
   {
-    "from": "ALB",
-    "to": "ADR",
+    "from": "alb",
+    "to": "adr",
     "mode": "sea"
   },
   {
-    "from": "ALB",
-    "to": "GRE",
+    "from": "alb",
+    "to": "gre",
     "mode": "both"
   },
   {
-    "from": "ALB",
-    "to": "ION",
+    "from": "alb",
+    "to": "ion",
     "mode": "sea"
   },
   {
-    "from": "ALB",
-    "to": "SER",
+    "from": "alb",
+    "to": "ser",
     "mode": "land"
   },
   {
-    "from": "ALB",
-    "to": "TRI",
+    "from": "alb",
+    "to": "tri",
     "mode": "both"
   },
   {
-    "from": "ANK",
-    "to": "ARM",
+    "from": "ank",
+    "to": "arm",
     "mode": "both"
   },
   {
-    "from": "ANK",
-    "to": "BLA",
+    "from": "ank",
+    "to": "bla",
     "mode": "sea"
   },
   {
-    "from": "ANK",
-    "to": "CON",
+    "from": "ank",
+    "to": "con",
     "mode": "both"
   },
   {
-    "from": "ANK",
-    "to": "SMY",
+    "from": "ank",
+    "to": "smy",
     "mode": "land"
   },
   {
-    "from": "APU",
-    "to": "ADR",
+    "from": "apu",
+    "to": "adr",
     "mode": "sea"
   },
   {
-    "from": "APU",
-    "to": "ION",
+    "from": "apu",
+    "to": "ion",
     "mode": "sea"
   },
   {
-    "from": "APU",
-    "to": "NAP",
+    "from": "apu",
+    "to": "nap",
     "mode": "both"
   },
   {
-    "from": "APU",
-    "to": "ROM",
+    "from": "apu",
+    "to": "rom",
     "mode": "land"
   },
   {
-    "from": "APU",
-    "to": "VEN",
+    "from": "apu",
+    "to": "ven",
     "mode": "both"
   },
   {
-    "from": "ARM",
-    "to": "ANK",
+    "from": "arm",
+    "to": "ank",
     "mode": "both"
   },
   {
-    "from": "ARM",
-    "to": "BLA",
+    "from": "arm",
+    "to": "bla",
     "mode": "sea"
   },
   {
-    "from": "ARM",
-    "to": "SEV",
+    "from": "arm",
+    "to": "sev",
     "mode": "both"
   },
   {
-    "from": "ARM",
-    "to": "SMY",
+    "from": "arm",
+    "to": "smy",
     "mode": "land"
   },
   {
-    "from": "ARM",
-    "to": "SYR",
+    "from": "arm",
+    "to": "syr",
     "mode": "land"
   },
   {
-    "from": "BAL",
-    "to": "BER",
+    "from": "bal",
+    "to": "ber",
     "mode": "sea"
   },
   {
-    "from": "BAL",
-    "to": "BOT",
+    "from": "bal",
+    "to": "bot",
     "mode": "sea"
   },
   {
-    "from": "BAL",
-    "to": "DEN",
+    "from": "bal",
+    "to": "den",
     "mode": "sea"
   },
   {
-    "from": "BAL",
-    "to": "KIE",
+    "from": "bal",
+    "to": "kie",
     "mode": "sea"
   },
   {
-    "from": "BAL",
-    "to": "LVN",
+    "from": "bal",
+    "to": "lvn",
     "mode": "sea"
   },
   {
-    "from": "BAL",
-    "to": "PRU",
+    "from": "bal",
+    "to": "pru",
     "mode": "sea"
   },
   {
-    "from": "BAL",
-    "to": "SWE",
+    "from": "bal",
+    "to": "swe",
     "mode": "sea"
   },
   {
-    "from": "BAR",
-    "to": "NOR",
+    "from": "bar",
+    "to": "nor",
     "mode": "sea"
   },
   {
-    "from": "BAR",
-    "to": "NWG",
+    "from": "bar",
+    "to": "nwg",
     "mode": "sea"
   },
   {
-    "from": "BAR",
-    "to": "STP/NC",
+    "from": "bar",
+    "to": "stp_nc",
     "mode": "sea"
   },
   {
-    "from": "BEL",
-    "to": "BUR",
+    "from": "bel",
+    "to": "bur",
     "mode": "land"
   },
   {
-    "from": "BEL",
-    "to": "ENG",
+    "from": "bel",
+    "to": "eng",
     "mode": "sea"
   },
   {
-    "from": "BEL",
-    "to": "HOL",
+    "from": "bel",
+    "to": "hol",
     "mode": "both"
   },
   {
-    "from": "BEL",
-    "to": "NTH",
+    "from": "bel",
+    "to": "nth",
     "mode": "sea"
   },
   {
-    "from": "BEL",
-    "to": "PIC",
+    "from": "bel",
+    "to": "pic",
     "mode": "both"
   },
   {
-    "from": "BEL",
-    "to": "RUH",
+    "from": "bel",
+    "to": "ruh",
     "mode": "land"
   },
   {
-    "from": "BER",
-    "to": "BAL",
+    "from": "ber",
+    "to": "bal",
     "mode": "sea"
   },
   {
-    "from": "BER",
-    "to": "KIE",
+    "from": "ber",
+    "to": "kie",
     "mode": "both"
   },
   {
-    "from": "BER",
-    "to": "MUN",
+    "from": "ber",
+    "to": "mun",
     "mode": "land"
   },
   {
-    "from": "BER",
-    "to": "PRU",
+    "from": "ber",
+    "to": "pru",
     "mode": "both"
   },
   {
-    "from": "BER",
-    "to": "SIL",
+    "from": "ber",
+    "to": "sil",
     "mode": "land"
   },
   {
-    "from": "BLA",
-    "to": "ANK",
+    "from": "bla",
+    "to": "ank",
     "mode": "sea"
   },
   {
-    "from": "BLA",
-    "to": "ARM",
+    "from": "bla",
+    "to": "arm",
     "mode": "sea"
   },
   {
-    "from": "BLA",
-    "to": "BUL/EC",
+    "from": "bla",
+    "to": "bul_ec",
     "mode": "sea"
   },
   {
-    "from": "BLA",
-    "to": "CON",
+    "from": "bla",
+    "to": "con",
     "mode": "sea"
   },
   {
-    "from": "BLA",
-    "to": "RUM",
+    "from": "bla",
+    "to": "rum",
     "mode": "sea"
   },
   {
-    "from": "BLA",
-    "to": "SEV",
+    "from": "bla",
+    "to": "sev",
     "mode": "sea"
   },
   {
-    "from": "BOH",
-    "to": "GAL",
+    "from": "boh",
+    "to": "gal",
     "mode": "land"
   },
   {
-    "from": "BOH",
-    "to": "MUN",
+    "from": "boh",
+    "to": "mun",
     "mode": "land"
   },
   {
-    "from": "BOH",
-    "to": "SIL",
+    "from": "boh",
+    "to": "sil",
     "mode": "land"
   },
   {
-    "from": "BOH",
-    "to": "TYR",
+    "from": "boh",
+    "to": "tyr",
     "mode": "land"
   },
   {
-    "from": "BOH",
-    "to": "VIE",
+    "from": "boh",
+    "to": "vie",
     "mode": "land"
   },
   {
-    "from": "BOT",
-    "to": "BAL",
+    "from": "bot",
+    "to": "bal",
     "mode": "sea"
   },
   {
-    "from": "BOT",
-    "to": "FIN",
+    "from": "bot",
+    "to": "fin",
     "mode": "sea"
   },
   {
-    "from": "BOT",
-    "to": "LVN",
+    "from": "bot",
+    "to": "lvn",
     "mode": "sea"
   },
   {
-    "from": "BOT",
-    "to": "STP/SC",
+    "from": "bot",
+    "to": "stp/sc",
     "mode": "sea"
   },
   {
-    "from": "BOT",
-    "to": "SWE",
+    "from": "bot",
+    "to": "swe",
     "mode": "sea"
   },
   {
-    "from": "BRE",
-    "to": "ENG",
+    "from": "bre",
+    "to": "eng",
     "mode": "sea"
   },
   {
-    "from": "BRE",
-    "to": "GAS",
+    "from": "bre",
+    "to": "gas",
     "mode": "both"
   },
   {
-    "from": "BRE",
-    "to": "MAO",
+    "from": "bre",
+    "to": "mao",
     "mode": "sea"
   },
   {
-    "from": "BRE",
-    "to": "PAR",
+    "from": "bre",
+    "to": "par",
     "mode": "land"
   },
   {
-    "from": "BRE",
-    "to": "PIC",
+    "from": "bre",
+    "to": "pic",
     "mode": "both"
   },
   {
-    "from": "BUD",
-    "to": "GAL",
+    "from": "bud",
+    "to": "gal",
     "mode": "land"
   },
   {
-    "from": "BUD",
-    "to": "RUM",
+    "from": "bud",
+    "to": "rum",
     "mode": "land"
   },
   {
-    "from": "BUD",
-    "to": "SER",
+    "from": "bud",
+    "to": "ser",
     "mode": "land"
   },
   {
-    "from": "BUD",
-    "to": "TRI",
+    "from": "bud",
+    "to": "tri",
     "mode": "land"
   },
   {
-    "from": "BUD",
-    "to": "VIE",
+    "from": "bud",
+    "to": "vie",
     "mode": "land"
   },
   {
-    "from": "BUL",
-    "to": "CON",
+    "from": "bul",
+    "to": "con",
     "mode": "land"
   },
   {
-    "from": "BUL",
-    "to": "GRE",
+    "from": "bul",
+    "to": "gre",
     "mode": "land"
   },
   {
-    "from": "BUL",
-    "to": "RUM",
+    "from": "bul",
+    "to": "rum",
     "mode": "land"
   },
   {
-    "from": "BUL",
-    "to": "SER",
+    "from": "bul",
+    "to": "ser",
     "mode": "land"
   },
   {
-    "from": "BUL/EC",
-    "to": "BLA",
+    "from": "bul_ec",
+    "to": "bla",
     "mode": "sea"
   },
   {
-    "from": "BUL/EC",
-    "to": "CON",
+    "from": "bul_ec",
+    "to": "con",
     "mode": "sea"
   },
   {
-    "from": "BUL/EC",
-    "to": "RUM",
+    "from": "bul_ec",
+    "to": "rum",
     "mode": "sea"
   },
   {
-    "from": "BUL/SC",
-    "to": "AEG",
+    "from": "bul_sc",
+    "to": "aeg",
     "mode": "sea"
   },
   {
-    "from": "BUL/SC",
-    "to": "CON",
+    "from": "bul_sc",
+    "to": "con",
     "mode": "sea"
   },
   {
-    "from": "BUL/SC",
-    "to": "GRE",
+    "from": "bul_sc",
+    "to": "gre",
     "mode": "sea"
   },
   {
-    "from": "BUR",
-    "to": "BEL",
+    "from": "bur",
+    "to": "bel",
     "mode": "land"
   },
   {
-    "from": "BUR",
-    "to": "GAS",
+    "from": "bur",
+    "to": "gas",
     "mode": "land"
   },
   {
-    "from": "BUR",
-    "to": "MAR",
+    "from": "bur",
+    "to": "mar",
     "mode": "land"
   },
   {
-    "from": "BUR",
-    "to": "MUN",
+    "from": "bur",
+    "to": "mun",
     "mode": "land"
   },
   {
-    "from": "BUR",
-    "to": "PAR",
+    "from": "bur",
+    "to": "par",
     "mode": "land"
   },
   {
-    "from": "BUR",
-    "to": "PIC",
+    "from": "bur",
+    "to": "pic",
     "mode": "land"
   },
   {
-    "from": "BUR",
-    "to": "RUH",
+    "from": "bur",
+    "to": "ruh",
     "mode": "land"
   },
   {
-    "from": "CLY",
-    "to": "EDI",
+    "from": "cly",
+    "to": "edi",
     "mode": "both"
   },
   {
-    "from": "CLY",
-    "to": "LVP",
+    "from": "cly",
+    "to": "lvp",
     "mode": "both"
   },
   {
-    "from": "CLY",
-    "to": "NAO",
+    "from": "cly",
+    "to": "nao",
     "mode": "sea"
   },
   {
-    "from": "CLY",
-    "to": "NWG",
+    "from": "cly",
+    "to": "nwg",
     "mode": "sea"
   },
   {
-    "from": "CON",
-    "to": "AEG",
+    "from": "con",
+    "to": "aeg",
     "mode": "sea"
   },
   {
-    "from": "CON",
-    "to": "ANK",
+    "from": "con",
+    "to": "ank",
     "mode": "both"
   },
   {
-    "from": "CON",
-    "to": "BLA",
+    "from": "con",
+    "to": "bla",
     "mode": "sea"
   },
   {
-    "from": "CON",
-    "to": "BUL",
+    "from": "con",
+    "to": "bul",
     "mode": "land"
   },
   {
-    "from": "CON",
-    "to": "BUL/EC",
+    "from": "con",
+    "to": "bul_ec",
     "mode": "sea"
   },
   {
-    "from": "CON",
-    "to": "BUL/SC",
+    "from": "con",
+    "to": "bul_sc",
     "mode": "sea"
   },
   {
-    "from": "CON",
-    "to": "SMY",
+    "from": "con",
+    "to": "smy",
     "mode": "both"
   },
   {
-    "from": "DEN",
-    "to": "BAL",
+    "from": "den",
+    "to": "bal",
     "mode": "sea"
   },
   {
-    "from": "DEN",
-    "to": "HEL",
+    "from": "den",
+    "to": "hel",
     "mode": "sea"
   },
   {
-    "from": "DEN",
-    "to": "KIE",
+    "from": "den",
+    "to": "kie",
     "mode": "both"
   },
   {
-    "from": "DEN",
-    "to": "NTH",
+    "from": "den",
+    "to": "nth",
     "mode": "sea"
   },
   {
-    "from": "DEN",
-    "to": "SKA",
+    "from": "den",
+    "to": "ska",
     "mode": "sea"
   },
   {
-    "from": "DEN",
-    "to": "SWE",
+    "from": "den",
+    "to": "swe",
     "mode": "both"
   },
   {
-    "from": "EAS",
-    "to": "AEG",
+    "from": "eas",
+    "to": "aeg",
     "mode": "sea"
   },
   {
-    "from": "EAS",
-    "to": "ION",
+    "from": "eas",
+    "to": "ion",
     "mode": "sea"
   },
   {
-    "from": "EAS",
-    "to": "SMY",
+    "from": "eas",
+    "to": "smy",
     "mode": "sea"
   },
   {
-    "from": "EAS",
-    "to": "SYR",
+    "from": "eas",
+    "to": "syr",
     "mode": "sea"
   },
   {
-    "from": "EDI",
-    "to": "CLY",
+    "from": "edi",
+    "to": "cly",
     "mode": "both"
   },
   {
-    "from": "EDI",
-    "to": "LVP",
+    "from": "edi",
+    "to": "lvp",
     "mode": "land"
   },
   {
-    "from": "EDI",
-    "to": "NTH",
+    "from": "edi",
+    "to": "nth",
     "mode": "sea"
   },
   {
-    "from": "EDI",
-    "to": "NWG",
+    "from": "edi",
+    "to": "nwg",
     "mode": "sea"
   },
   {
-    "from": "EDI",
-    "to": "YOR",
+    "from": "edi",
+    "to": "yor",
     "mode": "both"
   },
   {
-    "from": "ENG",
-    "to": "BEL",
+    "from": "eng",
+    "to": "bel",
     "mode": "sea"
   },
   {
-    "from": "ENG",
-    "to": "BRE",
+    "from": "eng",
+    "to": "bre",
     "mode": "sea"
   },
   {
-    "from": "ENG",
-    "to": "IRI",
+    "from": "eng",
+    "to": "iri",
     "mode": "sea"
   },
   {
-    "from": "ENG",
-    "to": "LON",
+    "from": "eng",
+    "to": "lon",
     "mode": "sea"
   },
   {
-    "from": "ENG",
-    "to": "MAO",
+    "from": "eng",
+    "to": "mao",
     "mode": "sea"
   },
   {
-    "from": "ENG",
-    "to": "NTH",
+    "from": "eng",
+    "to": "nth",
     "mode": "sea"
   },
   {
-    "from": "ENG",
-    "to": "PIC",
+    "from": "eng",
+    "to": "pic",
     "mode": "sea"
   },
   {
-    "from": "ENG",
-    "to": "WAL",
+    "from": "eng",
+    "to": "wal",
     "mode": "sea"
   },
   {
-    "from": "FIN",
-    "to": "BOT",
+    "from": "fin",
+    "to": "bot",
     "mode": "sea"
   },
   {
-    "from": "FIN",
-    "to": "NOR",
+    "from": "fin",
+    "to": "nor",
     "mode": "land"
   },
   {
-    "from": "FIN",
-    "to": "STP",
+    "from": "fin",
+    "to": "stp",
     "mode": "land"
   },
   {
-    "from": "FIN",
-    "to": "STP/SC",
+    "from": "fin",
+    "to": "stp_sc",
     "mode": "sea"
   },
   {
-    "from": "FIN",
-    "to": "SWE",
+    "from": "fin",
+    "to": "swe",
     "mode": "both"
   },
   {
-    "from": "GAL",
-    "to": "BOH",
+    "from": "gal",
+    "to": "boh",
     "mode": "land"
   },
   {
-    "from": "GAL",
-    "to": "BUD",
+    "from": "gal",
+    "to": "bud",
     "mode": "land"
   },
   {
-    "from": "GAL",
-    "to": "RUM",
+    "from": "gal",
+    "to": "rum",
     "mode": "land"
   },
   {
-    "from": "GAL",
-    "to": "SIL",
+    "from": "gal",
+    "to": "sil",
     "mode": "land"
   },
   {
-    "from": "GAL",
-    "to": "UKR",
+    "from": "gal",
+    "to": "ukr",
     "mode": "land"
   },
   {
-    "from": "GAL",
-    "to": "VIE",
+    "from": "gal",
+    "to": "vie",
     "mode": "land"
   },
   {
-    "from": "GAL",
-    "to": "WAR",
+    "from": "gal",
+    "to": "war",
     "mode": "land"
   },
   {
-    "from": "GAS",
-    "to": "BRE",
+    "from": "gas",
+    "to": "bre",
     "mode": "both"
   },
   {
-    "from": "GAS",
-    "to": "BUR",
+    "from": "gas",
+    "to": "bur",
     "mode": "land"
   },
   {
-    "from": "GAS",
-    "to": "MAO",
+    "from": "gas",
+    "to": "mao",
     "mode": "sea"
   },
   {
-    "from": "GAS",
-    "to": "MAR",
+    "from": "gas",
+    "to": "mar",
     "mode": "land"
   },
   {
-    "from": "GAS",
-    "to": "PAR",
+    "from": "gas",
+    "to": "par",
     "mode": "land"
   },
   {
-    "from": "GAS",
-    "to": "SPA",
+    "from": "gas",
+    "to": "spa",
     "mode": "land"
   },
   {
-    "from": "GAS",
-    "to": "SPA/NC",
+    "from": "gas",
+    "to": "spa_nc",
     "mode": "sea"
   },
   {
-    "from": "GRE",
-    "to": "AEG",
+    "from": "gre",
+    "to": "aeg",
     "mode": "sea"
   },
   {
-    "from": "GRE",
-    "to": "ALB",
+    "from": "gre",
+    "to": "alb",
     "mode": "both"
   },
   {
-    "from": "GRE",
-    "to": "BUL",
+    "from": "gre",
+    "to": "bul",
     "mode": "land"
   },
   {
-    "from": "GRE",
-    "to": "BUL/SC",
+    "from": "gre",
+    "to": "bul_sc",
     "mode": "sea"
   },
   {
-    "from": "GRE",
-    "to": "ION",
+    "from": "gre",
+    "to": "ion",
     "mode": "sea"
   },
   {
-    "from": "GRE",
-    "to": "SER",
+    "from": "gre",
+    "to": "ser",
     "mode": "land"
   },
   {
-    "from": "HEL",
-    "to": "DEN",
+    "from": "hel",
+    "to": "den",
     "mode": "sea"
   },
   {
-    "from": "HEL",
-    "to": "HOL",
+    "from": "hel",
+    "to": "hol",
     "mode": "sea"
   },
   {
-    "from": "HEL",
-    "to": "KIE",
+    "from": "hel",
+    "to": "kie",
     "mode": "sea"
   },
   {
-    "from": "HEL",
-    "to": "NTH",
+    "from": "hel",
+    "to": "nth",
     "mode": "sea"
   },
   {
-    "from": "HOL",
-    "to": "BEL",
+    "from": "hol",
+    "to": "bel",
     "mode": "both"
   },
   {
-    "from": "HOL",
-    "to": "HEL",
+    "from": "hol",
+    "to": "hel",
     "mode": "sea"
   },
   {
-    "from": "HOL",
-    "to": "KIE",
+    "from": "hol",
+    "to": "kie",
     "mode": "both"
   },
   {
-    "from": "HOL",
-    "to": "NTH",
+    "from": "hol",
+    "to": "nth",
     "mode": "sea"
   },
   {
-    "from": "HOL",
-    "to": "RUH",
+    "from": "hol",
+    "to": "ruh",
     "mode": "land"
   },
   {
-    "from": "ION",
-    "to": "ADR",
+    "from": "ion",
+    "to": "adr",
     "mode": "sea"
   },
   {
-    "from": "ION",
-    "to": "AEG",
+    "from": "ion",
+    "to": "aeg",
     "mode": "sea"
   },
   {
-    "from": "ION",
-    "to": "ALB",
+    "from": "ion",
+    "to": "alb",
     "mode": "sea"
   },
   {
-    "from": "ION",
-    "to": "APU",
+    "from": "ion",
+    "to": "apu",
     "mode": "sea"
   },
   {
-    "from": "ION",
-    "to": "EAS",
+    "from": "ion",
+    "to": "eas",
     "mode": "sea"
   },
   {
-    "from": "ION",
-    "to": "GRE",
+    "from": "ion",
+    "to": "gre",
     "mode": "sea"
   },
   {
-    "from": "ION",
-    "to": "NAP",
+    "from": "ion",
+    "to": "nap",
     "mode": "sea"
   },
   {
-    "from": "ION",
-    "to": "TUN",
+    "from": "ion",
+    "to": "tun",
     "mode": "sea"
   },
   {
-    "from": "ION",
-    "to": "TYS",
+    "from": "ion",
+    "to": "tys",
     "mode": "sea"
   },
   {
-    "from": "IRI",
-    "to": "ENG",
+    "from": "iri",
+    "to": "eng",
     "mode": "sea"
   },
   {
-    "from": "IRI",
-    "to": "LVP",
+    "from": "iri",
+    "to": "lvp",
     "mode": "sea"
   },
   {
-    "from": "IRI",
-    "to": "MAO",
+    "from": "iri",
+    "to": "mao",
     "mode": "sea"
   },
   {
-    "from": "IRI",
-    "to": "NAO",
+    "from": "iri",
+    "to": "nao",
     "mode": "sea"
   },
   {
-    "from": "IRI",
-    "to": "WAL",
+    "from": "iri",
+    "to": "wal",
     "mode": "sea"
   },
   {
-    "from": "KIE",
-    "to": "BAL",
+    "from": "kie",
+    "to": "bal",
     "mode": "sea"
   },
   {
-    "from": "KIE",
-    "to": "BER",
+    "from": "kie",
+    "to": "ber",
     "mode": "both"
   },
   {
-    "from": "KIE",
-    "to": "DEN",
+    "from": "kie",
+    "to": "den",
     "mode": "both"
   },
   {
-    "from": "KIE",
-    "to": "HEL",
+    "from": "kie",
+    "to": "hel",
     "mode": "sea"
   },
   {
-    "from": "KIE",
-    "to": "HOL",
+    "from": "kie",
+    "to": "hol",
     "mode": "both"
   },
   {
-    "from": "KIE",
-    "to": "MUN",
+    "from": "kie",
+    "to": "mun",
     "mode": "land"
   },
   {
-    "from": "KIE",
-    "to": "RUH",
+    "from": "kie",
+    "to": "ruh",
     "mode": "land"
   },
   {
-    "from": "LON",
-    "to": "ENG",
+    "from": "lon",
+    "to": "eng",
     "mode": "sea"
   },
   {
-    "from": "LON",
-    "to": "NTH",
+    "from": "lon",
+    "to": "nth",
     "mode": "sea"
   },
   {
-    "from": "LON",
-    "to": "WAL",
+    "from": "lon",
+    "to": "wal",
     "mode": "both"
   },
   {
-    "from": "LON",
-    "to": "YOR",
+    "from": "lon",
+    "to": "yor",
     "mode": "both"
   },
   {
-    "from": "LVN",
-    "to": "BAL",
+    "from": "lvn",
+    "to": "bal",
     "mode": "sea"
   },
   {
-    "from": "LVN",
-    "to": "BOT",
+    "from": "lvn",
+    "to": "bot",
     "mode": "sea"
   },
   {
-    "from": "LVN",
-    "to": "MOS",
+    "from": "lvn",
+    "to": "mos",
     "mode": "land"
   },
   {
-    "from": "LVN",
-    "to": "PRU",
+    "from": "lvn",
+    "to": "pru",
     "mode": "both"
   },
   {
-    "from": "LVN",
-    "to": "STP",
+    "from": "lvn",
+    "to": "stp",
     "mode": "land"
   },
   {
-    "from": "LVN",
-    "to": "STP/SC",
+    "from": "lvn",
+    "to": "stp_sc",
     "mode": "sea"
   },
   {
-    "from": "LVN",
-    "to": "WAR",
+    "from": "lvn",
+    "to": "war",
     "mode": "land"
   },
   {
-    "from": "LVP",
-    "to": "CLY",
+    "from": "lvp",
+    "to": "cly",
     "mode": "both"
   },
   {
-    "from": "LVP",
-    "to": "EDI",
+    "from": "lvp",
+    "to": "edi",
     "mode": "land"
   },
   {
-    "from": "LVP",
-    "to": "IRI",
+    "from": "lvp",
+    "to": "iri",
     "mode": "sea"
   },
   {
-    "from": "LVP",
-    "to": "NAO",
+    "from": "lvp",
+    "to": "nao",
     "mode": "sea"
   },
   {
-    "from": "LVP",
-    "to": "WAL",
+    "from": "lvp",
+    "to": "wal",
     "mode": "both"
   },
   {
-    "from": "LVP",
-    "to": "YOR",
+    "from": "lvp",
+    "to": "yor",
     "mode": "land"
   },
   {
-    "from": "LYO",
-    "to": "MAR",
+    "from": "lyo",
+    "to": "mar",
     "mode": "sea"
   },
   {
-    "from": "LYO",
-    "to": "PIE",
+    "from": "lyo",
+    "to": "pie",
     "mode": "sea"
   },
   {
-    "from": "LYO",
-    "to": "SPA/SC",
+    "from": "lyo",
+    "to": "spa_sc",
     "mode": "sea"
   },
   {
-    "from": "LYO",
-    "to": "TUS",
+    "from": "lyo",
+    "to": "tus",
     "mode": "sea"
   },
   {
-    "from": "LYO",
-    "to": "TYS",
+    "from": "lyo",
+    "to": "tys",
     "mode": "sea"
   },
   {
-    "from": "LYO",
-    "to": "WES",
+    "from": "lyo",
+    "to": "wes",
     "mode": "sea"
   },
   {
-    "from": "MAO",
-    "to": "BRE",
+    "from": "mao",
+    "to": "bre",
     "mode": "sea"
   },
   {
-    "from": "MAO",
-    "to": "ENG",
+    "from": "mao",
+    "to": "eng",
     "mode": "sea"
   },
   {
-    "from": "MAO",
-    "to": "GAS",
+    "from": "mao",
+    "to": "gas",
     "mode": "sea"
   },
   {
-    "from": "MAO",
-    "to": "IRI",
+    "from": "mao",
+    "to": "iri",
     "mode": "sea"
   },
   {
-    "from": "MAO",
-    "to": "NAF",
+    "from": "mao",
+    "to": "naf",
     "mode": "sea"
   },
   {
-    "from": "MAO",
-    "to": "NAO",
+    "from": "mao",
+    "to": "nao",
     "mode": "sea"
   },
   {
-    "from": "MAO",
-    "to": "POR",
+    "from": "mao",
+    "to": "por",
     "mode": "sea"
   },
   {
-    "from": "MAO",
-    "to": "SPA/NC",
+    "from": "mao",
+    "to": "spa_nc",
     "mode": "sea"
   },
   {
-    "from": "MAO",
-    "to": "SPA/SC",
+    "from": "mao",
+    "to": "spa_sc",
     "mode": "sea"
   },
   {
-    "from": "MAO",
-    "to": "WES",
+    "from": "mao",
+    "to": "wes",
     "mode": "sea"
   },
   {
-    "from": "MAR",
-    "to": "BUR",
+    "from": "mar",
+    "to": "bur",
     "mode": "land"
   },
   {
-    "from": "MAR",
-    "to": "GAS",
+    "from": "mar",
+    "to": "gas",
     "mode": "land"
   },
   {
-    "from": "MAR",
-    "to": "LYO",
+    "from": "mar",
+    "to": "lyo",
     "mode": "sea"
   },
   {
-    "from": "MAR",
-    "to": "PIE",
+    "from": "mar",
+    "to": "pie",
     "mode": "both"
   },
   {
-    "from": "MAR",
-    "to": "SPA",
+    "from": "mar",
+    "to": "spa",
     "mode": "land"
   },
   {
-    "from": "MAR",
-    "to": "SPA/SC",
+    "from": "mar",
+    "to": "spa_sc",
     "mode": "sea"
   },
   {
-    "from": "MOS",
-    "to": "LVN",
+    "from": "mos",
+    "to": "lvn",
     "mode": "land"
   },
   {
-    "from": "MOS",
-    "to": "SEV",
+    "from": "mos",
+    "to": "sev",
     "mode": "land"
   },
   {
-    "from": "MOS",
-    "to": "STP",
+    "from": "mos",
+    "to": "stp",
     "mode": "land"
   },
   {
-    "from": "MOS",
-    "to": "UKR",
+    "from": "mos",
+    "to": "ukr",
     "mode": "land"
   },
   {
-    "from": "MOS",
-    "to": "WAR",
+    "from": "mos",
+    "to": "war",
     "mode": "land"
   },
   {
-    "from": "MUN",
-    "to": "BER",
+    "from": "mun",
+    "to": "ber",
     "mode": "land"
   },
   {
-    "from": "MUN",
-    "to": "BOH",
+    "from": "mun",
+    "to": "boh",
     "mode": "land"
   },
   {
-    "from": "MUN",
-    "to": "BUR",
+    "from": "mun",
+    "to": "bur",
     "mode": "land"
   },
   {
-    "from": "MUN",
-    "to": "KIE",
+    "from": "mun",
+    "to": "kie",
     "mode": "land"
   },
   {
-    "from": "MUN",
-    "to": "RUH",
+    "from": "mun",
+    "to": "ruh",
     "mode": "land"
   },
   {
-    "from": "MUN",
-    "to": "SIL",
+    "from": "mun",
+    "to": "sil",
     "mode": "land"
   },
   {
-    "from": "MUN",
-    "to": "TYR",
+    "from": "mun",
+    "to": "tyr",
     "mode": "land"
   },
   {
-    "from": "NAF",
-    "to": "MAO",
+    "from": "naf",
+    "to": "mao",
     "mode": "sea"
   },
   {
-    "from": "NAF",
-    "to": "TUN",
+    "from": "naf",
+    "to": "tun",
     "mode": "both"
   },
   {
-    "from": "NAF",
-    "to": "WES",
+    "from": "naf",
+    "to": "wes",
     "mode": "sea"
   },
   {
-    "from": "NAO",
-    "to": "CLY",
+    "from": "nao",
+    "to": "cly",
     "mode": "sea"
   },
   {
-    "from": "NAO",
-    "to": "IRI",
+    "from": "nao",
+    "to": "iri",
     "mode": "sea"
   },
   {
-    "from": "NAO",
-    "to": "LVP",
+    "from": "nao",
+    "to": "lvp",
     "mode": "sea"
   },
   {
-    "from": "NAO",
-    "to": "MAO",
+    "from": "nao",
+    "to": "mao",
     "mode": "sea"
   },
   {
-    "from": "NAO",
-    "to": "NWG",
+    "from": "nao",
+    "to": "nwg",
     "mode": "sea"
   },
   {
-    "from": "NAP",
-    "to": "APU",
+    "from": "nap",
+    "to": "apu",
     "mode": "both"
   },
   {
-    "from": "NAP",
-    "to": "ION",
+    "from": "nap",
+    "to": "ion",
     "mode": "sea"
   },
   {
-    "from": "NAP",
-    "to": "ROM",
+    "from": "nap",
+    "to": "rom",
     "mode": "both"
   },
   {
-    "from": "NAP",
-    "to": "TYS",
+    "from": "nap",
+    "to": "tys",
     "mode": "sea"
   },
   {
-    "from": "NOR",
-    "to": "BAR",
+    "from": "nor",
+    "to": "bar",
     "mode": "sea"
   },
   {
-    "from": "NOR",
-    "to": "FIN",
+    "from": "nor",
+    "to": "fin",
     "mode": "land"
   },
   {
-    "from": "NOR",
-    "to": "NTH",
+    "from": "nor",
+    "to": "nth",
     "mode": "sea"
   },
   {
-    "from": "NOR",
-    "to": "NWG",
+    "from": "nor",
+    "to": "nwg",
     "mode": "sea"
   },
   {
-    "from": "NOR",
-    "to": "SKA",
+    "from": "nor",
+    "to": "ska",
     "mode": "sea"
   },
   {
-    "from": "NOR",
-    "to": "STP",
+    "from": "nor",
+    "to": "stp",
     "mode": "land"
   },
   {
-    "from": "NOR",
-    "to": "STP/NC",
+    "from": "nor",
+    "to": "stp_nc",
     "mode": "sea"
   },
   {
-    "from": "NOR",
-    "to": "SWE",
+    "from": "nor",
+    "to": "swe",
     "mode": "both"
   },
   {
-    "from": "NTH",
-    "to": "BEL",
+    "from": "nth",
+    "to": "bel",
     "mode": "sea"
   },
   {
-    "from": "NTH",
-    "to": "DEN",
+    "from": "nth",
+    "to": "den",
     "mode": "sea"
   },
   {
-    "from": "NTH",
-    "to": "EDI",
+    "from": "nth",
+    "to": "edi",
     "mode": "sea"
   },
   {
-    "from": "NTH",
-    "to": "ENG",
+    "from": "nth",
+    "to": "eng",
     "mode": "sea"
   },
   {
-    "from": "NTH",
-    "to": "HEL",
+    "from": "nth",
+    "to": "hel",
     "mode": "sea"
   },
   {
-    "from": "NTH",
-    "to": "HOL",
+    "from": "nth",
+    "to": "hol",
     "mode": "sea"
   },
   {
-    "from": "NTH",
-    "to": "LON",
+    "from": "nth",
+    "to": "lon",
     "mode": "sea"
   },
   {
-    "from": "NTH",
-    "to": "NOR",
+    "from": "nth",
+    "to": "nor",
     "mode": "sea"
   },
   {
-    "from": "NTH",
-    "to": "NWG",
+    "from": "nth",
+    "to": "nwg",
     "mode": "sea"
   },
   {
-    "from": "NTH",
-    "to": "SKA",
+    "from": "nth",
+    "to": "ska",
     "mode": "sea"
   },
   {
-    "from": "NTH",
-    "to": "YOR",
+    "from": "nth",
+    "to": "yor",
     "mode": "sea"
   },
   {
-    "from": "NWG",
-    "to": "BAR",
+    "from": "nwg",
+    "to": "bar",
     "mode": "sea"
   },
   {
-    "from": "NWG",
-    "to": "CLY",
+    "from": "nwg",
+    "to": "cly",
     "mode": "sea"
   },
   {
-    "from": "NWG",
-    "to": "EDI",
+    "from": "nwg",
+    "to": "edi",
     "mode": "sea"
   },
   {
-    "from": "NWG",
-    "to": "NAO",
+    "from": "nwg",
+    "to": "nao",
     "mode": "sea"
   },
   {
-    "from": "NWG",
-    "to": "NOR",
+    "from": "nwg",
+    "to": "nor",
     "mode": "sea"
   },
   {
-    "from": "NWG",
-    "to": "NTH",
+    "from": "nwg",
+    "to": "nth",
     "mode": "sea"
   },
   {
-    "from": "PAR",
-    "to": "BRE",
+    "from": "par",
+    "to": "bre",
     "mode": "land"
   },
   {
-    "from": "PAR",
-    "to": "BUR",
+    "from": "par",
+    "to": "bur",
     "mode": "land"
   },
   {
-    "from": "PAR",
-    "to": "GAS",
+    "from": "par",
+    "to": "gas",
     "mode": "land"
   },
   {
-    "from": "PAR",
-    "to": "PIC",
+    "from": "par",
+    "to": "pic",
     "mode": "land"
   },
   {
-    "from": "PIC",
-    "to": "BEL",
+    "from": "pic",
+    "to": "bel",
     "mode": "both"
   },
   {
-    "from": "PIC",
-    "to": "BRE",
+    "from": "pic",
+    "to": "bre",
     "mode": "both"
   },
   {
-    "from": "PIC",
-    "to": "BUR",
+    "from": "pic",
+    "to": "bur",
     "mode": "land"
   },
   {
-    "from": "PIC",
-    "to": "ENG",
+    "from": "pic",
+    "to": "eng",
     "mode": "sea"
   },
   {
-    "from": "PIC",
-    "to": "PAR",
+    "from": "pic",
+    "to": "par",
     "mode": "land"
   },
   {
-    "from": "PIE",
-    "to": "LYO",
+    "from": "pie",
+    "to": "lyo",
     "mode": "sea"
   },
   {
-    "from": "PIE",
-    "to": "MAR",
+    "from": "pie",
+    "to": "mar",
     "mode": "both"
   },
   {
-    "from": "PIE",
-    "to": "TUS",
+    "from": "pie",
+    "to": "tus",
     "mode": "both"
   },
   {
-    "from": "PIE",
-    "to": "TYR",
+    "from": "pie",
+    "to": "tyr",
     "mode": "land"
   },
   {
-    "from": "PIE",
-    "to": "VEN",
+    "from": "pie",
+    "to": "ven",
     "mode": "land"
   },
   {
-    "from": "POR",
-    "to": "MAO",
+    "from": "por",
+    "to": "mao",
     "mode": "sea"
   },
   {
-    "from": "POR",
-    "to": "SPA",
+    "from": "por",
+    "to": "spa",
     "mode": "land"
   },
   {
-    "from": "POR",
-    "to": "SPA/NC",
+    "from": "por",
+    "to": "spa_nc",
     "mode": "sea"
   },
   {
-    "from": "POR",
-    "to": "SPA/SC",
+    "from": "por",
+    "to": "spa_sc",
     "mode": "sea"
   },
   {
-    "from": "PRU",
-    "to": "BAL",
+    "from": "pru",
+    "to": "bal",
     "mode": "sea"
   },
   {
-    "from": "PRU",
-    "to": "BER",
+    "from": "pru",
+    "to": "ber",
     "mode": "both"
   },
   {
-    "from": "PRU",
-    "to": "LVN",
+    "from": "pru",
+    "to": "lvn",
     "mode": "both"
   },
   {
-    "from": "PRU",
-    "to": "SIL",
+    "from": "pru",
+    "to": "sil",
     "mode": "land"
   },
   {
-    "from": "PRU",
-    "to": "WAR",
+    "from": "pru",
+    "to": "war",
     "mode": "land"
   },
   {
-    "from": "ROM",
-    "to": "APU",
+    "from": "rom",
+    "to": "apu",
     "mode": "land"
   },
   {
-    "from": "ROM",
-    "to": "NAP",
+    "from": "rom",
+    "to": "nap",
     "mode": "both"
   },
   {
-    "from": "ROM",
-    "to": "TUS",
+    "from": "rom",
+    "to": "tus",
     "mode": "both"
   },
   {
-    "from": "ROM",
-    "to": "TYS",
+    "from": "rom",
+    "to": "tys",
     "mode": "sea"
   },
   {
-    "from": "ROM",
-    "to": "VEN",
+    "from": "rom",
+    "to": "ven",
     "mode": "land"
   },
   {
-    "from": "RUH",
-    "to": "BEL",
+    "from": "ruh",
+    "to": "bel",
     "mode": "land"
   },
   {
-    "from": "RUH",
-    "to": "BUR",
+    "from": "ruh",
+    "to": "bur",
     "mode": "land"
   },
   {
-    "from": "RUH",
-    "to": "HOL",
+    "from": "ruh",
+    "to": "hol",
     "mode": "land"
   },
   {
-    "from": "RUH",
-    "to": "KIE",
+    "from": "ruh",
+    "to": "kie",
     "mode": "land"
   },
   {
-    "from": "RUH",
-    "to": "MUN",
+    "from": "ruh",
+    "to": "mun",
     "mode": "land"
   },
   {
-    "from": "RUM",
-    "to": "BLA",
+    "from": "rum",
+    "to": "bla",
     "mode": "sea"
   },
   {
-    "from": "RUM",
-    "to": "BUD",
+    "from": "rum",
+    "to": "bud",
     "mode": "land"
   },
   {
-    "from": "RUM",
-    "to": "BUL",
+    "from": "rum",
+    "to": "bul",
     "mode": "land"
   },
   {
-    "from": "RUM",
-    "to": "BUL/EC",
+    "from": "rum",
+    "to": "bul_ec",
     "mode": "sea"
   },
   {
-    "from": "RUM",
-    "to": "GAL",
+    "from": "rum",
+    "to": "gal",
     "mode": "land"
   },
   {
-    "from": "RUM",
-    "to": "SER",
+    "from": "rum",
+    "to": "ser",
     "mode": "land"
   },
   {
-    "from": "RUM",
-    "to": "SEV",
+    "from": "rum",
+    "to": "sev",
     "mode": "both"
   },
   {
-    "from": "RUM",
-    "to": "UKR",
+    "from": "rum",
+    "to": "ukr",
     "mode": "land"
   },
   {
-    "from": "SER",
-    "to": "ALB",
+    "from": "ser",
+    "to": "alb",
     "mode": "land"
   },
   {
-    "from": "SER",
-    "to": "BUD",
+    "from": "ser",
+    "to": "bud",
     "mode": "land"
   },
   {
-    "from": "SER",
-    "to": "BUL",
+    "from": "ser",
+    "to": "bul",
     "mode": "land"
   },
   {
-    "from": "SER",
-    "to": "GRE",
+    "from": "ser",
+    "to": "gre",
     "mode": "land"
   },
   {
-    "from": "SER",
-    "to": "RUM",
+    "from": "ser",
+    "to": "rum",
     "mode": "land"
   },
   {
-    "from": "SER",
-    "to": "TRI",
+    "from": "ser",
+    "to": "tri",
     "mode": "land"
   },
   {
-    "from": "SEV",
-    "to": "ARM",
+    "from": "sev",
+    "to": "arm",
     "mode": "both"
   },
   {
-    "from": "SEV",
-    "to": "BLA",
+    "from": "sev",
+    "to": "bla",
     "mode": "sea"
   },
   {
-    "from": "SEV",
-    "to": "MOS",
+    "from": "sev",
+    "to": "mos",
     "mode": "land"
   },
   {
-    "from": "SEV",
-    "to": "RUM",
+    "from": "sev",
+    "to": "rum",
     "mode": "both"
   },
   {
-    "from": "SEV",
-    "to": "UKR",
+    "from": "sev",
+    "to": "ukr",
     "mode": "land"
   },
   {
-    "from": "SIL",
-    "to": "BER",
+    "from": "sil",
+    "to": "ber",
     "mode": "land"
   },
   {
-    "from": "SIL",
-    "to": "BOH",
+    "from": "sil",
+    "to": "boh",
     "mode": "land"
   },
   {
-    "from": "SIL",
-    "to": "GAL",
+    "from": "sil",
+    "to": "gal",
     "mode": "land"
   },
   {
-    "from": "SIL",
-    "to": "MUN",
+    "from": "sil",
+    "to": "mun",
     "mode": "land"
   },
   {
-    "from": "SIL",
-    "to": "PRU",
+    "from": "sil",
+    "to": "pru",
     "mode": "land"
   },
   {
-    "from": "SIL",
-    "to": "WAR",
+    "from": "sil",
+    "to": "war",
     "mode": "land"
   },
   {
-    "from": "SKA",
-    "to": "DEN",
+    "from": "ska",
+    "to": "den",
     "mode": "sea"
   },
   {
-    "from": "SKA",
-    "to": "NOR",
+    "from": "ska",
+    "to": "nor",
     "mode": "sea"
   },
   {
-    "from": "SKA",
-    "to": "NTH",
+    "from": "ska",
+    "to": "nth",
     "mode": "sea"
   },
   {
-    "from": "SKA",
-    "to": "SWE",
+    "from": "ska",
+    "to": "swe",
     "mode": "sea"
   },
   {
-    "from": "SMY",
-    "to": "AEG",
+    "from": "smy",
+    "to": "aeg",
     "mode": "sea"
   },
   {
-    "from": "SMY",
-    "to": "ANK",
+    "from": "smy",
+    "to": "ank",
     "mode": "land"
   },
   {
-    "from": "SMY",
-    "to": "ARM",
+    "from": "smy",
+    "to": "arm",
     "mode": "land"
   },
   {
-    "from": "SMY",
-    "to": "CON",
+    "from": "smy",
+    "to": "con",
     "mode": "both"
   },
   {
-    "from": "SMY",
-    "to": "EAS",
+    "from": "smy",
+    "to": "eas",
     "mode": "sea"
   },
   {
-    "from": "SMY",
-    "to": "SYR",
+    "from": "smy",
+    "to": "syr",
     "mode": "both"
   },
   {
-    "from": "SPA",
-    "to": "GAS",
+    "from": "spa",
+    "to": "gas",
     "mode": "land"
   },
   {
-    "from": "SPA",
-    "to": "MAR",
+    "from": "spa",
+    "to": "mar",
     "mode": "land"
   },
   {
-    "from": "SPA",
-    "to": "POR",
+    "from": "spa",
+    "to": "por",
     "mode": "land"
   },
   {
-    "from": "SPA/NC",
-    "to": "GAS",
+    "from": "spa_nc",
+    "to": "gas",
     "mode": "sea"
   },
   {
-    "from": "SPA/NC",
-    "to": "MAO",
+    "from": "spa_nc",
+    "to": "mao",
     "mode": "sea"
   },
   {
-    "from": "SPA/NC",
-    "to": "POR",
+    "from": "spa_nc",
+    "to": "por",
     "mode": "sea"
   },
   {
-    "from": "SPA/SC",
-    "to": "LYO",
+    "from": "spa_sc",
+    "to": "lyo",
     "mode": "sea"
   },
   {
-    "from": "SPA/SC",
-    "to": "MAO",
+    "from": "spa_sc",
+    "to": "mao",
     "mode": "sea"
   },
   {
-    "from": "SPA/SC",
-    "to": "MAR",
+    "from": "spa_sc",
+    "to": "mar",
     "mode": "sea"
   },
   {
-    "from": "SPA/SC",
-    "to": "POR",
+    "from": "spa_sc",
+    "to": "por",
     "mode": "sea"
   },
   {
-    "from": "SPA/SC",
-    "to": "WES",
+    "from": "spa_sc",
+    "to": "wes",
     "mode": "sea"
   },
   {
-    "from": "STP",
-    "to": "FIN",
+    "from": "stp",
+    "to": "fin",
     "mode": "land"
   },
   {
-    "from": "STP",
-    "to": "LVN",
+    "from": "stp",
+    "to": "lvn",
     "mode": "land"
   },
   {
-    "from": "STP",
-    "to": "MOS",
+    "from": "stp",
+    "to": "mos",
     "mode": "land"
   },
   {
-    "from": "STP",
-    "to": "NOR",
+    "from": "stp",
+    "to": "nor",
     "mode": "land"
   },
   {
-    "from": "STP/NC",
-    "to": "BAR",
+    "from": "stp_nc",
+    "to": "bar",
     "mode": "sea"
   },
   {
-    "from": "STP/NC",
-    "to": "NOR",
+    "from": "stp_nc",
+    "to": "nor",
     "mode": "sea"
   },
   {
-    "from": "STP/SC",
-    "to": "BOT",
+    "from": "stp_sc",
+    "to": "bot",
     "mode": "sea"
   },
   {
-    "from": "STP/SC",
-    "to": "FIN",
+    "from": "stp_sc",
+    "to": "fin",
     "mode": "sea"
   },
   {
-    "from": "STP/SC",
-    "to": "LVN",
+    "from": "stp_sc",
+    "to": "lvn",
     "mode": "sea"
   },
   {
-    "from": "SWE",
-    "to": "BAL",
+    "from": "swe",
+    "to": "bal",
     "mode": "sea"
   },
   {
-    "from": "SWE",
-    "to": "BOT",
+    "from": "swe",
+    "to": "bot",
     "mode": "sea"
   },
   {
-    "from": "SWE",
-    "to": "DEN",
+    "from": "swe",
+    "to": "den",
     "mode": "both"
   },
   {
-    "from": "SWE",
-    "to": "FIN",
+    "from": "swe",
+    "to": "fin",
     "mode": "both"
   },
   {
-    "from": "SWE",
-    "to": "NOR",
+    "from": "swe",
+    "to": "nor",
     "mode": "both"
   },
   {
-    "from": "SWE",
-    "to": "SKA",
+    "from": "swe",
+    "to": "ska",
     "mode": "sea"
   },
   {
-    "from": "SYR",
-    "to": "ARM",
+    "from": "syr",
+    "to": "arm",
     "mode": "land"
   },
   {
-    "from": "SYR",
-    "to": "EAS",
+    "from": "syr",
+    "to": "eas",
     "mode": "sea"
   },
   {
-    "from": "SYR",
-    "to": "SMY",
+    "from": "syr",
+    "to": "smy",
     "mode": "both"
   },
   {
-    "from": "TRI",
-    "to": "ADR",
+    "from": "tri",
+    "to": "adr",
     "mode": "sea"
   },
   {
-    "from": "TRI",
-    "to": "ALB",
+    "from": "tri",
+    "to": "alb",
     "mode": "both"
   },
   {
-    "from": "TRI",
-    "to": "BUD",
+    "from": "tri",
+    "to": "bud",
     "mode": "land"
   },
   {
-    "from": "TRI",
-    "to": "SER",
+    "from": "tri",
+    "to": "ser",
     "mode": "land"
   },
   {
-    "from": "TRI",
-    "to": "TYR",
+    "from": "tri",
+    "to": "tyr",
     "mode": "land"
   },
   {
-    "from": "TRI",
-    "to": "VEN",
+    "from": "tri",
+    "to": "ven",
     "mode": "both"
   },
   {
-    "from": "TRI",
-    "to": "VIE",
+    "from": "tri",
+    "to": "vie",
     "mode": "land"
   },
   {
-    "from": "TUN",
-    "to": "ION",
+    "from": "tun",
+    "to": "ion",
     "mode": "sea"
   },
   {
-    "from": "TUN",
-    "to": "NAF",
+    "from": "tun",
+    "to": "naf",
     "mode": "both"
   },
   {
-    "from": "TUN",
-    "to": "TYS",
+    "from": "tun",
+    "to": "tys",
     "mode": "sea"
   },
   {
-    "from": "TUN",
-    "to": "WES",
+    "from": "tun",
+    "to": "wes",
     "mode": "sea"
   },
   {
-    "from": "TUS",
-    "to": "LYO",
+    "from": "tus",
+    "to": "lyo",
     "mode": "sea"
   },
   {
-    "from": "TUS",
-    "to": "PIE",
+    "from": "tus",
+    "to": "pie",
     "mode": "both"
   },
   {
-    "from": "TUS",
-    "to": "ROM",
+    "from": "tus",
+    "to": "rom",
     "mode": "both"
   },
   {
-    "from": "TUS",
-    "to": "TYS",
+    "from": "tus",
+    "to": "tys",
     "mode": "sea"
   },
   {
-    "from": "TUS",
-    "to": "VEN",
+    "from": "tus",
+    "to": "ven",
     "mode": "land"
   },
   {
-    "from": "TYR",
-    "to": "BOH",
+    "from": "tyr",
+    "to": "boh",
     "mode": "land"
   },
   {
-    "from": "TYR",
-    "to": "MUN",
+    "from": "tyr",
+    "to": "mun",
     "mode": "land"
   },
   {
-    "from": "TYR",
-    "to": "PIE",
+    "from": "tyr",
+    "to": "pie",
     "mode": "land"
   },
   {
-    "from": "TYR",
-    "to": "TRI",
+    "from": "tyr",
+    "to": "tri",
     "mode": "land"
   },
   {
-    "from": "TYR",
-    "to": "VEN",
+    "from": "tyr",
+    "to": "ven",
     "mode": "land"
   },
   {
-    "from": "TYR",
-    "to": "VIE",
+    "from": "tyr",
+    "to": "vie",
     "mode": "land"
   },
   {
-    "from": "TYS",
-    "to": "ION",
+    "from": "tys",
+    "to": "ion",
     "mode": "sea"
   },
   {
-    "from": "TYS",
-    "to": "LYO",
+    "from": "tys",
+    "to": "lyo",
     "mode": "sea"
   },
   {
-    "from": "TYS",
-    "to": "NAP",
+    "from": "tys",
+    "to": "nap",
     "mode": "sea"
   },
   {
-    "from": "TYS",
-    "to": "ROM",
+    "from": "tys",
+    "to": "rom",
     "mode": "sea"
   },
   {
-    "from": "TYS",
-    "to": "TUN",
+    "from": "tys",
+    "to": "tun",
     "mode": "sea"
   },
   {
-    "from": "TYS",
-    "to": "TUS",
+    "from": "tys",
+    "to": "tus",
     "mode": "sea"
   },
   {
-    "from": "TYS",
-    "to": "WES",
+    "from": "tys",
+    "to": "wes",
     "mode": "sea"
   },
   {
-    "from": "UKR",
-    "to": "GAL",
+    "from": "ukr",
+    "to": "gal",
     "mode": "land"
   },
   {
-    "from": "UKR",
-    "to": "MOS",
+    "from": "ukr",
+    "to": "mos",
     "mode": "land"
   },
   {
-    "from": "UKR",
-    "to": "RUM",
+    "from": "ukr",
+    "to": "rum",
     "mode": "land"
   },
   {
-    "from": "UKR",
-    "to": "SEV",
+    "from": "ukr",
+    "to": "sev",
     "mode": "land"
   },
   {
-    "from": "UKR",
-    "to": "WAR",
+    "from": "ukr",
+    "to": "war",
     "mode": "land"
   },
   {
-    "from": "VEN",
-    "to": "ADR",
+    "from": "ven",
+    "to": "adr",
     "mode": "sea"
   },
   {
-    "from": "VEN",
-    "to": "APU",
+    "from": "ven",
+    "to": "apu",
     "mode": "both"
   },
   {
-    "from": "VEN",
-    "to": "PIE",
+    "from": "ven",
+    "to": "pie",
     "mode": "land"
   },
   {
-    "from": "VEN",
-    "to": "ROM",
+    "from": "ven",
+    "to": "rom",
     "mode": "land"
   },
   {
-    "from": "VEN",
-    "to": "TRI",
+    "from": "ven",
+    "to": "tri",
     "mode": "both"
   },
   {
-    "from": "VEN",
-    "to": "TUS",
+    "from": "ven",
+    "to": "tus",
     "mode": "land"
   },
   {
-    "from": "VEN",
-    "to": "TYR",
+    "from": "ven",
+    "to": "tyr",
     "mode": "land"
   },
   {
-    "from": "VIE",
-    "to": "BOH",
+    "from": "vie",
+    "to": "boh",
     "mode": "land"
   },
   {
-    "from": "VIE",
-    "to": "BUD",
+    "from": "vie",
+    "to": "bud",
     "mode": "land"
   },
   {
-    "from": "VIE",
-    "to": "GAL",
+    "from": "vie",
+    "to": "gal",
     "mode": "land"
   },
   {
-    "from": "VIE",
-    "to": "TRI",
+    "from": "vie",
+    "to": "tri",
     "mode": "land"
   },
   {
-    "from": "VIE",
-    "to": "TYR",
+    "from": "vie",
+    "to": "tyr",
     "mode": "land"
   },
   {
-    "from": "WAL",
-    "to": "ENG",
+    "from": "wal",
+    "to": "eng",
     "mode": "sea"
   },
   {
-    "from": "WAL",
-    "to": "IRI",
+    "from": "wal",
+    "to": "iri",
     "mode": "sea"
   },
   {
-    "from": "WAL",
-    "to": "LON",
+    "from": "wal",
+    "to": "lon",
     "mode": "both"
   },
   {
-    "from": "WAL",
-    "to": "LVP",
+    "from": "wal",
+    "to": "lvp",
     "mode": "both"
   },
   {
-    "from": "WAL",
-    "to": "YOR",
+    "from": "wal",
+    "to": "yor",
     "mode": "land"
   },
   {
-    "from": "WAR",
-    "to": "GAL",
+    "from": "war",
+    "to": "gal",
     "mode": "land"
   },
   {
-    "from": "WAR",
-    "to": "LVN",
+    "from": "war",
+    "to": "lvn",
     "mode": "land"
   },
   {
-    "from": "WAR",
-    "to": "MOS",
+    "from": "war",
+    "to": "mos",
     "mode": "land"
   },
   {
-    "from": "WAR",
-    "to": "PRU",
+    "from": "war",
+    "to": "pru",
     "mode": "land"
   },
   {
-    "from": "WAR",
-    "to": "SIL",
+    "from": "war",
+    "to": "sil",
     "mode": "land"
   },
   {
-    "from": "WAR",
-    "to": "UKR",
+    "from": "war",
+    "to": "ukr",
     "mode": "land"
   },
   {
-    "from": "WES",
-    "to": "LYO",
+    "from": "wes",
+    "to": "lyo",
     "mode": "sea"
   },
   {
-    "from": "WES",
-    "to": "MAO",
+    "from": "wes",
+    "to": "mao",
     "mode": "sea"
   },
   {
-    "from": "WES",
-    "to": "NAF",
+    "from": "wes",
+    "to": "naf",
     "mode": "sea"
   },
   {
-    "from": "WES",
-    "to": "SPA/SC",
+    "from": "wes",
+    "to": "spa_sc",
     "mode": "sea"
   },
   {
-    "from": "WES",
-    "to": "TUN",
+    "from": "wes",
+    "to": "tun",
     "mode": "sea"
   },
   {
-    "from": "WES",
-    "to": "TYS",
+    "from": "wes",
+    "to": "tys",
     "mode": "sea"
   },
   {
-    "from": "YOR",
-    "to": "EDI",
+    "from": "yor",
+    "to": "edi",
     "mode": "both"
   },
   {
-    "from": "YOR",
-    "to": "LON",
+    "from": "yor",
+    "to": "lon",
     "mode": "both"
   },
   {
-    "from": "YOR",
-    "to": "LVP",
+    "from": "yor",
+    "to": "lvp",
     "mode": "land"
   },
   {
-    "from": "YOR",
-    "to": "NTH",
+    "from": "yor",
+    "to": "nth",
     "mode": "sea"
   },
   {
-    "from": "YOR",
-    "to": "WAL",
+    "from": "yor",
+    "to": "wal",
     "mode": "land"
   }
 ]

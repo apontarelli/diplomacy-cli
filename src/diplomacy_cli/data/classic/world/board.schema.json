@@ -4,21 +4,21 @@
   "title": "Diplomacy territory file",
   "type": "object",
   "patternProperties": {
-    "^[A-Z]{3}(?:/[A-Z]{2})?$": {
+    "^[a-z]{3}(?:/[A-Z]{2})?$": {
       "type": "object",
       "properties": {
-        "name":            { "type": "string" },
+        "display_name":            { "type": "string" },
         "type":            { "enum": ["land", "sea"] },
         "is_supply_center":{ "type": "boolean" },
         "has_coast":       { "type": "boolean" },
         "coasts": {
           "type": "array",
-          "items": { "enum": ["NC", "SC", "EC", "WC"] }
+          "items": { "enum": ["nc", "sc", "ec", "wc"] }
         },
-        "home_country":    { "enum": ["ENG","FRA","GER","ITA","AUS","RUS","TUR"] },
+        "home_country":    { "enum": ["eng","fra","ger","ita","aus","rus","tur"] },
         "parent":          { "type": "string" }
       },
-      "required": ["name"],
+      "required": ["display_name"],
       "additionalProperties": false
     }
   },

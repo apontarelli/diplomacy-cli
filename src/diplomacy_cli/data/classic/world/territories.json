@@ -1,412 +1,412 @@
 {
-  "LON": {
-    "name": "London",
+  "lon": {
+    "display_name": "London",
     "type": "land",
-    "home_country": "ENG",
+    "home_country": "eng",
     "has_coast": true,
     "is_supply_center": true
   },
-  "WAL": {
-    "name": "Wales",
+  "wal": {
+    "display_name": "Wales",
     "type": "land",
     "has_coast": true
   },
-  "YOR": {
-    "name": "York",
+  "yor": {
+    "display_name": "York",
     "type": "land",
     "has_coast": true
   },
-  "CLY": {
-    "name": "Clyde",
+  "cly": {
+    "display_name": "Clyde",
     "type": "land",
     "has_coast": true
   },
-  "EDI": {
-    "name": "Edinburgh",
+  "edi": {
+    "display_name": "Edinburgh",
     "type": "land",
-    "home_country": "ENG",
+    "home_country": "eng",
     "has_coast": true,
     "is_supply_center": true
   },
-  "LVP": {
-    "name": "Liverpool",
+  "lvp": {
+    "display_name": "Liverpool",
     "type": "land",
-    "home_country": "ENG",
+    "home_country": "eng",
     "has_coast": true,
     "is_supply_center": true
   },
-  "SPA": {
-    "name": "Spain",
+  "spa": {
+    "display_name": "Spain",
     "type": "land",
     "coasts": [
-      "NC",
-      "SC"
+      "nc",
+      "sc"
     ],
     "has_coast": true,
     "is_supply_center": true
   },
-  "POR": {
-    "name": "Portugal",
+  "por": {
+    "display_name": "Portugal",
     "type": "land",
     "has_coast": true,
     "is_supply_center": true
   },
-  "MAR": {
-    "name": "Marseilles",
+  "mar": {
+    "display_name": "Marseilles",
     "type": "land",
-    "home_country": "FRA",
+    "home_country": "fra",
     "has_coast": true,
     "is_supply_center": true
   },
-  "GAS": {
-    "name": "Gascony",
+  "gas": {
+    "display_name": "Gascony",
     "type": "land",
     "has_coast": true
   },
-  "BRE": {
-    "name": "Brest",
+  "bre": {
+    "display_name": "Brest",
     "type": "land",
-    "home_country": "FRA",
+    "home_country": "fra",
     "has_coast": true,
     "is_supply_center": true
   },
-  "PAR": {
-    "name": "Paris",
+  "par": {
+    "display_name": "Paris",
     "type": "land",
-    "home_country": "FRA",
+    "home_country": "fra",
     "is_supply_center": true
   },
-  "BUR": {
-    "name": "Burgundy",
+  "bur": {
+    "display_name": "Burgundy",
     "type": "land"
   },
-  "PIC": {
-    "name": "Picardy",
+  "pic": {
+    "display_name": "Picardy",
     "type": "land",
     "has_coast": true
   },
-  "BEL": {
-    "name": "Belgium",
+  "bel": {
+    "display_name": "Belgium",
     "type": "land",
     "has_coast": true,
     "is_supply_center": true
   },
-  "HOL": {
-    "name": "Holland",
+  "hol": {
+    "display_name": "Holland",
     "type": "land",
     "has_coast": true,
     "is_supply_center": true
   },
-  "RUH": {
-    "name": "Ruhr",
+  "ruh": {
+    "display_name": "Ruhr",
     "type": "land"
   },
-  "KIE": {
-    "name": "Kiel",
+  "kie": {
+    "display_name": "Kiel",
     "type": "land",
-    "home_country": "GER",
+    "home_country": "ger",
     "has_coast": true,
     "is_supply_center": true
   },
-  "MUN": {
-    "name": "Munich",
+  "mun": {
+    "display_name": "Munich",
     "type": "land",
-    "home_country": "GER",
+    "home_country": "ger",
     "is_supply_center": true
   },
-  "BER": {
-    "name": "Berlin",
+  "ber": {
+    "display_name": "Berlin",
     "type": "land",
-    "home_country": "GER",
+    "home_country": "ger",
     "has_coast": true,
     "is_supply_center": true
   },
-  "DEN": {
-    "name": "Denmark",
-    "type": "land",
-    "has_coast": true,
-    "is_supply_center": true
-  },
-  "SWE": {
-    "name": "Sweden",
+  "den": {
+    "display_name": "Denmark",
     "type": "land",
     "has_coast": true,
     "is_supply_center": true
   },
-  "NOR": {
-    "name": "Norway",
+  "swe": {
+    "display_name": "Sweden",
     "type": "land",
     "has_coast": true,
     "is_supply_center": true
   },
-  "STP": {
-    "name": "St. Petersburg",
+  "nor": {
+    "display_name": "Norway",
+    "type": "land",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "stp": {
+    "display_name": "St. Petersburg",
     "type": "land",
     "coasts": [
-      "NC",
-      "SC"
+      "nc",
+      "sc"
     ],
-    "home_country": "RUS",
+    "home_country": "rus",
     "has_coast": true,
     "is_supply_center": true
   },
-  "FIN": {
-    "name": "Finland",
+  "fin": {
+    "display_name": "Finland",
     "type": "land",
     "has_coast": true
   },
-  "LVN": {
-    "name": "Livonia",
+  "lvn": {
+    "display_name": "Livonia",
     "type": "land",
     "has_coast": true
   },
-  "PRU": {
-    "name": "Prussia",
+  "pru": {
+    "display_name": "Prussia",
     "type": "land",
     "has_coast": true
   },
-  "UKR": {
-    "name": "Ukraine",
+  "ukr": {
+    "display_name": "Ukraine",
     "type": "land"
   },
-  "MOS": {
-    "name": "Moscow",
+  "mos": {
+    "display_name": "Moscow",
     "type": "land",
-    "home_country": "RUS",
+    "home_country": "rus",
     "is_supply_center": true
   },
-  "SEV": {
-    "name": "Sevastopol",
+  "sev": {
+    "display_name": "Sevastopol",
     "type": "land",
-    "home_country": "RUS",
+    "home_country": "rus",
     "has_coast": true,
     "is_supply_center": true
   },
-  "WAR": {
-    "name": "Warsaw",
+  "war": {
+    "display_name": "Warsaw",
     "type": "land",
-    "home_country": "RUS",
+    "home_country": "rus",
     "is_supply_center": true
   },
-  "GAL": {
-    "name": "Galicia",
+  "gal": {
+    "display_name": "Galicia",
     "type": "land"
   },
-  "BOH": {
-    "name": "Bohemia",
+  "boh": {
+    "display_name": "Bohemia",
     "type": "land"
   },
-  "VIE": {
-    "name": "Vienna",
+  "vie": {
+    "display_name": "Vienna",
     "type": "land",
-    "home_country": "AUS",
+    "home_country": "aus",
     "is_supply_center": true
   },
-  "BUD": {
-    "name": "Budapest",
+  "bud": {
+    "display_name": "Budapest",
     "type": "land",
-    "home_country": "AUS",
+    "home_country": "aus",
     "is_supply_center": true
   },
-  "TRI": {
-    "name": "Trieste",
+  "tri": {
+    "display_name": "Trieste",
     "type": "land",
-    "home_country": "AUS",
+    "home_country": "aus",
     "has_coast": true,
     "is_supply_center": true
   },
-  "TYR": {
-    "name": "Tyrolia",
+  "tyr": {
+    "display_name": "Tyrolia",
     "type": "land"
   },
-  "VEN": {
-    "name": "Venice",
+  "ven": {
+    "display_name": "Venice",
     "type": "land",
-    "home_country": "ITA",
+    "home_country": "ita",
     "has_coast": true,
     "is_supply_center": true
   },
-  "PIE": {
-    "name": "Piedmont",
+  "pie": {
+    "display_name": "Piedmont",
     "type": "land",
     "has_coast": true
   },
-  "ROM": {
-    "name": "Rome",
+  "rom": {
+    "display_name": "Rome",
     "type": "land",
-    "home_country": "ITA",
+    "home_country": "ita",
     "has_coast": true,
     "is_supply_center": true
   },
-  "NAP": {
-    "name": "Naples",
+  "nap": {
+    "display_name": "Naples",
     "type": "land",
-    "home_country": "ITA",
+    "home_country": "ita",
     "has_coast": true,
     "is_supply_center": true
   },
-  "APU": {
-    "name": "Apulia",
+  "apu": {
+    "display_name": "Apulia",
     "type": "land",
     "has_coast": true
   },
-  "TUS": {
-    "name": "Tuscany",
+  "tus": {
+    "display_name": "Tuscany",
     "type": "land",
     "has_coast": true
   },
-  "BUL": {
-    "name": "Bulgaria",
+  "bul": {
+    "display_name": "Bulgaria",
     "type": "land",
     "coasts": [
-      "EC",
-      "SC"
+      "ec",
+      "sc"
     ],
     "has_coast": true,
     "is_supply_center": true
   },
-  "GRE": {
-    "name": "Greece",
+  "gre": {
+    "display_name": "Greece",
     "type": "land",
     "has_coast": true,
     "is_supply_center": true
   },
-  "SER": {
-    "name": "Serbia",
+  "ser": {
+    "display_name": "Serbia",
     "type": "land",
     "is_supply_center": true
   },
-  "ALB": {
-    "name": "Albania",
+  "alb": {
+    "display_name": "Albania",
     "type": "land",
     "has_coast": true
   },
-  "CON": {
-    "name": "Constantinople",
+  "con": {
+    "display_name": "Constantinople",
     "type": "land",
-    "home_country": "TUR",
+    "home_country": "tur",
     "has_coast": true,
     "is_supply_center": true
   },
-  "ANK": {
-    "name": "Ankara",
+  "ank": {
+    "display_name": "Ankara",
     "type": "land",
-    "home_country": "TUR",
+    "home_country": "tur",
     "has_coast": true,
     "is_supply_center": true
   },
-  "SMY": {
-    "name": "Smyrna",
+  "smy": {
+    "display_name": "Smyrna",
     "type": "land",
-    "home_country": "TUR",
+    "home_country": "tur",
     "has_coast": true,
     "is_supply_center": true
   },
-  "ARM": {
-    "name": "Armenia",
+  "arm": {
+    "display_name": "Armenia",
     "type": "land",
     "has_coast": true
   },
-  "SYR": {
-    "name": "Syria",
+  "syr": {
+    "display_name": "Syria",
     "type": "land",
     "has_coast": true
   },
-  "NAO": {
-    "name": "North Atlantic Ocean",
+  "nao": {
+    "display_name": "North Atlantic Ocean",
     "type": "sea"
   },
-  "NWG": {
-    "name": "Norwegian Sea",
+  "nwg": {
+    "display_name": "Norwegian Sea",
     "type": "sea"
   },
-  "BAR": {
-    "name": "Barents Sea",
+  "bar": {
+    "display_name": "Barents Sea",
     "type": "sea"
   },
-  "SKA": {
-    "name": "Skagerrak",
+  "ska": {
+    "display_name": "Skagerrak",
     "type": "sea"
   },
-  "HEL": {
-    "name": "Heligoland Bight",
+  "hel": {
+    "display_name": "Heligoland Bight",
     "type": "sea"
   },
-  "NTH": {
-    "name": "North Sea",
+  "nth": {
+    "display_name": "North Sea",
     "type": "sea"
   },
-  "ENG": {
-    "name": "English Channel",
+  "eng": {
+    "display_name": "English Channel",
     "type": "sea"
   },
-  "IRI": {
-    "name": "Irish Sea",
+  "iri": {
+    "display_name": "Irish Sea",
     "type": "sea"
   },
-  "MAO": {
-    "name": "Mid-Atlantic Ocean",
+  "mao": {
+    "display_name": "Mid-Atlantic Ocean",
     "type": "sea"
   },
-  "BAL": {
-    "name": "Baltic Sea",
+  "bal": {
+    "display_name": "Baltic Sea",
     "type": "sea"
   },
-  "BOT": {
-    "name": "Gulf of Bothnia",
+  "bot": {
+    "display_name": "Gulf of Bothnia",
     "type": "sea"
   },
-  "ADR": {
-    "name": "Adriatic Sea",
+  "adr": {
+    "display_name": "Adriatic Sea",
     "type": "sea"
   },
-  "AEG": {
-    "name": "Aegean Sea",
+  "aeg": {
+    "display_name": "Aegean Sea",
     "type": "sea"
   },
-  "EAS": {
-    "name": "Eastern Mediterranean",
+  "eas": {
+    "display_name": "Eastern Mediterranean",
     "type": "sea"
   },
-  "ION": {
-    "name": "Ionian Sea",
+  "ion": {
+    "display_name": "Ionian Sea",
     "type": "sea"
   },
-  "TYS": {
-    "name": "Tyrrhenian Sea",
+  "tys": {
+    "display_name": "Tyrrhenian Sea",
     "type": "sea"
   },
-  "WES": {
-    "name": "Western Mediterranean",
+  "wes": {
+    "display_name": "Western Mediterranean",
     "type": "sea"
   },
-  "BLA": {
-    "name": "Black Sea",
+  "bla": {
+    "display_name": "Black Sea",
     "type": "sea"
   },
-  "SIL": {
-    "name": "Silesia",
+  "sil": {
+    "display_name": "Silesia",
     "type": "land"
   },
-  "TUN": {
-    "name": "Tunisia",
+  "tun": {
+    "display_name": "Tunisia",
     "type": "land",
     "has_coast": true,
     "is_supply_center": true
   },
-  "NAF": {
-    "name": "North Africa",
+  "naf": {
+    "display_name": "North Africa",
     "type": "land",
     "has_coast": true
   },
-  "RUM": {
-    "name": "Rumania",
+  "rum": {
+    "display_name": "Rumania",
     "type": "land",
     "has_coast": true,
     "is_supply_center": true
   },
-  "LYO": {
-    "name": "Gulf of Lyon",
+  "lyo": {
+    "display_name": "Gulf of Lyon",
     "type": "sea"
   }
 }

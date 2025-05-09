@@ -1,9 +1,9 @@
 [
-  { "id": "ENG", "name": "England" },
-  { "id": "AUS", "name": "Austria" },
-  { "id": "GER", "name": "Germany" },
-  { "id": "FRA", "name": "France" },
-  { "id": "ITA", "name": "Italy" },
-  { "id": "TUR", "name": "Turkey" },
-  { "id": "RUS", "name": "Russia" }
+  { "id": "eng", "display_name": "England" },
+  { "id": "aus", "display_name": "Austria" },
+  { "id": "ger", "display_name": "Germany" },
+  { "id": "fra", "display_name": "France" },
+  { "id": "ita", "display_name": "Italy" },
+  { "id": "tur", "display_name": "Turkey" },
+  { "id": "rus", "display_name": "Russia" }
 ]
