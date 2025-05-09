@@ -27,14 +27,14 @@ from diplomacy_cli.core.logic.validator.syntax import (
         ("  BUR  S   PAR - PIC! ", "bur s par - pic"),
         ("Par-Pic", "par - pic"),
         (" MUN    hold", "mun hold"),
-        ("stp/sc hold", "stp/sc hold"),
+        ("stp/sc hold", "stp_sc hold"),
         ("bal c pru – den", "bal c pru - den"),
         ("bal c pru — den", "bal c pru - den"),
         ("bal c pru ‒ den", "bal c pru - den"),
         ("par.pic", "parpic"),
         ("bur,s par", "burs par"),
         ("  Par...   -   Pic??", "par - pic"),
-        ("stp / sc hold", "stp/sc hold"),
+        ("stp / sc hold", "stp_sc hold"),
     ],
 )
 def test_normalize_various_cases(raw, expected):
