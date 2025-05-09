@@ -37,9 +37,10 @@ class LoadedState:
 class Rules:
     territory_ids: set[str]
     supply_centers: set[str]
-    parent_territory: dict[str, str]
     edges: set[tuple[str, str, str]]
     home_centers: dict[str, set[str]]
+    parent_to_coast: dict[str, str]
+    coast_to_parent: dict[str, str]
 
 
 @dataclass(frozen=True)
@@ -79,3 +80,25 @@ class ValidationResult:
     valid: bool
     errors: list[str]
     order: Order | None = None
+
+
+@dataclass(frozen=True)
+class ResolutionResult:
+    player_id: str
+    order: Order
+    outcome: str
+
+
+@dataclass(frozen=True)
+class Mutation:
+    type: str
+    payload: dict[str, Any]
+
+
+@dataclass(frozen=True)
+class TurnReport:
+    invalid_syntax: dict[str, list[SyntaxResult]]
+    invalid_semantic: dict[str, list[SemanticResult]]
+    resolution: list[ResolutionResult]
+    mutations: list[Mutation]
+    new_state: LoadedState

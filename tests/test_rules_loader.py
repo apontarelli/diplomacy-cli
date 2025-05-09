@@ -9,9 +9,15 @@ def test_load_rules_smoke():
 def test_load_rules_structure():
     rules = load_rules("classic")
     assert isinstance(rules.territory_ids, set)
+    assert len(rules.territory_ids) > 0
     assert isinstance(rules.supply_centers, set)
-    assert isinstance(rules.parent_territory, dict)
+    assert len(rules.supply_centers) > 0
+    assert isinstance(rules.parent_to_coast, dict)
+    assert len(rules.parent_to_coast) > 0
+    assert isinstance(rules.coast_to_parent, dict)
+    assert len(rules.coast_to_parent) > 0
     assert isinstance(rules.edges, set)
+    assert len(rules.edges) > 0
     assert isinstance(rules.home_centers, dict)
 
 

@@ -13,18 +13,26 @@ def load_rules(variant):
 
     territory_ids = set()
     supply_centers = set()
-    parent_territory = {}
     edges = set()
     home_centers = {}
+    parent_to_coast = {}
+    coast_to_parent = {}
 
     for tid, data in territories.items():
         territory_ids.add(tid)
         if data.get("is_supply_center"):
             supply_centers.add(tid)
-        if data.get("parent"):
-            parent_territory[tid] = data["parent"]
-        if data.get("home_center"):
-            home_centers.setdefault(data["home_center"], set()).add(data)
+        coasts = data.get("coasts")
+        if coasts:
+            for coast in coasts:
+                coast_id = f"{tid}_{coast}"
+                territory_ids.add(coast_id)
+                parent_to_coast.setdefault(tid, {})[coast] = coast_id
+                coast_to_parent[coast_id] = tid
+
+        home_country = data.get("home_country")
+        if home_country:
+            home_centers.setdefault(home_country, set()).add(tid)
 
     for edge in edge_data:
         a, b, mode = edge["from"], edge["to"], edge["mode"]
@@ -34,7 +42,8 @@ def load_rules(variant):
     return Rules(
         territory_ids=territory_ids,
         supply_centers=supply_centers,
-        parent_territory=parent_territory,
         edges=edges,
         home_centers=home_centers,
+        parent_to_coast=parent_to_coast,
+        coast_to_parent=coast_to_parent,
     )
