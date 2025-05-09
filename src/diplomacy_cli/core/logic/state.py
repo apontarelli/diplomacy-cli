@@ -30,7 +30,8 @@ def start_game(
     )
 
     players = {
-        p["nation_id"]: {"status": p["status"]} for p in starting_players
+        p["nation_id"]: {"nation_id": p["nation_id"], "status": p["status"]}
+        for p in starting_players
     }
     game_meta = {
         "game_id": game_id,
@@ -169,12 +170,15 @@ def build_unit(
 def set_territory_owner(
     territory_state: dict[str, dict[str, str]], territory_id: str, owner_id: str
 ) -> dict[str, dict[str, str]]:
-    territory_state[territory_id] = {"owner_id": owner_id}
+    territory_state[territory_id] = {
+        "territory_id": territory_id,
+        "owner_id": owner_id,
+    }
     return territory_state
 
 
 def eliminate_player(
     players: dict[str, dict[str, str]], player_id: str
 ) -> dict[str, Any]:
-    players[player_id] = {"status": "eliminated"}
+    players[player_id] = {"nation_id": player_id, "status": "eliminated"}
     return players
