@@ -37,10 +37,15 @@ class LoadedState:
 class Rules:
     territory_ids: set[str]
     supply_centers: set[str]
-    edges: set[tuple[str, str, str]]
     home_centers: dict[str, set[str]]
-    parent_to_coast: dict[str, str]
+    display_name: dict[str, str]
+    territory_type: dict[str, str]
+    has_coast: set[str]
+    parent_coasts: dict[str, list[str]]
+    parent_to_coast: dict[str, dict[str, str]]
     coast_to_parent: dict[str, str]
+    edges: set[tuple[str, str, str]]
+    adjacency_map: dict[str, list[tuple[str, str]]]
 
 
 @dataclass(frozen=True)

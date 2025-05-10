@@ -326,7 +326,7 @@
   },
   {
     "from": "bot",
-    "to": "stp/sc",
+    "to": "stp_sc",
     "mode": "sea"
   },
   {
