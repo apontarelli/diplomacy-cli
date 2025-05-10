@@ -156,7 +156,7 @@ class TestState(unittest.TestCase):
                 "id": "fra_army_1",
                 "owner_id": "fra",
                 "unit_type": "army",
-                "territory_id": "bre",
+                "territory_id": "gas",
             },
             "fra_army_2": {
                 "id": "fra_army_2",
@@ -177,7 +177,7 @@ class TestState(unittest.TestCase):
                 "id": "fra_army_1",
                 "owner_id": "fra",
                 "unit_type": "army",
-                "territory_id": "bre",
+                "territory_id": "gas",
             },
             "fra_army_2": {
                 "id": "fra_army_2",
@@ -206,7 +206,7 @@ class TestState(unittest.TestCase):
         }
 
         expected_t2u = {
-            "bre": "fra_army_1",
+            "gas": "fra_army_1",
             "spa": "fra_army_2",
             "mao": "fra_fleet_1",
             "bre": "fra_fleet_2",
