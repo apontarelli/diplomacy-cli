@@ -37,7 +37,7 @@ def load_rules(variant) -> Rules:
             display_name[coast_id] = f"{data['display_name']} ({coast.upper()})"
             parent_coasts[tid].append(coast_id)
 
-            parent_to_coast.setdefault(tid, {})[coast] = coast_id
+            parent_to_coast.setdefault(tid, []).append(coast_id)
             coast_to_parent[coast_id] = tid
 
     edges = set()

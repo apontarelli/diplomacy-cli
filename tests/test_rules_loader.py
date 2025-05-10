@@ -59,9 +59,11 @@ def test_load_rules_structure():
             assert mode in ("land", "sea", "both")
 
     # Coast lookup round-trips
-    for parent, mapping in rules.parent_to_coast.items():
-        for coast_label, coast_id in mapping.items():
-            assert isinstance(coast_label, str)
+    for parent, coast_ids in rules.parent_to_coast.items():
+        assert isinstance(parent, str)
+        assert isinstance(coast_ids, list)
+        assert coast_ids, f"{parent} should have at least one coast"
+        for coast_id in coast_ids:
             assert isinstance(coast_id, str)
             assert rules.coast_to_parent[coast_id] == parent
 
