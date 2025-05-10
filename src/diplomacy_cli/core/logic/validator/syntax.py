@@ -1,6 +1,7 @@
 import re
 
 from ..schema import Order, OrderType, SyntaxResult
+from ..turn_code import Phase
 
 
 class ParseError(Exception):
@@ -128,35 +129,60 @@ def parse_disband(tokens: list[str]):
     )
 
 
-_PARSERS = [
+def parse_retreat(tokens: list[str]) -> Order:
+    origin = take_province(tokens)
+    expect(tokens, "-")
+    destination = take_province(tokens)
+    ensure_no_tokens(tokens)
+    return Order(
+        origin=origin,
+        destination=destination,
+        order_type=OrderType.RETREAT,
+    )
+
+
+MOVEMENT_PARSERS = [
     parse_support_move,
     parse_convoy,
     parse_support_hold,
     parse_move,
     parse_hold,
-    parse_build,
-    parse_disband,
 ]
 
+RETREAT_PARSERS = [parse_retreat]
 
-def dispatch_parsers(tokens: list[str]):
-    for parser in _PARSERS:
+ADJUSTMENT_PARSERS = [parse_build, parse_disband]
+
+
+def dispatch_parsers(tokens: list[str], phase: Phase):
+    if phase == Phase.MOVEMENT:
+        candidates = MOVEMENT_PARSERS
+    elif phase == Phase.RETREAT:
+        candidates = RETREAT_PARSERS
+    elif phase == Phase.ADJUSTMENT:
+        candidates = ADJUSTMENT_PARSERS
+    else:
+        raise ParseError(f"Unknown phase: {phase}")
+
+    for parser in candidates:
         try:
             order = parser(tokens.copy())
             return order
         except ParseError:
             continue
-    raise ParseError(f"Unrecognized order: {' '.join(tokens)}")
+    raise ParseError(
+        f"Unrecognized order for {phase.name} phase: {' '.join(tokens)}"
+    )
 
 
-def parse_syntax(raw: str) -> SyntaxResult:
+def parse_syntax(raw: str, phase: Phase) -> SyntaxResult:
     normalized = normalize_order_string(raw)
     errors: list[str] = []
     order = None
 
     try:
         tokens = normalized.split(" ")
-        order = dispatch_parsers(tokens)
+        order = dispatch_parsers(tokens, phase)
         valid = True
     except ParseError as pe:
         errors.append(str(pe))

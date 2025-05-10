@@ -26,6 +26,7 @@ from diplomacy_cli.core.logic.validator.semantic import (
     _check_territory_exists,
     _check_unit_exists,
     _check_unit_ownership,
+    _check_retreat,
     _has_sea_path,
     validate_semantic,
 )
@@ -86,6 +87,7 @@ def loaded_state():
             "game_id": "test_game",
             "variant": "classic",
             "turn_code": "S1901M",
+            "dislodged": set(),
         },
         players={
             "england": {"status": "active"},
@@ -100,6 +102,7 @@ def loaded_state():
         game=game,
         territory_to_unit=build_territory_to_unit(game.units),
         counters=build_counters(game.units),
+        dislodged=set(),
     )
 
 
@@ -420,6 +423,39 @@ def test_check_invalid_hold(loaded_state, classic_rules):
     )
     with pytest.raises(SemanticError):
         _check_hold("eng", order, loaded_state, classic_rules)
+
+
+def test_check_retreat(loaded_state, classic_rules):
+    loaded_state.dislodged.add("lon")
+    player_id = "eng"
+    order = Order(origin="lon", order_type=OrderType.RETREAT, destination="wal")
+    _check_retreat(player_id, order, loaded_state, classic_rules)
+
+
+def test_check_retreat_no_destination(loaded_state, classic_rules):
+    loaded_state.dislodged.add("lon")
+    player_id = "eng"
+    order = Order(origin="lon", order_type=OrderType.RETREAT)
+    with pytest.raises(
+        SemanticError, match=f"Retreat must specify a destination"
+    ):
+        _check_retreat(player_id, order, loaded_state, classic_rules)
+
+
+def test_check_retreat_not_dislodged(loaded_state, classic_rules):
+    loaded_state.dislodged.add("lon")
+    player_id = "eng"
+    order = Order(origin="eng", order_type=OrderType.RETREAT, destination="iri")
+    with pytest.raises(SemanticError, match=f"No dislodged unit at eng"):
+        _check_retreat(player_id, order, loaded_state, classic_rules)
+
+
+def test_check_retreat_occupied(loaded_state, classic_rules):
+    loaded_state.dislodged.add("eng")
+    player_id = "eng"
+    order = Order(origin="eng", order_type=OrderType.RETREAT, destination="bre")
+    with pytest.raises(SemanticError, match=f"bre is occupied"):
+        _check_retreat(player_id, order, loaded_state, classic_rules)
 
 
 def test_validate_semantic(loaded_state, classic_rules):

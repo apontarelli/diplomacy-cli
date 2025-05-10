@@ -231,6 +231,26 @@ def _check_disband(
     )
 
 
+def _check_retreat(
+    player_id: str, order: Order, state: LoadedState, rules: Rules
+) -> None:
+    if order.destination is None:
+        raise SemanticError("Retreat must specify a destination")
+
+    if order.origin not in state.dislodged:
+        raise SemanticError(f"No dislodged unit at {order.origin}")
+    _check_territory_exists(order.origin, rules.territory_ids)
+    _check_unit_exists(order.origin, state.territory_to_unit)
+    _check_unit_ownership(
+        player_id, order.origin, state.game.units, state.territory_to_unit
+    )
+    _check_territory_exists(order.destination, rules.territory_ids)
+    _check_adjacency(order.origin, order.destination, state, rules)
+
+    if order.destination in state.territory_to_unit:
+        raise SemanticError(f"{order.destination} is occupied")
+
+
 def validate_semantic(
     player_id: str, syntax: SyntaxResult, rules: Rules, state: LoadedState
 ):
@@ -249,6 +269,7 @@ def validate_semantic(
         OrderType.BUILD: _check_build,
         OrderType.DISBAND: _check_disband,
         OrderType.HOLD: _check_hold,
+        OrderType.RETREAT: _check_retreat,
     }
 
     checker = checker_map.get(order.order_type)

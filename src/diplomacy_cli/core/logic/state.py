@@ -95,9 +95,13 @@ def load_state(
 
     territory_to_unit: TerritoryToUnit = build_territory_to_unit(gs.units)
     counters: Counters = build_counters(gs.units)
+    dislodged: set[str] = gs.game_meta.get("dislodged", [])
 
     return LoadedState(
-        game=gs, territory_to_unit=territory_to_unit, counters=counters
+        game=gs,
+        territory_to_unit=territory_to_unit,
+        counters=counters,
+        dislodged=dislodged,
     )
 
 

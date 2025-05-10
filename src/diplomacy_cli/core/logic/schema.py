@@ -11,6 +11,7 @@ class OrderType(str, Enum):
     CONVOY = "convoy"
     BUILD = "build"
     DISBAND = "disband"
+    RETREAT = "retreat"
 
 
 TerritoryToUnit = dict[str, str]
@@ -31,6 +32,7 @@ class LoadedState:
     game: GameState
     territory_to_unit: TerritoryToUnit
     counters: Counters
+    dislodged: set[str]
 
 
 @dataclass(frozen=True)

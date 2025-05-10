@@ -2,6 +2,7 @@ import pytest
 
 from diplomacy_cli.core.logic.validator.syntax import (
     Order,
+    Phase,
     OrderType,
     ParseError,
     dispatch_parsers,
@@ -192,7 +193,7 @@ def test_parse_disband_success_and_errors():
 
 def test_dispatch_parsers_success():
     tokens = ["mar", "-", "ber"]
-    order = dispatch_parsers(tokens)
+    order = dispatch_parsers(tokens, Phase.MOVEMENT)
     assert order.order_type == OrderType.MOVE
     assert order.origin == "mar"
     assert order.destination == "ber"
@@ -200,13 +201,15 @@ def test_dispatch_parsers_success():
 
 def test_dispatch_parsers_failure():
     with pytest.raises(ParseError) as excinfo:
-        dispatch_parsers(["foo", "bar"])
-    assert "Unrecognized order: foo bar" in str(excinfo.value)
+        dispatch_parsers(["foo", "bar"], Phase.MOVEMENT)
+    assert "Unrecognized order for MOVEMENT phase: foo bar" in str(
+        excinfo.value
+    )
 
 
 def test_parse_syntax_valid_move():
     raw = "mar - ber"
-    result = parse_syntax(raw)
+    result = parse_syntax(raw, Phase.MOVEMENT)
     assert result.raw == raw
     assert result.valid is True
     assert result.errors == []
@@ -216,9 +219,12 @@ def test_parse_syntax_valid_move():
 
 def test_parse_syntax_invalid():
     raw = "invalid order"
-    result = parse_syntax(raw)
+    result = parse_syntax(raw, Phase.MOVEMENT)
     assert result.raw == raw
     assert result.valid is False
     assert result.order is None
     assert len(result.errors) == 1
-    assert "Unrecognized order: invalid order" in result.errors[0]
+    assert (
+        "Unrecognized order for MOVEMENT phase: invalid order"
+        in result.errors[0]
+    )
