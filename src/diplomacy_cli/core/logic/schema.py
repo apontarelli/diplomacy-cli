@@ -120,6 +120,27 @@ class ValidationResult:
     order: Order | None = None
 
 
+@dataclass
+class ResolutionSoA:
+    unit_id: list[str]
+    owner_id: list[str]
+    unit_type: list[UnitType]
+    orig_territory: list[str]
+    order_type: list[OrderType]
+    move_destination: list[str | None]
+    support_origin: list[str | None]
+    support_destination: list[str | None]
+    convoy_origin: list[str | None]
+    convoy_destination: list[str | None]
+    new_territory: list[str]
+    strength: list[int]
+    dislodged: list[bool]
+    support_cut: list[bool]
+    has_valid_convoy: list[bool]
+    is_resolved: list[bool]
+    outcome: list[OutcomeType | None]
+
+
 @dataclass(frozen=True)
 class ResolutionResult:
     player_id: str
