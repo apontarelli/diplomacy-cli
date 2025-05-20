@@ -3,6 +3,11 @@ from enum import Enum
 from typing import Any
 
 
+class UnitType(str, Enum):
+    ARMY = "army"
+    FLEET = "fleet"
+
+
 class OrderType(str, Enum):
     HOLD = "hold"
     MOVE = "move"
@@ -12,6 +17,32 @@ class OrderType(str, Enum):
     BUILD = "build"
     DISBAND = "disband"
     RETREAT = "retreat"
+
+
+class OutcomeType(str, Enum):
+    MOVE_SUCCESS = "move_success"
+    MOVE_BOUNCED = "move_bounced"
+    SUPPORT_CUT = "support_cut"
+    INVALID_SUPPORT = "invalid_support"
+    HOLD_SUCCESS = "hold_success"
+    CONVOY_SUCCESS = "convoy_success"
+    INVALID_CONVOY = "invalid_convoy"
+    DISLODGED = "dislodged"
+    RETREAT_SUCCESS = "retreat_success"
+    RETREAT_FAILED = "retreat_failed"
+    BUILD_SUCCESS = "build_success"
+    BUILD_ILLEGAL_LOCATION = "build_illegal_location"
+    BUILD_NO_CENTER = "build_no_center"
+    DISBAND_SUCCESS = "disband_success"
+    DISBAND_FAILED = "disband_failed"
+
+
+class ChangeType(str, Enum):
+    MOVE = "move"
+    BUILD = "build"
+    DISBAND = "disband"
+    SET_OWNER = "set_owner"
+    ELIMINATE = "eliminate"
 
 
 TerritoryToUnit = dict[str, str]
