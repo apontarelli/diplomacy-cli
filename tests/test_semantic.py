@@ -21,12 +21,12 @@ from diplomacy_cli.core.logic.validator.semantic import (
     _check_disband,
     _check_hold,
     _check_move,
+    _check_retreat,
     _check_support_hold,
     _check_support_move,
     _check_territory_exists,
     _check_unit_exists,
     _check_unit_ownership,
-    _check_retreat,
     _has_sea_path,
     validate_semantic,
 )
@@ -437,7 +437,7 @@ def test_check_retreat_no_destination(loaded_state, classic_rules):
     player_id = "eng"
     order = Order(origin="lon", order_type=OrderType.RETREAT)
     with pytest.raises(
-        SemanticError, match=f"Retreat must specify a destination"
+        SemanticError, match="Retreat must specify a destination"
     ):
         _check_retreat(player_id, order, loaded_state, classic_rules)
 
@@ -446,7 +446,7 @@ def test_check_retreat_not_dislodged(loaded_state, classic_rules):
     loaded_state.dislodged.add("lon")
     player_id = "eng"
     order = Order(origin="eng", order_type=OrderType.RETREAT, destination="iri")
-    with pytest.raises(SemanticError, match=f"No dislodged unit at eng"):
+    with pytest.raises(SemanticError, match="No dislodged unit at eng"):
         _check_retreat(player_id, order, loaded_state, classic_rules)
 
 
@@ -454,7 +454,7 @@ def test_check_retreat_occupied(loaded_state, classic_rules):
     loaded_state.dislodged.add("eng")
     player_id = "eng"
     order = Order(origin="eng", order_type=OrderType.RETREAT, destination="bre")
-    with pytest.raises(SemanticError, match=f"bre is occupied"):
+    with pytest.raises(SemanticError, match="bre is occupied"):
         _check_retreat(player_id, order, loaded_state, classic_rules)
 
 

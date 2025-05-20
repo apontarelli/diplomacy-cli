@@ -2,9 +2,9 @@ import pytest
 
 from diplomacy_cli.core.logic.validator.syntax import (
     Order,
-    Phase,
     OrderType,
     ParseError,
+    Phase,
     dispatch_parsers,
     ensure_no_tokens,
     expect,
