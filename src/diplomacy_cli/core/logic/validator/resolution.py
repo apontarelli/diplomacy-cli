@@ -7,6 +7,7 @@ from diplomacy_cli.core.logic.schema import (
     OrderType,
     ResolutionSoA,
     SemanticResult,
+    OutcomeType,
 )
 
 
@@ -156,3 +157,60 @@ def move_phase_soa(
     )
 
     return soa, duplicate_orders
+
+
+def validate_convoy(
+    soa: ResolutionSoA, maps: ResolutionMaps, idx: int
+) -> OutcomeType | None:
+    orig = soa.convoy_origin[idx]
+    if orig is None:
+        return OutcomeType.INVALID_CONVOY
+    move_idx = maps.move_by_origin.get(orig)
+    if (
+        move_idx is None
+        or soa.move_destination[move_idx] != soa.convoy_destination[idx]
+    ):
+        return OutcomeType.INVALID_CONVOY
+    return None
+
+
+def validate_support_move(
+    soa: ResolutionSoA, maps: ResolutionMaps, idx: int
+) -> OutcomeType | None:
+    orig = soa.support_origin[idx]
+    if orig is None:
+        return OutcomeType.INVALID_SUPPORT
+    move_idx = maps.move_by_origin.get(orig)
+    if (
+        move_idx is None
+        or soa.move_destination[move_idx] != soa.support_destination[idx]
+    ):
+        return OutcomeType.INVALID_SUPPORT
+    return None
+
+
+def validate_support_hold(
+    soa: ResolutionSoA, maps: ResolutionMaps, idx: int
+) -> OutcomeType | None:
+    orig = soa.support_origin[idx]
+    if orig is None:
+        return OutcomeType.INVALID_SUPPORT
+    hold_idx = maps.hold_by_origin.get(orig)
+    if hold_idx is None or soa.order_type[hold_idx] != OrderType.HOLD:
+        return OutcomeType.INVALID_SUPPORT
+    return None
+
+
+def flag_support_convoy_mismatches(
+    soa: ResolutionSoA, maps: ResolutionMaps
+) -> list[OutcomeType | None]:
+    result: list[OutcomeType | None] = [None] * len(soa.order_type)
+    for idx, typ in enumerate(soa.order_type):
+        match typ:
+            case OrderType.CONVOY:
+                result[idx] = validate_convoy(soa, maps, idx)
+            case OrderType.SUPPORT_MOVE:
+                result[idx] = validate_support_move(soa, maps, idx)
+            case OrderType.SUPPORT_HOLD:
+                result[idx] = validate_support_hold(soa, maps, idx)
+    return result

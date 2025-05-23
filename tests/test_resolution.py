@@ -1,8 +1,9 @@
-from diplomacy_cli.core.logic.schema import OrderType, UnitType
+from diplomacy_cli.core.logic.schema import OrderType, UnitType, OutcomeType
 from diplomacy_cli.core.logic.validator.resolution import (
     make_resolution_maps,
     make_semantic_map,
     move_phase_soa,
+    flag_support_convoy_mismatches,
 )
 
 
@@ -199,3 +200,114 @@ def test_move_phase_soa_missing_data(
     assert soa.order_type == [OrderType.MOVE, OrderType.HOLD]
     assert soa.move_destination == ["C", None]
     assert soa.new_territory == ["A", "B"]
+
+
+def test_valid_convoy_support(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2"],
+        owner_id=["p1", "p2"],
+        unit_type=[UnitType.ARMY, UnitType.FLEET],
+        orig_territory=["A", "B"],
+        order_type=[OrderType.MOVE, OrderType.CONVOY],
+        move_destination=["C", None],
+        support_origin=[None, None],
+        support_destination=[None, None],
+        convoy_origin=[None, "A"],
+        convoy_destination=[None, "C"],
+    )
+    maps = make_resolution_maps(soa)
+    outcomes = flag_support_convoy_mismatches(soa, maps)
+    assert outcomes == [None, None]
+
+
+def test_valid_support_move(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2"],
+        owner_id=["p1", "p2"],
+        unit_type=[UnitType.ARMY, UnitType.ARMY],
+        orig_territory=["A", "B"],
+        order_type=[OrderType.MOVE, OrderType.SUPPORT_MOVE],
+        move_destination=["X", None],
+        support_origin=[None, "A"],
+        support_destination=[None, "X"],
+        convoy_origin=[None, None],
+        convoy_destination=[None, None],
+    )
+    maps = make_resolution_maps(soa)
+    outcomes = flag_support_convoy_mismatches(soa, maps)
+    assert outcomes == [None, None]
+
+
+def test_valid_support_hold(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2"],
+        owner_id=["p1", "p2"],
+        unit_type=[UnitType.ARMY, UnitType.ARMY],
+        orig_territory=["A", "B"],
+        order_type=[OrderType.HOLD, OrderType.SUPPORT_HOLD],
+        move_destination=[None, None],
+        support_origin=[None, "A"],
+        support_destination=[None, "Z"],
+        convoy_origin=[None, None],
+        convoy_destination=[None, None],
+    )
+    maps = make_resolution_maps(soa)
+    outcomes = flag_support_convoy_mismatches(soa, maps)
+    assert outcomes == [None, None]
+
+
+def test_invalid_convoy_wrong_dest(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2"],
+        owner_id=["p1", "p2"],
+        unit_type=[UnitType.ARMY, UnitType.FLEET],
+        orig_territory=["A", "B"],
+        order_type=[OrderType.MOVE, OrderType.CONVOY],
+        move_destination=["C", None],
+        support_origin=[None, None],
+        support_destination=[None, None],
+        convoy_origin=[None, "A"],
+        convoy_destination=[None, "D"],
+    )
+    maps = make_resolution_maps(soa)
+    outcomes = flag_support_convoy_mismatches(soa, maps)
+    assert outcomes == [None, OutcomeType.INVALID_CONVOY]
+
+
+def test_invalid_support_move(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2"],
+        owner_id=["p1", "p2"],
+        unit_type=[UnitType.ARMY, UnitType.ARMY],
+        orig_territory=["A", "B"],
+        order_type=[OrderType.MOVE, OrderType.SUPPORT_MOVE],
+        move_destination=["X", None],
+        support_origin=[None, "A"],
+        support_destination=[None, "Y"],
+        convoy_origin=[None, None],
+        convoy_destination=[None, None],
+    )
+    maps = make_resolution_maps(soa)
+    outcomes = flag_support_convoy_mismatches(soa, maps)
+    assert outcomes == [None, OutcomeType.INVALID_SUPPORT]
+
+
+def test_invalid_support_hold_wrong_type(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2"],
+        owner_id=["p1", "p2"],
+        unit_type=[UnitType.ARMY, UnitType.ARMY],
+        orig_territory=["A", "B"],
+        order_type=[
+            OrderType.MOVE,
+            OrderType.SUPPORT_HOLD,
+        ],
+        move_destination=["C", None],
+        support_origin=[None, "A"],
+        support_destination=[None, "C"],
+        convoy_origin=[None, None],
+        convoy_destination=[None, None],
+    )
+    maps = make_resolution_maps(soa)
+    outcomes = flag_support_convoy_mismatches(soa, maps)
+    assert outcomes == [None, OutcomeType.INVALID_SUPPORT]
