@@ -190,7 +190,6 @@ def test_move_phase_soa_basic(loaded_state_factory, semantic_result_factory):
     assert soa.convoy_path_start == [-1, -1]
     assert soa.convoy_path_len == [0, 0]
     assert soa.convoy_path_flat == []
-    assert soa.is_resolved == [False, False]
     assert soa.outcome == [None, None]
 
 

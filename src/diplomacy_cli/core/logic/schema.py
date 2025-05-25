@@ -139,7 +139,6 @@ class ResolutionSoA:
     convoy_path_flat: list[str]
     convoy_path_start: list[int]
     convoy_path_len: list[int]
-    is_resolved: list[bool]
     outcome: list[OutcomeType | None]
 
 

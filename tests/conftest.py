@@ -138,7 +138,6 @@ def resolution_soa_factory():
         convoy_path_flat: list[str] | None = None,
         convoy_path_start: list[int] | None = None,
         convoy_path_len: list[int] | None = None,
-        is_resolved: list[bool] | None = None,
         outcome: list[OutcomeType | None] | None = None,
     ) -> ResolutionSoA:
         n = len(unit_id)
@@ -170,7 +169,6 @@ def resolution_soa_factory():
             convoy_path_start=convoy_path_start
             if convoy_path_start is not None
             else [-1] * n,
-            is_resolved=default(is_resolved, False),
             outcome=cast(list[OutcomeType | None], default(outcome, None)),
         )
 

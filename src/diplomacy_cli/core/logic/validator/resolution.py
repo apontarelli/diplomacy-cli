@@ -155,7 +155,6 @@ def move_phase_soa(
         convoy_path_flat=[],
         convoy_path_len=[0] * n,
         convoy_path_start=[-1] * n,
-        is_resolved=[False] * n,
         outcome=[None] * n,
     )
 
@@ -244,7 +243,6 @@ def find_convoy_path(
         for neighbor, mode in rules.adjacency_map.get(cur, []):
             if mode not in ("sea", "both"):
                 continue
-            # Allow convoy fleet territories AND destination coasts
             if (
                 neighbor not in convoy_fleet_territories
                 and neighbor not in destination_coasts
