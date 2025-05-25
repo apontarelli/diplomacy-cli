@@ -8,6 +8,8 @@ from diplomacy_cli.core.logic.schema import (
     UnitType,
 )
 from diplomacy_cli.core.logic.validator.resolution import (
+    ResolutionMaps,
+    calculate_strength,
     cut_supports,
     find_convoy_path,
     flag_support_convoy_mismatches,
@@ -681,3 +683,186 @@ def test_non_support_order_ignored(resolution_soa_factory):
     move_by_origin = {"A": 1}
     result = cut_supports(soa, move_by_origin)
     assert result == [False, False]
+
+
+def test_strength_no_support(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2"],
+        owner_id=["p1", "p2"],
+        unit_type=[UnitType.ARMY] * 2,
+        orig_territory=["A", "B"],
+        order_type=[OrderType.HOLD, OrderType.HOLD],
+        move_destination=[None, None],
+        support_origin=[None, None],
+        support_destination=[None, None],
+        convoy_origin=[None, None],
+        convoy_destination=[None, None],
+        support_cut=[False, False],
+    )
+
+    maps = cast(
+        ResolutionMaps,
+        SimpleNamespace(
+            move_by_origin={},
+            hold_by_origin={"A": 0, "B": 1},
+            support_moves_by_supported_origin={},
+            support_holds_by_supported_origin={},
+        ),
+    )
+
+    result = calculate_strength(soa, maps)
+    assert result == [1, 1]
+
+
+def test_strength_with_uncut_support_hold(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2"],
+        owner_id=["p1", "p2"],
+        unit_type=[UnitType.ARMY] * 2,
+        orig_territory=["A", "B"],
+        order_type=[OrderType.HOLD, OrderType.SUPPORT_HOLD],
+        move_destination=[None, None],
+        support_origin=[None, "A"],
+        support_destination=[None, None],
+        convoy_origin=[None, None],
+        convoy_destination=[None, None],
+        support_cut=[False, False],
+    )
+
+    maps = cast(
+        ResolutionMaps,
+        SimpleNamespace(
+            move_by_origin={},
+            hold_by_origin={"A": 0, "B": 1},
+            support_moves_by_supported_origin={},
+            support_holds_by_supported_origin={"A": [1]},
+        ),
+    )
+
+    result = calculate_strength(soa, maps)
+    assert result == [2, 1]
+
+
+def test_strength_with_uncut_support_move(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2"],
+        owner_id=["p1", "p2"],
+        unit_type=[UnitType.ARMY] * 2,
+        orig_territory=["A", "B"],
+        order_type=[OrderType.MOVE, OrderType.SUPPORT_MOVE],
+        move_destination=["C", None],
+        support_origin=[None, "A"],
+        support_destination=[None, "C"],
+        convoy_origin=[None, None],
+        convoy_destination=[None, None],
+        support_cut=[False, False],
+    )
+
+    maps = cast(
+        ResolutionMaps,
+        SimpleNamespace(
+            move_by_origin={"A": 0},
+            hold_by_origin={},
+            support_moves_by_supported_origin={"A": [1]},
+            support_holds_by_supported_origin={},
+        ),
+    )
+
+    result = calculate_strength(soa, maps)
+    assert result == [2, 1]
+
+
+def test_strength_multiple_uncut_supports(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2", "u3"],
+        owner_id=["p1", "p2", "p3"],
+        unit_type=[UnitType.ARMY] * 3,
+        orig_territory=["A", "B", "C"],
+        order_type=[
+            OrderType.HOLD,
+            OrderType.SUPPORT_HOLD,
+            OrderType.SUPPORT_HOLD,
+        ],
+        move_destination=[None, None, None],
+        support_origin=[None, "A", "A"],
+        support_destination=[None, None, None],
+        convoy_origin=[None, None, None],
+        convoy_destination=[None, None, None],
+        support_cut=[False, False, False],
+    )
+
+    maps = cast(
+        ResolutionMaps,
+        SimpleNamespace(
+            move_by_origin={},
+            hold_by_origin={"A": 0, "B": 1, "C": 2},
+            support_moves_by_supported_origin={},
+            support_holds_by_supported_origin={"A": [1, 2]},
+        ),
+    )
+
+    result = calculate_strength(soa, maps)
+    assert result == [3, 1, 1]
+
+
+def test_strength_support_cut_ignored(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2"],
+        owner_id=["p1", "p2"],
+        unit_type=[UnitType.ARMY] * 2,
+        orig_territory=["A", "B"],
+        order_type=[OrderType.HOLD, OrderType.SUPPORT_HOLD],
+        move_destination=[None, None],
+        support_origin=[None, None],
+        support_destination=[None, "A"],
+        convoy_origin=[None, None],
+        convoy_destination=[None, None],
+        support_cut=[False, True],
+    )
+
+    maps = cast(
+        ResolutionMaps,
+        SimpleNamespace(
+            move_by_origin={},
+            hold_by_origin={"A": 0, "B": 1},
+            support_moves_by_supported_origin={},
+            support_holds_by_supported_origin={"A": [1]},
+        ),
+    )
+
+    result = calculate_strength(soa, maps)
+    assert result == [1, 1]
+
+
+def test_strength_mixed_support_move_and_hold(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2", "u3", "u4"],
+        owner_id=["p1"] * 4,
+        unit_type=[UnitType.ARMY] * 4,
+        orig_territory=["A", "B", "C", "D"],
+        order_type=[
+            OrderType.MOVE,
+            OrderType.SUPPORT_MOVE,
+            OrderType.HOLD,
+            OrderType.SUPPORT_HOLD,
+        ],
+        move_destination=["X", None, None, None],
+        support_origin=[None, "A", None, "C"],
+        support_destination=[None, "X", None, None],
+        convoy_origin=[None] * 4,
+        convoy_destination=[None] * 4,
+        support_cut=[False] * 4,
+    )
+
+    maps = cast(
+        ResolutionMaps,
+        SimpleNamespace(
+            move_by_origin={"A": 0},
+            hold_by_origin={"B": 1, "C": 2, "D": 3},
+            support_moves_by_supported_origin={"A": [1]},
+            support_holds_by_supported_origin={"C": [3]},
+        ),
+    )
+
+    result = calculate_strength(soa, maps)
+    assert result == [2, 1, 2, 1]

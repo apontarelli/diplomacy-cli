@@ -53,6 +53,7 @@ def make_resolution_maps(soa: ResolutionSoA) -> ResolutionMaps:
                 ].append(idx)
             case OrderType.SUPPORT_HOLD:
                 support_by_origin[soa.orig_territory[idx]] = idx
+                hold_by_origin[soa.orig_territory[idx]] = idx
                 support_holds_by_supported_origin[
                     soa.support_origin[idx]
                 ].append(idx)
@@ -352,3 +353,26 @@ def cut_supports(
             break
 
     return support_cut
+
+
+def calculate_strength(soa: ResolutionSoA, maps: ResolutionMaps):
+    strength = [1] * len(soa.order_type)
+    for (
+        supported_origin,
+        support_idxs,
+    ) in maps.support_moves_by_supported_origin.items():
+        for support_idx in support_idxs:
+            if soa.support_cut[support_idx]:
+                continue
+            supported_idx = maps.move_by_origin[supported_origin]
+            strength[supported_idx] += 1
+    for (
+        supported_origin,
+        support_idxs,
+    ) in maps.support_holds_by_supported_origin.items():
+        for support_idx in support_idxs:
+            if soa.support_cut[support_idx]:
+                continue
+            supported_idx = maps.hold_by_origin[supported_origin]
+            strength[supported_idx] += 1
+    return strength
