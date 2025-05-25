@@ -325,3 +325,30 @@ def process_moves(
             if is_adjacent:
                 new_territories[move_idx] = destination
     return new_territories
+
+
+def cut_supports(
+    soa: ResolutionSoA, move_by_origin: dict[str, int]
+) -> list[bool]:
+    n = len(soa.order_type)
+    support_cut = [False] * n
+    for i in range(n):
+        order_type = soa.order_type[i]
+        if order_type not in (OrderType.SUPPORT_MOVE, OrderType.SUPPORT_HOLD):
+            continue
+
+        supporter_territory = soa.orig_territory[i]
+        support_target = soa.support_destination[i]
+
+        for move_origin, move_idx in move_by_origin.items():
+            if soa.new_territory[move_idx] != supporter_territory:
+                continue
+            if soa.outcome[move_idx] == OutcomeType.MOVE_NO_CONVOY:
+                continue
+            if move_origin == support_target:
+                continue
+
+            support_cut[i] = True
+            break
+
+    return support_cut

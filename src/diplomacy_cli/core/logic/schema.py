@@ -22,6 +22,7 @@ class OrderType(str, Enum):
 class OutcomeType(str, Enum):
     MOVE_SUCCESS = "move_success"
     MOVE_BOUNCED = "move_bounced"
+    MOVE_NO_CONVOY = "move_no_convoy"
     SUPPORT_CUT = "support_cut"
     INVALID_SUPPORT = "invalid_support"
     HOLD_SUCCESS = "hold_success"

@@ -8,6 +8,7 @@ from diplomacy_cli.core.logic.schema import (
     UnitType,
 )
 from diplomacy_cli.core.logic.validator.resolution import (
+    cut_supports,
     find_convoy_path,
     flag_support_convoy_mismatches,
     get_convoy_path,
@@ -556,3 +557,127 @@ def test_process_moves_fleet_invalid_not_adjacent(
     )
     result = process_moves(soa, {"X": 0}, rules)
     assert result == [None]
+
+
+def test_cut_support_success_support_hold_attacked_by_third_party(
+    resolution_soa_factory,
+):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2", "u3"],
+        owner_id=["p1", "p2", "p3"],
+        unit_type=[UnitType.ARMY] * 3,
+        orig_territory=["A", "B", "C"],
+        order_type=[OrderType.SUPPORT_HOLD, OrderType.MOVE, OrderType.HOLD],
+        move_destination=[None, "A", None],
+        support_origin=[None, None, None],
+        support_destination=["C", None, None],
+        convoy_origin=[None] * 3,
+        convoy_destination=[None] * 3,
+        new_territory=["A", "A", "C"],
+        outcome=[None, OutcomeType.MOVE_SUCCESS, None],
+    )
+    move_by_origin = {"B": 1}
+    result = cut_supports(soa, move_by_origin)
+    assert result == [True, False, False]
+
+
+def test_support_hold_not_cut_if_supporting_unit_attacks_supporter(
+    resolution_soa_factory,
+):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2"],
+        owner_id=["p1", "p2"],
+        unit_type=[UnitType.ARMY, UnitType.ARMY],
+        orig_territory=["B", "A"],
+        order_type=[OrderType.SUPPORT_HOLD, OrderType.MOVE],
+        move_destination=[None, "B"],
+        support_origin=[None, None],
+        support_destination=["A", None],
+        convoy_origin=[None, None],
+        convoy_destination=[None, None],
+        new_territory=["B", "B"],
+        outcome=[None, OutcomeType.MOVE_SUCCESS],
+    )
+    move_by_origin = {"A": 1}
+    result = cut_supports(soa, move_by_origin)
+    assert result == [False, False]
+
+
+def test_cut_support_fails_wrong_destination(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2"],
+        owner_id=["p1", "p2"],
+        unit_type=[UnitType.ARMY, UnitType.ARMY],
+        orig_territory=["B", "A"],
+        order_type=[OrderType.SUPPORT_HOLD, OrderType.MOVE],
+        move_destination=[None, "C"],
+        support_origin=[None, None],
+        support_destination=["A", None],
+        convoy_origin=[None, None],
+        convoy_destination=[None, None],
+        new_territory=["B", "C"],
+        outcome=[None, OutcomeType.MOVE_SUCCESS],
+    )
+    move_by_origin = {"A": 1}
+    result = cut_supports(soa, move_by_origin)
+    assert result == [False, False]
+
+
+def test_cut_support_fails_move_no_convoy(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2"],
+        owner_id=["p1", "p2"],
+        unit_type=[UnitType.ARMY, UnitType.ARMY],
+        orig_territory=["B", "A"],
+        order_type=[OrderType.SUPPORT_HOLD, OrderType.MOVE],
+        move_destination=[None, "B"],
+        support_origin=[None, None],
+        support_destination=["A", None],
+        convoy_origin=[None, None],
+        convoy_destination=[None, None],
+        new_territory=["B", "B"],
+        outcome=[None, OutcomeType.MOVE_NO_CONVOY],
+    )
+    move_by_origin = {"A": 1}
+    result = cut_supports(soa, move_by_origin)
+    assert result == [False, False]
+
+
+def test_cut_support_fails_from_supported_unit(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2"],
+        owner_id=["p1", "p2"],
+        unit_type=[UnitType.ARMY, UnitType.ARMY],
+        orig_territory=["B", "A"],
+        order_type=[OrderType.SUPPORT_HOLD, OrderType.MOVE],
+        move_destination=[None, "B"],
+        support_origin=[None, None],
+        support_destination=["A", None],
+        convoy_origin=[None, None],
+        convoy_destination=[None, None],
+        new_territory=["B", "B"],
+        outcome=[None, OutcomeType.MOVE_SUCCESS],
+    )
+    move_by_origin = {"A": 1}
+    result = cut_supports(soa, move_by_origin)
+    assert result == [False, False]
+
+
+def test_non_support_order_ignored(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2"],
+        owner_id=["p1", "p2"],
+        unit_type=[UnitType.ARMY, UnitType.ARMY],
+        orig_territory=["B", "A"],
+        order_type=[OrderType.MOVE, OrderType.MOVE],
+        move_destination=["C", "B"],
+        support_origin=[None, None],
+        support_destination=[None, None],
+        convoy_origin=[None, None],
+        convoy_destination=[None, None],
+        new_territory=["C", "B"],
+        outcome=[OutcomeType.MOVE_SUCCESS, OutcomeType.MOVE_SUCCESS],
+    )
+    move_by_origin = {"A": 1}
+    result = cut_supports(soa, move_by_origin)
+    assert result == [False, False]
