@@ -1,9 +1,20 @@
-from diplomacy_cli.core.logic.schema import OrderType, UnitType, OutcomeType
+from types import SimpleNamespace
+from typing import cast
+
+from diplomacy_cli.core.logic.schema import (
+    OrderType,
+    OutcomeType,
+    ResolutionSoA,
+    UnitType,
+)
 from diplomacy_cli.core.logic.validator.resolution import (
+    find_convoy_path,
+    flag_support_convoy_mismatches,
+    get_convoy_path,
     make_resolution_maps,
     make_semantic_map,
     move_phase_soa,
-    flag_support_convoy_mismatches,
+    process_convoys,
 )
 
 
@@ -176,7 +187,9 @@ def test_move_phase_soa_basic(loaded_state_factory, semantic_result_factory):
     assert soa.strength == [1, 1]
     assert soa.dislodged == [False, False]
     assert soa.support_cut == [False, False]
-    assert soa.has_valid_convoy == [False, False]
+    assert soa.convoy_path_start == [-1, -1]
+    assert soa.convoy_path_len == [0, 0]
+    assert soa.convoy_path_flat == []
     assert soa.is_resolved == [False, False]
     assert soa.outcome == [None, None]
 
@@ -311,3 +324,124 @@ def test_invalid_support_hold_wrong_type(resolution_soa_factory):
     maps = make_resolution_maps(soa)
     outcomes = flag_support_convoy_mismatches(soa, maps)
     assert outcomes == [None, OutcomeType.INVALID_SUPPORT]
+
+
+def test_find_convoy_path_basic(rules_factory):
+    rules = rules_factory(
+        parent_to_coast={"A": {"A"}, "B": {"B"}, "C": {"C"}},
+        adjacency_map={
+            "A": [("B", "sea")],
+            "B": [("A", "sea"), ("C", "sea")],
+            "C": [("B", "sea")],
+        },
+    )
+    result = find_convoy_path("A", "C", ["B"], rules)
+    assert result == ["A", "B", "C"]
+
+
+def test_find_convoy_path_disconnected(rules_factory):
+    rules = rules_factory(
+        parent_to_coast={"A": {"A"}, "C": {"C"}},
+        adjacency_map={
+            "A": [("X", "sea")],
+            "X": [("A", "sea")],
+            "C": [("Y", "sea")],
+            "Y": [("C", "sea")],
+        },
+    )
+    result = find_convoy_path("A", "C", ["X", "Y"], rules)
+    assert result is None
+
+
+def test_get_convoy_path_success():
+    ns = SimpleNamespace(
+        convoy_path_start=[0],
+        convoy_path_len=[3],
+        convoy_path_flat=["A", "B", "C"],
+    )
+    soa = cast(ResolutionSoA, ns)
+    result = get_convoy_path(soa, 0)
+    assert result == ["A", "B", "C"]
+
+
+def test_get_convoy_path_none():
+    ns = SimpleNamespace(
+        convoy_path_start=[-1],
+        convoy_path_len=[0],
+        convoy_path_flat=[],
+    )
+    soa = cast(ResolutionSoA, ns)
+    result = get_convoy_path(soa, 0)
+    assert result is None
+
+
+def test_process_convoys_valid_path(resolution_soa_factory, rules_factory):
+    rules = rules_factory(
+        parent_to_coast={"A": {"A"}, "C": {"C"}},
+        adjacency_map={
+            "A": [("B", "sea")],
+            "B": [("A", "sea"), ("C", "sea")],
+            "C": [("B", "sea")],
+        },
+    )
+
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2"],
+        owner_id=["p1", "p2"],
+        unit_type=["army", "fleet"],
+        orig_territory=["A", "B"],
+        order_type=["move", "convoy"],
+        move_destination=["C", None],
+        support_origin=[None, None],
+        support_destination=[None, None],
+        convoy_origin=[None, "A"],
+        convoy_destination=[None, "C"],
+        dislodged=[False, False],
+        outcome=[None, None],
+        convoy_path_flat=[],
+    )
+
+    origin_to_move = {"A": 0}
+    origin_to_convoy = {"B": 1}
+
+    path_start, path_len, path_flat = process_convoys(
+        soa, rules, origin_to_move, origin_to_convoy
+    )
+
+    assert path_start[0] == 0
+    assert path_len[0] == 3
+    assert path_flat == ["A", "B", "C"]
+
+
+def test_process_convoys_invalid_convoy(resolution_soa_factory, rules_factory):
+    rules = rules_factory(
+        parent_to_coast={},
+        adjacency_map={},
+    )
+
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2"],
+        owner_id=["p1", "p2"],
+        unit_type=["army", "fleet"],
+        orig_territory=["A", "B"],
+        order_type=["move", "convoy"],
+        move_destination=["C", None],
+        support_origin=[None, None],
+        support_destination=[None, None],
+        convoy_origin=[None, "A"],
+        convoy_destination=[None, "C"],
+        dislodged=[False, True],
+        outcome=[None, None],
+        convoy_path_flat=[],
+    )
+
+    origin_to_move = {"A": 0}
+    origin_to_convoy = {"B": 1}
+
+    path_start, path_len, path_flat = process_convoys(
+        soa, rules, origin_to_move, origin_to_convoy
+    )
+
+    assert path_start == [-1] * len(soa.order_type)
+    assert path_len == [0] * len(soa.order_type)
+    assert path_flat == []

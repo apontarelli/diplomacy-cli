@@ -136,7 +136,9 @@ class ResolutionSoA:
     strength: list[int]
     dislodged: list[bool]
     support_cut: list[bool]
-    has_valid_convoy: list[bool]
+    convoy_path_flat: list[str]
+    convoy_path_start: list[int]
+    convoy_path_len: list[int]
     is_resolved: list[bool]
     outcome: list[OutcomeType | None]
 

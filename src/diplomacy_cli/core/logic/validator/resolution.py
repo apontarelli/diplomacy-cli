@@ -1,13 +1,14 @@
-from collections import defaultdict
+from collections import defaultdict, deque
 from dataclasses import dataclass
 
 from diplomacy_cli.core.logic.schema import (
     LoadedState,
     Order,
     OrderType,
-    ResolutionSoA,
-    SemanticResult,
     OutcomeType,
+    ResolutionSoA,
+    Rules,
+    SemanticResult,
 )
 
 
@@ -151,7 +152,9 @@ def move_phase_soa(
         strength=[1] * n,
         dislodged=[False] * n,
         support_cut=[False] * n,
-        has_valid_convoy=[False] * n,
+        convoy_path_flat=[],
+        convoy_path_len=[0] * n,
+        convoy_path_start=[-1] * n,
         is_resolved=[False] * n,
         outcome=[None] * n,
     )
@@ -214,3 +217,91 @@ def flag_support_convoy_mismatches(
             case OrderType.SUPPORT_HOLD:
                 result[idx] = validate_support_hold(soa, maps, idx)
     return result
+
+
+def find_convoy_path(
+    origin: str,
+    destination: str,
+    convoy_fleet_territories: list[str],
+    rules: Rules,
+) -> list[str] | None:
+    origin_coasts = rules.parent_to_coast.get(origin, {origin})
+    destination_coasts = rules.parent_to_coast.get(destination, {destination})
+
+    visited = set(origin_coasts)
+    queue = deque(origin_coasts)
+    previous: dict[str, str] = {}
+
+    while queue:
+        cur = queue.popleft()
+        if cur in destination_coasts:
+            path = [cur]
+            while cur in previous:
+                cur = previous[cur]
+                path.append(cur)
+            return list(reversed(path))
+
+        for neighbor, mode in rules.adjacency_map.get(cur, []):
+            if mode not in ("sea", "both"):
+                continue
+            # Allow convoy fleet territories AND destination coasts
+            if (
+                neighbor not in convoy_fleet_territories
+                and neighbor not in destination_coasts
+            ):
+                continue
+            if neighbor in visited:
+                continue
+
+            visited.add(neighbor)
+            previous[neighbor] = cur
+            queue.append(neighbor)
+
+    return None
+
+
+def get_convoy_path(soa: ResolutionSoA, idx: int) -> list[str] | None:
+    start = soa.convoy_path_start[idx]
+    if start == -1:
+        return None
+    length = soa.convoy_path_len[idx]
+    return soa.convoy_path_flat[start : start + length]
+
+
+def process_convoys(
+    soa: ResolutionSoA,
+    rules: Rules,
+    origin_to_move: dict,
+    origin_to_convoy: dict,
+) -> tuple[list[int], list[int], list[str]]:
+    n = len(soa.order_type)
+    path_start = [-1] * n
+    path_len = [0] * n
+    path_flat = []
+    convoy_support_map: dict[int, list[str]] = defaultdict(list)
+    for idx in origin_to_convoy.values():
+        if soa.dislodged[idx] or soa.outcome[idx] == OutcomeType.INVALID_CONVOY:
+            continue
+        move_idx = origin_to_move[soa.convoy_origin[idx]]
+        convoy_fleet_origin = soa.orig_territory[idx]
+        convoy_support_map[move_idx].append(convoy_fleet_origin)
+
+    for move_idx, convoy_list in convoy_support_map.items():
+        move_origin = soa.orig_territory[move_idx]
+        move_destination = soa.move_destination[move_idx]
+        assert move_destination is not None, (
+            f"Expected move destination at index {move_idx}"
+        )
+        path = find_convoy_path(
+            move_origin, move_destination, convoy_list, rules
+        )
+        if path is None:
+            path_start[move_idx] = -1
+            path_len[move_idx] = 0
+        else:
+            start = len(path_flat)
+            path_start[move_idx] = start
+            path_len[move_idx] = len(path)
+            path_flat.extend(path)
+
+    return path_start, path_len, path_flat

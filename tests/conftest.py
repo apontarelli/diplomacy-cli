@@ -11,6 +11,7 @@ from diplomacy_cli.core.logic.schema import (
     OrderType,
     OutcomeType,
     ResolutionSoA,
+    Rules,
     SemanticResult,
     TerritoryToUnit,
     UnitType,
@@ -134,7 +135,9 @@ def resolution_soa_factory():
         strength: list[int] | None = None,
         dislodged: list[bool] | None = None,
         support_cut: list[bool] | None = None,
-        has_valid_convoy: list[bool] | None = None,
+        convoy_path_flat: list[str] | None = None,
+        convoy_path_start: list[int] | None = None,
+        convoy_path_len: list[int] | None = None,
         is_resolved: list[bool] | None = None,
         outcome: list[OutcomeType | None] | None = None,
     ) -> ResolutionSoA:
@@ -158,9 +161,32 @@ def resolution_soa_factory():
             strength=default(strength, 1),
             dislodged=default(dislodged, False),
             support_cut=default(support_cut, False),
-            has_valid_convoy=default(has_valid_convoy, False),
+            convoy_path_flat=convoy_path_flat
+            if convoy_path_flat is not None
+            else [],
+            convoy_path_len=convoy_path_len
+            if convoy_path_len is not None
+            else [0] * n,
+            convoy_path_start=convoy_path_start
+            if convoy_path_start is not None
+            else [-1] * n,
             is_resolved=default(is_resolved, False),
             outcome=cast(list[OutcomeType | None], default(outcome, None)),
         )
+
+    return _factory
+
+
+@pytest.fixture
+def rules_factory():
+    def _factory(
+        parent_to_coast: dict[str, set[str]],
+        adjacency_map: dict[str, list[tuple[str, str]]],
+    ):
+        ns = SimpleNamespace(
+            parent_to_coast=parent_to_coast,
+            adjacency_map=adjacency_map,
+        )
+        return cast(Rules, ns)
 
     return _factory
