@@ -156,7 +156,9 @@ def resolution_soa_factory():
             support_destination=support_destination,
             convoy_origin=convoy_origin,
             convoy_destination=convoy_destination,
-            new_territory=new_territory or orig_territory.copy(),
+            new_territory=cast(
+                list[str | None], new_territory or orig_territory.copy()
+            ),
             strength=default(strength, 1),
             dislodged=default(dislodged, False),
             support_cut=default(support_cut, False),

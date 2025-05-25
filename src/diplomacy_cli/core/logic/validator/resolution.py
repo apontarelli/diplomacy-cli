@@ -9,6 +9,7 @@ from diplomacy_cli.core.logic.schema import (
     ResolutionSoA,
     Rules,
     SemanticResult,
+    UnitType,
 )
 
 
@@ -303,3 +304,24 @@ def process_convoys(
             path_flat.extend(path)
 
     return path_start, path_len, path_flat
+
+
+def process_moves(
+    soa: ResolutionSoA, move_by_origin: dict[str, int], rules: Rules
+) -> list[str | None]:
+    new_territories: list[str | None] = [None] * len(soa.order_type)
+    for origin, move_idx in move_by_origin.items():
+        destination = soa.move_destination[move_idx]
+        unit_type = soa.unit_type[move_idx]
+        is_adjacent = any(
+            adj == destination for adj, _ in rules.adjacency_map[origin]
+        )
+
+        if unit_type == UnitType.ARMY:
+            has_convoy = soa.convoy_path_len[move_idx] > 0
+            if has_convoy or is_adjacent:
+                new_territories[move_idx] = destination
+        elif unit_type == UnitType.FLEET:
+            if is_adjacent:
+                new_territories[move_idx] = destination
+    return new_territories

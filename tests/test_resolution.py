@@ -15,6 +15,7 @@ from diplomacy_cli.core.logic.validator.resolution import (
     make_semantic_map,
     move_phase_soa,
     process_convoys,
+    process_moves,
 )
 
 
@@ -444,3 +445,114 @@ def test_process_convoys_invalid_convoy(resolution_soa_factory, rules_factory):
     assert path_start == [-1] * len(soa.order_type)
     assert path_len == [0] * len(soa.order_type)
     assert path_flat == []
+
+
+def test_process_moves_army_adjacent(resolution_soa_factory, rules_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1"],
+        owner_id=["p1"],
+        unit_type=[UnitType.ARMY],
+        orig_territory=["A"],
+        order_type=[OrderType.MOVE],
+        move_destination=["B"],
+        support_origin=[None],
+        support_destination=[None],
+        convoy_origin=[None],
+        convoy_destination=[None],
+    )
+    rules = rules_factory(
+        parent_to_coast={},
+        adjacency_map={"A": [("B", "land")]},
+    )
+    result = process_moves(soa, {"A": 0}, rules)
+    assert result == ["B"]
+
+
+def test_process_moves_army_with_convoy(resolution_soa_factory, rules_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1"],
+        owner_id=["p1"],
+        unit_type=[UnitType.ARMY],
+        orig_territory=["A"],
+        order_type=[OrderType.MOVE],
+        move_destination=["C"],
+        support_origin=[None],
+        support_destination=[None],
+        convoy_origin=[None],
+        convoy_destination=[None],
+        convoy_path_len=[2],
+    )
+    rules = rules_factory(
+        parent_to_coast={},
+        adjacency_map={"A": [("B", "land")]},
+    )
+    result = process_moves(soa, {"A": 0}, rules)
+    assert result == ["C"]
+
+
+def test_process_moves_army_invalid_no_convoy(
+    resolution_soa_factory, rules_factory
+):
+    soa = resolution_soa_factory(
+        unit_id=["u1"],
+        owner_id=["p1"],
+        unit_type=[UnitType.ARMY],
+        orig_territory=["A"],
+        order_type=[OrderType.MOVE],
+        move_destination=["C"],
+        support_origin=[None],
+        support_destination=[None],
+        convoy_origin=[None],
+        convoy_destination=[None],
+        convoy_path_len=[0],
+    )
+    rules = rules_factory(
+        parent_to_coast={},
+        adjacency_map={"A": [("B", "land")]},
+    )
+    result = process_moves(soa, {"A": 0}, rules)
+    assert result == [None]
+
+
+def test_process_moves_fleet_adjacent(resolution_soa_factory, rules_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1"],
+        owner_id=["p1"],
+        unit_type=[UnitType.FLEET],
+        orig_territory=["X"],
+        order_type=[OrderType.MOVE],
+        move_destination=["Y"],
+        support_origin=[None],
+        support_destination=[None],
+        convoy_origin=[None],
+        convoy_destination=[None],
+    )
+    rules = rules_factory(
+        parent_to_coast={},
+        adjacency_map={"X": [("Y", "sea")]},
+    )
+    result = process_moves(soa, {"X": 0}, rules)
+    assert result == ["Y"]
+
+
+def test_process_moves_fleet_invalid_not_adjacent(
+    resolution_soa_factory, rules_factory
+):
+    soa = resolution_soa_factory(
+        unit_id=["u1"],
+        owner_id=["p1"],
+        unit_type=[UnitType.FLEET],
+        orig_territory=["X"],
+        order_type=[OrderType.MOVE],
+        move_destination=["Z"],
+        support_origin=[None],
+        support_destination=[None],
+        convoy_origin=[None],
+        convoy_destination=[None],
+    )
+    rules = rules_factory(
+        parent_to_coast={},
+        adjacency_map={"X": [("Y", "sea")]},
+    )
+    result = process_moves(soa, {"X": 0}, rules)
+    assert result == [None]

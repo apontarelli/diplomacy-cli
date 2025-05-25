@@ -132,7 +132,7 @@ class ResolutionSoA:
     support_destination: list[str | None]
     convoy_origin: list[str | None]
     convoy_destination: list[str | None]
-    new_territory: list[str]
+    new_territory: list[str | None]
     strength: list[int]
     dislodged: list[bool]
     support_cut: list[bool]
