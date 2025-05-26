@@ -359,7 +359,7 @@ def cut_supports(
     return support_cut
 
 
-def calculate_strength(soa: ResolutionSoA, maps: ResolutionMaps):
+def calculate_strength(soa: ResolutionSoA, maps: ResolutionMaps) -> list[int]:
     strength = [1] * len(soa.order_type)
     for (
         supported_origin,
