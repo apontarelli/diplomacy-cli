@@ -19,6 +19,7 @@ from diplomacy_cli.core.logic.validator.resolution import (
     move_phase_soa,
     process_convoys,
     process_moves,
+    resolve_conflict,
 )
 
 
@@ -866,3 +867,99 @@ def test_strength_mixed_support_move_and_hold(resolution_soa_factory):
 
     result = calculate_strength(soa, maps)
     assert result == [2, 1, 2, 1]
+
+
+def test_resolve_no_conflict(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2"],
+        owner_id=["p1", "p2"],
+        unit_type=[UnitType.ARMY] * 2,
+        orig_territory=["A", "B"],
+        new_territory=["A", "C"],
+        order_type=[OrderType.HOLD, OrderType.MOVE],
+        move_destination=[None, "C"],
+        support_origin=[None] * 2,
+        support_destination=[None] * 2,
+        convoy_origin=[None] * 2,
+        convoy_destination=[None] * 2,
+        strength=[1, 1],
+    )
+    result = resolve_conflict(soa)
+    assert result == ["A", "C"]
+
+
+def test_resolve_clear_winner(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2"],
+        owner_id=["p1", "p2"],
+        unit_type=[UnitType.ARMY] * 2,
+        orig_territory=["A", "B"],
+        new_territory=["C", "C"],
+        order_type=[OrderType.MOVE] * 2,
+        move_destination=["C", "C"],
+        support_origin=[None] * 2,
+        support_destination=[None] * 2,
+        convoy_origin=[None] * 2,
+        convoy_destination=[None] * 2,
+        strength=[2, 1],
+    )
+    result = resolve_conflict(soa)
+    assert result == ["C", "B"]
+
+
+def test_resolve_tie_bounce(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2"],
+        owner_id=["p1", "p2"],
+        unit_type=[UnitType.ARMY] * 2,
+        orig_territory=["A", "B"],
+        new_territory=["C", "C"],
+        order_type=[OrderType.MOVE] * 2,
+        move_destination=["C", "C"],
+        support_origin=[None] * 2,
+        support_destination=[None] * 2,
+        convoy_origin=[None] * 2,
+        convoy_destination=[None] * 2,
+        strength=[2, 2],
+    )
+    result = resolve_conflict(soa)
+    assert result == ["A", "B"]
+
+
+def test_resolve_cascading_conflict_corrected(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2", "u3"],
+        owner_id=["p1"] * 3,
+        unit_type=[UnitType.ARMY] * 3,
+        orig_territory=["A", "B", "C"],
+        order_type=[OrderType.MOVE, OrderType.MOVE, OrderType.HOLD],
+        move_destination=["B", "C", None],
+        new_territory=["B", "C", "C"],
+        support_origin=[None] * 3,
+        support_destination=[None] * 3,
+        convoy_origin=[None] * 3,
+        convoy_destination=[None] * 3,
+        strength=[2, 2, 1],
+    )
+    result = resolve_conflict(soa)
+    assert result == ["B", "C", "C"]
+
+
+def test_resolve_cascading_tie(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2", "u3"],
+        owner_id=["p1"] * 3,
+        unit_type=[UnitType.ARMY] * 3,
+        orig_territory=["A", "C", "D"],
+        order_type=[OrderType.MOVE] * 3,
+        move_destination=["B", "B", "C"],
+        new_territory=["B", "B", "C"],
+        support_origin=[None] * 3,
+        support_destination=[None] * 3,
+        convoy_origin=[None] * 3,
+        convoy_destination=[None] * 3,
+        strength=[2, 2, 2],
+    )
+
+    result = resolve_conflict(soa)
+    assert result == ["A", "C", "D"]

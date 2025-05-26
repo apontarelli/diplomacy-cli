@@ -376,3 +376,40 @@ def calculate_strength(soa: ResolutionSoA, maps: ResolutionMaps):
             supported_idx = maps.hold_by_origin[supported_origin]
             strength[supported_idx] += 1
     return strength
+
+
+def resolve_conflict(soa: ResolutionSoA) -> list[str]:
+    new_territory = soa.new_territory.copy()
+    strength = soa.strength
+
+    changed = True
+    while changed:
+        changed = False
+        contested = defaultdict(list)
+
+        for i, dest in enumerate(new_territory):
+            contested[dest].append(i)
+
+        for indices in contested.values():
+            if len(indices) == 1:
+                continue
+            s = [strength[i] for i in indices]
+            max_s = max(s)
+            winners = [i for i in indices if strength[i] == max_s]
+
+            if len(winners) > 1:
+                for i in indices:
+                    if new_territory[i] != soa.orig_territory[i]:
+                        new_territory[i] = soa.orig_territory[i]
+                        changed = True
+            else:
+                winner = winners[0]
+                for i in indices:
+                    if (
+                        i != winner
+                        and new_territory[i] != soa.orig_territory[i]
+                    ):
+                        new_territory[i] = soa.orig_territory[i]
+                        changed = True
+
+    return new_territory
