@@ -431,3 +431,37 @@ def detect_dislodged(soa: ResolutionSoA) -> list[bool]:
                         dislodged[i] = True
                         break
     return dislodged
+
+
+def assign_move_outcomes(soa: ResolutionSoA) -> list[OutcomeType | None]:
+    outcome = soa.outcome.copy()
+    n = len(soa.unit_id)
+
+    for i in range(n):
+        if outcome[i] is not None:
+            continue
+        if soa.dislodged[i]:
+            outcome[i] = OutcomeType.DISLODGED
+            continue
+
+        match soa.order_type[i]:
+            case OrderType.MOVE:
+                if soa.move_destination[i] == soa.new_territory[i]:
+                    outcome[i] = OutcomeType.MOVE_SUCCESS
+                elif soa.orig_territory[i] == soa.new_territory[i]:
+                    outcome[i] = OutcomeType.MOVE_BOUNCED
+                else:
+                    raise ValueError(
+                        f"Inconsistent new_territory for MOVE at index {i}"
+                    )
+            case OrderType.SUPPORT_HOLD | OrderType.SUPPORT_MOVE:
+                if soa.support_cut[i]:
+                    outcome[i] = OutcomeType.SUPPORT_CUT
+                else:
+                    outcome[i] = OutcomeType.SUPPORT_SUCCESS
+            case OrderType.HOLD:
+                outcome[i] = OutcomeType.HOLD_SUCCESS
+            case OrderType.CONVOY:
+                outcome[i] = OutcomeType.CONVOY_SUCCESS
+
+    return outcome

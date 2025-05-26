@@ -23,6 +23,7 @@ from diplomacy_cli.core.logic.validator.resolution import (
     process_convoys,
     process_moves,
     resolve_conflict,
+    assign_move_outcomes,
 )
 
 
@@ -1052,3 +1053,201 @@ def test_detect_dislodged(
     soa = resolution_soa_factory(**soa_kwargs)
     result = detect_dislodged(soa)
     assert result == expected, f"Failed: {description}"
+
+
+def test_assign_move_success(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1"],
+        owner_id=["p1"],
+        unit_type=[UnitType.ARMY],
+        orig_territory=["A"],
+        new_territory=["B"],
+        order_type=[OrderType.MOVE],
+        move_destination=["B"],
+        support_origin=[None],
+        support_destination=[None],
+        convoy_origin=[None],
+        convoy_destination=[None],
+    )
+    outcome = assign_move_outcomes(soa)
+    assert outcome == [OutcomeType.MOVE_SUCCESS]
+
+
+def test_assign_move_bounced(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1"],
+        owner_id=["p1"],
+        unit_type=[UnitType.ARMY],
+        orig_territory=["A"],
+        new_territory=["A"],
+        order_type=[OrderType.MOVE],
+        move_destination=["B"],
+        support_origin=[None],
+        support_destination=[None],
+        convoy_origin=[None],
+        convoy_destination=[None],
+    )
+    outcome = assign_move_outcomes(soa)
+    assert outcome == [OutcomeType.MOVE_BOUNCED]
+
+
+def test_assign_move_inconsistent_raises(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1"],
+        owner_id=["p1"],
+        unit_type=[UnitType.ARMY],
+        orig_territory=["A"],
+        new_territory=["X"],  # invalid: not origin or destination
+        order_type=[OrderType.MOVE],
+        move_destination=["B"],
+        support_origin=[None],
+        support_destination=[None],
+        convoy_origin=[None],
+        convoy_destination=[None],
+    )
+    with pytest.raises(ValueError, match="Inconsistent new_territory"):
+        assign_move_outcomes(soa)
+
+
+def test_assign_support_cut(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1"],
+        owner_id=["p1"],
+        unit_type=[UnitType.ARMY],
+        orig_territory=["A"],
+        new_territory=["A"],
+        order_type=[OrderType.SUPPORT_HOLD],
+        move_destination=[None],
+        support_origin=[None],
+        support_destination=["X"],
+        convoy_origin=[None],
+        convoy_destination=[None],
+        support_cut=[True],
+    )
+    outcome = assign_move_outcomes(soa)
+    assert outcome == [OutcomeType.SUPPORT_CUT]
+
+
+def test_assign_support_success(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1"],
+        owner_id=["p1"],
+        unit_type=[UnitType.ARMY],
+        orig_territory=["A"],
+        new_territory=["A"],
+        order_type=[OrderType.SUPPORT_MOVE],
+        move_destination=[None],
+        support_origin=["X"],
+        support_destination=["Y"],
+        convoy_origin=[None],
+        convoy_destination=[None],
+        support_cut=[False],
+    )
+    outcome = assign_move_outcomes(soa)
+    assert outcome == [OutcomeType.SUPPORT_SUCCESS]
+
+
+def test_assign_hold_success(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1"],
+        owner_id=["p1"],
+        unit_type=[UnitType.ARMY],
+        orig_territory=["A"],
+        new_territory=["A"],
+        order_type=[OrderType.HOLD],
+        move_destination=[None],
+        support_origin=[None],
+        support_destination=[None],
+        convoy_origin=[None],
+        convoy_destination=[None],
+    )
+    outcome = assign_move_outcomes(soa)
+    assert outcome == [OutcomeType.HOLD_SUCCESS]
+
+
+def test_assign_convoy_success(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1"],
+        owner_id=["p1"],
+        unit_type=[UnitType.FLEET],
+        orig_territory=["A"],
+        new_territory=["A"],
+        order_type=[OrderType.CONVOY],
+        move_destination=[None],
+        support_origin=[None],
+        support_destination=[None],
+        convoy_origin=["X"],
+        convoy_destination=["Y"],
+    )
+    outcome = assign_move_outcomes(soa)
+    assert outcome == [OutcomeType.CONVOY_SUCCESS]
+
+
+def test_assign_dislodged_overrides_all(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1"],
+        owner_id=["p1"],
+        unit_type=[UnitType.ARMY],
+        orig_territory=["A"],
+        new_territory=["A"],
+        order_type=[OrderType.HOLD],
+        move_destination=[None],
+        support_origin=[None],
+        support_destination=[None],
+        convoy_origin=[None],
+        convoy_destination=[None],
+        dislodged=[True],
+    )
+    outcome = assign_move_outcomes(soa)
+    assert outcome == [OutcomeType.DISLODGED]
+
+
+def test_preserve_existing_outcome(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1"],
+        owner_id=["p1"],
+        unit_type=[UnitType.ARMY],
+        orig_territory=["A"],
+        new_territory=["B"],
+        order_type=[OrderType.MOVE],
+        move_destination=["B"],
+        support_origin=[None],
+        support_destination=[None],
+        convoy_origin=[None],
+        convoy_destination=[None],
+        outcome=[OutcomeType.MOVE_NO_CONVOY],
+    )
+    outcome = assign_move_outcomes(soa)
+    assert outcome == [OutcomeType.MOVE_NO_CONVOY]
+
+
+def test_assign_outcomes_mixed_batch(resolution_soa_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2", "u3", "u4"],
+        owner_id=["p1"] * 4,
+        unit_type=[UnitType.ARMY] * 4,
+        orig_territory=["A", "B", "C", "D"],
+        new_territory=["B", "B", "C", "D"],
+        order_type=[
+            OrderType.MOVE,
+            OrderType.MOVE,
+            OrderType.SUPPORT_HOLD,
+            OrderType.HOLD,
+        ],
+        move_destination=["B", "C", None, None],
+        support_origin=[None, None, None, None],
+        support_destination=[None, None, "C", None],
+        convoy_origin=[None] * 4,
+        convoy_destination=[None] * 4,
+        dislodged=[False, False, False, False],
+        support_cut=[False, False, True, False],
+        outcome=[None] * 4,
+        strength=[2, 1, 1, 1],
+    )
+    result = assign_move_outcomes(soa)
+    assert result == [
+        OutcomeType.MOVE_SUCCESS,
+        OutcomeType.MOVE_BOUNCED,
+        OutcomeType.SUPPORT_CUT,
+        OutcomeType.HOLD_SUCCESS,
+    ]
