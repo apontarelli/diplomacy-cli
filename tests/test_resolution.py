@@ -24,6 +24,7 @@ from diplomacy_cli.core.logic.validator.resolution import (
     process_moves,
     resolve_conflict,
     assign_move_outcomes,
+    move_resolution_pass,
 )
 
 
@@ -1251,3 +1252,134 @@ def test_assign_outcomes_mixed_batch(resolution_soa_factory):
         OutcomeType.SUPPORT_CUT,
         OutcomeType.HOLD_SUCCESS,
     ]
+
+
+def test_simple_army_move_succeeds(resolution_soa_factory, rules_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1"],
+        owner_id=["p1"],
+        unit_type=[UnitType.ARMY],
+        orig_territory=["A"],
+        order_type=[OrderType.MOVE],
+        move_destination=["B"],
+        support_origin=[None],
+        support_destination=[None],
+        convoy_origin=[None],
+        convoy_destination=[None],
+    )
+    rules = rules_factory(
+        parent_to_coast={"A": {"A"}, "B": {"B"}},
+        adjacency_map={"A": [("B", "land")], "B": [("A", "land")]},
+    )
+    maps = make_resolution_maps(soa)
+    resolved = move_resolution_pass(soa, maps, rules)
+
+    assert resolved.new_territory == ["B"]
+    assert resolved.outcome == [None]
+
+
+def test_valid_convoy_path_detected(resolution_soa_factory, rules_factory):
+    soa = resolution_soa_factory(
+        unit_id=["army", "fleet1", "fleet2"],
+        owner_id=["p1", "p1", "p1"],
+        unit_type=[UnitType.ARMY, UnitType.FLEET, UnitType.FLEET],
+        orig_territory=["A", "B", "C"],
+        order_type=[OrderType.MOVE, OrderType.CONVOY, OrderType.CONVOY],
+        move_destination=["D", None, None],
+        support_origin=[None, "A", "A"],
+        support_destination=[None, "D", "D"],
+        convoy_origin=[None, "A", "A"],
+        convoy_destination=["D", "D", "D"],
+    )
+    rules = rules_factory(
+        parent_to_coast={"A": {"A"}, "B": {"B"}, "C": {"C"}, "D": {"D"}},
+        adjacency_map={
+            "A": [("B", "sea"), ("C", "sea")],
+            "B": [("A", "sea"), ("C", "sea")],
+            "C": [("A", "sea"), ("D", "sea")],
+            "D": [("C", "sea")],
+        },
+    )
+    maps = make_resolution_maps(soa)
+    resolved = move_resolution_pass(soa, maps, rules)
+
+    assert resolved.convoy_path_flat in [["A", "B", "C", "D"], ["A", "C", "D"]]
+
+
+def test_support_cut_when_attacked(resolution_soa_factory, rules_factory):
+    soa = resolution_soa_factory(
+        unit_id=["supporter", "attacker"],
+        owner_id=["p1", "p2"],
+        unit_type=[UnitType.ARMY, UnitType.ARMY],
+        orig_territory=["S", "A"],
+        order_type=[OrderType.SUPPORT_HOLD, OrderType.MOVE],
+        move_destination=[None, "S"],
+        support_origin=[None, None],
+        support_destination=["T", None],
+        convoy_origin=[None, None],
+        convoy_destination=[None, None],
+    )
+    rules = rules_factory(
+        parent_to_coast={"A": {"A"}, "S": {"S"}, "T": {"T"}},
+        adjacency_map={"A": [("S", "land")], "S": [("A", "land")]},
+    )
+    maps = make_resolution_maps(soa)
+    resolved = move_resolution_pass(soa, maps, rules)
+
+    assert resolved.support_cut == [True, False]
+
+
+def test_supported_move_dislodges_unit(resolution_soa_factory, rules_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2", "u3"],
+        owner_id=["p1", "p1", "p2"],
+        unit_type=[UnitType.ARMY, UnitType.ARMY, UnitType.ARMY],
+        orig_territory=["A", "C", "B"],
+        order_type=[OrderType.MOVE, OrderType.SUPPORT_MOVE, OrderType.HOLD],
+        move_destination=["B", None, None],
+        support_origin=[None, "A", None],
+        support_destination=[None, "B", None],
+        convoy_origin=[None, None, None],
+        convoy_destination=[None, None, None],
+    )
+    rules = rules_factory(
+        parent_to_coast={"A": {"A"}, "B": {"B"}, "C": {"C"}},
+        adjacency_map={
+            "A": [("B", "land")],
+            "C": [("B", "land")],
+            "B": [("A", "land"), ("C", "land")],
+        },
+    )
+    maps = make_resolution_maps(soa)
+    resolved = move_resolution_pass(soa, maps, rules)
+
+    assert resolved.new_territory[0] == "B"
+    assert resolved.dislodged[2] is True
+
+
+def test_convoyed_move_cuts_support(resolution_soa_factory, rules_factory):
+    soa = resolution_soa_factory(
+        unit_id=["u1", "u2", "u3"],
+        owner_id=["p1", "p1", "p2"],
+        unit_type=[UnitType.ARMY, UnitType.FLEET, UnitType.ARMY],
+        orig_territory=["A", "B", "D"],
+        order_type=[OrderType.MOVE, OrderType.CONVOY, OrderType.SUPPORT_HOLD],
+        move_destination=["D", None, None],
+        support_origin=[None, None, None],
+        support_destination=[None, None, "E"],
+        convoy_origin=[None, "A", None],
+        convoy_destination=["D", "D", None],
+    )
+    rules = rules_factory(
+        parent_to_coast={"A": {"A"}, "B": {"B"}, "D": {"D"}, "E": {"E"}},
+        adjacency_map={
+            "A": [("B", "sea")],
+            "B": [("A", "sea"), ("D", "sea")],
+            "D": [("B", "sea")],
+        },
+    )
+    maps = make_resolution_maps(soa)
+
+    resolved = move_resolution_pass(soa, maps, rules)
+
+    assert resolved.support_cut == [False, False, True]

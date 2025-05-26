@@ -466,3 +466,36 @@ def assign_move_outcomes(soa: ResolutionSoA) -> list[OutcomeType | None]:
                 outcome[i] = OutcomeType.CONVOY_SUCCESS
 
     return outcome
+
+
+def copy_soa(soa: ResolutionSoA) -> ResolutionSoA:
+    return replace(
+        soa,
+        **{
+            field: list(getattr(soa, field))
+            if isinstance(getattr(soa, field), list)
+            else getattr(soa, field)
+            for field in soa.__dataclass_fields__
+        },
+    )
+
+
+def move_resolution_pass(
+    soa: ResolutionSoA, maps: ResolutionMaps, rules: Rules
+) -> ResolutionSoA:
+    new_soa = copy_soa(soa)
+    (
+        new_soa.convoy_path_start,
+        new_soa.convoy_path_len,
+        new_soa.convoy_path_flat,
+    ) = process_convoys(
+        new_soa, rules, maps.move_by_origin, maps.convoy_by_origin
+    )
+    new_soa.new_territory, new_soa.outcome = process_moves(
+        new_soa, maps.move_by_origin, rules
+    )
+    new_soa.support_cut = cut_supports(new_soa, maps.move_by_origin)
+    new_soa.strength = calculate_strength(new_soa, maps)
+    new_soa.new_territory = resolve_conflict(new_soa)
+    new_soa.dislodged = detect_dislodged(new_soa)
+    return new_soa
