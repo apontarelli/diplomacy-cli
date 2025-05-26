@@ -471,8 +471,9 @@ def test_process_moves_army_adjacent(resolution_soa_factory, rules_factory):
         parent_to_coast={},
         adjacency_map={"A": [("B", "land")]},
     )
-    result = process_moves(soa, {"A": 0}, rules)
-    assert result == ["B"]
+    new_territory, outcome = process_moves(soa, {"A": 0}, rules)
+    assert new_territory == ["B"]
+    assert outcome == [None]
 
 
 def test_process_moves_army_with_convoy(resolution_soa_factory, rules_factory):
@@ -493,8 +494,9 @@ def test_process_moves_army_with_convoy(resolution_soa_factory, rules_factory):
         parent_to_coast={},
         adjacency_map={"A": [("B", "land")]},
     )
-    result = process_moves(soa, {"A": 0}, rules)
-    assert result == ["C"]
+    new_territory, outcome = process_moves(soa, {"A": 0}, rules)
+    assert new_territory == ["C"]
+    assert outcome == [None]
 
 
 def test_process_moves_army_invalid_no_convoy(
@@ -517,8 +519,9 @@ def test_process_moves_army_invalid_no_convoy(
         parent_to_coast={},
         adjacency_map={"A": [("B", "land")]},
     )
-    result = process_moves(soa, {"A": 0}, rules)
-    assert result == [None]
+    new_territory, outcome = process_moves(soa, {"A": 0}, rules)
+    assert new_territory == [None]
+    assert outcome == [OutcomeType.MOVE_NO_CONVOY]
 
 
 def test_process_moves_fleet_adjacent(resolution_soa_factory, rules_factory):
@@ -538,8 +541,9 @@ def test_process_moves_fleet_adjacent(resolution_soa_factory, rules_factory):
         parent_to_coast={},
         adjacency_map={"X": [("Y", "sea")]},
     )
-    result = process_moves(soa, {"X": 0}, rules)
-    assert result == ["Y"]
+    new_territory, outcome = process_moves(soa, {"X": 0}, rules)
+    assert new_territory == ["Y"]
+    assert outcome == [None]
 
 
 def test_process_moves_fleet_invalid_not_adjacent(
@@ -561,8 +565,9 @@ def test_process_moves_fleet_invalid_not_adjacent(
         parent_to_coast={},
         adjacency_map={"X": [("Y", "sea")]},
     )
-    result = process_moves(soa, {"X": 0}, rules)
-    assert result == [None]
+    new_territory, outcome = process_moves(soa, {"X": 0}, rules)
+    assert new_territory == [None]
+    assert outcome == [None]
 
 
 def test_cut_support_success_support_hold_attacked_by_third_party(

@@ -309,8 +309,9 @@ def process_convoys(
 
 def process_moves(
     soa: ResolutionSoA, move_by_origin: dict[str, int], rules: Rules
-) -> list[str | None]:
+) -> tuple[list[str | None], list[OutcomeType | None]]:
     new_territories: list[str | None] = [None] * len(soa.order_type)
+    outcome: list[OutcomeType | None] = soa.outcome.copy()
     for origin, move_idx in move_by_origin.items():
         destination = soa.move_destination[move_idx]
         unit_type = soa.unit_type[move_idx]
@@ -322,10 +323,12 @@ def process_moves(
             has_convoy = soa.convoy_path_len[move_idx] > 0
             if has_convoy or is_adjacent:
                 new_territories[move_idx] = destination
+            else:
+                outcome[move_idx] = OutcomeType.MOVE_NO_CONVOY
         elif unit_type == UnitType.FLEET:
             if is_adjacent:
                 new_territories[move_idx] = destination
-    return new_territories
+    return new_territories, outcome
 
 
 def cut_supports(
