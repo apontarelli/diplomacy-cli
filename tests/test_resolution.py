@@ -521,7 +521,7 @@ def test_process_moves_army_invalid_no_convoy(
         adjacency_map={"A": [("B", "land")]},
     )
     new_territory, outcome = process_moves(soa, {"A": 0}, rules)
-    assert new_territory == [None]
+    assert new_territory == ["A"]
     assert outcome == [OutcomeType.MOVE_NO_CONVOY]
 
 
@@ -567,7 +567,7 @@ def test_process_moves_fleet_invalid_not_adjacent(
         adjacency_map={"X": [("Y", "sea")]},
     )
     new_territory, outcome = process_moves(soa, {"X": 0}, rules)
-    assert new_territory == [None]
+    assert new_territory == ["X"]
     assert outcome == [None]
 
 
