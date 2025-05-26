@@ -157,7 +157,7 @@ def resolution_soa_factory():
             convoy_origin=convoy_origin,
             convoy_destination=convoy_destination,
             new_territory=cast(
-                list[str | None], new_territory or orig_territory.copy()
+                list[str], new_territory or orig_territory.copy()
             ),
             strength=default(strength, 1),
             dislodged=default(dislodged, False),

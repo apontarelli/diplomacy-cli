@@ -1,6 +1,8 @@
 from types import SimpleNamespace
 from typing import cast
 
+import pytest
+
 from diplomacy_cli.core.logic.schema import (
     OrderType,
     OutcomeType,
@@ -11,6 +13,7 @@ from diplomacy_cli.core.logic.validator.resolution import (
     ResolutionMaps,
     calculate_strength,
     cut_supports,
+    detect_dislodged,
     find_convoy_path,
     flag_support_convoy_mismatches,
     get_convoy_path,
@@ -963,3 +966,84 @@ def test_resolve_cascading_tie(resolution_soa_factory):
 
     result = resolve_conflict(soa)
     assert result == ["A", "C", "D"]
+
+
+@pytest.mark.parametrize(
+    "description, soa_kwargs, expected",
+    [
+        (
+            "Hold dislodged by enemy move",
+            {
+                "unit_id": ["u1", "u2"],
+                "owner_id": ["p1", "p2"],
+                "unit_type": [UnitType.ARMY, UnitType.ARMY],
+                "orig_territory": ["A", "B"],
+                "order_type": [OrderType.HOLD, OrderType.MOVE],
+                "move_destination": [None, "A"],
+                "support_origin": [None, None],
+                "support_destination": [None, None],
+                "convoy_origin": [None, None],
+                "convoy_destination": [None, None],
+                "new_territory": ["A", "A"],
+            },
+            [True, False],
+        ),
+        (
+            "Bounce prevents dislodgement",
+            {
+                "unit_id": ["u1", "u2", "u3"],
+                "owner_id": ["p1", "p2", "p3"],
+                "unit_type": [UnitType.ARMY] * 3,
+                "orig_territory": ["A", "B", "C"],
+                "order_type": [OrderType.HOLD, OrderType.MOVE, OrderType.MOVE],
+                "move_destination": [None, "A", "A"],
+                "support_origin": [None, None, None],
+                "support_destination": [None, None, None],
+                "convoy_origin": [None, None, None],
+                "convoy_destination": [None, None, None],
+                "new_territory": ["A", "B", "C"],
+            },
+            [False, False, False],
+        ),
+        (
+            "Bounced unit dislodged",
+            {
+                "unit_id": ["u1", "u2"],
+                "owner_id": ["p1", "p2"],
+                "unit_type": [UnitType.ARMY, UnitType.ARMY],
+                "orig_territory": ["A", "B"],
+                "order_type": [OrderType.MOVE, OrderType.MOVE],
+                "move_destination": ["B", "A"],
+                "support_origin": [None, None],
+                "support_destination": [None, None],
+                "convoy_origin": [None, None],
+                "convoy_destination": [None, None],
+                "new_territory": ["A", "A"],
+            },
+            [True, False],
+        ),
+        (
+            "Self dislodge prevented",
+            {
+                "unit_id": ["u1", "u2"],
+                "owner_id": ["p1", "p1"],
+                "unit_type": [UnitType.ARMY, UnitType.ARMY],
+                "orig_territory": ["A", "B"],
+                "order_type": [OrderType.HOLD, OrderType.MOVE],
+                "move_destination": [None, "A"],
+                "support_origin": [None, None],
+                "support_destination": [None, None],
+                "convoy_origin": [None, None],
+                "convoy_destination": [None, None],
+                "new_territory": ["A", "A"],
+            },
+            [False, False],
+        ),
+    ],
+)
+def test_detect_dislodged(
+    resolution_soa_factory, description, soa_kwargs, expected
+):
+    soa = resolution_soa_factory(**soa_kwargs)
+    result = detect_dislodged(soa)
+    assert result == expected, f"Failed: {description}"

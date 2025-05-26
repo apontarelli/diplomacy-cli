@@ -413,3 +413,18 @@ def resolve_conflict(soa: ResolutionSoA) -> list[str]:
                         changed = True
 
     return new_territory
+
+
+def detect_dislodged(soa: ResolutionSoA) -> list[bool]:
+    n = len(soa.unit_type)
+    dislodged = [False] * n
+    for i in range(n):
+        if soa.new_territory[i] == soa.orig_territory[i]:
+            for j in range(n):
+                if j == i:
+                    continue
+                if soa.new_territory[j] == soa.orig_territory[i]:
+                    if soa.owner_id[j] != soa.owner_id[i]:
+                        dislodged[i] = True
+                        break
+    return dislodged
