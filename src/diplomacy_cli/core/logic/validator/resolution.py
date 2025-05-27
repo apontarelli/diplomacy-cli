@@ -497,3 +497,18 @@ def move_resolution_pass(
     new_soa.new_territory = resolve_conflict(new_soa)
     new_soa.dislodged = detect_dislodged(new_soa)
     return new_soa
+
+
+def resolve_move_phase(
+    semantic_results: list[SemanticResult], state: LoadedState, rules: Rules
+) -> tuple[ResolutionSoA, dict[str, list[str]]]:
+    soa, duplicate_orders = move_phase_soa(state, semantic_results)
+    maps = make_resolution_maps(soa)
+    soa.outcome = flag_support_convoy_mismatches(soa, maps)
+    while True:
+        prev_convoy_path_flat = soa.convoy_path_flat
+        soa = move_resolution_pass(soa, maps, rules)
+        if soa.convoy_path_flat == prev_convoy_path_flat:
+            break
+    soa.outcome = assign_move_outcomes(soa)
+    return soa, duplicate_orders

@@ -3,6 +3,7 @@ from typing import cast
 
 import pytest
 
+from diplomacy_cli.core.logic.rules_loader import load_rules
 from diplomacy_cli.core.logic.schema import (
     OrderType,
     OutcomeType,
@@ -25,6 +26,7 @@ from diplomacy_cli.core.logic.validator.resolution import (
     resolve_conflict,
     assign_move_outcomes,
     move_resolution_pass,
+    resolve_move_phase,
 )
 
 
@@ -1383,3 +1385,82 @@ def test_convoyed_move_cuts_support(resolution_soa_factory, rules_factory):
     resolved = move_resolution_pass(soa, maps, rules)
 
     assert resolved.support_cut == [False, False, True]
+
+
+def test_resolve_move_phase_fixed_point_convoy_invalidation(
+    semantic_result_factory, loaded_state_factory
+):
+    semantic_results = [
+        semantic_result_factory(
+            origin="lon",
+            order_type=OrderType.MOVE,
+            destination="bel",
+            raw="lon-bel",
+        ),
+        semantic_result_factory(
+            origin="eng",
+            order_type=OrderType.CONVOY,
+            convoy_origin="lon",
+            convoy_destination="bel",
+            raw="eng c lon-bel",
+        ),
+        semantic_result_factory(
+            origin="bre",
+            order_type=OrderType.MOVE,
+            destination="eng",
+            raw="bre-eng",
+        ),
+        semantic_result_factory(
+            origin="pic",
+            order_type=OrderType.HOLD,
+            raw="pic hold",
+        ),
+        semantic_result_factory(
+            origin="mao",
+            order_type=OrderType.SUPPORT_MOVE,
+            raw="mao s bre - eng",
+            support_origin="bre",
+            support_destination="eng",
+        ),
+        semantic_result_factory(
+            origin="bel",
+            order_type=OrderType.SUPPORT_HOLD,
+            raw="bel s pic h",
+            support_origin="pic",
+        ),
+        semantic_result_factory(
+            origin="lon",
+            order_type=OrderType.MOVE,
+            destination="bel",
+            raw="lon-lvp",
+        ),
+    ]
+
+    loaded_state = loaded_state_factory(
+        [
+            ("u_a1", 1, UnitType.ARMY, "lon"),
+            ("u_f1", 1, UnitType.FLEET, "eng"),
+            ("u_f2", 2, UnitType.FLEET, "bre"),
+            ("u_a2", 2, UnitType.ARMY, "pic"),
+            ("u_f3", 2, UnitType.FLEET, "mao"),
+            ("u_a3", 2, UnitType.ARMY, "bel"),
+        ]
+    )
+
+    rules = load_rules("classic")
+
+    soa, dupes = resolve_move_phase(semantic_results, loaded_state, rules)
+
+    idx_a1 = soa.unit_id.index("u_a1")
+    assert soa.outcome[idx_a1] == OutcomeType.MOVE_NO_CONVOY
+
+    idx_f1 = soa.unit_id.index("u_f1")
+    assert soa.dislodged[idx_f1] is True
+
+    idx_a3 = soa.unit_id.index("u_a3")
+    assert soa.support_cut[idx_a3] is False
+
+    idx_a3 = soa.unit_id.index("u_a3")
+    assert soa.outcome[idx_a3] == OutcomeType.SUPPORT_SUCCESS
+
+    assert dupes["u_a1"] == ["lon-lvp"]
