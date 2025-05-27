@@ -122,7 +122,7 @@ def test_make_semantic_map_defaults_to_hold(loaded_state_factory):
         ]
     )
     sem_by_unit, errs = make_semantic_map(ls, [])
-    assert errs == []
+    assert errs == {}
     assert set(sem_by_unit.keys()) == {"U1", "U2"}
     for sem in sem_by_unit.values():
         assert sem.order.order_type == OrderType.HOLD
@@ -142,10 +142,10 @@ def test_make_semantic_map_duplicate_orders(
         origin="A", order_type=OrderType.MOVE, destination="X"
     )
     sem2 = semantic_result_factory(
-        origin="A", order_type=OrderType.MOVE, destination="Y"
+        raw="A-Y", origin="A", order_type=OrderType.MOVE, destination="Y"
     )
     sem_by_unit, errs = make_semantic_map(ls, [sem1, sem2])
-    assert errs == ["Duplicate order for unit U1; ignoring."]
+    assert errs == {"U1": ["A-Y"]}
     assert sem_by_unit["U1"].order.destination == "X"
     assert sem_by_unit["U2"].order.order_type == OrderType.HOLD
 
@@ -169,7 +169,7 @@ def test_make_semantic_map_preexisting(
         support_destination="C",
     )
     sem_by_unit, errs = make_semantic_map(ls, [move_sem, support_sem])
-    assert errs == []
+    assert errs == {}
     assert sem_by_unit["U1"].order.order_type == OrderType.MOVE
     assert sem_by_unit["U1"].order.destination == "X"
     assert sem_by_unit["U2"].order.order_type == OrderType.SUPPORT_HOLD
@@ -190,7 +190,7 @@ def test_move_phase_soa_basic(loaded_state_factory, semantic_result_factory):
         semantic_result_factory(origin="B", order_type=OrderType.HOLD),
     ]
     soa, errs = move_phase_soa(ls, sems)
-    assert errs == []
+    assert errs == {}
     assert soa.order_type == [OrderType.MOVE, OrderType.HOLD]
     assert soa.move_destination == ["C", None]
     assert soa.new_territory == ["A", "B"]
@@ -218,7 +218,7 @@ def test_move_phase_soa_missing_data(
         )
     ]
     soa, errs = move_phase_soa(ls, sems)
-    assert errs == []
+    assert errs == {}
     assert soa.order_type == [OrderType.MOVE, OrderType.HOLD]
     assert soa.move_destination == ["C", None]
     assert soa.new_territory == ["A", "B"]

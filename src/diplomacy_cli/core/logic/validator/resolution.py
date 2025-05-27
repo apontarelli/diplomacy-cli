@@ -81,15 +81,13 @@ def make_resolution_maps(soa: ResolutionSoA) -> ResolutionMaps:
 def make_semantic_map(
     loaded_state: LoadedState,
     semantic_results: list[SemanticResult],
-) -> tuple[dict[str, SemanticResult], list[str]]:
-    sem_by_unit: dict[str, SemanticResult] = {}
-    duplicate_orders: list[str] = []
+) -> tuple[dict[str, SemanticResult], dict[str, list[str]]]:
+    sem_by_unit = {}
+    duplicate_orders = defaultdict(list)
     for sem in semantic_results:
         uid = loaded_state.territory_to_unit[sem.order.origin]
         if uid in sem_by_unit:
-            duplicate_orders.append(
-                f"Duplicate order for unit {uid}; ignoring."
-            )
+            duplicate_orders[uid].append(sem.raw)
             continue
         sem_by_unit[uid] = sem
 
@@ -107,7 +105,7 @@ def make_semantic_map(
 
 def move_phase_soa(
     loaded_state: LoadedState, semantic_results: list[SemanticResult]
-) -> tuple[ResolutionSoA, list[str]]:
+) -> tuple[ResolutionSoA, dict[str, list[str]]]:
     sem_by_unit, duplicate_orders = make_semantic_map(
         loaded_state, semantic_results
     )
