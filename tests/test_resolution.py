@@ -19,7 +19,6 @@ from diplomacy_cli.core.logic.validator.resolution import (
     flag_support_convoy_mismatches,
     get_convoy_path,
     make_resolution_maps,
-    make_semantic_map,
     move_phase_soa,
     process_convoys,
     process_moves,
@@ -116,83 +115,21 @@ def test_make_resolution_maps_no_orders(resolution_soa_factory):
     assert not maps.hold_by_origin
 
 
-def test_make_semantic_map_defaults_to_hold(loaded_state_factory):
+def test_move_phase_soa_basic(loaded_state_factory, semantic_map_factory):
     ls = loaded_state_factory(
         [
             ("U1", 1, UnitType.ARMY, "A"),
             ("U2", 2, UnitType.FLEET, "B"),
         ]
     )
-    sem_by_unit, errs = make_semantic_map(ls, [])
-    assert errs == {}
-    assert set(sem_by_unit.keys()) == {"U1", "U2"}
-    for sem in sem_by_unit.values():
-        assert sem.order.order_type == OrderType.HOLD
-        assert sem.valid
-
-
-def test_make_semantic_map_duplicate_orders(
-    loaded_state_factory, semantic_result_factory
-):
-    ls = loaded_state_factory(
+    sem_by_unit, _ = semantic_map_factory(
+        ls,
         [
-            ("U1", 1, UnitType.ARMY, "A"),
-            ("U2", 2, UnitType.FLEET, "B"),
-        ]
+            {"origin": "A", "order_type": OrderType.MOVE, "destination": "C"},
+            {"origin": "B", "order_type": OrderType.HOLD},
+        ],
     )
-    sem1 = semantic_result_factory(
-        origin="A", order_type=OrderType.MOVE, destination="X"
-    )
-    sem2 = semantic_result_factory(
-        raw="A-Y", origin="A", order_type=OrderType.MOVE, destination="Y"
-    )
-    sem_by_unit, errs = make_semantic_map(ls, [sem1, sem2])
-    assert errs == {"U1": ["A-Y"]}
-    assert sem_by_unit["U1"].order.destination == "X"
-    assert sem_by_unit["U2"].order.order_type == OrderType.HOLD
-
-
-def test_make_semantic_map_preexisting(
-    loaded_state_factory, semantic_result_factory
-):
-    ls = loaded_state_factory(
-        [
-            ("U1", 1, UnitType.ARMY, "A"),
-            ("U2", 2, UnitType.FLEET, "B"),
-        ]
-    )
-    move_sem = semantic_result_factory(
-        origin="A", order_type=OrderType.MOVE, destination="X"
-    )
-    support_sem = semantic_result_factory(
-        origin="B",
-        order_type=OrderType.SUPPORT_HOLD,
-        support_origin="A",
-        support_destination="C",
-    )
-    sem_by_unit, errs = make_semantic_map(ls, [move_sem, support_sem])
-    assert errs == {}
-    assert sem_by_unit["U1"].order.order_type == OrderType.MOVE
-    assert sem_by_unit["U1"].order.destination == "X"
-    assert sem_by_unit["U2"].order.order_type == OrderType.SUPPORT_HOLD
-    assert sem_by_unit["U2"].order.support_origin == "A"
-
-
-def test_move_phase_soa_basic(loaded_state_factory, semantic_result_factory):
-    ls = loaded_state_factory(
-        [
-            ("U1", 1, UnitType.ARMY, "A"),
-            ("U2", 2, UnitType.FLEET, "B"),
-        ]
-    )
-    sems = [
-        semantic_result_factory(
-            origin="A", order_type=OrderType.MOVE, destination="C"
-        ),
-        semantic_result_factory(origin="B", order_type=OrderType.HOLD),
-    ]
-    soa, errs = move_phase_soa(ls, sems)
-    assert errs == {}
+    soa = move_phase_soa(ls, sem_by_unit)
     assert soa.order_type == [OrderType.MOVE, OrderType.HOLD]
     assert soa.move_destination == ["C", None]
     assert soa.new_territory == ["A", "B"]
@@ -206,7 +143,7 @@ def test_move_phase_soa_basic(loaded_state_factory, semantic_result_factory):
 
 
 def test_move_phase_soa_missing_data(
-    loaded_state_factory, semantic_result_factory
+    loaded_state_factory, semantic_map_factory
 ):
     ls = loaded_state_factory(
         [
@@ -214,13 +151,13 @@ def test_move_phase_soa_missing_data(
             ("U2", 2, UnitType.FLEET, "B"),
         ]
     )
-    sems = [
-        semantic_result_factory(
-            origin="A", order_type=OrderType.MOVE, destination="C"
-        )
-    ]
-    soa, errs = move_phase_soa(ls, sems)
-    assert errs == {}
+    sem_by_unit, _ = semantic_map_factory(
+        ls,
+        [
+            {"origin": "A", "order_type": OrderType.MOVE, "destination": "C"},
+        ],
+    )
+    soa = move_phase_soa(ls, sem_by_unit)
     assert soa.order_type == [OrderType.MOVE, OrderType.HOLD]
     assert soa.move_destination == ["C", None]
     assert soa.new_territory == ["A", "B"]
@@ -1388,55 +1325,9 @@ def test_convoyed_move_cuts_support(resolution_soa_factory, rules_factory):
 
 
 def test_resolve_move_phase_fixed_point_convoy_invalidation(
-    semantic_result_factory, loaded_state_factory
+    semantic_map_factory, loaded_state_factory
 ):
-    semantic_results = [
-        semantic_result_factory(
-            origin="lon",
-            order_type=OrderType.MOVE,
-            destination="bel",
-            raw="lon-bel",
-        ),
-        semantic_result_factory(
-            origin="eng",
-            order_type=OrderType.CONVOY,
-            convoy_origin="lon",
-            convoy_destination="bel",
-            raw="eng c lon-bel",
-        ),
-        semantic_result_factory(
-            origin="bre",
-            order_type=OrderType.MOVE,
-            destination="eng",
-            raw="bre-eng",
-        ),
-        semantic_result_factory(
-            origin="pic",
-            order_type=OrderType.HOLD,
-            raw="pic hold",
-        ),
-        semantic_result_factory(
-            origin="mao",
-            order_type=OrderType.SUPPORT_MOVE,
-            raw="mao s bre - eng",
-            support_origin="bre",
-            support_destination="eng",
-        ),
-        semantic_result_factory(
-            origin="bel",
-            order_type=OrderType.SUPPORT_HOLD,
-            raw="bel s pic h",
-            support_origin="pic",
-        ),
-        semantic_result_factory(
-            origin="lon",
-            order_type=OrderType.MOVE,
-            destination="bel",
-            raw="lon-lvp",
-        ),
-    ]
-
-    loaded_state = loaded_state_factory(
+    ls = loaded_state_factory(
         [
             ("u_a1", 1, UnitType.ARMY, "lon"),
             ("u_f1", 1, UnitType.FLEET, "eng"),
@@ -1447,9 +1338,58 @@ def test_resolve_move_phase_fixed_point_convoy_invalidation(
         ]
     )
 
+    sem_by_unit, _ = semantic_map_factory(
+        ls,
+        [
+            {
+                "origin": "lon",
+                "order_type": OrderType.MOVE,
+                "destination": "bel",
+                "raw": "lon-bel",
+            },
+            {
+                "origin": "eng",
+                "order_type": OrderType.CONVOY,
+                "convoy_origin": "lon",
+                "convoy_destination": "bel",
+                "raw": "eng c lon-bel",
+            },
+            {
+                "origin": "bre",
+                "order_type": OrderType.MOVE,
+                "destination": "eng",
+                "raw": "bre-eng",
+            },
+            {
+                "origin": "pic",
+                "order_type": OrderType.HOLD,
+                "raw": "pic hold",
+            },
+            {
+                "origin": "mao",
+                "order_type": OrderType.SUPPORT_MOVE,
+                "support_origin": "bre",
+                "support_destination": "eng",
+                "raw": "mao s bre - eng",
+            },
+            {
+                "origin": "bel",
+                "order_type": OrderType.SUPPORT_HOLD,
+                "support_origin": "pic",
+                "raw": "bel s pic h",
+            },
+            {
+                "origin": "lon",
+                "order_type": OrderType.MOVE,
+                "destination": "lvp",
+                "raw": "lon-lvp",
+            },
+        ],
+    )
+
     rules = load_rules("classic")
 
-    soa, dupes = resolve_move_phase(semantic_results, loaded_state, rules)
+    soa = resolve_move_phase(sem_by_unit, ls, rules)
 
     idx_a1 = soa.unit_id.index("u_a1")
     assert soa.outcome[idx_a1] == OutcomeType.MOVE_NO_CONVOY
@@ -1462,5 +1402,3 @@ def test_resolve_move_phase_fixed_point_convoy_invalidation(
 
     idx_a3 = soa.unit_id.index("u_a3")
     assert soa.outcome[idx_a3] == OutcomeType.SUPPORT_SUCCESS
-
-    assert dupes["u_a1"] == ["lon-lvp"]

@@ -16,6 +16,7 @@ from diplomacy_cli.core.logic.schema import (
     TerritoryToUnit,
     UnitType,
 )
+from diplomacy_cli.core.logic.validator.orchestrator import make_semantic_map
 
 
 @pytest.fixture
@@ -65,6 +66,20 @@ def semantic_result_factory(order_factory):
             valid=valid,
             errors=errors or [],
         )
+
+    return _factory
+
+
+@pytest.fixture
+def semantic_map_factory(semantic_result_factory):
+    def _factory(
+        loaded_state,
+        sem_kwargs_list,
+    ) -> tuple[dict[str, SemanticResult], dict[str, list[SemanticResult]]]:
+        semantic_results = [
+            semantic_result_factory(**kwargs) for kwargs in sem_kwargs_list
+        ]
+        return make_semantic_map(loaded_state, semantic_results)
 
     return _factory
 
