@@ -46,6 +46,7 @@ def order_factory():
 @pytest.fixture
 def semantic_result_factory(order_factory):
     def _factory(
+        player_id: str,
         origin: str,
         order_type: OrderType,
         valid: bool = True,
@@ -60,6 +61,7 @@ def semantic_result_factory(order_factory):
             **order_kwargs,
         )
         return SemanticResult(
+            player_id=player_id,
             raw=raw,
             normalized=normalized,
             order=order,

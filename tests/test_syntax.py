@@ -209,7 +209,8 @@ def test_dispatch_parsers_failure():
 
 def test_parse_syntax_valid_move():
     raw = "mar - ber"
-    result = parse_syntax(raw, Phase.MOVEMENT)
+    player_id = "eng"
+    result = parse_syntax(player_id, raw, Phase.MOVEMENT)
     assert result.raw == raw
     assert result.valid is True
     assert result.errors == []
@@ -219,7 +220,8 @@ def test_parse_syntax_valid_move():
 
 def test_parse_syntax_invalid():
     raw = "invalid order"
-    result = parse_syntax(raw, Phase.MOVEMENT)
+    player_id = "eng"
+    result = parse_syntax(player_id, raw, Phase.MOVEMENT)
     assert result.raw == raw
     assert result.valid is False
     assert result.order is None

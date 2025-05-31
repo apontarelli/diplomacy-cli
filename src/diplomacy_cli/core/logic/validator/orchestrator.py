@@ -28,6 +28,11 @@ def make_semantic_map(
                 order_type=OrderType.HOLD,
             )
             sem_by_unit[uid] = SemanticResult(
-                raw="", normalized="", order=hold_order, valid=True, errors=[]
+                player_id=loaded_state.game.units[uid]["owner_id"],
+                raw="",
+                normalized="",
+                order=hold_order,
+                valid=True,
+                errors=[],
             )
     return sem_by_unit, duplicate_sem_by_uid

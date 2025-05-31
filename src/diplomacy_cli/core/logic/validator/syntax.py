@@ -175,7 +175,7 @@ def dispatch_parsers(tokens: list[str], phase: Phase):
     )
 
 
-def parse_syntax(raw: str, phase: Phase) -> SyntaxResult:
+def parse_syntax(player_id: str, raw: str, phase: Phase) -> SyntaxResult:
     normalized = normalize_order_string(raw)
     errors: list[str] = []
     order = None
@@ -192,6 +192,7 @@ def parse_syntax(raw: str, phase: Phase) -> SyntaxResult:
         valid = False
 
     return SyntaxResult(
+        player_id=player_id,
         raw=raw,
         normalized=normalized,
         valid=valid,

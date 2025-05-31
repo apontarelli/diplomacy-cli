@@ -282,6 +282,7 @@ def validate_semantic(
         errors.append(str(e))
 
     return SemanticResult(
+        player_id=player_id,
         raw=syntax.raw,
         normalized=syntax.normalized,
         order=order,

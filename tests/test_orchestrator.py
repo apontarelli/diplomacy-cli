@@ -1,4 +1,9 @@
-from diplomacy_cli.core.logic.schema import OrderType, UnitType
+from diplomacy_cli.core.logic.schema import (
+    OrderType,
+    PhaseResolutionReport,
+    UnitType,
+)
+from diplomacy_cli.core.logic.turn_code import Phase, Season
 from diplomacy_cli.core.logic.validator.orchestrator import make_semantic_map
 
 
@@ -27,10 +32,14 @@ def test_make_semantic_map_duplicate_orders(
         ]
     )
     sem1 = semantic_result_factory(
-        origin="A", order_type=OrderType.MOVE, destination="X"
+        player_id="eng", origin="A", order_type=OrderType.MOVE, destination="X"
     )
     sem2 = semantic_result_factory(
-        raw="A-Y", origin="A", order_type=OrderType.MOVE, destination="Y"
+        player_id="eng",
+        raw="A-Y",
+        origin="A",
+        order_type=OrderType.MOVE,
+        destination="Y",
     )
     sem_by_unit, errs = make_semantic_map(ls, [sem1, sem2])
 
@@ -51,9 +60,10 @@ def test_make_semantic_map_preexisting(
         ]
     )
     move_sem = semantic_result_factory(
-        origin="A", order_type=OrderType.MOVE, destination="X"
+        player_id="eng", origin="A", order_type=OrderType.MOVE, destination="X"
     )
     support_sem = semantic_result_factory(
+        player_id="eng",
         origin="B",
         order_type=OrderType.SUPPORT_HOLD,
         support_origin="A",

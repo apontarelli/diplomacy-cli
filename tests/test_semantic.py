@@ -462,6 +462,7 @@ def test_validate_semantic(loaded_state, classic_rules):
     player_id = "eng"
     order = Order(origin="lon", order_type=OrderType.MOVE, destination="wal")
     syntax = SyntaxResult(
+        player_id=player_id,
         raw="lon - wal",
         normalized="lon-wal",
         valid=True,
@@ -470,6 +471,7 @@ def test_validate_semantic(loaded_state, classic_rules):
     )
 
     expected = SemanticResult(
+        player_id="eng",
         raw="lon - wal",
         normalized="lon-wal",
         valid=True,
@@ -487,6 +489,7 @@ def test_validate_semantic_invalid(loaded_state, classic_rules):
     player_id = "eng"
     order = Order(origin="lon", order_type=OrderType.MOVE, destination="fun")
     syntax = SyntaxResult(
+        player_id=player_id,
         raw="lon - fun",
         normalized="lon-fun",
         valid=True,
@@ -495,6 +498,7 @@ def test_validate_semantic_invalid(loaded_state, classic_rules):
     )
 
     expected = SemanticResult(
+        player_id="eng",
         raw="lon - fun",
         normalized="lon-fun",
         valid=False,

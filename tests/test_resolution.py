@@ -125,8 +125,13 @@ def test_move_phase_soa_basic(loaded_state_factory, semantic_map_factory):
     sem_by_unit, _ = semantic_map_factory(
         ls,
         [
-            {"origin": "A", "order_type": OrderType.MOVE, "destination": "C"},
-            {"origin": "B", "order_type": OrderType.HOLD},
+            {
+                "player_id": 1,
+                "origin": "A",
+                "order_type": OrderType.MOVE,
+                "destination": "C",
+            },
+            {"player_id": 2, "origin": "B", "order_type": OrderType.HOLD},
         ],
     )
     soa = move_phase_soa(ls, sem_by_unit)
@@ -154,7 +159,12 @@ def test_move_phase_soa_missing_data(
     sem_by_unit, _ = semantic_map_factory(
         ls,
         [
-            {"origin": "A", "order_type": OrderType.MOVE, "destination": "C"},
+            {
+                "player_id": 1,
+                "origin": "A",
+                "order_type": OrderType.MOVE,
+                "destination": "C",
+            },
         ],
     )
     soa = move_phase_soa(ls, sem_by_unit)
@@ -1342,12 +1352,14 @@ def test_resolve_move_phase_fixed_point_convoy_invalidation(
         ls,
         [
             {
+                "player_id": 1,
                 "origin": "lon",
                 "order_type": OrderType.MOVE,
                 "destination": "bel",
                 "raw": "lon-bel",
             },
             {
+                "player_id": 1,
                 "origin": "eng",
                 "order_type": OrderType.CONVOY,
                 "convoy_origin": "lon",
@@ -1355,17 +1367,20 @@ def test_resolve_move_phase_fixed_point_convoy_invalidation(
                 "raw": "eng c lon-bel",
             },
             {
+                "player_id": 2,
                 "origin": "bre",
                 "order_type": OrderType.MOVE,
                 "destination": "eng",
                 "raw": "bre-eng",
             },
             {
+                "player_id": 2,
                 "origin": "pic",
                 "order_type": OrderType.HOLD,
                 "raw": "pic hold",
             },
             {
+                "player_id": 2,
                 "origin": "mao",
                 "order_type": OrderType.SUPPORT_MOVE,
                 "support_origin": "bre",
@@ -1373,12 +1388,14 @@ def test_resolve_move_phase_fixed_point_convoy_invalidation(
                 "raw": "mao s bre - eng",
             },
             {
+                "player_id": 2,
                 "origin": "bel",
                 "order_type": OrderType.SUPPORT_HOLD,
                 "support_origin": "pic",
                 "raw": "bel s pic h",
             },
             {
+                "player_id": 2,
                 "origin": "lon",
                 "order_type": OrderType.MOVE,
                 "destination": "lvp",

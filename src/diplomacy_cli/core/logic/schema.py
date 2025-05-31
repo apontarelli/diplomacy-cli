@@ -97,6 +97,7 @@ class Order:
 
 @dataclass(frozen=True)
 class SyntaxResult:
+    player_id: str
     raw: str
     normalized: str
     valid: bool
@@ -106,6 +107,7 @@ class SyntaxResult:
 
 @dataclass(frozen=True)
 class SemanticResult:
+    player_id: str
     raw: str
     normalized: str
     order: Order
