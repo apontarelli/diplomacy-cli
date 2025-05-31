@@ -3,7 +3,6 @@ from dataclasses import dataclass, replace
 
 from diplomacy_cli.core.logic.schema import (
     LoadedState,
-    Order,
     OrderType,
     OutcomeType,
     ResolutionSoA,
@@ -78,37 +77,9 @@ def make_resolution_maps(soa: ResolutionSoA) -> ResolutionMaps:
     )
 
 
-def make_semantic_map(
-    loaded_state: LoadedState,
-    semantic_results: list[SemanticResult],
-) -> tuple[dict[str, SemanticResult], dict[str, list[str]]]:
-    sem_by_unit = {}
-    duplicate_orders = defaultdict(list)
-    for sem in semantic_results:
-        uid = loaded_state.territory_to_unit[sem.order.origin]
-        if uid in sem_by_unit:
-            duplicate_orders[uid].append(sem.raw)
-            continue
-        sem_by_unit[uid] = sem
-
-    for uid in loaded_state.game.units.keys():
-        if uid not in sem_by_unit:
-            hold_order = Order(
-                origin=loaded_state.game.units[uid]["territory_id"],
-                order_type=OrderType.HOLD,
-            )
-            sem_by_unit[uid] = SemanticResult(
-                raw="", normalized="", order=hold_order, valid=True, errors=[]
-            )
-    return sem_by_unit, duplicate_orders
-
-
 def move_phase_soa(
-    loaded_state: LoadedState, semantic_results: list[SemanticResult]
-) -> tuple[ResolutionSoA, dict[str, list[str]]]:
-    sem_by_unit, duplicate_orders = make_semantic_map(
-        loaded_state, semantic_results
-    )
+    loaded_state: LoadedState, sem_by_unit: dict[str, SemanticResult]
+) -> ResolutionSoA:
     unit_id = []
     owner_id = []
     unit_type = []
@@ -158,7 +129,7 @@ def move_phase_soa(
         outcome=[None] * n,
     )
 
-    return soa, duplicate_orders
+    return soa
 
 
 def validate_convoy(
@@ -500,9 +471,9 @@ def move_resolution_pass(
 
 
 def resolve_move_phase(
-    semantic_results: list[SemanticResult], state: LoadedState, rules: Rules
-) -> tuple[ResolutionSoA, dict[str, list[str]]]:
-    soa, duplicate_orders = move_phase_soa(state, semantic_results)
+    sem_by_unit: dict[str, SemanticResult], state: LoadedState, rules: Rules
+) -> ResolutionSoA:
+    soa = move_phase_soa(state, sem_by_unit)
     maps = make_resolution_maps(soa)
     soa.outcome = flag_support_convoy_mismatches(soa, maps)
     while True:
@@ -511,4 +482,4 @@ def resolve_move_phase(
         if soa.convoy_path_flat == prev_convoy_path_flat:
             break
     soa.outcome = assign_move_outcomes(soa)
-    return soa, duplicate_orders
+    return soa
