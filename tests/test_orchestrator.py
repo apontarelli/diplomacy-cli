@@ -1,10 +1,15 @@
+from diplomacy_cli.core.logic.rules_loader import load_rules
 from diplomacy_cli.core.logic.schema import (
     OrderType,
-    PhaseResolutionReport,
+    Season,
     UnitType,
+    OutcomeType,
+    Phase,
 )
-from diplomacy_cli.core.logic.turn_code import Phase, Season
-from diplomacy_cli.core.logic.validator.orchestrator import make_semantic_map
+from diplomacy_cli.core.logic.validator.orchestrator import (
+    make_semantic_map,
+    process_move_phase,
+)
 
 
 def test_make_semantic_map_defaults_to_hold(loaded_state_factory):
@@ -75,3 +80,60 @@ def test_make_semantic_map_preexisting(
     assert sem_by_unit["U1"].order.destination == "X"
     assert sem_by_unit["U2"].order.order_type == OrderType.SUPPORT_HOLD
     assert sem_by_unit["U2"].order.support_origin == "A"
+
+
+def test_process_move_phase_single_valid_order(loaded_state_factory):
+    raw_orders = {"P1": ["lon-wal"]}
+
+    loaded_state = loaded_state_factory(
+        [("U1", "P1", UnitType.ARMY, "lon")],
+        game_meta={"turn_code": "1901-S-M"},
+    )
+    rules = load_rules("classic")
+    report = process_move_phase(raw_orders, rules, loaded_state)
+
+    assert report.phase == Phase.MOVEMENT
+    assert report.year == 0
+    assert report.season == Season.SPRING
+    assert len(report.syntax_errors) == 0
+    assert len(report.semantic_errors) == 0
+    assert len(report.resolution_results) == 1
+
+    res = report.resolution_results[0]
+    assert res.unit_id == "U1"
+    assert res.origin_territory == "lon"
+    assert res.destination == "wal"
+    assert res.outcome == OutcomeType.MOVE_SUCCESS
+
+
+def test_process_move_phase_invalid_syntax(loaded_state_factory):
+    raw_orders = {"P1": ["this-is-not-valid"]}
+
+    loaded_state = loaded_state_factory(
+        [("U1", "P1", UnitType.ARMY, "lon")],
+        game_meta={"turn_code": "1901-S-M"},
+    )
+
+    rules = load_rules("classic")
+    report = process_move_phase(raw_orders, rules, loaded_state)
+
+    assert len(report.syntax_errors) == 1
+    assert len(report.semantic_errors) == 0
+    assert len(report.resolution_results) == 1
+
+
+def test_process_move_phase_invalid_semantic(loaded_state_factory):
+    raw_orders = {"P1": ["lon-mun"]}
+
+    loaded_state = loaded_state_factory(
+        [("U1", "P1", UnitType.ARMY, "lon")],
+        game_meta={"turn_code": "1901-S-M"},
+    )
+
+    rules = load_rules("classic")
+
+    report = process_move_phase(raw_orders, rules, loaded_state)
+
+    assert len(report.syntax_errors) == 0
+    assert len(report.semantic_errors) == 1
+    assert len(report.resolution_results) == 1

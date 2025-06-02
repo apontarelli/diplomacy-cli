@@ -92,9 +92,10 @@ def loaded_state_factory():
         unit_specs: list[tuple[str, int, UnitType, str]],
         counters: Counters | None = None,
         dislodged: set[str] | None = None,
+        game_meta: dict | None = None,
     ) -> LoadedState:
         gs_ns = SimpleNamespace(
-            game_meta=SimpleNamespace(),
+            game_meta=game_meta,
             players=[],
             territory_state={},
             units={},
@@ -199,10 +200,13 @@ def rules_factory():
     def _factory(
         parent_to_coast: dict[str, set[str]],
         adjacency_map: dict[str, list[tuple[str, str]]],
+        territory_ids: list[str] | None = None,
     ):
         ns = SimpleNamespace(
             parent_to_coast=parent_to_coast,
             adjacency_map=adjacency_map,
+            territory_ids=territory_ids
+            or list(parent_to_coast.keys()) + list(adjacency_map.keys()),
         )
         return cast(Rules, ns)
 
