@@ -56,6 +56,8 @@ def process_move_phase(
         loaded_state.game.game_meta["turn_code"]
     )
     validated_orders = []
+    valid_syntax = []
+    valid_semantics = []
     syntax_errors = []
     semantic_errors = []
     resolution_results = []
@@ -65,12 +67,14 @@ def process_move_phase(
             if not parsed_order.valid:
                 syntax_errors.append(parsed_order)
                 continue
+            valid_syntax.append(parsed_order)
             validated_order = validate_semantic(
                 player, parsed_order, rules, loaded_state
             )
             if not validated_order.valid:
                 semantic_errors.append(validated_order)
                 continue
+            valid_semantics.append(validated_order)
             validated_orders.append(validated_order)
     sem_by_unit, duplicated_orders_by_unit = make_semantic_map(
         loaded_state, validated_orders
@@ -118,6 +122,8 @@ def process_move_phase(
         phase=phase,
         season=season,
         year=year,
+        valid_syntax=valid_syntax,
+        valid_semantics=valid_semantics,
         syntax_errors=syntax_errors,
         semantic_errors=semantic_errors,
         resolution_results=resolution_results,

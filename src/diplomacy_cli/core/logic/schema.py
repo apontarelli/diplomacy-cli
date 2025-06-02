@@ -180,6 +180,8 @@ class PhaseResolutionReport:
     phase: Phase
     season: Season
     year: int
+    valid_syntax: list[SyntaxResult]
+    valid_semantics: list[SemanticResult]
     syntax_errors: list[SyntaxResult]
     semantic_errors: list[SemanticResult]
     resolution_results: list[ResolutionResult]

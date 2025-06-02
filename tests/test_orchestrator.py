@@ -95,6 +95,8 @@ def test_process_move_phase_single_valid_order(loaded_state_factory):
     assert report.phase == Phase.MOVEMENT
     assert report.year == 0
     assert report.season == Season.SPRING
+    assert len(report.valid_syntax) == 1
+    assert len(report.valid_semantics) == 1
     assert len(report.syntax_errors) == 0
     assert len(report.semantic_errors) == 0
     assert len(report.resolution_results) == 1
@@ -117,6 +119,8 @@ def test_process_move_phase_invalid_syntax(loaded_state_factory):
     rules = load_rules("classic")
     report = process_move_phase(raw_orders, rules, loaded_state)
 
+    assert len(report.valid_syntax) == 0
+    assert len(report.valid_semantics) == 0
     assert len(report.syntax_errors) == 1
     assert len(report.semantic_errors) == 0
     assert len(report.resolution_results) == 1
@@ -134,6 +138,8 @@ def test_process_move_phase_invalid_semantic(loaded_state_factory):
 
     report = process_move_phase(raw_orders, rules, loaded_state)
 
+    assert len(report.valid_syntax) == 1
+    assert len(report.valid_semantics) == 0
     assert len(report.syntax_errors) == 0
     assert len(report.semantic_errors) == 1
     assert len(report.resolution_results) == 1
