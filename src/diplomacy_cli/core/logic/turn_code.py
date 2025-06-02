@@ -1,4 +1,4 @@
-from enum import IntEnum
+from diplomacy_cli.core.logic.schema import Phase, Season
 
 BASE_YEAR = 1901
 SEASON_CODES = ("S", "F", "W")
@@ -6,18 +6,6 @@ SEASON_NAMES = ("Spring", "Fall", "Winter")
 PHASE_CODES = ("M", "R", "A")
 PHASE_NAMES = ("Movement", "Retreat", "Adjustment")
 INITIAL_TURN_CODE = f"{BASE_YEAR}-{SEASON_CODES[0]}-{PHASE_CODES[0]}"
-
-
-class Season(IntEnum):
-    SPRING = 0
-    FALL = 1
-    WINTER = 2
-
-
-class Phase(IntEnum):
-    MOVEMENT = 0
-    RETREAT = 1
-    ADJUSTMENT = 2
 
 
 _TRANSITIONS = {

@@ -1,6 +1,18 @@
 from dataclasses import dataclass
-from enum import Enum
+from enum import Enum, IntEnum
 from typing import Any
+
+
+class Season(IntEnum):
+    SPRING = 0
+    FALL = 1
+    WINTER = 2
+
+
+class Phase(IntEnum):
+    MOVEMENT = 0
+    RETREAT = 1
+    ADJUSTMENT = 2
 
 
 class UnitType(str, Enum):
@@ -148,9 +160,29 @@ class ResolutionSoA:
 
 @dataclass(frozen=True)
 class ResolutionResult:
-    player_id: str
-    order: Order
-    outcome: str
+    unit_id: str
+    owner_id: str
+    unit_type: UnitType
+    origin_territory: str
+    semantic_result: SemanticResult
+    outcome: OutcomeType
+    resolved_territory: str
+    strength: int
+    dislodged_by_id: str | None
+    destination: str | None
+    convoy_path: list[str] | None
+    supported_unit_id: str | None
+    duplicate_orders: list[SemanticResult]
+
+
+@dataclass(frozen=True)
+class PhaseResolutionReport:
+    phase: Phase
+    season: Season
+    year: int
+    syntax_errors: list[SyntaxResult]
+    semantic_errors: list[SemanticResult]
+    resolution_results: list[ResolutionResult]
 
 
 @dataclass(frozen=True)
