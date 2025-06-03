@@ -7,6 +7,7 @@ from diplomacy_cli.core.logic.validator.resolution import (
 )
 from diplomacy_cli.core.logic.validator.semantic import validate_semantic
 from diplomacy_cli.core.logic.validator.syntax import parse_syntax
+
 from ..schema import (
     LoadedState,
     Order,

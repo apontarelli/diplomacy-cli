@@ -1,26 +1,26 @@
 from diplomacy_cli.core.logic.schema import (
     Order,
     OrderType,
-    SyntaxResult,
-    SemanticResult,
-    ResolutionResult,
-    UnitType,
     OutcomeType,
-    PhaseResolutionReport,
     Phase,
+    PhaseResolutionReport,
+    ResolutionResult,
     Season,
+    SemanticResult,
+    SyntaxResult,
+    UnitType,
 )
 from diplomacy_cli.core.logic.serialization import (
     order_from_dict,
     order_to_dict,
-    syntax_result_from_dict,
-    syntax_result_to_dict,
-    semantic_result_from_dict,
-    semantic_result_to_dict,
-    resolution_result_from_dict,
-    resolution_result_to_dict,
     phase_resolution_report_from_dict,
     phase_resolution_report_to_dict,
+    resolution_result_from_dict,
+    resolution_result_to_dict,
+    semantic_result_from_dict,
+    semantic_result_to_dict,
+    syntax_result_from_dict,
+    syntax_result_to_dict,
 )
 
 
@@ -41,7 +41,7 @@ def test_order_roundtrip():
 def test_syntax_result_roundtrip():
     order = Order("lon", OrderType.HOLD)
     syntax = SyntaxResult(
-        player_id="ENG",
+        player_id="eng",
         raw="lon hold",
         normalized="lon h",
         valid=True,
@@ -54,7 +54,7 @@ def test_syntax_result_roundtrip():
 def test_semantic_result_roundtrip():
     order = Order("bre", OrderType.MOVE, destination="pic")
     semantic = SemanticResult(
-        player_id="FRA",
+        player_id="fra",
         raw="bre-pic",
         normalized="bre m pic",
         order=order,
@@ -68,7 +68,7 @@ def test_semantic_result_roundtrip():
 
 def test_resolution_result_roundtrip():
     sem = SemanticResult(
-        player_id="RUS",
+        player_id="rus",
         raw="sev-bla",
         normalized="sev m bla",
         order=Order("sev", OrderType.MOVE, destination="bla"),
@@ -77,7 +77,7 @@ def test_resolution_result_roundtrip():
     )
     result = ResolutionResult(
         unit_id="U1",
-        owner_id="RUS",
+        owner_id="rus",
         unit_type=UnitType.FLEET,
         origin_territory="sev",
         semantic_result=sem,
@@ -101,7 +101,7 @@ def test_phase_resolution_report_roundtrip():
     semantic = SemanticResult("ITA", "rom hold", "rom h", order, True, [])
     result = ResolutionResult(
         unit_id="U2",
-        owner_id="ITA",
+        owner_id="ita",
         unit_type=UnitType.ARMY,
         origin_territory="rom",
         semantic_result=semantic,

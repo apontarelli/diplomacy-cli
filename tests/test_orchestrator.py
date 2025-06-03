@@ -1,10 +1,10 @@
 from diplomacy_cli.core.logic.rules_loader import load_rules
 from diplomacy_cli.core.logic.schema import (
     OrderType,
-    Season,
-    UnitType,
     OutcomeType,
     Phase,
+    Season,
+    UnitType,
 )
 from diplomacy_cli.core.logic.validator.orchestrator import (
     make_semantic_map,

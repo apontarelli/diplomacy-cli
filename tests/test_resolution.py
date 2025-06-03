@@ -12,6 +12,7 @@ from diplomacy_cli.core.logic.schema import (
 )
 from diplomacy_cli.core.logic.validator.resolution import (
     ResolutionMaps,
+    assign_move_outcomes,
     calculate_strength,
     cut_supports,
     detect_dislodged,
@@ -20,11 +21,10 @@ from diplomacy_cli.core.logic.validator.resolution import (
     get_convoy_path,
     make_resolution_maps,
     move_phase_soa,
+    move_resolution_pass,
     process_convoys,
     process_moves,
     resolve_conflict,
-    assign_move_outcomes,
-    move_resolution_pass,
     resolve_move_phase,
 )
 

@@ -1,14 +1,14 @@
 from diplomacy_cli.core.logic.schema import (
-    PhaseResolutionReport,
+    Order,
     OrderType,
-    UnitType,
     OutcomeType,
     Phase,
-    Season,
-    SyntaxResult,
-    SemanticResult,
-    Order,
+    PhaseResolutionReport,
     ResolutionResult,
+    Season,
+    SemanticResult,
+    SyntaxResult,
+    UnitType,
 )
 
 
