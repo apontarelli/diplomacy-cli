@@ -185,18 +185,3 @@ class PhaseResolutionReport:
     syntax_errors: list[SyntaxResult]
     semantic_errors: list[SemanticResult]
     resolution_results: list[ResolutionResult]
-
-
-@dataclass(frozen=True)
-class Mutation:
-    type: str
-    payload: dict[str, Any]
-
-
-@dataclass(frozen=True)
-class TurnReport:
-    invalid_syntax: dict[str, list[SyntaxResult]]
-    invalid_semantic: dict[str, list[SemanticResult]]
-    resolution: list[ResolutionResult]
-    mutations: list[Mutation]
-    new_state: LoadedState
