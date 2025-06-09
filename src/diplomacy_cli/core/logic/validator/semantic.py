@@ -5,9 +5,11 @@ from ..schema import (
     LoadedState,
     Order,
     OrderType,
+    OutcomeType,
     SemanticResult,
     SyntaxResult,
     TerritoryToUnit,
+    UnitType,
 )
 
 
@@ -51,16 +53,16 @@ def _check_adjacency(
     _check_territory_exists(origin, rules.territory_ids)
     _check_territory_exists(target, rules.territory_ids)
     unit_id = state.territory_to_unit[origin]
-    unit_type = state.game.units[unit_id]["unit_type"]
+    unit_type = UnitType(state.game.units[unit_id]["unit_type"])
 
     for a, b, edge_type in rules.edges:
         if {a, b} == {origin, target}:
-            if unit_type == "army" and edge_type in ("land", "both"):
+            if unit_type == UnitType.ARMY and edge_type in ("land", "both"):
                 return
-            if unit_type == "fleet" and edge_type in ("sea", "both"):
+            if unit_type == UnitType.FLEET and edge_type in ("sea", "both"):
                 return
 
-    if allow_convoy and unit_type == "army":
+    if allow_convoy and unit_type == UnitType.ARMY:
         if _has_sea_path(origin, target, rules):
             return
         raise SemanticError(
@@ -69,8 +71,8 @@ def _check_adjacency(
         )
 
     raise SemanticError(
-        f"{unit_type.title()} at {origin} cannot reach {target} "
-        f"(requires {unit_type}-appropriate edge)"
+        f"{unit_type.value.title()} at {origin} cannot reach {target} "
+        f"(requires {unit_type.value}-appropriate edge)"
     )
 
 
@@ -139,12 +141,12 @@ def _check_convoy(
     )
     _check_unit_exists(order.origin, state.territory_to_unit)
     fleet = state.game.units[state.territory_to_unit[order.origin]]
-    if fleet["unit_type"] != "fleet":
+    if fleet["unit_type"] != UnitType.FLEET.value:
         raise SemanticError(f"No fleet at {order.origin} to convoy")
 
     _check_unit_exists(order.convoy_origin, state.territory_to_unit)
     army = state.game.units[state.territory_to_unit[order.convoy_origin]]
-    if army["unit_type"] != "army":
+    if army["unit_type"] != UnitType.ARMY.value:
         raise SemanticError(f"No army at {order.convoy_origin} to convoy")
 
     if not _has_sea_path(order.convoy_origin, order.convoy_destination, rules):
@@ -212,7 +214,10 @@ def _check_build(
         raise SemanticError(
             f"{player_id} does not have enough supply centers to build a unit"
         )
-    if order.unit_type == "fleet" and order.origin not in rules.has_coast:
+    if (
+        order.unit_type == UnitType.FLEET
+        and order.origin not in rules.has_coast
+    ):
         raise SemanticError("Fleets can only be built on coasts")
 
 
@@ -221,11 +226,12 @@ def _check_disband(
 ) -> None:
     _check_territory_exists(order.origin, rules.territory_ids)
     _check_unit_exists(order.origin, state.territory_to_unit)
+    assert order.unit_type is not None
     if (
         state.game.units[state.territory_to_unit[order.origin]]["unit_type"]
-        != order.unit_type
+        != order.unit_type.value
     ):
-        raise SemanticError(f"No {order.unit_type} at {order.origin}")
+        raise SemanticError(f"No {order.unit_type.value} at {order.origin}")
     _check_unit_ownership(
         player_id, order.origin, state.game.units, state.territory_to_unit
     )

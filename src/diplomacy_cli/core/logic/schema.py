@@ -104,7 +104,7 @@ class Order:
     convoy_destination: str | None = None
     support_origin: str | None = None
     support_destination: str | None = None
-    unit_type: str | None = None
+    unit_type: UnitType | None = None
 
 
 @dataclass(frozen=True)

@@ -8,6 +8,7 @@ from diplomacy_cli.core.logic.schema import (
     OrderType,
     SemanticResult,
     SyntaxResult,
+    UnitType,
 )
 from diplomacy_cli.core.logic.state import (
     build_counters,
@@ -207,7 +208,7 @@ def test_symmetry(classic_rules):
 
 def test_check_build(loaded_state, classic_rules):
     build_order = Order(
-        origin="edi", order_type=OrderType.BUILD, unit_type="army"
+        origin="edi", order_type=OrderType.BUILD, unit_type=UnitType.ARMY
     )
     player_id = "eng"
     _check_build(player_id, build_order, loaded_state, classic_rules)
@@ -215,7 +216,7 @@ def test_check_build(loaded_state, classic_rules):
 
 def test_check_build_occupied(loaded_state, classic_rules):
     build_order = Order(
-        origin="lon", order_type=OrderType.BUILD, unit_type="army"
+        origin="lon", order_type=OrderType.BUILD, unit_type=UnitType.ARMY
     )
     player_id = "eng"
     with pytest.raises(
@@ -226,7 +227,7 @@ def test_check_build_occupied(loaded_state, classic_rules):
 
 def test_check_build_not_home(loaded_state, classic_rules):
     build_order = Order(
-        origin="mar", order_type=OrderType.BUILD, unit_type="army"
+        origin="mar", order_type=OrderType.BUILD, unit_type=UnitType.ARMY
     )
     player_id = "eng"
     with pytest.raises(SemanticError, match="mar is not a home center of eng"):
@@ -253,7 +254,7 @@ def test_check_build_supply_centers(loaded_state, classic_rules):
 
 def test_check_build_not_owned(loaded_state, classic_rules):
     build_order = Order(
-        origin="lvp", order_type=OrderType.BUILD, unit_type="army"
+        origin="lvp", order_type=OrderType.BUILD, unit_type=UnitType.ARMY
     )
     player_id = "eng"
     with pytest.raises(SemanticError, match="lvp does not belong to eng"):
@@ -262,7 +263,7 @@ def test_check_build_not_owned(loaded_state, classic_rules):
 
 def test_check_build_land_fleet(loaded_state, classic_rules):
     build_order = Order(
-        origin="par", order_type=OrderType.BUILD, unit_type="fleet"
+        origin="par", order_type=OrderType.BUILD, unit_type=UnitType.FLEET
     )
     player_id = "fra"
     with pytest.raises(
@@ -273,7 +274,7 @@ def test_check_build_land_fleet(loaded_state, classic_rules):
 
 def test_check_disband(loaded_state, classic_rules):
     disband_order = Order(
-        origin="lon", order_type=OrderType.DISBAND, unit_type="army"
+        origin="lon", order_type=OrderType.DISBAND, unit_type=UnitType.ARMY
     )
     player_id = "eng"
     _check_disband(player_id, disband_order, loaded_state, classic_rules)
@@ -281,7 +282,7 @@ def test_check_disband(loaded_state, classic_rules):
 
 def test_check_disband_no_unit(loaded_state, classic_rules):
     disband_order = Order(
-        origin="swe", order_type=OrderType.DISBAND, unit_type="fleet"
+        origin="swe", order_type=OrderType.DISBAND, unit_type=UnitType.FLEET
     )
     player_id = "eng"
     with pytest.raises(SemanticError, match="Unit does not exist in swe"):
@@ -295,7 +296,7 @@ def test_check_disband_no_unit(loaded_state, classic_rules):
 
 def test_check_disband_wrong_unit(loaded_state, classic_rules):
     disband_order = Order(
-        origin="lon", order_type=OrderType.DISBAND, unit_type="fleet"
+        origin="lon", order_type=OrderType.DISBAND, unit_type=UnitType.FLEET
     )
     player_id = "eng"
     with pytest.raises(SemanticError, match="No fleet at lon"):
@@ -309,7 +310,7 @@ def test_check_disband_wrong_unit(loaded_state, classic_rules):
 
 def test_check_disband_not_owned(loaded_state, classic_rules):
     disband_order = Order(
-        origin="pie", order_type=OrderType.DISBAND, unit_type="army"
+        origin="pie", order_type=OrderType.DISBAND, unit_type=UnitType.ARMY
     )
     player_id = "eng"
     with pytest.raises(SemanticError, match="pie does not belong to eng"):

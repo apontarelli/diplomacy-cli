@@ -1,6 +1,6 @@
 import re
 
-from ..schema import Order, OrderType, SyntaxResult
+from ..schema import Order, OrderType, SyntaxResult, UnitType
 from ..turn_code import Phase
 
 
@@ -38,11 +38,11 @@ def take_unit_type(tokens: list[str]) -> str:
             "Expected unit type (‘army’ or ‘fleet’), but got end of input"
         )
     tok = tokens.pop(0)
-    if tok not in ("army", "fleet"):
-        raise ParseError(
-            f"Expected unit type ‘army’ or ‘fleet’, but got {tok!r}"
-        )
-    return tok
+    if tok == "army":
+        return UnitType.ARMY
+    if tok == "fleet":
+        return UnitType.FLEET
+    raise ParseError(f"Expected unit type ‘army’ or ‘fleet’, but got {tok!r}")
 
 
 def ensure_no_tokens(tokens: list[str]) -> None:
