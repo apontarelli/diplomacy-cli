@@ -32,6 +32,7 @@ def order_factory():
         support_destination: str | None = None,
         convoy_origin: str | None = None,
         convoy_destination: str | None = None,
+        unit_type: UnitType | None = None,
     ) -> Order:
         return Order(
             origin=origin,
@@ -41,6 +42,7 @@ def order_factory():
             support_destination=support_destination,
             convoy_origin=convoy_origin,
             convoy_destination=convoy_destination,
+            unit_type=unit_type,
         )
 
     return _factory

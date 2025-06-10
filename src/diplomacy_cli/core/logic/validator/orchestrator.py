@@ -51,6 +51,41 @@ def make_semantic_map(
     return sem_by_unit, duplicate_sem_by_uid
 
 
+def make_adjustment_semantic_map(
+    loaded_state: LoadedState,
+    semantic_results: list[SemanticResult],
+) -> tuple[
+    dict[str, SemanticResult],
+    dict[str, list[SemanticResult]],
+    dict[str, SemanticResult],
+    dict[str, list[SemanticResult]],
+]:
+    disband_by_unit = {}
+    duplicate_disband_by_uid = defaultdict(list)
+    build_by_territory = {}
+    duplicate_build_by_territory = defaultdict(list)
+    for sem in semantic_results:
+        if sem.order.order_type == OrderType.DISBAND:
+            uid = loaded_state.territory_to_unit[sem.order.origin]
+            if uid in disband_by_unit:
+                duplicate_disband_by_uid[uid].append(sem)
+                continue
+            disband_by_unit[uid] = sem
+        elif sem.order.order_type == OrderType.BUILD:
+            territory = sem.order.origin
+            if territory in build_by_territory:
+                duplicate_build_by_territory[territory].append(sem)
+                continue
+            build_by_territory[territory] = sem
+
+    return (
+        disband_by_unit,
+        duplicate_disband_by_uid,
+        build_by_territory,
+        duplicate_build_by_territory,
+    )
+
+
 def process_phase(
     raw_orders: dict[str, list[str]], rules: Rules, loaded_state: LoadedState
 ) -> PhaseResolutionReport:

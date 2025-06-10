@@ -6,6 +6,7 @@ from diplomacy_cli.core.logic.schema import (
     UnitType,
 )
 from diplomacy_cli.core.logic.validator.orchestrator import (
+    make_adjustment_semantic_map,
     make_semantic_map,
     process_phase,
 )
@@ -79,6 +80,84 @@ def test_make_semantic_map_preexisting(
     assert sem_by_unit["U1"].order.destination == "X"
     assert sem_by_unit["U2"].order.order_type == OrderType.SUPPORT_HOLD
     assert sem_by_unit["U2"].order.support_origin == "A"
+
+
+def test_make_adjustment_semantic_map_single_valid(
+    loaded_state_factory, semantic_result_factory
+):
+    loaded_state = loaded_state_factory([("U1", "P1", UnitType.ARMY, "mun")])
+
+    sem_results = [
+        semantic_result_factory(
+            player_id="P1",
+            origin="mun",
+            order_type=OrderType.DISBAND,
+        ),
+        semantic_result_factory(
+            player_id="P1",
+            origin="ber",
+            order_type=OrderType.BUILD,
+            unit_type=UnitType.ARMY,
+        ),
+    ]
+
+    (
+        disband_by_unit,
+        dup_disband,
+        build_by_territory,
+        dup_build,
+    ) = make_adjustment_semantic_map(loaded_state, sem_results)
+
+    assert disband_by_unit == {"U1": sem_results[0]}
+    assert dup_disband == {}
+    assert build_by_territory == {"ber": sem_results[1]}
+    assert dup_build == {}
+
+
+def test_make_adjustment_semantic_map_duplicate_disband(
+    loaded_state_factory, semantic_result_factory
+):
+    loaded_state = loaded_state_factory([("U1", "P1", UnitType.ARMY, "mun")])
+
+    sem1 = semantic_result_factory("P1", "mun", OrderType.DISBAND)
+    sem2 = semantic_result_factory("P1", "mun", OrderType.DISBAND)
+
+    (
+        disband_by_unit,
+        dup_disband,
+        build_by_territory,
+        dup_build,
+    ) = make_adjustment_semantic_map(loaded_state, [sem1, sem2])
+
+    assert disband_by_unit == {"U1": sem1}
+    assert dup_disband == {"U1": [sem2]}
+    assert build_by_territory == {}
+    assert dup_build == {}
+
+
+def test_make_adjustment_semantic_map_duplicate_build(
+    loaded_state_factory, semantic_result_factory
+):
+    loaded_state = loaded_state_factory([])
+
+    sem1 = semantic_result_factory(
+        "P1", "ber", OrderType.BUILD, unit_type=UnitType.ARMY
+    )
+    sem2 = semantic_result_factory(
+        "P1", "ber", OrderType.BUILD, unit_type=UnitType.FLEET
+    )
+
+    (
+        disband_by_unit,
+        dup_disband,
+        build_by_territory,
+        dup_build,
+    ) = make_adjustment_semantic_map(loaded_state, [sem1, sem2])
+
+    assert disband_by_unit == {}
+    assert dup_disband == {}
+    assert build_by_territory == {"ber": sem1}
+    assert dup_build == {"ber": [sem2]}
 
 
 def test_process_move_phase_single_valid_order(
