@@ -257,3 +257,78 @@ def test_retreat_phase_bounce_real(loaded_state_factory, classic_rules):
     outcomes = {r.unit_id: r.outcome for r in retreat_report.resolution_results}
     assert outcomes["U1"] == OutcomeType.RETREAT_FAILED
     assert outcomes["U2"] == OutcomeType.RETREAT_FAILED
+
+
+def test_adjustment_phase_single_disband(loaded_state_factory, classic_rules):
+    loaded_state = loaded_state_factory(
+        unit_specs=[("U1", "ger", UnitType.ARMY, "mun")],
+        game_meta={"turn_code": "1901-F-A"},
+        territory_state={
+            "mun": {"owner_id": "ger", "supply_center": True},
+        },
+    )
+
+    raw_orders = {"ger": ["disband army mun"]}
+
+    report = process_phase(raw_orders, classic_rules, loaded_state)
+
+    assert len(report.resolution_results) == 1
+    result = report.resolution_results[0]
+    assert result.unit_id == "U1"
+    assert result.outcome == OutcomeType.DISBAND_SUCCESS
+
+
+def test_adjustment_phase_disband_duplicate(
+    loaded_state_factory, classic_rules
+):
+    loaded_state = loaded_state_factory(
+        unit_specs=[("U1", "ger", UnitType.ARMY, "mun")],
+        game_meta={"turn_code": "1901-F-A"},
+        territory_state={"mun": {"owner_id": "ger", "supply_center": True}},
+    )
+
+    raw_orders = {"ger": ["disband army mun", "disband army mun"]}
+
+    report = process_phase(raw_orders, classic_rules, loaded_state)
+
+    result = report.resolution_results[0]
+    assert result.unit_id == "U1"
+    assert result.outcome == OutcomeType.DISBAND_SUCCESS
+    assert len(result.duplicate_orders) == 1
+
+
+def test_adjustment_phase_build_over_cap(loaded_state_factory, classic_rules):
+    state = loaded_state_factory(
+        unit_specs=[("U1", "ger", UnitType.ARMY, "mun")],
+        players={"ger": {"status": "active", "nation_id": "ger"}},
+        game_meta={"turn_code": "1901-F-A"},
+        territory_state={"ber": {"owner_id": "ger", "supply_center": True}},
+    )
+
+    raw_orders = {"ger": ["build army ber"]}
+
+    report = process_phase(raw_orders, classic_rules, state)
+
+    result = report.resolution_results[0]
+    assert result.origin_territory == "ber"
+    assert result.outcome == OutcomeType.BUILD_NO_CENTER
+
+
+def test_adjustment_phase_duplicate_build(loaded_state_factory, classic_rules):
+    state = loaded_state_factory(
+        unit_specs=[],
+        players={"ger": {"status": "active", "nation_id": "ger"}},
+        game_meta={"turn_code": "1901-F-A"},
+        territory_state={"ber": {"owner_id": "ger", "supply_center": True}},
+    )
+
+    raw_orders = {"ger": ["build army ber", "build fleet ber"]}
+
+    report = process_phase(raw_orders, classic_rules, state)
+
+    result = report.resolution_results[0]
+    assert result.outcome in {
+        OutcomeType.BUILD_SUCCESS,
+        OutcomeType.BUILD_NO_CENTER,
+    }
+    assert len(result.duplicate_orders) == 1

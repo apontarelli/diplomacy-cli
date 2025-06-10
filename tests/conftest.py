@@ -98,9 +98,10 @@ def loaded_state_factory():
         territory_state: dict[str, dict] | None = None,
         game_meta: dict | None = None,
         dislodged: set[str] | None = None,
+        players: dict[str, dict] | None = None,
         pending_move=None,
     ) -> LoadedState:
-        players = {
+        players = players or {
             owner_id: {"status": "active", "nation_id": owner_id}
             for _, owner_id, _, _ in unit_specs
         }

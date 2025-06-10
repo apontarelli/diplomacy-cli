@@ -226,6 +226,67 @@ def process_phase(
                 else r
                 for r in retreat_results
             ]
+        case Phase.ADJUSTMENT:
+            (
+                disband_by_id,
+                duplicate_disband_by_id,
+                build_by_territory,
+                duplicate_build_by_territory,
+            ) = make_adjustment_semantic_map(loaded_state, validated_orders)
+            unit_count = {}
+            supply_center_count = {}
+            resolution_results = []
+            for player in loaded_state.game.players.values():
+                nation = player["nation_id"]
+                unit_count[nation] = 0
+                for unit in loaded_state.game.units.values():
+                    if unit["owner_id"] == nation:
+                        unit_count[nation] += 1
+                supply_center_count[nation] = sum(
+                    1
+                    for prv in loaded_state.game.territory_state.values()
+                    if prv.get("owner_id") == nation
+                )
+
+            for unit_id, disband in disband_by_id.items():
+                unit_count[disband.player_id] -= 1
+                disband_result = ResolutionResult(
+                    unit_id=unit_id,
+                    owner_id=disband.player_id,
+                    unit_type=loaded_state.game.units[unit_id]["unit_type"],
+                    origin_territory=disband.order.origin,
+                    semantic_result=disband,
+                    outcome=OutcomeType.DISBAND_SUCCESS,
+                    resolved_territory=disband.order.origin,
+                    strength=1,
+                    duplicate_orders=duplicate_disband_by_id.get(unit_id, []),
+                )
+                resolution_results.append(disband_result)
+
+            for territory, build in build_by_territory.items():
+                if (
+                    unit_count[build.player_id] + 1
+                    > supply_center_count[build.player_id]
+                ):
+                    outcome = OutcomeType.BUILD_NO_CENTER
+                else:
+                    unit_count[build.player_id] += 1
+                    outcome = OutcomeType.BUILD_SUCCESS
+                assert build.order.unit_type is not None
+                build_result = ResolutionResult(
+                    unit_id=None,
+                    owner_id=build.player_id,
+                    unit_type=build.order.unit_type,
+                    origin_territory=territory,
+                    semantic_result=build,
+                    outcome=outcome,
+                    resolved_territory=territory,
+                    strength=1,
+                    duplicate_orders=duplicate_build_by_territory.get(
+                        territory, []
+                    ),
+                )
+                resolution_results.append(build_result)
     return PhaseResolutionReport(
         phase=phase,
         season=season,

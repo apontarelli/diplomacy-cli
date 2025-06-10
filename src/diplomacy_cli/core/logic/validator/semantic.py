@@ -200,20 +200,6 @@ def _check_build(
         raise SemanticError(
             f"Cannot build in {order.origin}: territory is occupied"
         )
-    count = sum(
-        1
-        for unit in state.game.units.values()
-        if unit.get("owner_id") == player_id
-    )
-    supply_count = sum(
-        1
-        for prv in state.game.territory_state.values()
-        if prv.get("owner_id") == player_id
-    )
-    if count >= supply_count:
-        raise SemanticError(
-            f"{player_id} does not have enough supply centers to build a unit"
-        )
     if (
         order.unit_type == UnitType.FLEET
         and order.origin not in rules.has_coast
