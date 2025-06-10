@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import defaultdict
 import os
 from pathlib import Path
 from typing import Any
@@ -121,6 +122,11 @@ def load_state(
         counters=counters,
         pending_move=pending_move,
     )
+
+
+def load_orders() -> dict[str, list[str]]:
+    raw_orders = defaultdict(list)
+    return raw_orders
 
 
 def build_territory_to_unit(
