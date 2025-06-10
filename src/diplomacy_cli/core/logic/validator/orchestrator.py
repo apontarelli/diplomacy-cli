@@ -87,7 +87,7 @@ def make_adjustment_semantic_map(
 
 
 def process_phase(
-    raw_orders: dict[str, list[str]], rules: Rules, loaded_state: LoadedState
+    loaded_state: LoadedState, rules: Rules
 ) -> PhaseResolutionReport:
     year, season, phase = parse_turn_code(
         loaded_state.game.game_meta["turn_code"]
@@ -98,7 +98,7 @@ def process_phase(
     syntax_errors = []
     semantic_errors = []
     resolution_results = []
-    for player, orders in raw_orders.items():
+    for player, orders in loaded_state.game.raw_orders.items():
         for order in orders:
             parsed_order = parse_syntax(player, order, phase)
             if not parsed_order.valid:

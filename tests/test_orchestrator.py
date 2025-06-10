@@ -163,12 +163,12 @@ def test_make_adjustment_semantic_map_duplicate_build(
 def test_process_move_phase_single_valid_order(
     loaded_state_factory, classic_rules
 ):
-    raw_orders = {"P1": ["lon-wal"]}
     loaded_state = loaded_state_factory(
         [("U1", "P1", UnitType.ARMY, "lon")],
         game_meta={"turn_code": "1901-S-M"},
+        raw_orders={"P1": ["lon-wal"]},
     )
-    report = process_phase(raw_orders, classic_rules, loaded_state)
+    report = process_phase(loaded_state, classic_rules)
 
     assert report.phase == Phase.MOVEMENT
     assert report.year == 0
@@ -187,12 +187,12 @@ def test_process_move_phase_single_valid_order(
 
 
 def test_process_move_phase_invalid_syntax(loaded_state_factory, classic_rules):
-    raw_orders = {"P1": ["this-is-not-valid"]}
     loaded_state = loaded_state_factory(
         [("U1", "P1", UnitType.ARMY, "lon")],
         game_meta={"turn_code": "1901-S-M"},
+        raw_orders={"P1": ["this-is-not-valid"]},
     )
-    report = process_phase(raw_orders, classic_rules, loaded_state)
+    report = process_phase(loaded_state, classic_rules)
 
     assert len(report.valid_syntax) == 0
     assert len(report.valid_semantics) == 0
@@ -204,12 +204,12 @@ def test_process_move_phase_invalid_syntax(loaded_state_factory, classic_rules):
 def test_process_move_phase_invalid_semantic(
     loaded_state_factory, classic_rules
 ):
-    raw_orders = {"P1": ["lon-mun"]}
     loaded_state = loaded_state_factory(
         [("U1", "P1", UnitType.ARMY, "lon")],
         game_meta={"turn_code": "1901-S-M"},
+        raw_orders={"P1": ["lon-mun"]},
     )
-    report = process_phase(raw_orders, classic_rules, loaded_state)
+    report = process_phase(loaded_state, classic_rules)
 
     assert len(report.valid_syntax) == 1
     assert len(report.valid_semantics) == 0
@@ -218,7 +218,7 @@ def test_process_move_phase_invalid_semantic(
     assert len(report.resolution_results) == 1
 
 
-def test_retreat_phase_bounce_real(loaded_state_factory, classic_rules):
+def test_retreat_phase_bounce(loaded_state_factory, classic_rules):
     unit_specs = [
         ("U1", "P1", UnitType.ARMY, "bel"),
         ("U2", "P2", UnitType.ARMY, "ruh"),
@@ -231,27 +231,25 @@ def test_retreat_phase_bounce_real(loaded_state_factory, classic_rules):
     move_state = loaded_state_factory(
         unit_specs,
         game_meta={"turn_code": "1901-S-M"},
+        raw_orders={
+            "P2": ["pic-bel", "ruh hold", "nth s pic - bel"],
+            "P1": ["bur-ruh", "bel hold", "mun s bur - ruh"],
+        },
     )
 
-    raw_orders = {
-        "P2": ["pic-bel", "ruh hold", "nth s pic - bel"],
-        "P1": ["bur-ruh", "bel hold", "mun s bur - ruh"],
-    }
-
-    move_report = process_phase(raw_orders, classic_rules, move_state)
+    move_report = process_phase(move_state, classic_rules)
 
     retreat_state = loaded_state_factory(
         unit_specs=unit_specs,
         game_meta={"turn_code": "1901-S-R"},
         pending_move=move_report,
+        raw_orders={
+            "P1": ["bel-hol"],
+            "P2": ["ruh-hol"],
+        },
     )
 
-    retreat_orders = {
-        "P1": ["bel-hol"],
-        "P2": ["ruh-hol"],
-    }
-
-    retreat_report = process_phase(retreat_orders, classic_rules, retreat_state)
+    retreat_report = process_phase(retreat_state, classic_rules)
 
     assert len(retreat_report.resolution_results) == 2
     outcomes = {r.unit_id: r.outcome for r in retreat_report.resolution_results}
@@ -266,11 +264,10 @@ def test_adjustment_phase_single_disband(loaded_state_factory, classic_rules):
         territory_state={
             "mun": {"owner_id": "ger", "supply_center": True},
         },
+        raw_orders={"ger": ["disband army mun"]},
     )
 
-    raw_orders = {"ger": ["disband army mun"]}
-
-    report = process_phase(raw_orders, classic_rules, loaded_state)
+    report = process_phase(loaded_state, classic_rules)
 
     assert len(report.resolution_results) == 1
     result = report.resolution_results[0]
@@ -285,11 +282,10 @@ def test_adjustment_phase_disband_duplicate(
         unit_specs=[("U1", "ger", UnitType.ARMY, "mun")],
         game_meta={"turn_code": "1901-F-A"},
         territory_state={"mun": {"owner_id": "ger", "supply_center": True}},
+        raw_orders={"ger": ["disband army mun", "disband army mun"]},
     )
 
-    raw_orders = {"ger": ["disband army mun", "disband army mun"]}
-
-    report = process_phase(raw_orders, classic_rules, loaded_state)
+    report = process_phase(loaded_state, classic_rules)
 
     result = report.resolution_results[0]
     assert result.unit_id == "U1"
@@ -303,11 +299,10 @@ def test_adjustment_phase_build_over_cap(loaded_state_factory, classic_rules):
         players={"ger": {"status": "active", "nation_id": "ger"}},
         game_meta={"turn_code": "1901-F-A"},
         territory_state={"ber": {"owner_id": "ger", "supply_center": True}},
+        raw_orders={"ger": ["build army ber"]},
     )
 
-    raw_orders = {"ger": ["build army ber"]}
-
-    report = process_phase(raw_orders, classic_rules, state)
+    report = process_phase(state, classic_rules)
 
     result = report.resolution_results[0]
     assert result.origin_territory == "ber"
@@ -320,11 +315,10 @@ def test_adjustment_phase_duplicate_build(loaded_state_factory, classic_rules):
         players={"ger": {"status": "active", "nation_id": "ger"}},
         game_meta={"turn_code": "1901-F-A"},
         territory_state={"ber": {"owner_id": "ger", "supply_center": True}},
+        raw_orders={"ger": ["build army ber", "build fleet ber"]},
     )
 
-    raw_orders = {"ger": ["build army ber", "build fleet ber"]}
-
-    report = process_phase(raw_orders, classic_rules, state)
+    report = process_phase(state, classic_rules)
 
     result = report.resolution_results[0]
     assert result.outcome in {

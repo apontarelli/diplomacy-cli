@@ -97,8 +97,8 @@ def loaded_state_factory():
         unit_specs: list[tuple[str, str, UnitType, str]],
         territory_state: dict[str, dict] | None = None,
         game_meta: dict | None = None,
-        dislodged: set[str] | None = None,
         players: dict[str, dict] | None = None,
+        raw_orders: dict[str, list[str]] = {},
         pending_move=None,
     ) -> LoadedState:
         players = players or {
@@ -121,19 +121,17 @@ def loaded_state_factory():
                 "game_id": "test_game",
                 "variant": "classic",
                 "turn_code": "1901-S-M",
-                "dislodged": set(),
             },
             players=players,
             territory_state=territory_state or {},
             units=units,
-            raw_orders={},
+            raw_orders=raw_orders,
         )
 
         return LoadedState(
             game=game,
             territory_to_unit=build_territory_to_unit(units),
             counters=build_counters(units),
-            dislodged=dislodged or set(),
             pending_move=pending_move,
         )
 
