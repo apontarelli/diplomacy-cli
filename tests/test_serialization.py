@@ -33,7 +33,7 @@ def test_order_roundtrip():
         convoy_destination=None,
         support_origin=None,
         support_destination=None,
-        unit_type="A",
+        unit_type=UnitType.ARMY,
     )
     assert order_from_dict(order_to_dict(order)) == order
 
@@ -96,7 +96,7 @@ def test_resolution_result_roundtrip():
 
 
 def test_phase_resolution_report_roundtrip():
-    order = Order("rom", OrderType.HOLD, unit_type="A")
+    order = Order("rom", OrderType.HOLD, unit_type=UnitType.ARMY)
     syntax = SyntaxResult("ITA", "rom hold", "rom h", True, [], order)
     semantic = SemanticResult("ITA", "rom hold", "rom h", order, True, [])
     result = ResolutionResult(
