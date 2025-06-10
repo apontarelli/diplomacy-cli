@@ -4,12 +4,12 @@ import os
 from pathlib import Path
 from typing import Any
 
-from .schema import Counters, GameState, LoadedState, TerritoryToUnit
 from .schema import (
     Counters,
     GameState,
     LoadedState,
     Phase,
+    PhaseResolutionReport,
     Season,
     TerritoryToUnit,
 )
@@ -107,6 +107,14 @@ def load_state(
     dislodged: set[str] = gs.game_meta.get("dislodged", [])
     year, season, phase = parse_turn_code(gs.game_meta["turn_code"])
     pending_move = None
+    if phase == Phase.RETREAT:
+        pending_move = load_phase_resolution_report(
+            game_id,
+            year,
+            season,
+            Phase.RETREAT,
+            save_dir,
+        )
 
     return LoadedState(
         game=gs,
@@ -133,6 +141,22 @@ def build_counters(units: dict[str, Any]) -> Counters:
         key = f"{owner}_{unit_type}"
         counters[key] = max(counters.get(key, 0), int(num))
     return counters
+
+
+def load_phase_resolution_report(
+    game_id: str,
+    year: int,
+    season: Season,
+    phase: Phase,
+    save_dir: str | os.PathLike[str] | None = None,
+) -> PhaseResolutionReport:
+    save_root = Path(save_dir or DEFAULT_GAMES_DIR)
+    save_path = save_root / game_id
+    phase_turn_code = format_turn_code(year, season, phase)
+
+    phase_report_dict = load(save_path / "past_turns" / phase_turn_code)
+
+    return phase_resolution_report_from_dict(phase_report_dict)
 
 
 def apply_unit_movements(
