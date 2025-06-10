@@ -32,7 +32,7 @@ def take_province(tokens: list[str]) -> str:
     return prov
 
 
-def take_unit_type(tokens: list[str]) -> str:
+def take_unit_type(tokens: list[str]) -> UnitType:
     if not tokens:
         raise ParseError(
             "Expected unit type (‘army’ or ‘fleet’), but got end of input"
@@ -59,7 +59,7 @@ def parse_support_move(tokens: list[str]):
     return Order(
         origin=origin,
         order_type=OrderType.SUPPORT_MOVE,
-        destination=destination,
+        support_destination=destination,
         support_origin=support_origin,
     )
 

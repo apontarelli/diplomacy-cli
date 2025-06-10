@@ -112,7 +112,7 @@ def test_parse_support_move_success_and_missing_token():
     assert order.origin == "par"
     assert order.order_type == OrderType.SUPPORT_MOVE
     assert order.support_origin == "mar"
-    assert order.destination == "bre"
+    assert order.support_destination == "bre"
 
     with pytest.raises(ParseError):
         parse_support_move(["par", "x", "mar", "-", "bre"])

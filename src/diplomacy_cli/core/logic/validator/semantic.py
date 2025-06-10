@@ -243,7 +243,12 @@ def _check_retreat(
     if order.destination is None:
         raise SemanticError("Retreat must specify a destination")
 
-    if order.origin not in state.dislodged:
+    dislodged_units_by_origin = []
+    assert state.pending_move is not None
+    for result in state.pending_move.resolution_results:
+        if result.outcome == OutcomeType.DISLODGED:
+            dislodged_units_by_origin.append(result.origin_territory)
+    if order.origin not in dislodged_units_by_origin:
         raise SemanticError(f"No dislodged unit at {order.origin}")
     _check_territory_exists(order.origin, rules.territory_ids)
     _check_unit_exists(order.origin, state.territory_to_unit)

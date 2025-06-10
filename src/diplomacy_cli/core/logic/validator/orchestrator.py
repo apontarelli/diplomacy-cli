@@ -1,4 +1,5 @@
-from collections import defaultdict
+from collections import defaultdict, Counter
+from dataclasses import replace
 
 from diplomacy_cli.core.logic.turn_code import Phase, parse_turn_code
 from diplomacy_cli.core.logic.validator.resolution import (
@@ -50,7 +51,7 @@ def make_semantic_map(
     return sem_by_unit, duplicate_sem_by_uid
 
 
-def process_move_phase(
+def process_phase(
     raw_orders: dict[str, list[str]], rules: Rules, loaded_state: LoadedState
 ) -> PhaseResolutionReport:
     year, season, phase = parse_turn_code(
@@ -64,7 +65,7 @@ def process_move_phase(
     resolution_results = []
     for player, orders in raw_orders.items():
         for order in orders:
-            parsed_order = parse_syntax(player, order, Phase.MOVEMENT)
+            parsed_order = parse_syntax(player, order, phase)
             if not parsed_order.valid:
                 syntax_errors.append(parsed_order)
                 continue
@@ -77,48 +78,119 @@ def process_move_phase(
                 continue
             valid_semantics.append(validated_order)
             validated_orders.append(validated_order)
-    sem_by_unit, duplicated_orders_by_unit = make_semantic_map(
-        loaded_state, validated_orders
-    )
-    resolution_soa = resolve_move_phase(sem_by_unit, loaded_state, rules)
-    n = len(resolution_soa.unit_id)
-    for i in range(n):
-        unit_id = resolution_soa.unit_id[i]
-        origin_territory = resolution_soa.orig_territory[i]
-        sem = sem_by_unit[unit_id]
-        outcome = resolution_soa.outcome[i]
-        dislodged_by_id = None
-        supported_unit_id = None
-        assert outcome is not None
-        if outcome == OutcomeType.DISLODGED:
-            for j in range(n):
-                if resolution_soa.new_territory[j] == origin_territory:
-                    dislodged_by_id = resolution_soa.unit_id[j]
-                    break
-        convoy_path = get_convoy_path(resolution_soa, i)
-        if resolution_soa.order_type[i] in (
-            OrderType.SUPPORT_MOVE,
-            OrderType.SUPPORT_HOLD,
-        ):
-            support_origin = resolution_soa.support_origin[i]
-            assert support_origin is not None
-            supported_unit_id = loaded_state.territory_to_unit[support_origin]
-        resolution_result = ResolutionResult(
-            unit_id=resolution_soa.unit_id[i],
-            owner_id=resolution_soa.owner_id[i],
-            unit_type=resolution_soa.unit_type[i],
-            origin_territory=origin_territory,
-            semantic_result=sem,
-            outcome=outcome,
-            resolved_territory=resolution_soa.new_territory[i],
-            strength=resolution_soa.strength[i],
-            dislodged_by_id=dislodged_by_id,
-            destination=resolution_soa.move_destination[i],
-            convoy_path=convoy_path,
-            supported_unit_id=supported_unit_id,
-            duplicate_orders=duplicated_orders_by_unit.get(unit_id, []),
+    if phase in {Phase.MOVEMENT, Phase.RETREAT}:
+        sem_by_unit, duplicated_orders_by_unit = make_semantic_map(
+            loaded_state, validated_orders
         )
-        resolution_results.append(resolution_result)
+    match phase:
+        case Phase.MOVEMENT:
+            resolution_soa = resolve_move_phase(
+                sem_by_unit, loaded_state, rules
+            )
+            n = len(resolution_soa.unit_id)
+            for i in range(n):
+                unit_id = resolution_soa.unit_id[i]
+                origin_territory = resolution_soa.orig_territory[i]
+                sem = sem_by_unit[unit_id]
+                outcome = resolution_soa.outcome[i]
+                dislodged_by_id = None
+                supported_unit_id = None
+                assert outcome is not None
+                if outcome == OutcomeType.DISLODGED:
+                    for j in range(n):
+                        if resolution_soa.new_territory[j] == origin_territory:
+                            dislodged_by_id = resolution_soa.unit_id[j]
+                            break
+                convoy_path = get_convoy_path(resolution_soa, i)
+                if resolution_soa.order_type[i] in (
+                    OrderType.SUPPORT_MOVE,
+                    OrderType.SUPPORT_HOLD,
+                ):
+                    support_origin = resolution_soa.support_origin[i]
+                    assert support_origin is not None
+                    supported_unit_id = loaded_state.territory_to_unit[
+                        support_origin
+                    ]
+                resolution_result = ResolutionResult(
+                    unit_id=unit_id,
+                    owner_id=resolution_soa.owner_id[i],
+                    unit_type=resolution_soa.unit_type[i],
+                    origin_territory=origin_territory,
+                    semantic_result=sem,
+                    outcome=outcome,
+                    resolved_territory=resolution_soa.new_territory[i],
+                    strength=resolution_soa.strength[i],
+                    dislodged_by_id=dislodged_by_id,
+                    destination=resolution_soa.move_destination[i],
+                    convoy_path=convoy_path,
+                    supported_unit_id=supported_unit_id,
+                    duplicate_orders=duplicated_orders_by_unit.get(unit_id, []),
+                )
+                resolution_results.append(resolution_result)
+        case Phase.RETREAT:
+            retreat_results = []
+            last_phase = loaded_state.pending_move
+            if last_phase is None:
+                raise ValueError(
+                    "Retreat phase requires pending move data to process"
+                )
+            last_phase_resolution_results = last_phase.resolution_results
+            occupied_territories = [
+                r.resolved_territory
+                for r in last_phase_resolution_results
+                if r.outcome is not OutcomeType.DISLODGED
+            ]
+            for last_result in last_phase_resolution_results:
+                if last_result.outcome == OutcomeType.DISLODGED:
+                    assert last_result.unit_id is not None
+                    sem = sem_by_unit[last_result.unit_id]
+                    assert last_result.dislodged_by_id is not None
+                    attacker_origin = loaded_state.game.units[
+                        last_result.dislodged_by_id
+                    ]["territory_id"]
+                    assert sem.order.destination is not None
+                    if (
+                        sem.order.order_type == OrderType.HOLD
+                        or sem.order.destination == attacker_origin
+                        or sem.order.destination in occupied_territories
+                    ):
+                        outcome = OutcomeType.RETREAT_FAILED
+                        resolved_territory = last_result.origin_territory
+                    else:
+                        outcome = OutcomeType.RETREAT_SUCCESS
+                        resolved_territory = sem.order.destination
+                    resolution_result = ResolutionResult(
+                        unit_id=last_result.unit_id,
+                        owner_id=last_result.owner_id,
+                        unit_type=last_result.unit_type,
+                        origin_territory=last_result.origin_territory,
+                        semantic_result=sem,
+                        outcome=outcome,
+                        resolved_territory=resolved_territory,
+                        strength=1,
+                        dislodged_by_id=last_result.dislodged_by_id,
+                        destination=sem.order.destination,
+                        duplicate_orders=duplicated_orders_by_unit.get(
+                            last_result.unit_id, []
+                        ),
+                    )
+                    retreat_results.append(resolution_result)
+            destination_counts = Counter(
+                r.resolved_territory
+                for r in retreat_results
+                if r.outcome == OutcomeType.RETREAT_SUCCESS
+            )
+            resolution_results = [
+                replace(
+                    r,
+                    outcome=OutcomeType.RETREAT_FAILED,
+                    resolved_territory=r.origin_territory,
+                )
+                if r.outcome == OutcomeType.RETREAT_SUCCESS
+                and destination_counts[r.resolved_territory] > 1
+                else r
+                for r in retreat_results
+            ]
     return PhaseResolutionReport(
         phase=phase,
         season=season,
