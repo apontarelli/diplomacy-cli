@@ -13,7 +13,6 @@ from diplomacy_cli.core.logic.turn_code import (
 class TestTurnCode(unittest.TestCase):
     def test_parse_turn_code(self):
         turn_code = "1901-W-A"
-        year, season_code, phase_code = turn_code.split("-")
         result = parse_turn_code(turn_code)
         expected = (0, Season.WINTER, Phase.ADJUSTMENT)
         self.assertEqual(result, expected)
@@ -33,6 +32,12 @@ class TestTurnCode(unittest.TestCase):
     def test_advance_turn_code(self):
         turn_code = "1910-F-R"
         result = advance_turn_code(turn_code)
+        expected = "1910-W-A"
+        self.assertEqual(result, expected)
+
+    def test_advance_turn_code_skip(self):
+        turn_code = "1910-F-M"
+        result = advance_turn_code(turn_code, True)
         expected = "1910-W-A"
         self.assertEqual(result, expected)
 

@@ -38,7 +38,12 @@ def advance_turn_tuple(turn_tuple):
     return (year + dy, new_season, new_phase)
 
 
-def advance_turn_code(turn_code):
+def advance_turn_code(turn_code, skip: bool = False):
     current_turn = parse_turn_code(turn_code)
     new_year, new_season, new_phase = advance_turn_tuple(current_turn)
+    if skip:
+        new_year, new_season, new_phase = advance_turn_tuple(
+            (new_year, new_season, new_phase)
+        )
+
     return format_turn_code(new_year, new_season, new_phase)
