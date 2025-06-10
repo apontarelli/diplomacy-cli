@@ -3,8 +3,8 @@ from typing import cast
 
 import pytest
 
+from diplomacy_cli.core.logic.rules_loader import load_rules
 from diplomacy_cli.core.logic.schema import (
-    Counters,
     GameState,
     LoadedState,
     Order,
@@ -13,8 +13,11 @@ from diplomacy_cli.core.logic.schema import (
     ResolutionSoA,
     Rules,
     SemanticResult,
-    TerritoryToUnit,
     UnitType,
+)
+from diplomacy_cli.core.logic.state import (
+    build_counters,
+    build_territory_to_unit,
 )
 from diplomacy_cli.core.logic.validator.orchestrator import make_semantic_map
 
@@ -89,48 +92,46 @@ def semantic_map_factory(semantic_result_factory):
 @pytest.fixture
 def loaded_state_factory():
     def _factory(
-        unit_specs: list[tuple[str, int, UnitType, str]],
-        counters: Counters | None = None,
-        dislodged: set[str] | None = None,
+        unit_specs: list[tuple[str, str, UnitType, str]],
+        territory_state: dict[str, dict] | None = None,
         game_meta: dict | None = None,
+        dislodged: set[str] | None = None,
+        pending_move=None,
     ) -> LoadedState:
-        gs_ns = SimpleNamespace(
-            game_meta=game_meta,
-            players=[],
-            territory_state={},
-            units={},
-            raw_orders=[],
-        )
-
-        for uid, owner_id, utype, territory in unit_specs:
-            gs_ns.units[uid] = {
-                "owner_id": owner_id,
-                "unit_type": utype,
-                "territory_id": territory,
-            }
-
-        game = cast(GameState, gs_ns)
-
-        territory_to_unit: TerritoryToUnit = {
-            territory: uid for uid, _, _, territory in unit_specs
+        players = {
+            owner_id: {"status": "active", "nation_id": owner_id}
+            for _, owner_id, _, _ in unit_specs
         }
 
-        if counters is None:
-            counters = {}
-            for uid, _, _, _ in unit_specs:
-                parts = uid.split("_")
-                if len(parts) == 3:
-                    key = f"{parts[0]}_{parts[1]}"
-                    num = int(parts[2])
-                    counters[key] = max(counters.get(key, 0), num)
+        units = {
+            uid: {
+                "owner_id": owner_id,
+                "unit_type": unit_type,
+                "territory_id": territory,
+            }
+            for uid, owner_id, unit_type, territory in unit_specs
+        }
 
-        dislodged = dislodged or set()
+        game = GameState(
+            game_meta=game_meta
+            or {
+                "game_id": "test_game",
+                "variant": "classic",
+                "turn_code": "1901-S-M",
+                "dislodged": set(),
+            },
+            players=players,
+            territory_state=territory_state or {},
+            units=units,
+            raw_orders={},
+        )
 
         return LoadedState(
             game=game,
-            territory_to_unit=territory_to_unit,
-            counters=counters,
-            dislodged=dislodged,
+            territory_to_unit=build_territory_to_unit(units),
+            counters=build_counters(units),
+            dislodged=dislodged or set(),
+            pending_move=pending_move,
         )
 
     return _factory
@@ -211,3 +212,8 @@ def rules_factory():
         return cast(Rules, ns)
 
     return _factory
+
+
+@pytest.fixture
+def classic_rules():
+    return load_rules("classic")

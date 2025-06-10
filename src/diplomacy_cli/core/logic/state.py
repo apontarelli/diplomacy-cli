@@ -5,8 +5,17 @@ from pathlib import Path
 from typing import Any
 
 from .schema import Counters, GameState, LoadedState, TerritoryToUnit
+from .schema import (
+    Counters,
+    GameState,
+    LoadedState,
+    Phase,
+    Season,
+    TerritoryToUnit,
+)
 from .storage import DEFAULT_GAMES_DIR, load, load_variant_json, save
-from .turn_code import INITIAL_TURN_CODE
+from .turn_code import INITIAL_TURN_CODE, format_turn_code, parse_turn_code
+from .serialization import phase_resolution_report_from_dict
 
 
 def start_game(
@@ -96,12 +105,15 @@ def load_state(
     territory_to_unit: TerritoryToUnit = build_territory_to_unit(gs.units)
     counters: Counters = build_counters(gs.units)
     dislodged: set[str] = gs.game_meta.get("dislodged", [])
+    year, season, phase = parse_turn_code(gs.game_meta["turn_code"])
+    pending_move = None
 
     return LoadedState(
         game=gs,
         territory_to_unit=territory_to_unit,
         counters=counters,
         dislodged=dislodged,
+        pending_move=pending_move,
     )
 
 

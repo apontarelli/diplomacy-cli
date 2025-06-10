@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from enum import Enum, IntEnum
 from typing import Any
@@ -78,6 +80,7 @@ class LoadedState:
     territory_to_unit: TerritoryToUnit
     counters: Counters
     dislodged: set[str]
+    pending_move: PhaseResolutionReport | None = None
 
 
 @dataclass(frozen=True)
@@ -160,7 +163,7 @@ class ResolutionSoA:
 
 @dataclass(frozen=True)
 class ResolutionResult:
-    unit_id: str
+    unit_id: str | None
     owner_id: str
     unit_type: UnitType
     origin_territory: str
@@ -168,11 +171,11 @@ class ResolutionResult:
     outcome: OutcomeType
     resolved_territory: str
     strength: int
-    dislodged_by_id: str | None
-    destination: str | None
-    convoy_path: list[str] | None
-    supported_unit_id: str | None
     duplicate_orders: list[SemanticResult]
+    dislodged_by_id: str | None = None
+    destination: str | None = None
+    convoy_path: list[str] | None = None
+    supported_unit_id: str | None = None
 
 
 @dataclass(frozen=True)
