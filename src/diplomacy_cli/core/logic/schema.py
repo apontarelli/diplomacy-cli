@@ -79,7 +79,6 @@ class LoadedState:
     game: GameState
     territory_to_unit: TerritoryToUnit
     counters: Counters
-    dislodged: set[str]
     pending_move: PhaseResolutionReport | None = None
 
 

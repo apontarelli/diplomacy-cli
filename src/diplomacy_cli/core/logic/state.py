@@ -104,7 +104,6 @@ def load_state(
 
     territory_to_unit: TerritoryToUnit = build_territory_to_unit(gs.units)
     counters: Counters = build_counters(gs.units)
-    dislodged: set[str] = gs.game_meta.get("dislodged", [])
     year, season, phase = parse_turn_code(gs.game_meta["turn_code"])
     pending_move = None
     if phase == Phase.RETREAT:
@@ -120,7 +119,6 @@ def load_state(
         game=gs,
         territory_to_unit=territory_to_unit,
         counters=counters,
-        dislodged=dislodged,
         pending_move=pending_move,
     )
 
