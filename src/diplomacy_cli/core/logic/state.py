@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from .schema import (
+from diplomacy_cli.core.logic.schema import (
     Counters,
     GameState,
     LoadedState,
@@ -14,9 +15,22 @@ from .schema import (
     Season,
     TerritoryToUnit,
 )
-from .storage import DEFAULT_GAMES_DIR, load, load_variant_json, save
-from .turn_code import INITIAL_TURN_CODE, format_turn_code, parse_turn_code
-from .serialization import phase_resolution_report_from_dict
+from diplomacy_cli.core.logic.storage import (
+    DEFAULT_GAMES_DIR,
+    load,
+    load_variant_json,
+    save,
+)
+from diplomacy_cli.core.logic.turn_code import (
+    INITIAL_TURN_CODE,
+    advance_turn_code,
+    format_turn_code,
+    parse_turn_code,
+)
+from .serialization import (
+    phase_resolution_report_from_dict,
+    phase_resolution_report_to_dict,
+)
 
 
 def start_game(
@@ -147,6 +161,26 @@ def build_counters(units: dict[str, Any]) -> Counters:
     return counters
 
 
+def save_phase_resolution_report(
+    game_id: str,
+    phase_resolution_report: PhaseResolutionReport,
+    save_dir: str | os.PathLike[str] | None = None,
+) -> None:
+    save_root = Path(save_dir or DEFAULT_GAMES_DIR)
+    phase_turn_code = format_turn_code(
+        phase_resolution_report.year,
+        phase_resolution_report.season,
+        phase_resolution_report.phase,
+    )
+    save_path = (
+        save_root / game_id / "reports" / f"{phase_turn_code}_report.json"
+    )
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+
+    phase_report_dict = phase_resolution_report_to_dict(phase_resolution_report)
+    save(phase_report_dict, save_path)
+
+
 def load_phase_resolution_report(
     game_id: str,
     year: int,
@@ -158,7 +192,9 @@ def load_phase_resolution_report(
     save_path = save_root / game_id
     phase_turn_code = format_turn_code(year, season, phase)
 
-    phase_report_dict = load(save_path / "past_turns" / phase_turn_code)
+    phase_report_dict = load(
+        save_path / "reports" / f"{phase_turn_code}_report.json"
+    )
 
     return phase_resolution_report_from_dict(phase_report_dict)
 
