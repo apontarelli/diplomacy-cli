@@ -3,6 +3,7 @@ from diplomacy_cli.core.logic.state import (
     apply_state_mutations,
     load_orders,
     load_phase_resolution_report,
+    process_turn,
     save_phase_resolution_report,
 )
 from diplomacy_cli.core.logic.schema import (
@@ -15,6 +16,7 @@ import json
 
 from collections import defaultdict
 
+from diplomacy_cli.core.logic.storage import save
 from diplomacy_cli.core.logic.turn_code import format_turn_code
 from diplomacy_cli.core.logic.validator.orchestrator import process_phase
 
@@ -209,3 +211,48 @@ def test_apply_state_mutations_adjustment_disband_and_build(
     assert "par" in new_state.territory_to_unit.keys()
     assert "pic" in new_state.territory_to_unit.keys()
     assert "bel" not in new_state.territory_to_unit.keys()
+
+
+def test_process_turn_advances_phase_and_mutates_state(
+    tmp_path, loaded_state_factory
+):
+    game_id = "test_game"
+
+    unit_specs = [
+        ("U1", "P1", UnitType.ARMY, "par"),
+        ("U2", "P2", UnitType.ARMY, "bur"),
+    ]
+
+    initial_state = loaded_state_factory(
+        unit_specs=unit_specs,
+        game_meta={"turn_code": "1901-S-M", "variant": "classic"},
+        raw_orders={
+            "P1": ["par-bur"],
+            "P2": ["bur hold"],
+        },
+    )
+
+    save_root = tmp_path / game_id
+    save_root.mkdir(parents=True)
+
+    save(initial_state.game.players, save_root / "players.json")
+    save(initial_state.game.units, save_root / "units.json")
+    save(initial_state.game.territory_state, save_root / "territory_state.json")
+    save(initial_state.game.game_meta, save_root / "game.json")
+    save(initial_state.game.raw_orders, save_root / "orders.json")
+
+    new_state = process_turn(game_id, save_dir=tmp_path)
+
+    assert new_state.game.game_meta["turn_code"] == "1901-F-M"
+
+    assert isinstance(new_state.game.units, dict)
+    assert new_state.game.units
+
+    assert new_state.game.raw_orders == {}
+
+    report_file = save_root / "reports" / "1901-S-M_report.json"
+    assert report_file.exists()
+
+    with report_file.open() as f:
+        report_data = json.load(f)
+        assert "resolution_results" in report_data

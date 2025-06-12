@@ -17,6 +17,7 @@ from diplomacy_cli.core.logic.schema import (
     PhaseResolutionReport,
     Season,
     TerritoryToUnit,
+    UnitType,
 )
 from diplomacy_cli.core.logic.storage import (
     DEFAULT_GAMES_DIR,
@@ -119,6 +120,11 @@ def load_state(
         units=load(save_path / "units.json"),
         raw_orders=load(save_path / "orders.json"),
     )
+
+    for udata in gs.units.values():
+        ut = udata.get("unit_type")
+        if isinstance(ut, str):
+            udata["unit_type"] = UnitType(ut)
 
     territory_to_unit: TerritoryToUnit = build_territory_to_unit(gs.units)
     counters: Counters = build_counters(gs.units)
@@ -266,6 +272,70 @@ def apply_state_mutations(
         game_state.game_meta,
     )
     return LoadedState(game_state, territory_to_unit, counters, None)
+
+
+def process_turn(
+    game_id: str, save_dir: str | os.PathLike[str] | None = None
+) -> LoadedState:
+    save_path = Path(save_dir or DEFAULT_GAMES_DIR)
+
+    loaded_state = load_state(game_id, save_dir=save_dir)
+    rules = load_rules(loaded_state.game.game_meta["variant"])
+    report = process_phase(loaded_state, rules)
+
+    current_turn = loaded_state.game.game_meta["turn_code"]
+    dislodged = any(
+        r.outcome == OutcomeType.DISLODGED for r in report.resolution_results
+    )
+
+    if report.phase == Phase.MOVEMENT:
+        save_phase_resolution_report(game_id, report, save_path)
+        if dislodged:
+            new_turn = advance_turn_code(current_turn, False)
+        else:
+            loaded_state = apply_state_mutations(loaded_state, report)
+            new_turn = advance_turn_code(current_turn, True)
+    elif report.phase in (Phase.RETREAT, Phase.ADJUSTMENT):
+        loaded_state = apply_state_mutations(loaded_state, report)
+        save_phase_resolution_report(game_id, report, save_path)
+        new_turn = advance_turn_code(current_turn, False)
+
+    game_meta = dict(loaded_state.game.game_meta)
+    game_meta["turn_code"] = new_turn
+
+    updated_players = {}
+    for pid, pdata in loaded_state.game.players.items():
+        owns_territory = any(
+            t["owner_id"] == pid
+            for t in loaded_state.game.territory_state.values()
+        )
+        if not owns_territory:
+            pdata = {**pdata, "status": "eliminated"}
+        updated_players[pid] = pdata
+
+    updated_state = GameState(
+        players=updated_players,
+        units=loaded_state.game.units,
+        territory_state=loaded_state.game.territory_state,
+        raw_orders={},
+        game_meta=game_meta,
+    )
+
+    final_state = LoadedState(
+        updated_state,
+        build_territory_to_unit(updated_state.units),
+        build_counters(updated_state.units),
+    )
+
+    save(updated_state.players, save_path / "players.json")
+    save(updated_state.units, save_path / "units.json")
+    save(updated_state.territory_state, save_path / "territory_state.json")
+    save(updated_state.game_meta, save_path / "game.json")
+    save({}, save_path / "orders.json")
+
+    return final_state
+
+
 def apply_unit_movements(
     units: dict[str, Any],
     territory_to_unit: TerritoryToUnit,
@@ -304,7 +374,7 @@ def build_unit(
 
     units[unit_id] = {
         "id": unit_id,
-        "unit_type": unit_type.lower(),
+        "unit_type": unit_type,
         "owner_id": owner_id,
         "territory_id": territory_id,
     }

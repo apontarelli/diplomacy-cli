@@ -38,7 +38,7 @@ def resolution_result_to_dict(r: ResolutionResult) -> dict:
     return {
         "unit_id": r.unit_id,
         "owner_id": r.owner_id,
-        "unit_type": r.unit_type.name,
+        "unit_type": r.unit_type.value,
         "origin_territory": r.origin_territory,
         "semantic_result": semantic_result_to_dict(r.semantic_result),
         "outcome": r.outcome.name,
@@ -127,7 +127,7 @@ def resolution_result_from_dict(d: dict) -> ResolutionResult:
     return ResolutionResult(
         unit_id=d["unit_id"],
         owner_id=d["owner_id"],
-        unit_type=UnitType[d["unit_type"]],
+        unit_type=UnitType(d["unit_type"]),
         origin_territory=d["origin_territory"],
         semantic_result=semantic_result_from_dict(d["semantic_result"]),
         outcome=OutcomeType[d["outcome"]],
