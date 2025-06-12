@@ -111,42 +111,41 @@
     - [x] `SemanticResult`
     - [x] `ValidationResult`
   - [x] Syntax validation (proper structure, required fields) in `validator/syntax.py`
-  - [ ] Semantic validation (move legality, unit type, adjacency, phase legality) in `semantic.py
-  - [ ] Orchestrate & aggregate results, returning `ValidationReport`
-  - [ ] Unit tests for all validator logic
-    - [ ] `syntax.py`
-    - [ ] `semantic.py`
-    - [ ] `orchestrator.py`
-  - [ ] Validator should return a `valid` bool and a `reason` string
+  - [x] Semantic validation (move legality, unit type, adjacency, phase legality) in `semantic.py
+  - [x] Orchestrate & aggregate results, returning `ValidationReport`
+  - [x] Unit tests for all validator logic
+    - [x] `syntax.py`
+    - [x] `semantic.py`
+    - [x] `resolution.py`
+    - [x] `orchestrator.py`
+  - [x] Validator should return a `valid` bool and a `reason` string
     - Returns a `ValidationReport` result class type
 
 ### Resolution Engine
-- [ ] Core resolution:
-  - [ ] Resolve valid moves
-  - [ ] Treat invalid orders as holds
-  - [ ] Test basic move/hold cycle
-  - [ ] Create resolution_report.json to explain what happened
-    - [ ] applied_orders array
-    - [ ] invalid_orders array
-- [ ] Implement and test advanced rules resolution:
-  - [ ] Add Support Strength
-  - [ ] Cut support
-  - [ ] Convoys
-  - [ ] Retreats
-  - [ ] Adjustments (Disband, Builds)
+- [x] Core resolution:
+  - [x] Resolve valid moves
+  - [x] Treat invalid orders as holds
+  - [x] Create phase_resolution_report.json to explain what happened
+- [x] Implement and test advanced rules resolution:
+  - [x] Add Support Strength
+  - [x] Cut support
+  - [x] Convoys
+  - [x] Retreats
+  - [x] Adjustments (Disband, Builds)
 
 ---
 
 ## Phase 3: UX & Input ⏳
 
-- [ ] Raw text order input:
-  - [ ] Parse strings like `A PAR - BUR` into structured orders
-- [ ] Log invalid orders with human-readable error messages (non-blocking)
+- [ ] Order input
 
 ---
 
 ## Future scope
 
+- [ ] Raw text order input:
+  - [ ] Parse strings like `A PAR - BUR` into structured orders
+- [ ] Log invalid orders with human-readable error messages (non-blocking)
 - [ ] Better syntax ParseErrors
   - Currently, syntax parser returns a generic error if all parsers fail
   - Either show all errors for all parsers
@@ -216,6 +215,75 @@
 
 ## Future Enhancements
 
+-   **Fix Enum serialization:**
+```
+
+  # diplomacy_cli/core/logic/state.py
+# remove unit type casting
+    for udata in gs.units.values():
+        ut = udata.get("unit_type")
+        if isinstance(ut, str):
+            udata["unit_type"] = UnitType(ut)
+
+  # diplomacy_cli/core/logic/json.py
+import json
+from enum import Enum
+from pathlib import Path
+
+# import every enum you need to round-trip
+from .schema import (
+    OrderType,
+    OutcomeType,
+    Phase,
+    Season,
+    UnitType,
+)
+
+# map JSON field names → the Enum class that should own them
+_ENUM_FIELDS = {
+    "order_type": OrderType,
+    "outcome": OutcomeType,
+    "phase": Phase,
+    "season": Season,
+    "unit_type": UnitType,
+}
+
+
+class EnumEncoder(json.JSONEncoder):
+    """Emit any Enum as its .value, fall back to default for everything else."""
+    def default(self, obj):
+        if isinstance(obj, Enum):
+            return obj.value
+        return super().default(obj)
+
+
+def enum_hook(dct):
+    """
+    After parsing a JSON object into dict, look for any keys
+    in _ENUM_FIELDS whose values are strings, and cast them back.
+    """
+    for key, enum_cls in _ENUM_FIELDS.items():
+        if key in dct and isinstance(dct[key], str):
+            raw = dct[key]
+            # try name→member, else value→member
+            try:
+                dct[key] = enum_cls[raw]
+            except KeyError:
+                dct[key] = enum_cls(raw)
+    return dct
+
+
+def save(obj, path: Path):
+    """Serialize to JSON, encoding enums automatically."""
+    with open(path, "w") as f:
+        json.dump(obj, f, cls=EnumEncoder, indent=2)
+
+
+def load(path: Path):
+    """Load JSON, decoding any enum fields automatically."""
+    with open(path) as f:
+        return json.load(f, object_hook=enum_hook)
+```
 - **TUI/Map Rendering**:  
   Display board via ASCII art or simple grid visualization.
 
