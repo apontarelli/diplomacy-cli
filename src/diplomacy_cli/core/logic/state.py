@@ -5,11 +5,14 @@ import os
 from pathlib import Path
 from typing import Any
 
-from .schema import (
+from diplomacy_cli.core.logic.rules_loader import load_rules
+from diplomacy_cli.core.logic.validator.orchestrator import process_phase
+
 from diplomacy_cli.core.logic.schema import (
     Counters,
     GameState,
     LoadedState,
+    OutcomeType,
     Phase,
     PhaseResolutionReport,
     Season,
@@ -199,6 +202,70 @@ def load_phase_resolution_report(
     return phase_resolution_report_from_dict(phase_report_dict)
 
 
+def apply_state_mutations(
+    loaded_state: LoadedState, phase_resolution_report: PhaseResolutionReport
+) -> LoadedState:
+    game_state = loaded_state.game
+    units = game_state.units
+    territory_to_unit = loaded_state.territory_to_unit
+    counters = loaded_state.counters
+    territory_state = game_state.territory_state
+    if phase_resolution_report.phase == Phase.RETREAT:
+        movements = []
+        for result in phase_resolution_report.resolution_results:
+            if result.outcome == OutcomeType.RETREAT_FAILED:
+                units, territory_to_unit = disband_unit(
+                    units,
+                    territory_to_unit,
+                    result.origin_territory,
+                )
+            if result.outcome in (
+                OutcomeType.RETREAT_SUCCESS,
+                OutcomeType.MOVE_SUCCESS,
+            ):
+                movements.append(
+                    {"from": result.origin_territory, "to": result.destination}
+                )
+        units, territory_to_unit = apply_unit_movements(
+            units, territory_to_unit, movements
+        )
+    elif phase_resolution_report.phase == Phase.ADJUSTMENT:
+        for result in phase_resolution_report.resolution_results:
+            if result.outcome == OutcomeType.DISBAND_SUCCESS:
+                units, territory_to_unit = disband_unit(
+                    units,
+                    territory_to_unit,
+                    result.origin_territory,
+                )
+            if result.outcome == OutcomeType.BUILD_SUCCESS:
+                units, territory_to_unit, counters = build_unit(
+                    units,
+                    territory_to_unit,
+                    counters,
+                    result.origin_territory,
+                    result.unit_type,
+                    result.owner_id,
+                )
+        for territory_id in territory_state:
+            if territory_id in territory_to_unit:
+                uid = territory_to_unit[territory_id]
+                unit = units[uid]
+                if (
+                    unit["owner_id"]
+                    != territory_state[territory_id]["owner_id"]
+                ):
+                    territory_state = set_territory_owner(
+                        territory_state, territory_id, unit["owner_id"]
+                    )
+
+    game_state = GameState(
+        game_state.players,
+        units,
+        territory_state,
+        game_state.raw_orders,
+        game_state.game_meta,
+    )
+    return LoadedState(game_state, territory_to_unit, counters, None)
 def apply_unit_movements(
     units: dict[str, Any],
     territory_to_unit: TerritoryToUnit,
@@ -231,13 +298,13 @@ def build_unit(
     unit_type: str,
     owner_id: str,
 ) -> tuple[dict[str, Any], TerritoryToUnit, Counters]:
-    key = f"{owner_id}_{unit_type}"
+    key = f"{owner_id}_{unit_type.lower()}"
     next_num = counters.get(key, 0) + 1
     unit_id = f"{key}_{next_num}"
 
     units[unit_id] = {
         "id": unit_id,
-        "unit_type": unit_type,
+        "unit_type": unit_type.lower(),
         "owner_id": owner_id,
         "territory_id": territory_id,
     }

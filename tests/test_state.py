@@ -1,16 +1,22 @@
 import pytest
 from diplomacy_cli.core.logic.state import (
+    apply_state_mutations,
     load_orders,
     load_phase_resolution_report,
     save_phase_resolution_report,
 )
-from diplomacy_cli.core.logic.schema import PhaseResolutionReport, Season, Phase
+from diplomacy_cli.core.logic.schema import (
+    PhaseResolutionReport,
+    Season,
+    Phase,
+    UnitType,
+)
 import json
-from pathlib import Path
 
 from collections import defaultdict
 
 from diplomacy_cli.core.logic.turn_code import format_turn_code
+from diplomacy_cli.core.logic.validator.orchestrator import process_phase
 
 
 def test_load_orders_returns_defaultdict_list():
@@ -87,3 +93,119 @@ def test_load_phase_resolution_report_raises_on_invalid_json(tmp_path):
             phase=phase,
             save_dir=tmp_path,
         )
+
+
+def test_apply_state_mutations_retreat_disbands_failed(
+    loaded_state_factory, classic_rules
+):
+    unit_specs = [
+        ("U1", "P1", UnitType.ARMY, "bel"),
+        ("U2", "P2", UnitType.ARMY, "ruh"),
+        ("U3", "P2", UnitType.ARMY, "pic"),
+        ("U4", "P1", UnitType.ARMY, "bur"),
+        ("U5", "P1", UnitType.ARMY, "mun"),
+        ("U6", "P2", UnitType.FLEET, "nth"),
+    ]
+
+    move_state = loaded_state_factory(
+        unit_specs,
+        game_meta={"turn_code": "1901-S-M"},
+        raw_orders={
+            "P2": ["pic-bel", "ruh hold", "nth s pic - bel"],
+            "P1": ["bur-ruh", "bel hold", "mun s bur - ruh"],
+        },
+    )
+
+    move_report = process_phase(move_state, classic_rules)
+
+    retreat_state = loaded_state_factory(
+        unit_specs=unit_specs,
+        game_meta={"turn_code": "1901-S-R"},
+        pending_move=move_report,
+        raw_orders={
+            "P1": ["bel-hol"],
+            "P2": ["ruh-hol"],
+        },
+    )
+
+    retreat_report = process_phase(retreat_state, classic_rules)
+
+    new_state = apply_state_mutations(retreat_state, retreat_report)
+
+    assert "U1" not in new_state.game.units
+    assert "U2" not in new_state.game.units
+
+
+def test_apply_state_mutations_retreat_successful_movement(
+    loaded_state_factory, classic_rules
+):
+    unit_specs = [
+        ("U1", "P1", UnitType.ARMY, "bel"),
+        ("U2", "P2", UnitType.ARMY, "ruh"),
+        ("U3", "P2", UnitType.ARMY, "pic"),
+        ("U4", "P1", UnitType.ARMY, "bur"),
+        ("U5", "P1", UnitType.ARMY, "mun"),
+        ("U6", "P2", UnitType.FLEET, "nth"),
+    ]
+
+    move_state = loaded_state_factory(
+        unit_specs,
+        game_meta={"turn_code": "1901-S-M"},
+        raw_orders={
+            "P2": ["pic-bel", "ruh hold", "nth s pic - bel"],
+            "P1": ["bur-ruh", "bel hold", "mun s bur - ruh"],
+        },
+    )
+
+    move_report = process_phase(move_state, classic_rules)
+
+    retreat_state = loaded_state_factory(
+        unit_specs=unit_specs,
+        game_meta={"turn_code": "1901-S-R"},
+        pending_move=move_report,
+        raw_orders={
+            "P1": ["bel-hol"],
+            "P2": ["ruh-kie"],
+        },
+    )
+
+    retreat_report = process_phase(retreat_state, classic_rules)
+
+    new_state = apply_state_mutations(retreat_state, retreat_report)
+
+    assert "U1" in new_state.game.units
+    assert "U2" in new_state.game.units
+    assert new_state.territory_to_unit["hol"] == "U1"
+    assert new_state.territory_to_unit["kie"] == "U2"
+
+
+def test_apply_state_mutations_adjustment_disband_and_build(
+    loaded_state_factory, classic_rules
+):
+    unit_specs = [
+        ("fra_army_1", "fra", UnitType.ARMY, "bel"),
+        ("fra_army_2", "fra", UnitType.ARMY, "pic"),
+    ]
+
+    adjustment_state = loaded_state_factory(
+        unit_specs=unit_specs,
+        game_meta={"turn_code": "1901-W-A"},
+        pending_move=None,
+        territory_state={
+            "par": {"owner_id": "fra", "supply_center": True},
+            "ber": {"owner_id": "fra", "supply_center": True},
+        },
+        raw_orders={
+            "fra": ["disband army bel", "build army par"],
+        },
+    )
+
+    adjustment_report = process_phase(adjustment_state, classic_rules)
+    print(adjustment_report)
+    new_state = apply_state_mutations(adjustment_state, adjustment_report)
+
+    assert "fra_army_3" in new_state.game.units.keys()
+    assert "fra_army_2" in new_state.game.units.keys()
+    assert "par" in new_state.territory_to_unit.keys()
+    assert "pic" in new_state.territory_to_unit.keys()
+    assert "bel" not in new_state.territory_to_unit.keys()
