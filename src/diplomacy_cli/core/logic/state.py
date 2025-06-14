@@ -244,6 +244,16 @@ def apply_state_mutations(
         units, territory_to_unit = apply_unit_movements(
             units, territory_to_unit, movements
         )
+    elif phase_resolution_report.phase == Phase.MOVEMENT:
+        movements = []
+        for result in phase_resolution_report.resolution_results:
+            if result.outcome == OutcomeType.MOVE_SUCCESS:
+                movements.append(
+                    {"from": result.origin_territory, "to": result.destination}
+                )
+        units, territory_to_unit = apply_unit_movements(
+            units, territory_to_unit, movements
+        )
     elif phase_resolution_report.phase == Phase.ADJUSTMENT:
         for result in phase_resolution_report.resolution_results:
             if result.outcome == OutcomeType.DISBAND_SUCCESS:

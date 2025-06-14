@@ -98,6 +98,29 @@ def test_load_phase_resolution_report_raises_on_invalid_json(tmp_path):
         )
 
 
+def test_apply_state_mutations_movement(loaded_state_factory, classic_rules):
+    unit_specs = [
+        ("U1", "P1", UnitType.ARMY, "bel"),
+        ("U2", "P2", UnitType.ARMY, "ruh"),
+    ]
+
+    move_state = loaded_state_factory(
+        unit_specs,
+        game_meta={"turn_code": "1901-S-M"},
+        raw_orders={
+            "P1": ["bel-pic"],
+            "P2": ["ruh-bur"],
+        },
+    )
+
+    move_report = process_phase(move_state, classic_rules)
+
+    new_state = apply_state_mutations(move_state, move_report)
+
+    assert new_state.territory_to_unit["pic"] == "U1"
+    assert new_state.territory_to_unit["bur"] == "U2"
+
+
 def test_apply_state_mutations_retreat_disbands_failed(
     loaded_state_factory, classic_rules
 ):
