@@ -54,23 +54,24 @@ def test_save_and_load_phase_resolution_report(tmp_path):
     report = make_sample_report()
     game_id = "test_game"
 
-    save_phase_resolution_report(game_id, report, save_dir=tmp_path)
+    save_phase_resolution_report(game_id, report, tmp_path)
 
     loaded = load_phase_resolution_report(
-        game_id, 1901, Season.SPRING, Phase.MOVEMENT, save_dir=tmp_path
+        game_id, 1901, Season.SPRING, Phase.MOVEMENT, tmp_path
     )
 
     assert loaded == report
 
 
 def test_load_phase_resolution_report_raises_for_missing_file(tmp_path):
+    game_id = "test_game"
     with pytest.raises(FileNotFoundError):
         load_phase_resolution_report(
-            game_id="missing_game",
+            game_id=game_id,
             year=1901,
             season=Season.SPRING,
             phase=Phase.MOVEMENT,
-            save_dir=tmp_path,
+            root_dir=tmp_path,
         )
 
 
@@ -93,7 +94,7 @@ def test_load_phase_resolution_report_raises_on_invalid_json(tmp_path):
             year=year,
             season=season,
             phase=phase,
-            save_dir=tmp_path,
+            root_dir=tmp_path,
         )
 
 
@@ -241,7 +242,7 @@ def test_process_turn_advances_phase_and_mutates_state(
     save(initial_state.game.game_meta, save_root / "game.json")
     save(initial_state.game.raw_orders, save_root / "orders.json")
 
-    new_state = process_turn(game_id, save_dir=tmp_path)
+    new_state = process_turn(game_id, root_dir=tmp_path)
 
     assert new_state.game.game_meta["turn_code"] == "1901-F-M"
 

@@ -1,34 +1,18 @@
-import os
-import shutil
-import tempfile
-import unittest
+from pathlib import Path
 
-from diplomacy_cli.core.logic.storage import list_games, load, save
+from diplomacy_cli.core.logic.storage import load, save
 
 
-class TestStorage(unittest.TestCase):
-    def setUp(self):
-        self.test_dir = tempfile.mkdtemp()
-        self.games_dir = os.path.join(self.test_dir, "data", "games")
-        os.makedirs(self.games_dir)
+def test_storage_interface(tmp_path: Path):
+    games_root = tmp_path / "data" / "games"
+    games_root.mkdir(parents=True)
 
-    def tearDown(self):
-        shutil.rmtree(self.test_dir)
+    test_data = {"test": "data"}
+    game_dir = games_root / "test_game"
+    game_file = game_dir / "game.json"
 
-    def test_storage_interface(self):
-        test_data = {"test": "data"}
-        game_dir = os.path.join(self.games_dir, "test_game")
-        game_path = os.path.join(game_dir, "game.json")
+    save(test_data, game_file)
+    assert game_file.exists(), "Expected save() to create the game.json file"
 
-        save(test_data, game_path)
-        self.assertTrue(os.path.exists(game_path))
-
-        loaded_data = load(game_path)
-        self.assertEqual(loaded_data, test_data)
-
-        games = list_games(self.games_dir)
-        self.assertIn("test_game", games)
-
-
-if __name__ == "__main__":
-    unittest.main()
+    loaded = load(game_file)
+    assert loaded == test_data

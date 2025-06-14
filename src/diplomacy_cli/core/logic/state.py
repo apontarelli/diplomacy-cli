@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-import os
+import json
 from pathlib import Path
 from typing import Any
 
@@ -20,7 +20,6 @@ from diplomacy_cli.core.logic.schema import (
     UnitType,
 )
 from diplomacy_cli.core.logic.storage import (
-    DEFAULT_GAMES_DIR,
     load,
     load_variant_json,
     save,
@@ -28,8 +27,19 @@ from diplomacy_cli.core.logic.storage import (
 from diplomacy_cli.core.logic.turn_code import (
     INITIAL_TURN_CODE,
     advance_turn_code,
-    format_turn_code,
     parse_turn_code,
+)
+from diplomacy_cli.core.paths import (
+    DEFAULT_GAMES_DIR,
+    GamePaths,
+    ensure_dir,
+    game_dir,
+    game_meta_path,
+    orders_path,
+    players_path,
+    report_path,
+    territory_state_path,
+    units_path,
 )
 from .serialization import (
     phase_resolution_report_from_dict,
@@ -38,16 +48,18 @@ from .serialization import (
 
 
 def start_game(
+    game_id: str = "new_game",
     *,
     variant: str = "classic",
-    game_id: str = "new_game",
-    save_dir: str | os.PathLike[str] | None = None,
+    root_dir: Path = DEFAULT_GAMES_DIR,
 ) -> GameState:
-    save_root = Path(save_dir or DEFAULT_GAMES_DIR)
-    save_path = save_root / game_id
-    if save_path.exists():
-        raise FileExistsError(f"Save directory '{save_path}' already exists.")
-    save_path.mkdir(parents=True)
+    base = Path(root_dir)
+    paths = GamePaths(base, game_id)
+    gd = game_dir(paths)
+
+    if gd.exists():
+        raise FileExistsError(f"Save directory '{gd}' already exists.")
+    ensure_dir(gd)
 
     starting_units = load_variant_json(variant, "start", "starting_units.json")
     starting_ownerships = load_variant_json(
@@ -89,11 +101,11 @@ def start_game(
             u["owner_id"],
         )
 
-    save(players, save_path / "players.json")
-    save(units, save_path / "units.json")
-    save(territory_state, save_path / "territory_state.json")
-    save(game_meta, save_path / "game.json")
-    save({}, save_path / "orders.json")
+    save(players, players_path(paths))
+    save(units, units_path(paths))
+    save(territory_state, territory_state_path(paths))
+    save(game_meta, game_meta_path(paths))
+    save({}, orders_path(paths))
 
     gs = GameState(
         players=players,
@@ -107,18 +119,15 @@ def start_game(
     return gs
 
 
-def load_state(
-    game_id: str, *, save_dir: str | os.PathLike[str] | None = None
-) -> LoadedState:
-    save_root = Path(save_dir or DEFAULT_GAMES_DIR)
-    save_path = save_root / game_id
-
+def load_state(game_id: str, root_dir: Path = DEFAULT_GAMES_DIR) -> LoadedState:
+    base = Path(root_dir)
+    paths = GamePaths(base, game_id)
     gs = GameState(
-        game_meta=load(save_path / "game.json"),
-        players=load(save_path / "players.json"),
-        territory_state=load(save_path / "territory_state.json"),
-        units=load(save_path / "units.json"),
-        raw_orders=load(save_path / "orders.json"),
+        game_meta=load(game_meta_path(paths)),
+        players=load(players_path(paths)),
+        territory_state=load(territory_state_path(paths)),
+        units=load(units_path(paths)),
+        raw_orders=load(orders_path(paths)),
     )
 
     for udata in gs.units.values():
@@ -132,11 +141,7 @@ def load_state(
     pending_move = None
     if phase == Phase.RETREAT:
         pending_move = load_phase_resolution_report(
-            game_id,
-            year,
-            season,
-            Phase.RETREAT,
-            save_dir,
+            game_id, year, season, Phase.RETREAT
         )
 
     return LoadedState(
@@ -173,21 +178,21 @@ def build_counters(units: dict[str, Any]) -> Counters:
 def save_phase_resolution_report(
     game_id: str,
     phase_resolution_report: PhaseResolutionReport,
-    save_dir: str | os.PathLike[str] | None = None,
+    root_dir: Path = DEFAULT_GAMES_DIR,
 ) -> None:
-    save_root = Path(save_dir or DEFAULT_GAMES_DIR)
-    phase_turn_code = format_turn_code(
-        phase_resolution_report.year,
-        phase_resolution_report.season,
-        phase_resolution_report.phase,
-    )
-    save_path = (
-        save_root / game_id / "reports" / f"{phase_turn_code}_report.json"
-    )
-    save_path.parent.mkdir(parents=True, exist_ok=True)
+    base = Path(root_dir)
+    paths = GamePaths(base, game_id)
 
     phase_report_dict = phase_resolution_report_to_dict(phase_resolution_report)
-    save(phase_report_dict, save_path)
+    save(
+        phase_report_dict,
+        report_path(
+            paths,
+            phase_resolution_report.year,
+            phase_resolution_report.season,
+            phase_resolution_report.phase,
+        ),
+    )
 
 
 def load_phase_resolution_report(
@@ -195,14 +200,18 @@ def load_phase_resolution_report(
     year: int,
     season: Season,
     phase: Phase,
-    save_dir: str | os.PathLike[str] | None = None,
+    root_dir: Path = DEFAULT_GAMES_DIR,
 ) -> PhaseResolutionReport:
-    save_root = Path(save_dir or DEFAULT_GAMES_DIR)
-    save_path = save_root / game_id
-    phase_turn_code = format_turn_code(year, season, phase)
+    base = Path(root_dir)
+    paths = GamePaths(base, game_id)
 
     phase_report_dict = load(
-        save_path / "reports" / f"{phase_turn_code}_report.json"
+        report_path(
+            paths,
+            year,
+            season,
+            phase,
+        ),
     )
 
     return phase_resolution_report_from_dict(phase_report_dict)
@@ -275,11 +284,13 @@ def apply_state_mutations(
 
 
 def process_turn(
-    game_id: str, save_dir: str | os.PathLike[str] | None = None
+    game_id: str,
+    root_dir: Path = DEFAULT_GAMES_DIR,
 ) -> LoadedState:
-    save_path = Path(save_dir or DEFAULT_GAMES_DIR)
+    base = Path(root_dir)
+    paths = GamePaths(base, game_id)
 
-    loaded_state = load_state(game_id, save_dir=save_dir)
+    loaded_state = load_state(game_id, base)
     rules = load_rules(loaded_state.game.game_meta["variant"])
     report = process_phase(loaded_state, rules)
 
@@ -289,7 +300,7 @@ def process_turn(
     )
 
     if report.phase == Phase.MOVEMENT:
-        save_phase_resolution_report(game_id, report, save_path)
+        save_phase_resolution_report(game_id, report, base)
         if dislodged:
             new_turn = advance_turn_code(current_turn, False)
         else:
@@ -297,7 +308,7 @@ def process_turn(
             new_turn = advance_turn_code(current_turn, True)
     elif report.phase in (Phase.RETREAT, Phase.ADJUSTMENT):
         loaded_state = apply_state_mutations(loaded_state, report)
-        save_phase_resolution_report(game_id, report, save_path)
+        save_phase_resolution_report(game_id, report, base)
         new_turn = advance_turn_code(current_turn, False)
 
     game_meta = dict(loaded_state.game.game_meta)
@@ -327,11 +338,11 @@ def process_turn(
         build_counters(updated_state.units),
     )
 
-    save(updated_state.players, save_path / "players.json")
-    save(updated_state.units, save_path / "units.json")
-    save(updated_state.territory_state, save_path / "territory_state.json")
-    save(updated_state.game_meta, save_path / "game.json")
-    save({}, save_path / "orders.json")
+    save(updated_state.players, players_path(paths))
+    save(updated_state.units, units_path(paths))
+    save(updated_state.territory_state, territory_state_path(paths))
+    save(updated_state.game_meta, game_meta_path(paths))
+    save({}, orders_path(paths))
 
     return final_state
 
