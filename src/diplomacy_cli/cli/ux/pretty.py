@@ -1,11 +1,14 @@
 from collections import defaultdict
 
+from diplomacy_cli.core.logic.schema import LoadedState
 
-def format_state(state):
-    game = format_game(state["game"])
-    players = format_players(state["players"])
-    territory_state = format_territory_state(state["territory_state"])
-    units = format_units(state["units"])
+
+def format_state(loaded_state: LoadedState):
+    state = loaded_state.game
+    game = format_game(state.game_meta)
+    players = format_players(state.players)
+    territory_state = format_territory_state(state.territory_state)
+    units = format_units(state.units)
 
     output = []
     output.append(f"\n{game}")
@@ -13,6 +16,19 @@ def format_state(state):
     output.append(f"\n{territory_state}")
     output.append(f"\n{units}")
 
+    return "\n".join(output)
+
+
+def format_orders(player_orders: list[str], player: str):
+    output = []
+    output.append(f"--- Orders: {player} ---")
+    if player_orders == []:
+        output.append(f"No orders found")
+        return "\n".join(output)
+    i = 1
+    for order in player_orders:
+        output.append(f"{i}: {order}")
+        i += 1
     return "\n".join(output)
 
 
@@ -26,11 +42,23 @@ def format_game(game):
     return "\n".join(output)
 
 
-def format_players(players):
+def format_players(players, status: str = "both"):
     output = []
-    output.append("--- Players ---")
-    for k, v in players.items():
-        output.append(f"{k} - {v['status']}")
+    match status:
+        case "both":
+            output.append("--- Players ---")
+            for k, v in players.items():
+                output.append(f"{k} - {v['status']}")
+        case "active":
+            output.append("--- Active Players ---")
+            for k, v in players.items():
+                if v["status"] == status:
+                    output.append(f"{k} - {v['status']}")
+        case "eliminated":
+            output.append("--- Active Players ---")
+            for k, v in players.items():
+                if v["status"] == status:
+                    output.append(f"{k} - {v['status']}")
 
     return "\n".join(output)
 
@@ -56,7 +84,7 @@ def format_units(units):
     for owner, units in by_owner.items():
         output.append(f"\n{owner}")
         for u in units:
-            output.append(f" - {u['type']} - {u['territory_id']}")
+            output.append(f" - {u['unit_type'].lower()} - {u['territory_id']}")
 
     return "\n".join(output)
 

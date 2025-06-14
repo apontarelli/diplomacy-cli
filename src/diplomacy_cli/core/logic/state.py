@@ -175,6 +175,26 @@ def build_counters(units: dict[str, Any]) -> Counters:
     return counters
 
 
+def save_player_orders(
+    game_id: str,
+    player: str,
+    raw_orders: list[str],
+    root_dir: Path = DEFAULT_GAMES_DIR,
+) -> None:
+    base = Path(root_dir)
+    paths = GamePaths(base, game_id)
+    orders_file_path = orders_path(paths)
+    try:
+        saved_orders = load(orders_file_path)
+    except FileNotFoundError:
+        saved_orders = {}
+
+    saved_orders[player] = raw_orders
+    tmp = orders_file_path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(saved_orders, indent=2))
+    tmp.replace(orders_file_path)
+
+
 def save_phase_resolution_report(
     game_id: str,
     phase_resolution_report: PhaseResolutionReport,
