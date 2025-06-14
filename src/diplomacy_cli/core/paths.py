@@ -63,8 +63,13 @@ def territory_state_path(paths: GamePaths) -> Path:
     return game_dir(paths) / "territory_state.json"
 
 
-def delete_game(paths: GamePaths) -> None:
-    shutil.rmtree(game_dir(paths), ignore_errors=False)
+def delete_game(game_id: str) -> None:
+    dir_path = DEFAULT_GAMES_DIR / game_id
+    if not dir_path.is_dir():
+        raise FileNotFoundError(
+            f"No game directory for '{game_id}' at {DEFAULT_GAMES_DIR!r}"
+        )
+    shutil.rmtree(dir_path)
 
 
 def list_game_ids(games_dir: Path = DEFAULT_GAMES_DIR) -> list[str]:
