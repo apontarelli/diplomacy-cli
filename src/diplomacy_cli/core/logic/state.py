@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from diplomacy_cli.cli.ux.pretty import format_phase_resolution_report
 from diplomacy_cli.core.logic.rules_loader import load_rules
 from diplomacy_cli.core.logic.validator.orchestrator import process_phase
 
@@ -323,6 +324,7 @@ def process_turn(
     loaded_state = load_state(game_id, base)
     rules = load_rules(loaded_state.game.game_meta["variant"])
     report = process_phase(loaded_state, rules)
+    print(format_phase_resolution_report(report, rules))
 
     current_turn = loaded_state.game.game_meta["turn_code"]
     dislodged = any(

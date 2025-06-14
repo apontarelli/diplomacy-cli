@@ -1,6 +1,13 @@
 from collections import defaultdict
+from typing import List
 
-from diplomacy_cli.core.logic.schema import LoadedState
+from diplomacy_cli.core.logic.schema import (
+    LoadedState,
+    OutcomeType,
+    PhaseResolutionReport,
+    Rules,
+)
+from diplomacy_cli.core.logic.turn_code import BASE_YEAR
 
 
 def format_state(loaded_state: LoadedState):
@@ -39,6 +46,106 @@ def format_game(game):
     output.append(f"Turn: {game['turn_code']}")
     output.append(f"Status: {game['status']}")
 
+    return "\n".join(output)
+
+
+def format_phase_resolution_report(
+    phase_report: PhaseResolutionReport, rules: Rules
+) -> str:
+    output: List[str] = []
+
+    season_name = phase_report.season.name.capitalize()
+    phase_name = phase_report.phase.name.capitalize()
+    territory_names = rules.territory_display_names
+    nation_names = rules.nation_display_names
+
+    output.append(
+        f"=== {phase_report.year + BASE_YEAR} {season_name} - {phase_name} Phase ==="
+    )
+    output.append("")
+
+    output.append("-- Syntax Validation --")
+    if phase_report.valid_syntax:
+        output.append("Valid syntax orders:")
+        for s in phase_report.valid_syntax:
+            output.append(f"  [{s.player_id}] {s.normalized}")
+    else:
+        output.append("No valid syntax orders.")
+    if phase_report.syntax_errors:
+        output.append("Syntax errors:")
+        for s in phase_report.syntax_errors:
+            errs = "; ".join(s.errors)
+            output.append(f"  [{s.player_id}] {s.raw} -> {errs}")
+    output.append("")
+
+    output.append("-- Semantic Validation --")
+    if phase_report.valid_semantics:
+        output.append("Valid semantic orders:")
+        for sem in phase_report.valid_semantics:
+            output.append(f"  [{sem.player_id}] {sem.normalized}")
+    else:
+        output.append("No valid semantic orders.")
+    if phase_report.semantic_errors:
+        output.append("Semantic errors:")
+        for sem in phase_report.semantic_errors:
+            errs = "; ".join(sem.errors)
+            output.append(f"  [{sem.player_id}] {sem.normalized} -> {errs}")
+    output.append("")
+
+    output.append("-- Resolution Results --")
+    if not phase_report.resolution_results:
+        output.append("No resolution results.")
+    else:
+        for res in phase_report.resolution_results:
+            base = f"{nation_names[res.owner_id]} ({res.unit_type.title()}) at {territory_names[res.origin_territory]}"
+            outcome = res.outcome
+            if outcome == OutcomeType.MOVE_SUCCESS:
+                base += f" -> moved to {res.resolved_territory} (strength {res.strength})"
+            elif outcome == OutcomeType.MOVE_BOUNCED:
+                base += f" -> move bounced at {res.destination or res.resolved_territory}"
+            elif outcome == OutcomeType.MOVE_NO_CONVOY:
+                base += f" -> move failed (no convoy) to {res.destination}"
+            elif outcome == OutcomeType.SUPPORT_SUCCESS:
+                base += f" -> support succeeded"
+            elif outcome == OutcomeType.SUPPORT_CUT:
+                base += f" -> support cut"
+            elif outcome == OutcomeType.INVALID_SUPPORT:
+                base += f" -> invalid support"
+            elif outcome == OutcomeType.HOLD_SUCCESS:
+                base += f" -> held"
+            elif outcome == OutcomeType.CONVOY_SUCCESS:
+                path = "->".join(res.convoy_path or [])
+                base += f" -> convoyed to {res.resolved_territory} via {path}"
+            elif outcome == OutcomeType.INVALID_CONVOY:
+                base += f" -> invalid convoy"
+            elif outcome == OutcomeType.DISLODGED:
+                base += f" -> dislodged by {res.dislodged_by_id}"
+            elif outcome == OutcomeType.RETREAT_SUCCESS:
+                base += f" -> retreated to {res.resolved_territory}"
+            elif outcome == OutcomeType.RETREAT_FAILED:
+                base += f" -> failed to retreat"
+            elif outcome == OutcomeType.BUILD_SUCCESS:
+                base += f" -> built at {res.resolved_territory}"
+            elif outcome == OutcomeType.BUILD_ILLEGAL_LOCATION:
+                base += f" -> build illegal location"
+            elif outcome == OutcomeType.BUILD_NO_CENTER:
+                base += f" -> build failed (no center)"
+            elif outcome == OutcomeType.DISBAND_SUCCESS:
+                base += f" -> disbanded"
+            elif outcome == OutcomeType.DISBAND_FAILED:
+                base += f" -> failed to disband"
+            else:
+                base += f" -> outcome: {outcome.value}"
+
+            output.append(base)
+
+            if res.duplicate_orders:
+                dup_str = "; ".join(d.normalized for d in res.duplicate_orders)
+                output.append(f"    Duplicate orders: {dup_str}")
+
+            if res.convoy_path and outcome != OutcomeType.CONVOY_SUCCESS:
+                path = "->".join(res.convoy_path)
+                output.append(f"    Convoy path attempted: {path}")
     return "\n".join(output)
 
 

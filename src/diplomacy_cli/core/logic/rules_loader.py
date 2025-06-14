@@ -7,12 +7,14 @@ from .storage import load_variant_json
 def load_rules(variant) -> Rules:
     territories_raw = load_variant_json(variant, "world", "territories.json")
     edge_data = load_variant_json(variant, "world", "edges.json")
+    nation_data = load_variant_json(variant, "world", "nations.json")
     assert isinstance(territories_raw, dict)
     territory_ids = set()
     supply_centers = set()
     home_centers = defaultdict(set)
 
-    display_name = {}
+    territory_display_names = {}
+    nation_display_names = {}
     territory_type = {}
     has_coast = set()
     parent_coasts = defaultdict(list)
@@ -21,7 +23,7 @@ def load_rules(variant) -> Rules:
 
     for tid, data in territories_raw.items():
         territory_ids.add(tid)
-        display_name[tid] = data["display_name"]
+        territory_display_names[tid] = data["display_name"]
         territory_type[tid] = data["type"]  # "land" / "sea" / "coast"
         if data.get("is_supply_center"):
             supply_centers.add(tid)
@@ -34,11 +36,16 @@ def load_rules(variant) -> Rules:
             coast_id = f"{tid}_{coast}"
             territory_ids.add(coast_id)
             territory_type[coast_id] = "coast"
-            display_name[coast_id] = f"{data['display_name']} ({coast.upper()})"
+            territory_display_names[coast_id] = (
+                f"{data['display_name']} ({coast.upper()})"
+            )
             parent_coasts[tid].append(coast_id)
 
             parent_to_coast.setdefault(tid, []).append(coast_id)
             coast_to_parent[coast_id] = tid
+
+    for nation in nation_data:
+        nation_display_names[nation["id"]] = nation["display_name"]
 
     edges = set()
     adjacency_map = defaultdict(list)
@@ -52,7 +59,8 @@ def load_rules(variant) -> Rules:
         territory_ids=territory_ids,
         supply_centers=supply_centers,
         home_centers=dict(home_centers),
-        display_name=display_name,
+        territory_display_names=territory_display_names,
+        nation_display_names=nation_display_names,
         territory_type=territory_type,
         has_coast=has_coast,
         parent_coasts=dict(parent_coasts),
