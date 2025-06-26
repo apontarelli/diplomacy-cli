@@ -30,9 +30,9 @@ def test_load_rules_structure():
         assert all(isinstance(c, str) for c in coasts)
 
     # Territory metadata columns
-    assert isinstance(rules.display_name, dict)
+    assert isinstance(rules.territory_display_names, dict)
     # Every territory ID should have a display name
-    assert set(rules.display_name.keys()) == rules.territory_ids
+    assert set(rules.territory_display_names.keys()) == rules.territory_ids
 
     assert isinstance(rules.territory_type, dict)
     # Types should be one of the expected values

@@ -243,16 +243,16 @@ def test_process_turn_advances_phase_and_mutates_state(
     game_id = "test_game"
 
     unit_specs = [
-        ("U1", "P1", UnitType.ARMY, "par"),
-        ("U2", "P2", UnitType.ARMY, "bur"),
+        ("fra_army_1", "fra", UnitType.ARMY, "par"),
+        ("aus_army_1", "aus", UnitType.ARMY, "bur"),
     ]
 
     initial_state = loaded_state_factory(
         unit_specs=unit_specs,
         game_meta={"turn_code": "1901-S-M", "variant": "classic"},
         raw_orders={
-            "P1": ["par-bur"],
-            "P2": ["bur hold"],
+            "fra": ["par-bur"],
+            "aus": ["bur hold"],
         },
     )
 
