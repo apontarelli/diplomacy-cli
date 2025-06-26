@@ -7,38 +7,61 @@ This project is a work-in-progress, with ongoing tasks tracked in TODO.md
 ## Folder Structure
 
 ```
-main.py # Entry point
-logic/ # Core game logic
-tests/ # Test files
-data/ # Game data
-data/classic # Immutable data for classic Diplomacy (i.e. starting state)
-data/saves # Active game state folders
+src/diplomacy_cli/  # Main source code
+├── cli/            # User interface
+├── core/           # Core game logic
+└── data/           # Game data
+backend/            # Go backend for the game engine
+tests/              # Automated tests
+pyproject.toml      # Project definition and dependencies
+flake.nix           # Nix flake for development environment
 ```
 
 ## Getting Started
-1. Clone the repo
-2. Create a virtual environment
 
+This project uses [Nix](https://nixos.org/) with [direnv](https://direnv.net/) to automatically manage the development environment.
+
+### Prerequisites
+
+- [Nix](https://nixos.org/download.html) (with flakes enabled)
+- [direnv](https://direnv.net/docs/installation.html)
+
+### Setup
+
+1. **Clone the repository**
+2. **Allow direnv:** The first time you `cd` into the project directory, `direnv` will prompt you for permission. Type `direnv allow` to activate the environment.
+
+The development environment will automatically:
+- Set up Python 3.12 with uv package manager
+- Create a virtual environment in `.venv/`
+- Install all development dependencies (pytest, ruff, pyright, etc.)
+- Configure your PATH to use the virtual environment
+
+### Manual Setup (Alternative)
+
+If you prefer not to use Nix/direnv:
+
+```sh
+# Create virtual environment
+python3.12 -m venv .venv
+source .venv/bin/activate
+
+# Install dependencies
+pip install -e ".[dev]"
 ```
-python -m venv venv
-source venv/bin/activate
 
+## How to Run
+
+Once the development environment is active, run the application using the following command:
+
+```sh
+python -m diplomacy_cli
 ```
-3. Run the game loop
 
-```
-python main.py
-```
+## Running Tests
 
-## Data Model Overview
-- Players: id, name, status
-- Territories: id, name, type, owner_id
-- Edges: territory_a, territory_b, type
-- Units: id, owner_id, type, territory_id
-- Orders: player_id, type, source_id, target_id
+To run the test suite, use `pytest`:
 
-## Running Tests (when completed)
-
-```
-pytest tests/
+```sh
+pytest
 ```

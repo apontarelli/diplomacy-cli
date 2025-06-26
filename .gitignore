@@ -9,4 +9,11 @@ __pycache__/
 /dist/
 
 # Virtual python environment
-venv
+venv/
+.venv/
+
+# Direnv
+.direnv/
+
+# Pytest cache
+.pytest_cache/

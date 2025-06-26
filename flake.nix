@@ -16,18 +16,27 @@
         python-with-packages = python.withPackages (ps: with ps; [
           uv
           ruff
-          pyright
         ]);
       in
       {
         devShells.default = pkgs.mkShell {
           buildInputs = [
             pkgs.go
+            pkgs.pyright
             python-with-packages
           ];
           shellHook = ''
-            echo "Entering Diplomacy CLI development environment..."
+            # Define the virtual environment directory for uv and other tools
             export VIRTUAL_ENV="$(pwd)/.venv"
+
+            # If the venv doesn't exist, create it and install dependencies.
+            if [ ! -f "$VIRTUAL_ENV/pyvenv.cfg" ]; then
+              echo "Setting up Python environment..."
+              uv venv
+              uv pip install -e ".[dev]"
+            fi
+
+            # Add the virtual environment's bin to the PATH
             export PATH="$VIRTUAL_ENV/bin:$PATH"
           '';
         };
