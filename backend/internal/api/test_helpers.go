@@ -4,11 +4,15 @@ import (
 	"testing"
 
 	"diplomacy-backend/internal/game"
+	"diplomacy-backend/internal/game/rules"
 )
 
 // TestServer creates a new server instance for testing
 func TestServer() *Server {
-	return &Server{}
+	gameRules := rules.MustLoadRules("classic")
+	return &Server{
+		rules: gameRules,
+	}
 }
 
 // CreateMoveOrder creates a move order with the given parameters

@@ -1,0 +1,9 @@
+[
+  { "id": "eng", "display_name": "England" },
+  { "id": "aus", "display_name": "Austria" },
+  { "id": "ger", "display_name": "Germany" },
+  { "id": "fra", "display_name": "France" },
+  { "id": "ita", "display_name": "Italy" },
+  { "id": "tur", "display_name": "Turkey" },
+  { "id": "rus", "display_name": "Russia" }
+]

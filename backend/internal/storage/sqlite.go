@@ -249,6 +249,21 @@ func (db *DB) GetUnitsByGame(gameID string) ([]game.Unit, error) {
 	return units, rows.Err()
 }
 
+func (db *DB) GetUnitByID(unitID string) (*game.Unit, error) {
+	query := `SELECT id, game_id, owner_id, unit_type, territory_id FROM units WHERE id = ?`
+	row := db.conn.QueryRow(query, unitID)
+	
+	var u game.Unit
+	var unitType string
+	err := row.Scan(&u.ID, &u.GameID, &u.OwnerID, &unitType, &u.TerritoryID)
+	if err != nil {
+		return nil, err
+	}
+	u.UnitType = game.UnitType(unitType)
+	
+	return &u, nil
+}
+
 func (db *DB) GetTerritoriesByGame(gameID string) ([]game.TerritoryState, error) {
 	query := `SELECT id, game_id, turn_id, territory_id, owner_id FROM territory_state WHERE game_id = ?`
 	rows, err := db.conn.Query(query, gameID)

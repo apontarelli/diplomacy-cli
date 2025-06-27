@@ -10,9 +10,9 @@ func TestResolveMovementOrders_SingleMove_Success(t *testing.T) {
 	scenario := TestScenario{
 		Name: "Army in Berlin moves to Munich (unoccupied)",
 		MoveOrders: []game.Order{
-			CreateMoveOrder("order1", "unit1", "ber", "mun"),
+			CreateMoveOrder("order1", "germany_army_berlin", "ber", "mun"),
 		},
-		UnitPositions: CreateUnitPositions("unit1", "ber"),
+		UnitPositions: CreateUnitPositions("germany_army_berlin", "ber"),
 		Expectations: []OrderExpectation{
 			{OrderID: "order1", ExpectedResult: game.ResolutionSuccess, ExpectedPosition: "mun"},
 		},
@@ -25,10 +25,10 @@ func TestResolveMovementOrders_MultipleMovesToSameTerritory_Bounce(t *testing.T)
 	scenario := TestScenario{
 		Name: "Two armies try to move to the same territory",
 		MoveOrders: []game.Order{
-			CreateMoveOrder("order1", "unit1", "ber", "mun"),
-			CreateMoveOrder("order2", "unit2", "vie", "mun"),
+			CreateMoveOrder("order1", "germany_army_berlin", "ber", "mun"),
+			CreateMoveOrder("order2", "austria_army_bohemia", "boh", "mun"),
 		},
-		UnitPositions: CreateUnitPositions("unit1", "ber", "unit2", "vie"),
+		UnitPositions: CreateUnitPositions("germany_army_berlin", "ber", "austria_army_bohemia", "boh"),
 		Expectations: []OrderExpectation{
 			{OrderID: "order1", ExpectedResult: game.ResolutionBounced},
 			{OrderID: "order2", ExpectedResult: game.ResolutionBounced},
@@ -39,13 +39,13 @@ func TestResolveMovementOrders_MultipleMovesToSameTerritory_Bounce(t *testing.T)
 }
 
 func TestResolveMovementOrders_SupportedMove_Success(t *testing.T) {
-	server := &Server{}
+	server := TestServer()
 	
-	// Setup: Army in Berlin moves to Munich with support from Vienna
+	// Setup: Army in Berlin moves to Munich with support from Bohemia
 	moveOrders := []game.Order{
 		{
 			ID:            "order1",
-			UnitID:        "unit1",
+			UnitID:        "germany_army_berlin",
 			OrderType:     game.OrderTypeMove,
 			FromTerritory: "ber",
 			ToTerritory:   "mun",
@@ -55,17 +55,17 @@ func TestResolveMovementOrders_SupportedMove_Success(t *testing.T) {
 	supportOrders := []game.Order{
 		{
 			ID:            "support1",
-			UnitID:        "unit2",
+			UnitID:        "austria_army_bohemia",
 			OrderType:     game.OrderTypeSupport,
-			SupportUnit:   "unit1",
+			SupportUnit:   "germany_army_berlin",
 			ToTerritory:   "mun",
 		},
 	}
 	
 	unitPositions := map[string]string{
-		"unit1": "ber",
-		"unit2": "vie",
-		"unit3": "mun", // Defending unit
+		"germany_army_berlin": "ber",
+		"austria_army_bohemia": "boh",
+		"france_army_munich": "mun", // Defending unit
 	}
 	
 	results := server.resolveMovementOrders(moveOrders, supportOrders, unitPositions)

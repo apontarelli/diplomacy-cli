@@ -7,21 +7,26 @@ import (
 	"fmt"
 	"net/http"
 	"slices"
+	"strings"
 	"time"
 
 	"diplomacy-backend/internal/game"
+	"diplomacy-backend/internal/game/rules"
 	"diplomacy-backend/internal/storage"
 )
 
 type Server struct {
 	db       *storage.DB
 	gameData *game.GameData
+	rules    *rules.Rules
 }
 
 func NewServer(db *storage.DB, gameData *game.GameData) *Server {
+	gameRules := rules.MustLoadRules("classic")
 	return &Server{
 		db:       db,
 		gameData: gameData,
+		rules:    gameRules,
 	}
 }
 
@@ -506,9 +511,10 @@ func (s *Server) SubmitOrderHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func (s *Server) validateOrder(req SubmitOrderRequest, _ *game.Turn) error {
+func (s *Server) validateOrder(req SubmitOrderRequest, turn *game.Turn) error {
 	orderType := game.OrderType(req.OrderType)
 	
+	// Basic order type validation
 	switch orderType {
 	case game.OrderTypeMove:
 		if req.ToTerritory == "" {
@@ -528,7 +534,112 @@ func (s *Server) validateOrder(req SubmitOrderRequest, _ *game.Turn) error {
 		return fmt.Errorf("invalid order type: %s", req.OrderType)
 	}
 
+	// Enhanced validation for move orders using rules engine
+	if orderType == game.OrderTypeMove {
+		return s.validateMoveOrder(req)
+	}
+
 	return nil
+}
+
+func (s *Server) validateMoveOrder(req SubmitOrderRequest) error {
+	// Validate territories exist
+	if !s.rules.IsValidTerritory(req.FromTerritory) {
+		return fmt.Errorf("invalid origin territory: %s", req.FromTerritory)
+	}
+	
+	if !s.rules.IsValidTerritory(req.ToTerritory) {
+		return fmt.Errorf("invalid destination territory: %s", req.ToTerritory)
+	}
+
+	// Get unit information to determine unit type
+	unit, err := s.db.GetUnitByID(req.UnitID)
+	if err != nil {
+		return fmt.Errorf("unit not found: %s", req.UnitID)
+	}
+
+	// Validate unit can occupy origin territory
+	if !s.rules.CanUnitOccupy(unit.UnitType, req.FromTerritory) {
+		return fmt.Errorf("%s cannot occupy %s", unit.UnitType, req.FromTerritory)
+	}
+
+	// Validate unit can occupy destination territory
+	if !s.rules.CanUnitOccupy(unit.UnitType, req.ToTerritory) {
+		return fmt.Errorf("%s cannot occupy %s", unit.UnitType, req.ToTerritory)
+	}
+
+	// Validate adjacency - unit can move from origin to destination
+	if !s.rules.CanMove(unit.UnitType, req.FromTerritory, req.ToTerritory) {
+		return fmt.Errorf("%s cannot move from %s to %s (not adjacent or invalid for unit type)", 
+			unit.UnitType, req.FromTerritory, req.ToTerritory)
+	}
+
+	return nil
+}
+
+func (s *Server) validateMoveOrderWithRules(order game.Order, unitPositions map[string]string) error {
+	// Validate territories exist
+	if !s.rules.IsValidTerritory(order.FromTerritory) {
+		return fmt.Errorf("invalid origin territory: %s", order.FromTerritory)
+	}
+	
+	if !s.rules.IsValidTerritory(order.ToTerritory) {
+		return fmt.Errorf("invalid destination territory: %s", order.ToTerritory)
+	}
+
+	// For testing, extract unit type from unit ID (format: "country_unittype_territory")
+	unitType := s.extractUnitTypeFromID(order.UnitID)
+	if unitType == "" {
+		// Fallback: try to get from database if available
+		if s.db != nil {
+			unit, err := s.db.GetUnitByID(order.UnitID)
+			if err != nil {
+				return fmt.Errorf("unit not found: %s", order.UnitID)
+			}
+			unitType = string(unit.UnitType)
+		} else {
+			return fmt.Errorf("cannot determine unit type for: %s", order.UnitID)
+		}
+	}
+
+	// Verify unit is actually in the from territory
+	actualPosition := unitPositions[order.UnitID]
+	if actualPosition != order.FromTerritory {
+		return fmt.Errorf("unit %s is not in territory %s (actually in %s)", 
+			order.UnitID, order.FromTerritory, actualPosition)
+	}
+
+	gameUnitType := game.UnitType(unitType)
+
+	// Validate unit can occupy origin territory
+	if !s.rules.CanUnitOccupy(gameUnitType, order.FromTerritory) {
+		return fmt.Errorf("%s cannot occupy %s", gameUnitType, order.FromTerritory)
+	}
+
+	// Validate unit can occupy destination territory
+	if !s.rules.CanUnitOccupy(gameUnitType, order.ToTerritory) {
+		return fmt.Errorf("%s cannot occupy %s", gameUnitType, order.ToTerritory)
+	}
+
+	// Validate adjacency - unit can move from origin to destination
+	if !s.rules.CanMove(gameUnitType, order.FromTerritory, order.ToTerritory) {
+		return fmt.Errorf("%s cannot move from %s to %s (not adjacent or invalid for unit type)", 
+			gameUnitType, order.FromTerritory, order.ToTerritory)
+	}
+
+	return nil
+}
+
+// extractUnitTypeFromID extracts unit type from test unit IDs like "england_fleet_north_sea"
+func (s *Server) extractUnitTypeFromID(unitID string) string {
+	// Split by underscore and look for "army" or "fleet"
+	parts := strings.Split(unitID, "_")
+	for _, part := range parts {
+		if part == "army" || part == "fleet" {
+			return part
+		}
+	}
+	return ""
 }
 
 func (s *Server) GetOrdersHandler(w http.ResponseWriter, r *http.Request) {
@@ -842,10 +953,26 @@ func (s *Server) resolveOrders(gameID string, _ int, orders []game.Order) ([]gam
 
 func (s *Server) resolveMovementOrders(moveOrders []game.Order, supportOrders []game.Order, unitPositions map[string]string) []game.OrderResult {
 	var results []game.OrderResult
+	var validMoves []game.Order
 	
-	// Group moves by destination to detect conflicts
-	destinationMoves := make(map[string][]game.Order)
+	// First, validate all move orders using rules engine
 	for _, order := range moveOrders {
+		if err := s.validateMoveOrderWithRules(order, unitPositions); err != nil {
+			// Move is invalid - mark as failed
+			results = append(results, game.OrderResult{
+				OrderID: order.ID,
+				Result:  game.ResolutionFailed,
+				Reason:  err.Error(),
+			})
+		} else {
+			// Move is valid - add to valid moves for conflict resolution
+			validMoves = append(validMoves, order)
+		}
+	}
+	
+	// Group valid moves by destination to detect conflicts
+	destinationMoves := make(map[string][]game.Order)
+	for _, order := range validMoves {
 		destinationMoves[order.ToTerritory] = append(destinationMoves[order.ToTerritory], order)
 	}
 

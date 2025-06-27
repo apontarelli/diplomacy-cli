@@ -1,0 +1,412 @@
+{
+  "lon": {
+    "display_name": "London",
+    "type": "land",
+    "home_country": "eng",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "wal": {
+    "display_name": "Wales",
+    "type": "land",
+    "has_coast": true
+  },
+  "yor": {
+    "display_name": "York",
+    "type": "land",
+    "has_coast": true
+  },
+  "cly": {
+    "display_name": "Clyde",
+    "type": "land",
+    "has_coast": true
+  },
+  "edi": {
+    "display_name": "Edinburgh",
+    "type": "land",
+    "home_country": "eng",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "lvp": {
+    "display_name": "Liverpool",
+    "type": "land",
+    "home_country": "eng",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "spa": {
+    "display_name": "Spain",
+    "type": "land",
+    "coasts": [
+      "nc",
+      "sc"
+    ],
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "por": {
+    "display_name": "Portugal",
+    "type": "land",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "mar": {
+    "display_name": "Marseilles",
+    "type": "land",
+    "home_country": "fra",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "gas": {
+    "display_name": "Gascony",
+    "type": "land",
+    "has_coast": true
+  },
+  "bre": {
+    "display_name": "Brest",
+    "type": "land",
+    "home_country": "fra",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "par": {
+    "display_name": "Paris",
+    "type": "land",
+    "home_country": "fra",
+    "is_supply_center": true
+  },
+  "bur": {
+    "display_name": "Burgundy",
+    "type": "land"
+  },
+  "pic": {
+    "display_name": "Picardy",
+    "type": "land",
+    "has_coast": true
+  },
+  "bel": {
+    "display_name": "Belgium",
+    "type": "land",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "hol": {
+    "display_name": "Holland",
+    "type": "land",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "ruh": {
+    "display_name": "Ruhr",
+    "type": "land"
+  },
+  "kie": {
+    "display_name": "Kiel",
+    "type": "land",
+    "home_country": "ger",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "mun": {
+    "display_name": "Munich",
+    "type": "land",
+    "home_country": "ger",
+    "is_supply_center": true
+  },
+  "ber": {
+    "display_name": "Berlin",
+    "type": "land",
+    "home_country": "ger",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "den": {
+    "display_name": "Denmark",
+    "type": "land",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "swe": {
+    "display_name": "Sweden",
+    "type": "land",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "nor": {
+    "display_name": "Norway",
+    "type": "land",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "stp": {
+    "display_name": "St. Petersburg",
+    "type": "land",
+    "coasts": [
+      "nc",
+      "sc"
+    ],
+    "home_country": "rus",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "fin": {
+    "display_name": "Finland",
+    "type": "land",
+    "has_coast": true
+  },
+  "lvn": {
+    "display_name": "Livonia",
+    "type": "land",
+    "has_coast": true
+  },
+  "pru": {
+    "display_name": "Prussia",
+    "type": "land",
+    "has_coast": true
+  },
+  "ukr": {
+    "display_name": "Ukraine",
+    "type": "land"
+  },
+  "mos": {
+    "display_name": "Moscow",
+    "type": "land",
+    "home_country": "rus",
+    "is_supply_center": true
+  },
+  "sev": {
+    "display_name": "Sevastopol",
+    "type": "land",
+    "home_country": "rus",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "war": {
+    "display_name": "Warsaw",
+    "type": "land",
+    "home_country": "rus",
+    "is_supply_center": true
+  },
+  "gal": {
+    "display_name": "Galicia",
+    "type": "land"
+  },
+  "boh": {
+    "display_name": "Bohemia",
+    "type": "land"
+  },
+  "vie": {
+    "display_name": "Vienna",
+    "type": "land",
+    "home_country": "aus",
+    "is_supply_center": true
+  },
+  "bud": {
+    "display_name": "Budapest",
+    "type": "land",
+    "home_country": "aus",
+    "is_supply_center": true
+  },
+  "tri": {
+    "display_name": "Trieste",
+    "type": "land",
+    "home_country": "aus",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "tyr": {
+    "display_name": "Tyrolia",
+    "type": "land"
+  },
+  "ven": {
+    "display_name": "Venice",
+    "type": "land",
+    "home_country": "ita",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "pie": {
+    "display_name": "Piedmont",
+    "type": "land",
+    "has_coast": true
+  },
+  "rom": {
+    "display_name": "Rome",
+    "type": "land",
+    "home_country": "ita",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "nap": {
+    "display_name": "Naples",
+    "type": "land",
+    "home_country": "ita",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "apu": {
+    "display_name": "Apulia",
+    "type": "land",
+    "has_coast": true
+  },
+  "tus": {
+    "display_name": "Tuscany",
+    "type": "land",
+    "has_coast": true
+  },
+  "bul": {
+    "display_name": "Bulgaria",
+    "type": "land",
+    "coasts": [
+      "ec",
+      "sc"
+    ],
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "gre": {
+    "display_name": "Greece",
+    "type": "land",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "ser": {
+    "display_name": "Serbia",
+    "type": "land",
+    "is_supply_center": true
+  },
+  "alb": {
+    "display_name": "Albania",
+    "type": "land",
+    "has_coast": true
+  },
+  "con": {
+    "display_name": "Constantinople",
+    "type": "land",
+    "home_country": "tur",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "ank": {
+    "display_name": "Ankara",
+    "type": "land",
+    "home_country": "tur",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "smy": {
+    "display_name": "Smyrna",
+    "type": "land",
+    "home_country": "tur",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "arm": {
+    "display_name": "Armenia",
+    "type": "land",
+    "has_coast": true
+  },
+  "syr": {
+    "display_name": "Syria",
+    "type": "land",
+    "has_coast": true
+  },
+  "nao": {
+    "display_name": "North Atlantic Ocean",
+    "type": "sea"
+  },
+  "nwg": {
+    "display_name": "Norwegian Sea",
+    "type": "sea"
+  },
+  "bar": {
+    "display_name": "Barents Sea",
+    "type": "sea"
+  },
+  "ska": {
+    "display_name": "Skagerrak",
+    "type": "sea"
+  },
+  "hel": {
+    "display_name": "Heligoland Bight",
+    "type": "sea"
+  },
+  "nth": {
+    "display_name": "North Sea",
+    "type": "sea"
+  },
+  "eng": {
+    "display_name": "English Channel",
+    "type": "sea"
+  },
+  "iri": {
+    "display_name": "Irish Sea",
+    "type": "sea"
+  },
+  "mao": {
+    "display_name": "Mid-Atlantic Ocean",
+    "type": "sea"
+  },
+  "bal": {
+    "display_name": "Baltic Sea",
+    "type": "sea"
+  },
+  "bot": {
+    "display_name": "Gulf of Bothnia",
+    "type": "sea"
+  },
+  "adr": {
+    "display_name": "Adriatic Sea",
+    "type": "sea"
+  },
+  "aeg": {
+    "display_name": "Aegean Sea",
+    "type": "sea"
+  },
+  "eas": {
+    "display_name": "Eastern Mediterranean",
+    "type": "sea"
+  },
+  "ion": {
+    "display_name": "Ionian Sea",
+    "type": "sea"
+  },
+  "tys": {
+    "display_name": "Tyrrhenian Sea",
+    "type": "sea"
+  },
+  "wes": {
+    "display_name": "Western Mediterranean",
+    "type": "sea"
+  },
+  "bla": {
+    "display_name": "Black Sea",
+    "type": "sea"
+  },
+  "sil": {
+    "display_name": "Silesia",
+    "type": "land"
+  },
+  "tun": {
+    "display_name": "Tunisia",
+    "type": "land",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "naf": {
+    "display_name": "North Africa",
+    "type": "land",
+    "has_coast": true
+  },
+  "rum": {
+    "display_name": "Rumania",
+    "type": "land",
+    "has_coast": true,
+    "is_supply_center": true
+  },
+  "lyo": {
+    "display_name": "Gulf of Lyon",
+    "type": "sea"
+  }
+}
