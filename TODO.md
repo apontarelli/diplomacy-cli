@@ -22,12 +22,17 @@ All sub-phases completed:
 
 **Completed**:
 - [x] ✅ **COMMITTED**: Phase 2D resolution engine and comprehensive test suite (commit a602850)
-- [x] Complete end-to-end Diplomacy game engine with 24 tests (13.1% coverage)
+- [x] ✅ **COMMITTED**: DATC test framework with 163 official test case stubs (commit 36edf08)
+- [x] Complete end-to-end Diplomacy game engine with 25 passing tests
+- [x] Fixed urllib-based DATC extraction (no external dependencies)
+- [x] Generated 163 DATC test stubs across 10 categories
+
+**Current Status**: 188 total test cases (25 passing + 163 DATC stubs)
 
 **Current Plan**:
-1. **Fix DATC Script**: Resolve `requests` dependency issue
-2. **Extract DATC Tests**: Generate ~300+ official test cases organized by category
-3. **Refactor Test Structure**: Create hybrid approach to minimize duplication
+1. **Create Test Helpers**: Extract common setup to reduce duplication
+2. **Implement DATC Tests**: Progressive implementation of official test cases
+3. **Refactor Scenarios**: Replace custom scenarios with DATC equivalents
 
 **Test Refactoring Strategy**:
 ```
@@ -42,10 +47,22 @@ backend/internal/api/
 ```
 
 **Next Steps**:
-- [ ] Fix `requests` dependency in extraction script
-- [ ] Extract common test setup into shared helpers
-- [ ] Generate DATC test files by category
-- [ ] Replace scenario tests with DATC equivalents
+- [ ] Create shared test helpers (`test_helpers.go`) for common setup
+- [ ] Implement high-priority DATC test cases (Category A: BasicChecks)
+- [ ] Replace `diplomacy_scenarios_test.go` with DATC equivalents
+- [ ] Progressive DATC implementation across all categories
+
+**DATC Categories** (163 total test cases):
+- **A: BasicChecks** (12 tests) - ⭐ **Start here** - fundamental validation
+- **B: CoastalIssues** (15 tests) - Fleet/coast movement edge cases
+- **C: CircularMovement** (9 tests) - Complex movement chains
+- **D: SupportsAndDislodges** (34 tests) - Support mechanics and dislodging
+- **E: HeadToHeadBattles** (14 tests) - Direct unit conflicts
+- **F: Convoys** (25 tests) - Fleet convoy mechanics
+- **G: ConvoyingToAdjacent** (20 tests) - Adjacent convoy edge cases
+- **H: Retreating** (16 tests) - Retreat phase mechanics
+- **I: Building** (7 tests) - Build phase mechanics
+- **J: CivilDisorder** (11 tests) - NMR and disorder handling
 
 ## Next Phase Options
 
