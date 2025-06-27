@@ -116,3 +116,130 @@ func (db *DB) GetGame(gameID string) (*game.Game, error) {
 	g.Status = game.GameStatus(status)
 	return &g, nil
 }
+
+func (db *DB) CreatePlayer(p game.Player) error {
+	query := `INSERT INTO players (id, game_id, nation, status) VALUES (?, ?, ?, ?)`
+	_, err := db.conn.Exec(query, p.ID, p.GameID, p.Nation, string(p.Status))
+	return err
+}
+
+func (db *DB) GetPlayersByGame(gameID string) ([]game.Player, error) {
+	query := `SELECT id, game_id, nation, status FROM players WHERE game_id = ?`
+	rows, err := db.conn.Query(query, gameID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var players []game.Player
+	for rows.Next() {
+		var p game.Player
+		var status string
+		err := rows.Scan(&p.ID, &p.GameID, &p.Nation, &status)
+		if err != nil {
+			return nil, err
+		}
+		p.Status = game.PlayerStatus(status)
+		players = append(players, p)
+	}
+
+	return players, rows.Err()
+}
+
+func (db *DB) GetAssignedNations(gameID string) ([]string, error) {
+	query := `SELECT nation FROM players WHERE game_id = ?`
+	rows, err := db.conn.Query(query, gameID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var nations []string
+	for rows.Next() {
+		var nation string
+		err := rows.Scan(&nation)
+		if err != nil {
+			return nil, err
+		}
+		nations = append(nations, nation)
+	}
+
+	return nations, rows.Err()
+}
+
+func (db *DB) GetGameState(gameID string) (*game.GameState, error) {
+	gameInfo, err := db.GetGame(gameID)
+	if err != nil {
+		return nil, err
+	}
+
+	players, err := db.GetPlayersByGame(gameID)
+	if err != nil {
+		return nil, err
+	}
+
+	units, err := db.GetUnitsByGame(gameID)
+	if err != nil {
+		return nil, err
+	}
+
+	territories, err := db.GetTerritoriesByGame(gameID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &game.GameState{
+		Game:        *gameInfo,
+		Players:     players,
+		Units:       units,
+		Territories: territories,
+	}, nil
+}
+
+func (db *DB) GetUnitsByGame(gameID string) ([]game.Unit, error) {
+	query := `SELECT id, game_id, owner_id, unit_type, territory_id FROM units WHERE game_id = ?`
+	rows, err := db.conn.Query(query, gameID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var units []game.Unit
+	for rows.Next() {
+		var u game.Unit
+		var unitType string
+		err := rows.Scan(&u.ID, &u.GameID, &u.OwnerID, &unitType, &u.TerritoryID)
+		if err != nil {
+			return nil, err
+		}
+		u.UnitType = game.UnitType(unitType)
+		units = append(units, u)
+	}
+
+	return units, rows.Err()
+}
+
+func (db *DB) GetTerritoriesByGame(gameID string) ([]game.TerritoryState, error) {
+	query := `SELECT id, game_id, turn_id, territory_id, owner_id FROM territory_state WHERE game_id = ?`
+	rows, err := db.conn.Query(query, gameID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var territories []game.TerritoryState
+	for rows.Next() {
+		var t game.TerritoryState
+		var ownerID sql.NullString
+		err := rows.Scan(&t.ID, &t.GameID, &t.TurnID, &t.TerritoryID, &ownerID)
+		if err != nil {
+			return nil, err
+		}
+		if ownerID.Valid {
+			t.OwnerID = ownerID.String
+		}
+		territories = append(territories, t)
+	}
+
+	return territories, rows.Err()
+}

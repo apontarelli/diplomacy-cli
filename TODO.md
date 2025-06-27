@@ -21,12 +21,12 @@
 - Phase 2C: Order System
 - Phase 2D: Basic Resolution
 
-### Phase 2A: Game Foundation (Current Focus)
+### Phase 2A: Game Foundation ✅
 
 - [x] Load classic Diplomacy game data (nations, territories, adjacencies)
 - [x] Implement game creation endpoints with proper initialization
-- [ ] Add player registration and nation assignment
-- [ ] Basic game state query endpoints
+- [x] Add player registration and nation assignment
+- [x] Basic game state query endpoints
 
 ---
 
