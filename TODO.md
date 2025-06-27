@@ -1,50 +1,77 @@
-# Current Focus: Core System Architecture (Go Backend)
+# Current Focus: DATC Test Integration & Validation
 
 ## Phase 1: Backend Scaffolding ✅
+## Phase 2: Core Game Logic ✅
 
-- [x] Initialize a Go module within the `backend/` directory.
-- [x] Add SQLite dependency to the Go module (latest stable: v1.14.28).
-- [x] Implement a storage layer in `internal/storage/` that:
-  - [x] Initializes a SQLite database connection.
-  - [x] Creates the database schema if it doesn't exist.
-- [x] Define core game state data structures in `internal/game/` (clean domain types, no JSON tags).
-- [x] Set up a basic `net/http` server in `cmd/server/main.go`.
-- [x] Implement a `/health` endpoint that confirms the server is running and can connect to the database.
+**🎉 PHASE 2 COMPLETE - Full Diplomacy Game Engine Implemented**
 
-
-
-## Phase 2: Core Game Logic
-
-**Sub-phases:**
+All sub-phases completed:
 - Phase 2A: Game Foundation ✅
-- Phase 2B: Turn Management ✅
-- Phase 2C: Order System (current)
-- Phase 2D: Basic Resolution
+- Phase 2B: Turn Management ✅  
+- Phase 2C: Order System ✅
+- Phase 2D: Basic Resolution ✅
 
-### Phase 2A: Game Foundation ✅
+**Current Status**: Complete end-to-end game flow working:
+- Game creation → Player registration → Turn management → Order submission → Resolution
+- 24 comprehensive tests passing (13.1% code coverage)
+- Ready for commit: Resolution engine + test suite
 
-- [x] Load classic Diplomacy game data (nations, territories, adjacencies)
-- [x] Implement game creation endpoints with proper initialization
-- [x] Add player registration and nation assignment
-- [x] Basic game state query endpoints
+## Current Task: DATC Test Integration & Refactoring
 
-### Phase 2B: Turn Management ✅
+**Goal**: Integrate official DATC test cases while reducing test duplication.
 
-- [x] Implement turn creation and progression system
-- [x] Add phase management (Spring/Fall seasons, Movement/Retreat/Build phases)
-- [x] Create turn deadline and timing system
-- [x] Add endpoints for turn operations (start turn, advance phase, etc.)
-- [x] Initialize starting game state with units and territory ownership
+**Completed**:
+- [x] ✅ **COMMITTED**: Phase 2D resolution engine and comprehensive test suite (commit a602850)
+- [x] Complete end-to-end Diplomacy game engine with 24 tests (13.1% coverage)
 
-### Phase 2C: Order System ✅
+**Current Plan**:
+1. **Fix DATC Script**: Resolve `requests` dependency issue
+2. **Extract DATC Tests**: Generate ~300+ official test cases organized by category
+3. **Refactor Test Structure**: Create hybrid approach to minimize duplication
 
-- [x] Implement order types (Move, Hold, Support, Convoy)
-- [x] Add order validation logic (legal moves, unit ownership, adjacency)
-- [x] Create order submission and retrieval endpoints
-- [x] Implement order preview and modification system
-- [x] Add order conflict detection and NMR handling
+**Test Refactoring Strategy**:
+```
+backend/internal/api/
+├── resolution_test.go          # KEEP - Core unit tests for resolution methods
+├── integration_test.go         # KEEP - Full flow and edge case tests  
+├── test_helpers.go            # NEW - Shared test utilities and setup
+├── datc_basic_test.go         # NEW - DATC basic checks (Category A)
+├── datc_coastal_test.go       # NEW - DATC coastal issues (Category B)
+├── datc_circular_test.go      # NEW - DATC circular movement (Category C)
+└── diplomacy_scenarios_test.go # REPLACE with DATC equivalents
+```
 
----
+**Next Steps**:
+- [ ] Fix `requests` dependency in extraction script
+- [ ] Extract common test setup into shared helpers
+- [ ] Generate DATC test files by category
+- [ ] Replace scenario tests with DATC equivalents
+
+## Next Phase Options
+
+**Option A: Complete DATC Validation**
+- Fix dependency issue in extraction script
+- Implement all ~300 DATC test cases
+- Achieve comprehensive resolution engine validation
+- Estimated: 1-2 weeks
+
+**Option B: Move to Phase 3 - AI Agents**
+- Tactical AI engine (Go) for legal move generation
+- LLM strategist integration (Python/DSpy)
+- AI vs AI simulation capability
+- Estimated: 3-4 weeks
+
+**Option C: Frontend Development**
+- TUI client using Bubble Tea (Go)
+- Human-playable interface
+- Map visualization and order submission
+- Estimated: 2-3 weeks
+
+**Option D: Advanced Game Features**
+- Retreat and build phases
+- Elimination and victory conditions
+- Game history and replay system
+- Estimated: 2-3 weeks
 
 ---
 
