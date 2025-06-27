@@ -7,78 +7,35 @@ import (
 )
 
 func TestResolveMovementOrders_SingleMove_Success(t *testing.T) {
-	server := &Server{}
-	
-	// Setup: Army in Berlin moves to Munich (unoccupied)
-	moveOrders := []game.Order{
-		{
-			ID:            "order1",
-			UnitID:        "unit1",
-			OrderType:     game.OrderTypeMove,
-			FromTerritory: "ber",
-			ToTerritory:   "mun",
+	scenario := TestScenario{
+		Name: "Army in Berlin moves to Munich (unoccupied)",
+		MoveOrders: []game.Order{
+			CreateMoveOrder("order1", "unit1", "ber", "mun"),
+		},
+		UnitPositions: CreateUnitPositions("unit1", "ber"),
+		Expectations: []OrderExpectation{
+			{OrderID: "order1", ExpectedResult: game.ResolutionSuccess, ExpectedPosition: "mun"},
 		},
 	}
 	
-	supportOrders := []game.Order{}
-	unitPositions := map[string]string{
-		"unit1": "ber",
-	}
-	
-	results := server.resolveMovementOrders(moveOrders, supportOrders, unitPositions)
-	
-	if len(results) != 1 {
-		t.Fatalf("Expected 1 result, got %d", len(results))
-	}
-	
-	result := results[0]
-	if result.Result != game.ResolutionSuccess {
-		t.Errorf("Expected success, got %v", result.Result)
-	}
-	if result.NewPosition != "mun" {
-		t.Errorf("Expected new position 'mun', got %v", result.NewPosition)
-	}
+	RunTestScenario(t, scenario)
 }
 
 func TestResolveMovementOrders_MultipleMovesToSameTerritory_Bounce(t *testing.T) {
-	server := &Server{}
-	
-	// Setup: Two armies try to move to the same territory
-	moveOrders := []game.Order{
-		{
-			ID:            "order1",
-			UnitID:        "unit1",
-			OrderType:     game.OrderTypeMove,
-			FromTerritory: "ber",
-			ToTerritory:   "mun",
+	scenario := TestScenario{
+		Name: "Two armies try to move to the same territory",
+		MoveOrders: []game.Order{
+			CreateMoveOrder("order1", "unit1", "ber", "mun"),
+			CreateMoveOrder("order2", "unit2", "vie", "mun"),
 		},
-		{
-			ID:            "order2",
-			UnitID:        "unit2",
-			OrderType:     game.OrderTypeMove,
-			FromTerritory: "vie",
-			ToTerritory:   "mun",
+		UnitPositions: CreateUnitPositions("unit1", "ber", "unit2", "vie"),
+		Expectations: []OrderExpectation{
+			{OrderID: "order1", ExpectedResult: game.ResolutionBounced},
+			{OrderID: "order2", ExpectedResult: game.ResolutionBounced},
 		},
 	}
 	
-	supportOrders := []game.Order{}
-	unitPositions := map[string]string{
-		"unit1": "ber",
-		"unit2": "vie",
-	}
-	
-	results := server.resolveMovementOrders(moveOrders, supportOrders, unitPositions)
-	
-	if len(results) != 2 {
-		t.Fatalf("Expected 2 results, got %d", len(results))
-	}
-	
-	// Both moves should bounce
-	for _, result := range results {
-		if result.Result != game.ResolutionBounced {
-			t.Errorf("Expected bounce, got %v", result.Result)
-		}
-	}
+	RunTestScenario(t, scenario)
 }
 
 func TestResolveMovementOrders_SupportedMove_Success(t *testing.T) {
