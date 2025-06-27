@@ -2,6 +2,8 @@ package api
 
 import (
 	"testing"
+
+	"diplomacy-backend/internal/game"
 )
 
 // DATC Test Cases - Category A: BasicChecks
@@ -9,24 +11,78 @@ import (
 // TODO: Implement actual test cases from https://webdiplomacy.net/doc/DATC_v3_0.html
 
 func TestDATC_6_A_1(t *testing.T) {
-	t.Skip("DATC test case 6.A.1 not yet implemented")
+	// 6.A.1. TEST CASE, MOVING TO AN AREA THAT IS NOT A NEIGHBOUR
+	// Check if an illegal move (without convoy) will fail.
+	// England: F North Sea - Picardy
+	// Order should fail.
 	
-	// TODO: Implement DATC test case 6.A.1
-	// See: https://webdiplomacy.net/doc/DATC_v3_0.html#6.A.1
+	scenario := TestScenario{
+		Name: "DATC 6.A.1 - Moving to an area that is not a neighbour",
+		MoveOrders: []game.Order{
+			CreateMoveOrder("move_1", "england_fleet_north_sea", "nth", "pic"),
+		},
+		UnitPositions: CreateUnitPositions(
+			"england_fleet_north_sea", "nth",
+		),
+		Expectations: []OrderExpectation{
+			{
+				OrderID:        "move_1",
+				ExpectedResult: game.ResolutionFailed,
+			},
+		},
+	}
+	
+	RunTestScenario(t, scenario)
 }
 
 func TestDATC_6_A_2(t *testing.T) {
-	t.Skip("DATC test case 6.A.2 not yet implemented")
+	// 6.A.2. TEST CASE, MOVE ARMY TO SEA
+	// Check if an army could not be moved to open sea.
+	// England: A Liverpool - Irish Sea
+	// Order should fail.
 	
-	// TODO: Implement DATC test case 6.A.2
-	// See: https://webdiplomacy.net/doc/DATC_v3_0.html#6.A.2
+	scenario := TestScenario{
+		Name: "DATC 6.A.2 - Move army to sea",
+		MoveOrders: []game.Order{
+			CreateMoveOrder("move_1", "england_army_liverpool", "lvp", "iri"),
+		},
+		UnitPositions: CreateUnitPositions(
+			"england_army_liverpool", "lvp",
+		),
+		Expectations: []OrderExpectation{
+			{
+				OrderID:        "move_1",
+				ExpectedResult: game.ResolutionFailed,
+			},
+		},
+	}
+	
+	RunTestScenario(t, scenario)
 }
 
 func TestDATC_6_A_3(t *testing.T) {
-	t.Skip("DATC test case 6.A.3 not yet implemented")
+	// 6.A.3. TEST CASE, MOVE FLEET TO LAND
+	// Check whether a fleet cannot move to land.
+	// Germany: F Kiel - Munich
+	// Order should fail.
 	
-	// TODO: Implement DATC test case 6.A.3
-	// See: https://webdiplomacy.net/doc/DATC_v3_0.html#6.A.3
+	scenario := TestScenario{
+		Name: "DATC 6.A.3 - Move fleet to land",
+		MoveOrders: []game.Order{
+			CreateMoveOrder("move_1", "germany_fleet_kiel", "kie", "mun"),
+		},
+		UnitPositions: CreateUnitPositions(
+			"germany_fleet_kiel", "kie",
+		),
+		Expectations: []OrderExpectation{
+			{
+				OrderID:        "move_1",
+				ExpectedResult: game.ResolutionFailed,
+			},
+		},
+	}
+	
+	RunTestScenario(t, scenario)
 }
 
 func TestDATC_6_A_4(t *testing.T) {
