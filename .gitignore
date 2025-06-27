@@ -21,3 +21,6 @@ venv/
 # Go binaries
 backend/server
 backend/cmd/server/server
+
+# DATC HTML cache
+scripts/DATC_v3_0.html
