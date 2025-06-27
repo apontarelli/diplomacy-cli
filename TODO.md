@@ -23,8 +23,8 @@
 
 ### Phase 2A: Game Foundation (Current Focus)
 
-- [ ] Load classic Diplomacy game data (nations, territories, adjacencies)
-- [ ] Implement game creation endpoints with proper initialization
+- [x] Load classic Diplomacy game data (nations, territories, adjacencies)
+- [x] Implement game creation endpoints with proper initialization
 - [ ] Add player registration and nation assignment
 - [ ] Basic game state query endpoints
 
