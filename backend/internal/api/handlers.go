@@ -276,6 +276,147 @@ func (s *Server) GetGameStateHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(gameState)
 }
 
+type AdvancePhaseResponse struct {
+	GameID   string `json:"game_id"`
+	NewTurn  *game.Turn `json:"new_turn,omitempty"`
+	Message  string `json:"message"`
+}
+
+func (s *Server) AdvancePhaseHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	gameID := r.URL.Query().Get("id")
+	if gameID == "" {
+		http.Error(w, "Game ID is required", http.StatusBadRequest)
+		return
+	}
+
+	gameInfo, err := s.db.GetGame(gameID)
+	if err != nil {
+		http.Error(w, "Game not found", http.StatusNotFound)
+		return
+	}
+
+	if gameInfo.Status != game.GameStatusActive {
+		http.Error(w, "Game is not active", http.StatusBadRequest)
+		return
+	}
+
+	currentTurn, err := s.db.GetCurrentTurn(gameID)
+	if err != nil {
+		http.Error(w, "No active turn found", http.StatusNotFound)
+		return
+	}
+
+	newTurn, message, err := s.advancePhase(gameID, currentTurn)
+	if err != nil {
+		http.Error(w, "Failed to advance phase", http.StatusInternalServerError)
+		return
+	}
+
+	response := AdvancePhaseResponse{
+		GameID:  gameID,
+		NewTurn: newTurn,
+		Message: message,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
+}
+
+func (s *Server) advancePhase(gameID string, currentTurn *game.Turn) (*game.Turn, string, error) {
+	if err := s.db.UpdateTurnStatus(currentTurn.ID, game.TurnStatusCompleted); err != nil {
+		return nil, "", err
+	}
+
+	nextYear := currentTurn.Year
+	nextSeason := currentTurn.Season
+	nextPhase := currentTurn.Phase
+
+	switch currentTurn.Phase {
+	case game.PhaseMovement:
+		nextPhase = game.PhaseRetreat
+	case game.PhaseRetreat:
+		if currentTurn.Season == game.SeasonSpring {
+			nextPhase = game.PhaseMovement
+			nextSeason = game.SeasonFall
+		} else {
+			nextPhase = game.PhaseBuild
+		}
+	case game.PhaseBuild:
+		nextPhase = game.PhaseMovement
+		nextSeason = game.SeasonSpring
+		nextYear++
+	}
+
+	deadline := time.Now().Add(24 * time.Hour) // 24 hour deadline
+	newTurn := game.Turn{
+		GameID:    gameID,
+		Year:      nextYear,
+		Season:    nextSeason,
+		Phase:     nextPhase,
+		Status:    game.TurnStatusActive,
+		Deadline:  &deadline,
+		CreatedAt: time.Now(),
+	}
+
+	if err := s.db.CreateTurn(newTurn); err != nil {
+		return nil, "", err
+	}
+
+	createdTurn, err := s.db.GetCurrentTurn(gameID)
+	if err != nil {
+		return nil, "", err
+	}
+
+	message := "Advanced to " + string(nextSeason) + " " + string(nextPhase) + " phase"
+	return createdTurn, message, nil
+}
+
+func (s *Server) CheckDeadlinesHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	expiredGames, err := s.checkAndAdvanceExpiredTurns()
+	if err != nil {
+		http.Error(w, "Failed to check deadlines", http.StatusInternalServerError)
+		return
+	}
+
+	response := map[string]interface{}{
+		"expired_games": expiredGames,
+		"message":       "Deadline check completed",
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
+}
+
+func (s *Server) checkAndAdvanceExpiredTurns() ([]string, error) {
+	expiredTurns, err := s.db.GetExpiredTurns()
+	if err != nil {
+		return nil, err
+	}
+
+	var expiredGames []string
+	for _, turn := range expiredTurns {
+		_, _, err := s.advancePhase(turn.GameID, &turn)
+		if err != nil {
+			continue // Log error but continue with other games
+		}
+		expiredGames = append(expiredGames, turn.GameID)
+	}
+
+	return expiredGames, nil
+}
+
 func (s *Server) SetupRoutes() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/health", s.HealthHandler)
@@ -284,5 +425,7 @@ func (s *Server) SetupRoutes() *http.ServeMux {
 	mux.HandleFunc("/game", s.GetGameHandler)
 	mux.HandleFunc("/game-state", s.GetGameStateHandler)
 	mux.HandleFunc("/register-player", s.RegisterPlayerHandler)
+	mux.HandleFunc("/advance-phase", s.AdvancePhaseHandler)
+	mux.HandleFunc("/check-deadlines", s.CheckDeadlinesHandler)
 	return mux
 }

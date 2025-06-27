@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 
 	"diplomacy-backend/internal/game"
 	_ "github.com/mattn/go-sqlite3"
@@ -56,8 +57,11 @@ func (db *DB) initSchema() error {
 	CREATE TABLE IF NOT EXISTS turns (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		game_id TEXT NOT NULL,
-		turn_code TEXT NOT NULL,
-		state_json TEXT NOT NULL,
+		year INTEGER NOT NULL,
+		season TEXT NOT NULL,
+		phase TEXT NOT NULL,
+		status TEXT NOT NULL,
+		deadline TIMESTAMP,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		FOREIGN KEY (game_id) REFERENCES games(id)
 	);
@@ -242,4 +246,131 @@ func (db *DB) GetTerritoriesByGame(gameID string) ([]game.TerritoryState, error)
 	}
 
 	return territories, rows.Err()
+}
+
+func (db *DB) CreateTurn(t game.Turn) error {
+	query := `INSERT INTO turns (game_id, year, season, phase, status, deadline, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`
+	_, err := db.conn.Exec(query, t.GameID, t.Year, string(t.Season), string(t.Phase), string(t.Status), t.Deadline, t.CreatedAt)
+	return err
+}
+
+func (db *DB) GetCurrentTurn(gameID string) (*game.Turn, error) {
+	query := `SELECT id, game_id, year, season, phase, status, deadline, created_at FROM turns WHERE game_id = ? AND status = ? ORDER BY id DESC LIMIT 1`
+	row := db.conn.QueryRow(query, gameID, string(game.TurnStatusActive))
+
+	var t game.Turn
+	var season, phase, status string
+	var deadline sql.NullTime
+	err := row.Scan(&t.ID, &t.GameID, &t.Year, &season, &phase, &status, &deadline, &t.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	t.Season = game.Season(season)
+	t.Phase = game.Phase(phase)
+	t.Status = game.TurnStatus(status)
+	if deadline.Valid {
+		t.Deadline = &deadline.Time
+	}
+
+	return &t, nil
+}
+
+func (db *DB) GetTurnsByGame(gameID string) ([]game.Turn, error) {
+	query := `SELECT id, game_id, year, season, phase, status, deadline, created_at FROM turns WHERE game_id = ? ORDER BY id`
+	rows, err := db.conn.Query(query, gameID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var turns []game.Turn
+	for rows.Next() {
+		var t game.Turn
+		var season, phase, status string
+		var deadline sql.NullTime
+		err := rows.Scan(&t.ID, &t.GameID, &t.Year, &season, &phase, &status, &deadline, &t.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+
+		t.Season = game.Season(season)
+		t.Phase = game.Phase(phase)
+		t.Status = game.TurnStatus(status)
+		if deadline.Valid {
+			t.Deadline = &deadline.Time
+		}
+		turns = append(turns, t)
+	}
+
+	return turns, rows.Err()
+}
+
+func (db *DB) UpdateTurnStatus(turnID int, status game.TurnStatus) error {
+	query := `UPDATE turns SET status = ? WHERE id = ?`
+	_, err := db.conn.Exec(query, string(status), turnID)
+	return err
+}
+
+func (db *DB) CreateUnit(u game.Unit) error {
+	query := `INSERT INTO units (id, game_id, owner_id, unit_type, territory_id) VALUES (?, ?, ?, ?, ?)`
+	_, err := db.conn.Exec(query, u.ID, u.GameID, u.OwnerID, string(u.UnitType), u.TerritoryID)
+	return err
+}
+
+func (db *DB) CreateTerritoryState(ts game.TerritoryState) error {
+	query := `INSERT INTO territory_state (game_id, turn_id, territory_id, owner_id) VALUES (?, ?, ?, ?)`
+	_, err := db.conn.Exec(query, ts.GameID, ts.TurnID, ts.TerritoryID, ts.OwnerID)
+	return err
+}
+
+func (db *DB) UpdateGameStatus(gameID string, status game.GameStatus) error {
+	query := `UPDATE games SET status = ? WHERE id = ?`
+	_, err := db.conn.Exec(query, string(status), gameID)
+	return err
+}
+
+func (db *DB) GetPlayerByNation(gameID, nation string) (*game.Player, error) {
+	query := `SELECT id, game_id, nation, status FROM players WHERE game_id = ? AND nation = ?`
+	row := db.conn.QueryRow(query, gameID, nation)
+
+	var p game.Player
+	var status string
+	err := row.Scan(&p.ID, &p.GameID, &p.Nation, &status)
+	if err != nil {
+		return nil, err
+	}
+
+	p.Status = game.PlayerStatus(status)
+	return &p, nil
+}
+
+func (db *DB) GetExpiredTurns() ([]game.Turn, error) {
+	query := `SELECT id, game_id, year, season, phase, status, deadline, created_at FROM turns WHERE status = ? AND deadline < ?`
+	rows, err := db.conn.Query(query, string(game.TurnStatusActive), time.Now())
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var turns []game.Turn
+	for rows.Next() {
+		var t game.Turn
+		var season, phase, status string
+		var deadline sql.NullTime
+		err := rows.Scan(&t.ID, &t.GameID, &t.Year, &season, &phase, &status, &deadline, &t.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+
+		t.Season = game.Season(season)
+		t.Phase = game.Phase(phase)
+		t.Status = game.TurnStatus(status)
+		if deadline.Valid {
+			t.Deadline = &deadline.Time
+		}
+		turns = append(turns, t)
+	}
+
+	return turns, rows.Err()
 }

@@ -25,6 +25,28 @@ const (
 	UnitTypeFleet UnitType = "fleet"
 )
 
+type Season string
+
+const (
+	SeasonSpring Season = "spring"
+	SeasonFall   Season = "fall"
+)
+
+type Phase string
+
+const (
+	PhaseMovement Phase = "movement"
+	PhaseRetreat  Phase = "retreat"
+	PhaseBuild    Phase = "build"
+)
+
+type TurnStatus string
+
+const (
+	TurnStatusActive    TurnStatus = "active"
+	TurnStatusCompleted TurnStatus = "completed"
+)
+
 type Game struct {
 	ID        string
 	Name      string
@@ -35,8 +57,11 @@ type Game struct {
 type Turn struct {
 	ID        int
 	GameID    string
-	TurnCode  string
-	StateJSON string
+	Year      int
+	Season    Season
+	Phase     Phase
+	Status    TurnStatus
+	Deadline  *time.Time
 	CreatedAt time.Time
 }
 

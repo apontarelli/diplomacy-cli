@@ -16,8 +16,8 @@
 ## Phase 2: Core Game Logic
 
 **Sub-phases:**
-- Phase 2A: Game Foundation (current)
-- Phase 2B: Turn Management  
+- Phase 2A: Game Foundation ✅
+- Phase 2B: Turn Management (current)
 - Phase 2C: Order System
 - Phase 2D: Basic Resolution
 
@@ -27,6 +27,14 @@
 - [x] Implement game creation endpoints with proper initialization
 - [x] Add player registration and nation assignment
 - [x] Basic game state query endpoints
+
+### Phase 2B: Turn Management ✅
+
+- [x] Implement turn creation and progression system
+- [x] Add phase management (Spring/Fall seasons, Movement/Retreat/Build phases)
+- [x] Create turn deadline and timing system
+- [x] Add endpoints for turn operations (start turn, advance phase, etc.)
+- [x] Initialize starting game state with units and territory ownership
 
 ---
 
