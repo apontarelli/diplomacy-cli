@@ -1,24 +1,34 @@
 # Current Focus: Core System Architecture (Go Backend)
 
-## Phase 1: Backend Scaffolding
+## Phase 1: Backend Scaffolding ✅
 
-- [ ] Initialize a Go module within the `backend/` directory.
-- [ ] Add SQLite dependency to the Go module.
-- [ ] Implement a storage layer in `internal/storage/` that:
-  - [ ] Initializes a SQLite database connection.
-  - [ ] Creates the database schema if it doesn't exist.
-- [ ] Define core game state data structures in `internal/game/`.
-- [ ] Set up a basic `net/http` server in `cmd/server/main.go`.
-- [ ] Implement a `/health` endpoint that confirms the server is running and can connect to the database.
+- [x] Initialize a Go module within the `backend/` directory.
+- [x] Add SQLite dependency to the Go module (latest stable: v1.14.28).
+- [x] Implement a storage layer in `internal/storage/` that:
+  - [x] Initializes a SQLite database connection.
+  - [x] Creates the database schema if it doesn't exist.
+- [x] Define core game state data structures in `internal/game/` (clean domain types, no JSON tags).
+- [x] Set up a basic `net/http` server in `cmd/server/main.go`.
+- [x] Implement a `/health` endpoint that confirms the server is running and can connect to the database.
+
+
+
+## Phase 2: Core Game Logic
+
+**Sub-phases:**
+- Phase 2A: Game Foundation (current)
+- Phase 2B: Turn Management  
+- Phase 2C: Order System
+- Phase 2D: Basic Resolution
+
+### Phase 2A: Game Foundation (Current Focus)
+
+- [ ] Load classic Diplomacy game data (nations, territories, adjacencies)
+- [ ] Implement game creation endpoints with proper initialization
+- [ ] Add player registration and nation assignment
+- [ ] Basic game state query endpoints
 
 ---
-
-# Future Scope
-
-- [ ] Implement the Go backend, including the resolution engine and API.
-- [ ] Implement a TUI for the game.
-- [ ] Implement AI agents for the game.
-- [ ] Implement a messaging system for players.
 
 ---
 

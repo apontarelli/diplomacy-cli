@@ -17,3 +17,7 @@ venv/
 
 # Pytest cache
 .pytest_cache/
+
+# Go binaries
+backend/server
+backend/cmd/server/server

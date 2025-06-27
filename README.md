@@ -52,11 +52,24 @@ pip install -e ".[dev]"
 
 ## How to Run
 
-Once the development environment is active, run the application using the following command:
+### Python CLI (Legacy)
+
+Once the development environment is active, run the Python CLI:
 
 ```sh
 python -m diplomacy_cli
 ```
+
+### Go Backend (Current Development)
+
+The new Go backend server can be started with:
+
+```sh
+cd backend
+go run ./cmd/server
+```
+
+This starts the game engine server on `http://localhost:8080` with a health check endpoint at `/health`.
 
 ## Running Tests
 
