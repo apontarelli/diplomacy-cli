@@ -64,6 +64,23 @@ const (
 	OrderStatusCancelled OrderStatus = "cancelled"
 )
 
+type ResolutionResult string
+
+const (
+	ResolutionSuccess ResolutionResult = "success"
+	ResolutionFailed  ResolutionResult = "failed"
+	ResolutionBounced ResolutionResult = "bounced"
+	ResolutionCut     ResolutionResult = "cut"
+)
+
+type OrderResult struct {
+	OrderID    string
+	Result     ResolutionResult
+	Reason     string
+	Dislodged  bool
+	NewPosition string
+}
+
 type Game struct {
 	ID        string
 	Name      string

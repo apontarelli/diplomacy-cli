@@ -713,6 +713,298 @@ func (s *Server) detectOrderConflicts(orders []game.Order) []map[string]any {
 	return conflicts
 }
 
+type ResolveOrdersResponse struct {
+	GameID  string `json:"game_id"`
+	TurnID  int    `json:"turn_id"`
+	Results []game.OrderResult `json:"results"`
+	Message string `json:"message"`
+}
+
+func (s *Server) ResolveOrdersHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	gameID := r.URL.Query().Get("game_id")
+	if gameID == "" {
+		http.Error(w, "Game ID is required", http.StatusBadRequest)
+		return
+	}
+
+	gameInfo, err := s.db.GetGame(gameID)
+	if err != nil {
+		http.Error(w, "Game not found", http.StatusNotFound)
+		return
+	}
+
+	if gameInfo.Status != game.GameStatusActive {
+		http.Error(w, "Game is not active", http.StatusBadRequest)
+		return
+	}
+
+	currentTurn, err := s.db.GetCurrentTurn(gameID)
+	if err != nil {
+		http.Error(w, "No active turn found", http.StatusNotFound)
+		return
+	}
+
+	if currentTurn.Phase != game.PhaseMovement {
+		http.Error(w, "Can only resolve orders during movement phase", http.StatusBadRequest)
+		return
+	}
+
+	orders, err := s.db.GetOrdersByTurn(gameID, currentTurn.ID)
+	if err != nil {
+		http.Error(w, "Failed to get orders", http.StatusInternalServerError)
+		return
+	}
+
+	results, err := s.resolveOrders(gameID, currentTurn.ID, orders)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to resolve orders: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	response := ResolveOrdersResponse{
+		GameID:  gameID,
+		TurnID:  currentTurn.ID,
+		Results: results,
+		Message: "Orders resolved successfully",
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
+}
+
+func (s *Server) resolveOrders(gameID string, _ int, orders []game.Order) ([]game.OrderResult, error) {
+	var results []game.OrderResult
+	
+	// Get current unit positions
+	units, err := s.db.GetUnitsByGame(gameID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Create maps for easier lookup
+	unitPositions := make(map[string]string) // unitID -> territoryID
+	for _, unit := range units {
+		unitPositions[unit.ID] = unit.TerritoryID
+	}
+
+	// Group orders by type for processing
+	moveOrders := make([]game.Order, 0)
+	supportOrders := make([]game.Order, 0)
+	holdOrders := make([]game.Order, 0)
+	convoyOrders := make([]game.Order, 0)
+
+	for _, order := range orders {
+		if order.Status == game.OrderStatusCancelled {
+			continue
+		}
+
+		switch order.OrderType {
+		case game.OrderTypeMove:
+			moveOrders = append(moveOrders, order)
+		case game.OrderTypeSupport:
+			supportOrders = append(supportOrders, order)
+		case game.OrderTypeHold:
+			holdOrders = append(holdOrders, order)
+		case game.OrderTypeConvoy:
+			convoyOrders = append(convoyOrders, order)
+		}
+	}
+
+	// Resolve movement orders (basic implementation)
+	moveResults := s.resolveMovementOrders(moveOrders, supportOrders, unitPositions)
+	results = append(results, moveResults...)
+
+	// Resolve support orders
+	supportResults := s.resolveSupportOrders(supportOrders, moveResults)
+	results = append(results, supportResults...)
+
+	// Resolve hold orders (always succeed unless dislodged)
+	holdResults := s.resolveHoldOrders(holdOrders, moveResults)
+	results = append(results, holdResults...)
+
+	// Resolve convoy orders (simplified - just mark as successful)
+	convoyResults := s.resolveConvoyOrders(convoyOrders)
+	results = append(results, convoyResults...)
+
+	// Update unit positions based on successful moves
+	if err := s.updateUnitPositions(gameID, results); err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}
+
+func (s *Server) resolveMovementOrders(moveOrders []game.Order, supportOrders []game.Order, unitPositions map[string]string) []game.OrderResult {
+	var results []game.OrderResult
+	
+	// Group moves by destination to detect conflicts
+	destinationMoves := make(map[string][]game.Order)
+	for _, order := range moveOrders {
+		destinationMoves[order.ToTerritory] = append(destinationMoves[order.ToTerritory], order)
+	}
+
+	// Calculate support strength for each move
+	supportStrength := s.calculateSupportStrength(moveOrders, supportOrders)
+
+	for destination, moves := range destinationMoves {
+		if len(moves) == 1 {
+			// Single move to destination
+			move := moves[0]
+			strength := 1 + supportStrength[move.ID] // Base strength + support
+			
+			// Check if destination is occupied and defended
+			defendingStrength := s.getDefendingStrength(destination, supportOrders, unitPositions)
+			
+			if strength > defendingStrength {
+				results = append(results, game.OrderResult{
+					OrderID:     move.ID,
+					Result:      game.ResolutionSuccess,
+					Reason:      "Move successful",
+					NewPosition: move.ToTerritory,
+				})
+			} else {
+				results = append(results, game.OrderResult{
+					OrderID: move.ID,
+					Result:  game.ResolutionFailed,
+					Reason:  "Insufficient strength to dislodge defender",
+				})
+			}
+		} else {
+			// Multiple moves to same destination - all bounce
+			for _, move := range moves {
+				results = append(results, game.OrderResult{
+					OrderID: move.ID,
+					Result:  game.ResolutionBounced,
+					Reason:  "Multiple units attempted to move to same territory",
+				})
+			}
+		}
+	}
+
+	return results
+}
+
+func (s *Server) calculateSupportStrength(moveOrders []game.Order, supportOrders []game.Order) map[string]int {
+	strength := make(map[string]int)
+	
+	for _, support := range supportOrders {
+		// Find the move order being supported
+		for _, move := range moveOrders {
+			if move.UnitID == support.SupportUnit && move.ToTerritory == support.ToTerritory {
+				strength[move.ID]++
+				break
+			}
+		}
+	}
+	
+	return strength
+}
+
+func (s *Server) getDefendingStrength(territory string, supportOrders []game.Order, unitPositions map[string]string) int {
+	defendingStrength := 0
+	
+	// Find unit in the territory
+	for unitID, position := range unitPositions {
+		if position == territory {
+			defendingStrength = 1 // Base defending strength
+			
+			// Add support for the defending unit
+			for _, support := range supportOrders {
+				if support.SupportUnit == unitID {
+					defendingStrength++
+				}
+			}
+			break
+		}
+	}
+	
+	return defendingStrength
+}
+
+func (s *Server) resolveSupportOrders(supportOrders []game.Order, _ []game.OrderResult) []game.OrderResult {
+	var results []game.OrderResult
+	
+	for _, support := range supportOrders {
+		// Support succeeds unless the supporting unit is dislodged
+		result := game.OrderResult{
+			OrderID: support.ID,
+			Result:  game.ResolutionSuccess,
+			Reason:  "Support provided",
+		}
+		
+		// Check if supporting unit was dislodged (simplified)
+		// In a full implementation, you'd check if the supporting unit's territory was attacked
+		
+		results = append(results, result)
+	}
+	
+	return results
+}
+
+func (s *Server) resolveHoldOrders(holdOrders []game.Order, _ []game.OrderResult) []game.OrderResult {
+	var results []game.OrderResult
+	
+	for _, hold := range holdOrders {
+		// Hold orders succeed unless the unit is dislodged
+		result := game.OrderResult{
+			OrderID: hold.ID,
+			Result:  game.ResolutionSuccess,
+			Reason:  "Unit held position",
+		}
+		
+		results = append(results, result)
+	}
+	
+	return results
+}
+
+func (s *Server) updateUnitPositions(_ string, results []game.OrderResult) error {
+	for _, result := range results {
+		if result.Result == game.ResolutionSuccess && result.NewPosition != "" {
+			// Get the order to find the unit ID
+			order, err := s.db.GetOrderByID(result.OrderID)
+			if err != nil {
+				continue // Skip if order not found
+			}
+			
+			// Update unit position
+			if err := s.db.UpdateUnitPosition(order.UnitID, result.NewPosition); err != nil {
+				return fmt.Errorf("failed to update unit position: %w", err)
+			}
+		}
+	}
+	
+	return nil
+}
+
+func (s *Server) resolveConvoyOrders(convoyOrders []game.Order) []game.OrderResult {
+	var results []game.OrderResult
+	
+	for _, convoy := range convoyOrders {
+		// Simplified convoy resolution - just mark as successful
+		// In a full implementation, you'd check:
+		// 1. If the convoying fleet is in a sea territory
+		// 2. If there's a valid convoy chain
+		// 3. If the convoy chain is unbroken
+		
+		result := game.OrderResult{
+			OrderID: convoy.ID,
+			Result:  game.ResolutionSuccess,
+			Reason:  "Convoy provided",
+		}
+		
+		results = append(results, result)
+	}
+	
+	return results
+}
+
 func (s *Server) SetupRoutes() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/health", s.HealthHandler)
@@ -728,5 +1020,6 @@ func (s *Server) SetupRoutes() *http.ServeMux {
 	mux.HandleFunc("/cancel-order", s.CancelOrderHandler)
 	mux.HandleFunc("/modify-order", s.ModifyOrderHandler)
 	mux.HandleFunc("/check-conflicts", s.CheckOrderConflictsHandler)
+	mux.HandleFunc("/resolve-orders", s.ResolveOrdersHandler)
 	return mux
 }

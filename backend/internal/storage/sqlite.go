@@ -413,6 +413,36 @@ func (db *DB) DeleteOrder(orderID string) error {
 	_, err := db.conn.Exec(query, orderID)
 	return err
 }
+
+func (db *DB) UpdateUnitPosition(unitID, newTerritoryID string) error {
+	query := `UPDATE units SET territory_id = ? WHERE id = ?`
+	_, err := db.conn.Exec(query, newTerritoryID, unitID)
+	return err
+}
+
+func (db *DB) GetOrderByID(orderID string) (*game.Order, error) {
+	query := `SELECT id, game_id, turn_id, player_id, unit_id, order_type, from_territory, to_territory, support_unit, status, created_at, updated_at FROM orders WHERE id = ?`
+	row := db.conn.QueryRow(query, orderID)
+
+	var o game.Order
+	var orderType, status string
+	var toTerritory, supportUnit sql.NullString
+	err := row.Scan(&o.ID, &o.GameID, &o.TurnID, &o.PlayerID, &o.UnitID, &orderType, &o.FromTerritory, &toTerritory, &supportUnit, &status, &o.CreatedAt, &o.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	o.OrderType = game.OrderType(orderType)
+	o.Status = game.OrderStatus(status)
+	if toTerritory.Valid {
+		o.ToTerritory = toTerritory.String
+	}
+	if supportUnit.Valid {
+		o.SupportUnit = supportUnit.String
+	}
+
+	return &o, nil
+}
 func (db *DB) UpdateTurnStatus(turnID int, status game.TurnStatus) error {
 	query := `UPDATE turns SET status = ? WHERE id = ?`
 	_, err := db.conn.Exec(query, string(status), turnID)
