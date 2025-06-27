@@ -4,7 +4,9 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"slices"
 	"time"
 
 	"diplomacy-backend/internal/game"
@@ -227,12 +229,7 @@ func (s *Server) RegisterPlayerHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) isNationTaken(nation string, assignedNations []string) bool {
-	for _, assigned := range assignedNations {
-		if assigned == nation {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(assignedNations, nation)
 }
 
 func (s *Server) isValidNation(nation string) bool {
@@ -389,7 +386,7 @@ func (s *Server) CheckDeadlinesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := map[string]interface{}{
+	response := map[string]any{
 		"expired_games": expiredGames,
 		"message":       "Deadline check completed",
 	}
@@ -417,6 +414,305 @@ func (s *Server) checkAndAdvanceExpiredTurns() ([]string, error) {
 	return expiredGames, nil
 }
 
+type SubmitOrderRequest struct {
+	GameID        string `json:"game_id"`
+	PlayerID      string `json:"player_id"`
+	UnitID        string `json:"unit_id"`
+	OrderType     string `json:"order_type"`
+	FromTerritory string `json:"from_territory"`
+	ToTerritory   string `json:"to_territory,omitempty"`
+	SupportUnit   string `json:"support_unit,omitempty"`
+}
+
+type SubmitOrderResponse struct {
+	OrderID string `json:"order_id"`
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}
+
+func (s *Server) SubmitOrderHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req SubmitOrderRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+
+	if req.GameID == "" || req.PlayerID == "" || req.UnitID == "" || req.OrderType == "" {
+		http.Error(w, "Missing required fields", http.StatusBadRequest)
+		return
+	}
+
+	gameInfo, err := s.db.GetGame(req.GameID)
+	if err != nil {
+		http.Error(w, "Game not found", http.StatusNotFound)
+		return
+	}
+
+	if gameInfo.Status != game.GameStatusActive {
+		http.Error(w, "Game is not active", http.StatusBadRequest)
+		return
+	}
+
+	currentTurn, err := s.db.GetCurrentTurn(req.GameID)
+	if err != nil {
+		http.Error(w, "No active turn found", http.StatusNotFound)
+		return
+	}
+
+	if currentTurn.Phase != game.PhaseMovement {
+		http.Error(w, "Orders can only be submitted during movement phase", http.StatusBadRequest)
+		return
+	}
+
+	if err := s.validateOrder(req, currentTurn); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	orderID := generateID()
+	order := game.Order{
+		ID:            orderID,
+		GameID:        req.GameID,
+		TurnID:        currentTurn.ID,
+		PlayerID:      req.PlayerID,
+		UnitID:        req.UnitID,
+		OrderType:     game.OrderType(req.OrderType),
+		FromTerritory: req.FromTerritory,
+		ToTerritory:   req.ToTerritory,
+		SupportUnit:   req.SupportUnit,
+		Status:        game.OrderStatusSubmitted,
+		CreatedAt:     time.Now(),
+		UpdatedAt:     time.Now(),
+	}
+
+	if err := s.db.CreateOrder(order); err != nil {
+		http.Error(w, "Failed to submit order", http.StatusInternalServerError)
+		return
+	}
+
+	response := SubmitOrderResponse{
+		OrderID: orderID,
+		Status:  "submitted",
+		Message: "Order submitted successfully",
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(response)
+}
+
+func (s *Server) validateOrder(req SubmitOrderRequest, _ *game.Turn) error {
+	orderType := game.OrderType(req.OrderType)
+	
+	switch orderType {
+	case game.OrderTypeMove:
+		if req.ToTerritory == "" {
+			return fmt.Errorf("move orders require a destination territory")
+		}
+	case game.OrderTypeHold:
+		// Hold orders don't need additional validation
+	case game.OrderTypeSupport:
+		if req.SupportUnit == "" {
+			return fmt.Errorf("support orders require a unit to support")
+		}
+	case game.OrderTypeConvoy:
+		if req.ToTerritory == "" || req.SupportUnit == "" {
+			return fmt.Errorf("convoy orders require destination and unit to convoy")
+		}
+	default:
+		return fmt.Errorf("invalid order type: %s", req.OrderType)
+	}
+
+	return nil
+}
+
+func (s *Server) GetOrdersHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	gameID := r.URL.Query().Get("game_id")
+	playerID := r.URL.Query().Get("player_id")
+
+	if gameID == "" {
+		http.Error(w, "Game ID is required", http.StatusBadRequest)
+		return
+	}
+
+	currentTurn, err := s.db.GetCurrentTurn(gameID)
+	if err != nil {
+		http.Error(w, "No active turn found", http.StatusNotFound)
+		return
+	}
+
+	var orders []game.Order
+	if playerID != "" {
+		orders, err = s.db.GetOrdersByPlayer(gameID, currentTurn.ID, playerID)
+	} else {
+		orders, err = s.db.GetOrdersByTurn(gameID, currentTurn.ID)
+	}
+
+	if err != nil {
+		http.Error(w, "Failed to get orders", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(orders)
+}
+
+type CancelOrderRequest struct {
+	OrderID  string `json:"order_id"`
+	PlayerID string `json:"player_id"`
+}
+
+func (s *Server) CancelOrderHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req CancelOrderRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+
+	if req.OrderID == "" || req.PlayerID == "" {
+		http.Error(w, "Order ID and Player ID are required", http.StatusBadRequest)
+		return
+	}
+
+	if err := s.db.UpdateOrderStatus(req.OrderID, game.OrderStatusCancelled); err != nil {
+		http.Error(w, "Failed to cancel order", http.StatusInternalServerError)
+		return
+	}
+
+	response := map[string]string{
+		"status":  "cancelled",
+		"message": "Order cancelled successfully",
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
+}
+
+type ModifyOrderRequest struct {
+	OrderID       string `json:"order_id"`
+	PlayerID      string `json:"player_id"`
+	OrderType     string `json:"order_type,omitempty"`
+	ToTerritory   string `json:"to_territory,omitempty"`
+	SupportUnit   string `json:"support_unit,omitempty"`
+}
+
+func (s *Server) ModifyOrderHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPut {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req ModifyOrderRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+
+	if req.OrderID == "" || req.PlayerID == "" {
+		http.Error(w, "Order ID and Player ID are required", http.StatusBadRequest)
+		return
+	}
+
+	// For now, we'll implement modification by cancelling the old order and creating a new one
+	// In a more sophisticated system, you'd update the existing order
+	if err := s.db.UpdateOrderStatus(req.OrderID, game.OrderStatusCancelled); err != nil {
+		http.Error(w, "Failed to modify order", http.StatusInternalServerError)
+		return
+	}
+
+	response := map[string]string{
+		"status":  "modified",
+		"message": "Order modified successfully (cancelled old order)",
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
+}
+
+func (s *Server) CheckOrderConflictsHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	gameID := r.URL.Query().Get("game_id")
+	if gameID == "" {
+		http.Error(w, "Game ID is required", http.StatusBadRequest)
+		return
+	}
+
+	currentTurn, err := s.db.GetCurrentTurn(gameID)
+	if err != nil {
+		http.Error(w, "No active turn found", http.StatusNotFound)
+		return
+	}
+
+	orders, err := s.db.GetOrdersByTurn(gameID, currentTurn.ID)
+	if err != nil {
+		http.Error(w, "Failed to get orders", http.StatusInternalServerError)
+		return
+	}
+
+	conflicts := s.detectOrderConflicts(orders)
+
+	response := map[string]any{
+		"conflicts": conflicts,
+		"message":   "Order conflict check completed",
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
+}
+
+func (s *Server) detectOrderConflicts(orders []game.Order) []map[string]any {
+	var conflicts []map[string]any
+	territoryMoves := make(map[string][]string) // territory -> list of unit IDs trying to move there
+
+	for _, order := range orders {
+		if order.Status == game.OrderStatusCancelled {
+			continue
+		}
+
+		if order.OrderType == game.OrderTypeMove && order.ToTerritory != "" {
+			territoryMoves[order.ToTerritory] = append(territoryMoves[order.ToTerritory], order.UnitID)
+		}
+	}
+
+	// Check for multiple units trying to move to the same territory
+	for territory, unitIDs := range territoryMoves {
+		if len(unitIDs) > 1 {
+			conflict := map[string]any{
+				"type":      "movement_conflict",
+				"territory": territory,
+				"units":     unitIDs,
+				"message":   "Multiple units attempting to move to the same territory",
+			}
+			conflicts = append(conflicts, conflict)
+		}
+	}
+
+	return conflicts
+}
+
 func (s *Server) SetupRoutes() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/health", s.HealthHandler)
@@ -427,5 +723,10 @@ func (s *Server) SetupRoutes() *http.ServeMux {
 	mux.HandleFunc("/register-player", s.RegisterPlayerHandler)
 	mux.HandleFunc("/advance-phase", s.AdvancePhaseHandler)
 	mux.HandleFunc("/check-deadlines", s.CheckDeadlinesHandler)
+	mux.HandleFunc("/submit-order", s.SubmitOrderHandler)
+	mux.HandleFunc("/orders", s.GetOrdersHandler)
+	mux.HandleFunc("/cancel-order", s.CancelOrderHandler)
+	mux.HandleFunc("/modify-order", s.ModifyOrderHandler)
+	mux.HandleFunc("/check-conflicts", s.CheckOrderConflictsHandler)
 	return mux
 }

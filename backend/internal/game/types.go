@@ -47,6 +47,23 @@ const (
 	TurnStatusCompleted TurnStatus = "completed"
 )
 
+type OrderType string
+
+const (
+	OrderTypeMove    OrderType = "move"
+	OrderTypeHold    OrderType = "hold"
+	OrderTypeSupport OrderType = "support"
+	OrderTypeConvoy  OrderType = "convoy"
+)
+
+type OrderStatus string
+
+const (
+	OrderStatusPending   OrderStatus = "pending"
+	OrderStatusSubmitted OrderStatus = "submitted"
+	OrderStatusCancelled OrderStatus = "cancelled"
+)
+
 type Game struct {
 	ID        string
 	Name      string
@@ -88,9 +105,25 @@ type TerritoryState struct {
 	OwnerID     string
 }
 
+type Order struct {
+	ID           string
+	GameID       string
+	TurnID       int
+	PlayerID     string
+	UnitID       string
+	OrderType    OrderType
+	FromTerritory string
+	ToTerritory   string
+	SupportUnit   string
+	Status       OrderStatus
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
+
 type GameState struct {
 	Game        Game
 	Players     []Player
 	Units       []Unit
 	Territories []TerritoryState
+	Orders      []Order
 }

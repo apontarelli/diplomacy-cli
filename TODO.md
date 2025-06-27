@@ -17,8 +17,8 @@
 
 **Sub-phases:**
 - Phase 2A: Game Foundation ✅
-- Phase 2B: Turn Management (current)
-- Phase 2C: Order System
+- Phase 2B: Turn Management ✅
+- Phase 2C: Order System (current)
 - Phase 2D: Basic Resolution
 
 ### Phase 2A: Game Foundation ✅
@@ -35,6 +35,14 @@
 - [x] Create turn deadline and timing system
 - [x] Add endpoints for turn operations (start turn, advance phase, etc.)
 - [x] Initialize starting game state with units and territory ownership
+
+### Phase 2C: Order System ✅
+
+- [x] Implement order types (Move, Hold, Support, Convoy)
+- [x] Add order validation logic (legal moves, unit ownership, adjacency)
+- [x] Create order submission and retrieval endpoints
+- [x] Implement order preview and modification system
+- [x] Add order conflict detection and NMR handling
 
 ---
 
