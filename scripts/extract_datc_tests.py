@@ -5,7 +5,7 @@ Creates Go test files organized by category.
 """
 
 import re
-import requests
+import urllib.request
 from pathlib import Path
 from typing import List, Dict, Tuple
 from dataclasses import dataclass
@@ -22,9 +22,28 @@ class TestCase:
 def fetch_datc_html() -> str:
     """Fetch the DATC HTML from webdiplomacy.net"""
     url = "https://webdiplomacy.net/doc/DATC_v3_0.html"
-    response = requests.get(url)
-    response.raise_for_status()
-    return response.text
+    
+    # Try to read from local file first
+    local_file = Path("scripts/DATC_v3_0.html")
+    if local_file.exists():
+        print(f"Using local file: {local_file}")
+        return local_file.read_text(encoding='utf-8')
+    
+    # Otherwise fetch from web with user agent
+    req = urllib.request.Request(url)
+    req.add_header('User-Agent', 'Mozilla/5.0 (Diplomacy CLI Test Extractor)')
+    
+    try:
+        with urllib.request.urlopen(req) as response:
+            html = response.read().decode('utf-8')
+            # Save for future use
+            local_file.write_text(html, encoding='utf-8')
+            print(f"Downloaded and saved to: {local_file}")
+            return html
+    except Exception as e:
+        print(f"Failed to fetch from web: {e}")
+        print(f"Please manually download {url} and save as {local_file}")
+        raise
 
 def extract_test_cases(html: str) -> List[TestCase]:
     """Extract all test cases from the HTML"""
@@ -137,7 +156,12 @@ import (
 '''
         
         for order in test_case.orders:
-            content += f'	// {order}\n'
+            # Split multi-line orders and add each line as a separate comment
+            lines = order.replace('\r', '').split('\n')
+            for line in lines:
+                line = line.strip()
+                if line:
+                    content += f'\t// {line}\\n'
             
         if test_case.expected_result:
             content += f'	// Expected: {test_case.expected_result}\n'
