@@ -206,7 +206,7 @@ func TestResolveConvoyOrders(t *testing.T) {
 
 // Integration test for complex scenario
 func TestComplexResolutionScenario(t *testing.T) {
-	server := &Server{}
+	server := TestServer()
 	
 	// Scenario: Germany attacks France in Burgundy with support from Munich
 	// France defends Burgundy with support from Paris
