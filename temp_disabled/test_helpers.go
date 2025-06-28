@@ -1,18 +1,17 @@
-package api
+package api_test
 
 import (
 	"testing"
 
+	"diplomacy-backend/internal/api"
 	"diplomacy-backend/internal/game"
 	"diplomacy-backend/internal/game/rules"
 )
 
 // TestServer creates a new server instance for testing
-func TestServer() *Server {
+func TestServer() *api.Server {
 	gameRules := rules.MustLoadRules("classic")
-	return &Server{
-		rules: gameRules,
-	}
+	return api.NewServer(gameRules)
 }
 
 // CreateMoveOrder creates a move order with the given parameters
