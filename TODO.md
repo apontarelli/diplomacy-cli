@@ -100,20 +100,28 @@ This phased approach builds from the inside out, ensuring each layer rests on a 
 
 **Current State**: There's an existing `semantic.go` file with compilation errors due to missing types and interfaces. The file needs to be updated to work with our current domain model.
 
-#### Task 1.3.1: Fix Existing Validation and Create Missing Types
-**Files**: `backend/internal/game/validation/types.go` (new) and fix `semantic.go`
-- Fix compilation errors in existing `semantic.go` (missing `Orders` field, `Coast` type, `Coasts` field)
-- Create `SyntaxResult` struct for order parsing results  
-- Create `SemanticResult` struct for rule validation results
-- Define proper validation pipeline interfaces
-- Update existing `ValidationError` to work with new pipeline
-
-#### Task 1.3.2: Implement Syntax Validation
+#### Task 1.3.1: Implement Syntax Parser (Priority)
 **File**: `backend/internal/game/validation/syntax.go` (new)
 - Parse raw order strings (e.g., "A par - bur", "F lon S A wal - bel")
-- Normalize input and handle variations
-- Convert to structured Order objects
-- Return SyntaxResult with parsing errors
+- Normalize input and handle variations (case, whitespace, abbreviations)
+- Convert to structured `Order` objects matching our domain model
+- Return `SyntaxResult` with parsing errors and parsed orders
+- Handle all order types: Move, Hold, Support, Convoy
+
+#### Task 1.3.2: Create Validation Result Types  
+**File**: `backend/internal/game/validation/types.go` (new)
+- `SyntaxResult` struct for order parsing results
+- `SemanticResult` struct for rule validation results  
+- `ValidationError` types for pipeline errors
+- Pipeline interfaces for orchestration
+
+#### Task 1.3.3: Fix Existing Semantic Validation
+**File**: `backend/internal/game/validation/semantic.go` (fix existing)
+- Update to work with parsed `[]*Order` instead of `sv.state.Orders`
+- Fix coast handling to use `CoastNeighbors` map instead of `Coasts` field
+- Use string coast names instead of `game.Coast` type
+- Integrate with syntax parser output
+- Add support for all order types (Support, Convoy)
 
 #### Task 1.3.3: Enhance Semantic Validation
 **File**: `backend/internal/game/validation/semantic.go` (enhance existing)
@@ -124,10 +132,12 @@ This phased approach builds from the inside out, ensuring each layer rests on a 
 
 #### Task 1.3.4: Create Validation Orchestrator
 **File**: `backend/internal/game/validation/orchestrator.go` (new)
-- Coordinate syntax → semantic validation pipeline
+- Coordinate `RawOrders` → syntax → semantic validation pipeline
+- Convert `GameState.RawOrders` to parsed orders via syntax parser
+- Pass parsed orders to semantic validator
 - Handle duplicate orders and auto-hold for missing orders
 - Aggregate results by player and unit
-- Prepare data for resolution engine
+- Prepare validated orders for resolution engine
 
 #### Task 1.3.5: Write Validation Tests
 **Files**: `backend/internal/game/validation/*_test.go`
@@ -189,16 +199,52 @@ This phased approach builds from the inside out, ensuring each layer rests on a 
 
 ---
 
+## Pipeline Architecture Analysis & Decision
+
+### Current Domain Model Reality Check
+After reviewing the Go implementation, the existing `semantic.go` has **architectural mismatches**, not just missing types:
+
+**What We Actually Have:**
+- `GameState.RawOrders` - `map[Nation][]string` (raw order strings)
+- `Province.CoastNeighbors` - `map[string][]string` (coast name -> neighbors)  
+- `OrderResult` - already defined result types
+- `Unit.Coast` - string field for coast specification
+
+**What semantic.go Incorrectly Assumes:**
+- `sv.state.Orders` ❌ - we have `RawOrders` instead
+- `game.Coast` type ❌ - we use strings for coast names
+- `toProvince.Coasts` field ❌ - we have `CoastNeighbors` map
+
+### Correct Pipeline Flow
+```
+RawOrders (strings) → Syntax Parser → []*Order → Semantic Validator → SemanticResult
+```
+
+The semantic validator should work with **parsed orders**, not raw strings.
+
+### Strategic Decision: Syntax First vs Semantic First
+
+**Option A: Fix Semantic First**
+- ❌ Semantic validator expects parsed `[]*Order` objects
+- ❌ Without syntax parser, we can't test semantic validation properly
+- ❌ Would require creating mock parsed orders for testing
+
+**Option B: Build Syntax Parser First** ⭐ **RECOMMENDED**
+- ✅ Syntax parser converts `RawOrders` → `[]*Order` 
+- ✅ Enables proper testing of semantic validation with real parsed orders
+- ✅ Follows natural data flow: raw → parsed → validated
+- ✅ Semantic validator can be designed knowing exact `Order` structure
+
 ## Next Immediate Task
-**Task 1.3.1**: Create Validation Result Types in `backend/internal/game/validation/types.go`
+**Task 1.3.1**: Build Syntax Parser in `backend/internal/game/validation/syntax.go`
 
-The existing `semantic.go` file has compilation errors due to missing types and interfaces. We need to:
-1. Define validation result types (`SyntaxResult`, `SemanticResult`)
-2. Create proper error types for the validation pipeline
-3. Fix the existing semantic validation to use the new types
-4. Ensure all validation components work together
+**Rationale**: Semantic validation needs parsed orders to work properly. Building syntax first enables:
+1. Converting `GameState.RawOrders` to `[]*Order` objects
+2. Proper testing of semantic validation with real parsed orders  
+3. Natural pipeline flow that matches our domain model
+4. Ability to fix semantic.go with correct input types
 
-This foundational work will enable the complete validation pipeline implementation.
+**After Syntax Parser**: Fix semantic.go to work with parsed orders and our actual domain model.
 
 ---
 
