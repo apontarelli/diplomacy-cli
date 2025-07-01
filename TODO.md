@@ -1,19 +1,42 @@
 # Go Refactor Plan
 
+## Implementation Decisions & Follow-up Tasks
 
+### Phase 1 Decisions Made (Updated after Python PoC Analysis):
+- **Domain Types**: No JSON tags on core domain structs (following architecture decision)
+- **Order Types**: Implement all order types from start (Move, Hold, Support, Convoy) based on Python PoC learnings
+- **Game Phases**: Begin with movement phase, add retreat/build phases in later iterations
+- **Validation Pipeline**: Implement full Syntax → Semantic → Resolution pipeline from Python PoC
+- **Resolution Engine**: Use multi-pass algorithm with SoA pattern for performance
+- **Testing**: Comprehensive unit tests including DATC compliance
 
-### Phase 1: The Core Domain (The "Engine")
+### Key Architectural Insights from Python PoC:
+- **Validation Pipeline**: Raw orders → Syntax validation → Semantic validation → Resolution
+- **Data-Oriented Design**: Structure of Arrays (SoA) for resolution performance
+- **Multi-Pass Resolution**: Iterative algorithm with convoy path discovery and conflict resolution
+- **Orchestrator Pattern**: Coordinates entire validation and resolution pipeline
+- **Immutable State**: Game states with explicit transitions and history tracking
 
-This phase is done in complete isolation. You don't need a database or a web server. The goal is a fully testable Go library that understands the rules of Diplomacy.
+### Phase 1: The Core Domain (The "Engine") - Enhanced Approach
 
-*   **Packages to Build**: `internal/game/`
+This phase builds a complete Diplomacy rules engine in isolation, implementing the full validation and resolution pipeline learned from the Python PoC.
+
+*   **Packages to Build**: `internal/game/` with comprehensive sub-packages
 *   **Order of Operations**:
-    1.  **Define Structs**: Start in `board.go` and `state.go`. Define your core structs: `Province`, `Unit`, `Board`, `Game`, `Order`, etc.
-    2.  **Implement the Loader**: Create the `loader/` sub-package. Implement the `MapLoader` interface and the `StaticLoader` that returns the hardcoded classic map. This allows you to create a `Board` to test against.
-    3.  **Implement the Adjudicator**: This is the most complex part. In `resolution/adjudicator.go`, write the logic that resolves moves.
-    4.  **Write Tests (`_test.go`)**: This is the most critical step of Phase 1. Your `adjudicator_test.go` should be extensive. A great goal is to implement the [Diplomacy Adjudicator Test Cases (DATC)](http://web.inter.nl.net/users/L.B.Kruijswijk/), which are a standard suite for verifying a correct implementation.
+    1.  **Define Core Domain** (`board.go`, `state.go`): Complete structs with all order types, outcomes, and validation result types
+    2.  **Implement Map Loader** (`loader/`): Interface and static loader for classic map 
+    3.  **Build Validation Pipeline** (`validation/`):
+        - **Syntax Validation**: Parse raw order strings into structured orders
+        - **Semantic Validation**: Validate orders against game rules and current state  
+        - **Orchestrator**: Coordinate the validation pipeline
+    4.  **Implement Resolution Engine** (`resolution/`):
+        - **SoA Data Structures**: Structure of Arrays for performance
+        - **Multi-Pass Algorithm**: Iterative resolution with convoy discovery
+        - **Support & Strength**: Support cutting and strength calculation
+        - **Conflict Resolution**: Bouncing, dislodgement, and final outcomes
+    5.  **Comprehensive Testing**: Unit tests, integration tests, and DATC compliance
 
-*   **Milestone**: You have a Go package that can be given a game state and a set of orders, and it can correctly calculate the next game state.
+*   **Milestone**: A complete Diplomacy rules engine that can process raw order strings through syntax validation, semantic validation, and multi-pass resolution to produce the next game state with full outcome reporting.
 
 ### Phase 2: Persistence (Making the Engine's State "Real")
 
@@ -57,6 +80,128 @@ This phased approach builds from the inside out, ensuring each layer rests on a 
 
 ---
 
+# Current Implementation Status & Next Steps
+
+## ✅ Completed
+### Phase 1.1: Core Domain Foundation
+- **Core Domain Structs**: `board.go`, `state.go` with comprehensive types ✅
+- **Board Management**: Province creation, unit management, neighbor relationships ✅
+- **Game State**: Turn management, phase tracking, order handling ✅
+- **Comprehensive Testing**: Full test coverage for board and state logic ✅
+
+### Phase 1.2: Map Loader Implementation  
+- **MapLoader Interface**: Clean abstraction for loading game maps ✅
+- **JSONLoader**: Complete implementation for loading classic Diplomacy map ✅
+- **Coast Handling**: Support for complex provinces with multiple coasts ✅
+- **Comprehensive Testing**: Full test coverage including edge cases ✅
+
+## 🎯 Current Focus
+### Phase 1.3: Validation Pipeline Implementation
+
+**Current State**: There's an existing `semantic.go` file with compilation errors due to missing types and interfaces. The file needs to be updated to work with our current domain model.
+
+#### Task 1.3.1: Fix Existing Validation and Create Missing Types
+**Files**: `backend/internal/game/validation/types.go` (new) and fix `semantic.go`
+- Fix compilation errors in existing `semantic.go` (missing `Orders` field, `Coast` type, `Coasts` field)
+- Create `SyntaxResult` struct for order parsing results  
+- Create `SemanticResult` struct for rule validation results
+- Define proper validation pipeline interfaces
+- Update existing `ValidationError` to work with new pipeline
+
+#### Task 1.3.2: Implement Syntax Validation
+**File**: `backend/internal/game/validation/syntax.go` (new)
+- Parse raw order strings (e.g., "A par - bur", "F lon S A wal - bel")
+- Normalize input and handle variations
+- Convert to structured Order objects
+- Return SyntaxResult with parsing errors
+
+#### Task 1.3.3: Enhance Semantic Validation
+**File**: `backend/internal/game/validation/semantic.go` (enhance existing)
+- Support all order types (Move, Hold, Support, Convoy)
+- Comprehensive rule validation
+- Phase-specific validation logic
+- Return SemanticResult with detailed errors
+
+#### Task 1.3.4: Create Validation Orchestrator
+**File**: `backend/internal/game/validation/orchestrator.go` (new)
+- Coordinate syntax → semantic validation pipeline
+- Handle duplicate orders and auto-hold for missing orders
+- Aggregate results by player and unit
+- Prepare data for resolution engine
+
+#### Task 1.3.5: Write Validation Tests
+**Files**: `backend/internal/game/validation/*_test.go`
+- Unit tests for syntax parsing
+- Semantic validation rule tests
+- Pipeline integration tests
+- Edge cases and error conditions
+
+### Phase 1.4: Multi-Pass Resolution Engine
+
+#### Task 1.4.1: Resolution Data Structures
+**File**: `backend/internal/game/resolution/types.go` (new)
+- Structure of Arrays (SoA) for performance
+- ResolutionSoA with parallel arrays
+- ResolutionMaps for efficient lookups
+
+#### Task 1.4.2: Convoy Path Discovery
+**File**: `backend/internal/game/resolution/convoy.go` (new)
+- BFS-based convoy path finding
+- Convoy chain validation
+- Integration with move resolution
+
+#### Task 1.4.3: Support System
+**File**: `backend/internal/game/resolution/support.go` (new)
+- Support cutting logic
+- Strength calculation
+- Support effectiveness determination
+
+#### Task 1.4.4: Conflict Resolution
+**File**: `backend/internal/game/resolution/conflict.go` (new)
+- Move conflict detection
+- Bouncing and dislodgement logic
+- Final territory assignment
+
+#### Task 1.4.5: Main Resolution Engine
+**File**: `backend/internal/game/resolution/engine.go` (new)
+- Multi-pass iterative algorithm
+- Convoy path stabilization loop
+- Integration of all components
+- Final outcome assignment
+
+#### Task 1.4.6: Resolution Tests
+**Files**: `backend/internal/game/resolution/*_test.go`
+- Component unit tests
+- Integration tests
+- DATC compliance tests
+
+### Phase 1.5: Integration & Testing
+
+#### Task 1.5.1: Full Pipeline Integration
+- End-to-end tests (raw orders → final state)
+- Multi-turn game progression
+- Performance testing
+
+#### Task 1.5.2: DATC Implementation
+- Diplomacy Adjudicator Test Cases
+- Automated compliance testing
+- Regression test suite
+
+---
+
+## Next Immediate Task
+**Task 1.3.1**: Create Validation Result Types in `backend/internal/game/validation/types.go`
+
+The existing `semantic.go` file has compilation errors due to missing types and interfaces. We need to:
+1. Define validation result types (`SyntaxResult`, `SemanticResult`)
+2. Create proper error types for the validation pipeline
+3. Fix the existing semantic validation to use the new types
+4. Ensure all validation components work together
+
+This foundational work will enable the complete validation pipeline implementation.
+
+---
+
 # Current Proposed Go Structure
 ```
 diplomacy-game/
@@ -88,6 +233,7 @@ diplomacy-game/
 │   │   │   └── adjudicator_test.go
 │   │   ├── state.go
 │   │   └── validation/
+│   │       ├── syntax.go
 │   │       └── semantic.go
 │   ├── model/
 │   │   ├── game.go
@@ -137,12 +283,20 @@ internal/ Packages
 - internal/game/state.go: Manages the overall state of a single game, including phase, year, and unit positions.
 - internal/game/loader/: A sub-package responsible for loading map definitions.
 - internal/game/loader/interface.go: Defines the MapLoader interface, abstracting how maps are loaded.
-- internal/game/loader/static_loader.go: An implementation of MapLoader that returns the hardcoded classic map, allowing for fast startup.
-- internal/game/validation/: A sub-package for validating that player orders are legal.
-- internal/game/validation/semantic.go: Checks if an order makes sense according to the game rules and current state.
-- internal/game/resolution/: A sub-package for the complex logic of adjudicating a turn's orders.
-- internal/game/resolution/adjudicator.go: The rules engine that resolves all orders according to the official rules.
-- internal/game/resolution/adjudicator_test.go: Holds the critical unit tests (like the DATC) for the rules engine.
+- internal/game/loader/json_loader.go: An implementation of MapLoader that loads the classic map from JSON files.
+- internal/game/validation/: A sub-package implementing the complete validation pipeline.
+- internal/game/validation/syntax.go: Parses and normalizes raw order strings into structured orders.
+- internal/game/validation/semantic.go: Validates orders against game rules and current state.
+- internal/game/validation/orchestrator.go: Coordinates the syntax → semantic → resolution pipeline.
+- internal/game/validation/types.go: Validation result types and error handling.
+- internal/game/validation/*_test.go: Comprehensive unit tests for all validation components.
+- internal/game/resolution/: A sub-package implementing the multi-pass resolution engine.
+- internal/game/resolution/types.go: SoA data structures and resolution maps for performance.
+- internal/game/resolution/engine.go: Main resolution engine with multi-pass algorithm.
+- internal/game/resolution/convoy.go: Convoy path discovery and validation logic.
+- internal/game/resolution/support.go: Support cutting and strength calculation.
+- internal/game/resolution/conflict.go: Conflict resolution, bouncing, and dislodgement detection.
+- internal/game/resolution/*_test.go: Comprehensive tests including DATC compliance.
 - internal/model/: Defines the Go structs that map directly to your database tables or documents.
 - internal/storage/: The data persistence layer, abstracting all database interactions.
 - internal/storage/store.go: Defines the database interfaces (e.g., GameStore, UserStore) for dependency injection.
