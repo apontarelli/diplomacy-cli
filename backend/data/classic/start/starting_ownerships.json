@@ -1,0 +1,90 @@
+[
+  {
+    "provinceId": "london",
+    "owner": "england"
+  },
+  {
+    "provinceId": "liverpool",
+    "owner": "england"
+  },
+  {
+    "provinceId": "edinburgh",
+    "owner": "england"
+  },
+  {
+    "provinceId": "paris",
+    "owner": "france"
+  },
+  {
+    "provinceId": "marseilles",
+    "owner": "france"
+  },
+  {
+    "provinceId": "brest",
+    "owner": "france"
+  },
+  {
+    "provinceId": "berlin",
+    "owner": "germany"
+  },
+  {
+    "provinceId": "kiel",
+    "owner": "germany"
+  },
+  {
+    "provinceId": "munich",
+    "owner": "germany"
+  },
+  {
+    "provinceId": "rome",
+    "owner": "italy"
+  },
+  {
+    "provinceId": "venice",
+    "owner": "italy"
+  },
+  {
+    "provinceId": "naples",
+    "owner": "italy"
+  },
+  {
+    "provinceId": "vienna",
+    "owner": "austria"
+  },
+  {
+    "provinceId": "budapest",
+    "owner": "austria"
+  },
+  {
+    "provinceId": "trieste",
+    "owner": "austria"
+  },
+  {
+    "provinceId": "moscow",
+    "owner": "russia"
+  },
+  {
+    "provinceId": "sevastopol",
+    "owner": "russia"
+  },
+  {
+    "provinceId": "warsaw",
+    "owner": "russia"
+  },
+  {
+    "provinceId": "st_petersburg",
+    "owner": "russia"
+  },
+  {
+    "provinceId": "ankara",
+    "owner": "turkey"
+  },
+  {
+    "provinceId": "smyrna",
+    "owner": "turkey"
+  },
+  {
+    "provinceId": "constantinople",
+    "owner": "turkey"
+  }
+]

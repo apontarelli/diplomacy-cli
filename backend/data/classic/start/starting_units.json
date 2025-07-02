@@ -1,0 +1,112 @@
+[
+  {
+    "owner": "england",
+    "type": "fleet",
+    "locationId": "london"
+  },
+  {
+    "owner": "england",
+    "type": "army",
+    "locationId": "edinburgh"
+  },
+  {
+    "owner": "england",
+    "type": "army",
+    "locationId": "liverpool"
+  },
+  {
+    "owner": "france",
+    "type": "army",
+    "locationId": "paris"
+  },
+  {
+    "owner": "france",
+    "type": "army",
+    "locationId": "marseilles"
+  },
+  {
+    "owner": "france",
+    "type": "fleet",
+    "locationId": "brest"
+  },
+  {
+    "owner": "germany",
+    "type": "army",
+    "locationId": "berlin"
+  },
+  {
+    "owner": "germany",
+    "type": "fleet",
+    "locationId": "kiel"
+  },
+  {
+    "owner": "germany",
+    "type": "army",
+    "locationId": "munich"
+  },
+  {
+    "owner": "italy",
+    "type": "army",
+    "locationId": "rome"
+  },
+  {
+    "owner": "italy",
+    "type": "army",
+    "locationId": "venice"
+  },
+  {
+    "owner": "italy",
+    "type": "fleet",
+    "locationId": "naples"
+  },
+  {
+    "owner": "austria",
+    "type": "army",
+    "locationId": "vienna"
+  },
+  {
+    "owner": "austria",
+    "type": "army",
+    "locationId": "budapest"
+  },
+  {
+    "owner": "austria",
+    "type": "fleet",
+    "locationId": "trieste"
+  },
+  {
+    "owner": "russia",
+    "type": "army",
+    "locationId": "moscow"
+  },
+  {
+    "owner": "russia",
+    "type": "fleet",
+    "locationId": "sevastopol"
+  },
+  {
+    "owner": "russia",
+    "type": "army",
+    "locationId": "warsaw"
+  },
+  {
+    "owner": "russia",
+    "type": "fleet",
+    "locationId": "st_petersburg_sc"
+  },
+  {
+    "owner": "turkey",
+    "type": "army",
+    "locationId": "ankara"
+  },
+  {
+    "owner": "turkey",
+    "type": "army",
+    "locationId": "smyrna"
+  },
+  {
+    "owner": "turkey",
+    "type": "fleet",
+    "locationId": "constantinople"
+  }
+]

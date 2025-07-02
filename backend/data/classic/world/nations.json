@@ -1,0 +1,37 @@
+[
+  {
+    "id": "england",
+    "displayName": "England",
+    "shortCode": "eng"
+  },
+  {
+    "id": "austria",
+    "displayName": "Austria",
+    "shortCode": "aus"
+  },
+  {
+    "id": "germany",
+    "displayName": "Germany",
+    "shortCode": "ger"
+  },
+  {
+    "id": "france",
+    "displayName": "France",
+    "shortCode": "fra"
+  },
+  {
+    "id": "italy",
+    "displayName": "Italy",
+    "shortCode": "ita"
+  },
+  {
+    "id": "turkey",
+    "displayName": "Turkey",
+    "shortCode": "tur"
+  },
+  {
+    "id": "russia",
+    "displayName": "Russia",
+    "shortCode": "rus"
+  }
+]

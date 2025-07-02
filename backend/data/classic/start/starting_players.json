@@ -1,0 +1,30 @@
+[
+  {
+    "id": "england",
+    "status": "active"
+  },
+  {
+    "id": "austria",
+    "status": "active"
+  },
+  {
+    "id": "germany",
+    "status": "active"
+  },
+  {
+    "id": "france",
+    "status": "active"
+  },
+  {
+    "id": "italy",
+    "status": "active"
+  },
+  {
+    "id": "turkey",
+    "status": "active"
+  },
+  {
+    "id": "russia",
+    "status": "active"
+  }
+]

@@ -1,0 +1,487 @@
+{
+  "london": {
+    "shortCode": "lon",
+    "displayName": "London",
+    "type": "land",
+    "homeCountry": "england",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "wales": {
+    "shortCode": "wal",
+    "displayName": "Wales",
+    "type": "land",
+    "hasCoast": true
+  },
+  "york": {
+    "shortCode": "yor",
+    "displayName": "York",
+    "type": "land",
+    "hasCoast": true
+  },
+  "clyde": {
+    "shortCode": "cly",
+    "displayName": "Clyde",
+    "type": "land",
+    "hasCoast": true
+  },
+  "edinburgh": {
+    "shortCode": "edi",
+    "displayName": "Edinburgh",
+    "type": "land",
+    "homeCountry": "england",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "liverpool": {
+    "shortCode": "lvp",
+    "displayName": "Liverpool",
+    "type": "land",
+    "homeCountry": "england",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "spain": {
+    "shortCode": "spa",
+    "displayName": "Spain",
+    "type": "land",
+    "hasCoast": true,
+    "isSupplyCenter": true,
+    "coasts": [
+      "nc",
+      "sc"
+    ]
+  },
+  "portugal": {
+    "shortCode": "por",
+    "displayName": "Portugal",
+    "type": "land",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "marseilles": {
+    "shortCode": "mar",
+    "displayName": "Marseilles",
+    "type": "land",
+    "homeCountry": "france",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "gascony": {
+    "shortCode": "gas",
+    "displayName": "Gascony",
+    "type": "land",
+    "hasCoast": true
+  },
+  "brest": {
+    "shortCode": "bre",
+    "displayName": "Brest",
+    "type": "land",
+    "homeCountry": "france",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "paris": {
+    "shortCode": "par",
+    "displayName": "Paris",
+    "type": "land",
+    "homeCountry": "france",
+    "isSupplyCenter": true
+  },
+  "burgundy": {
+    "shortCode": "bur",
+    "displayName": "Burgundy",
+    "type": "land"
+  },
+  "picardy": {
+    "shortCode": "pic",
+    "displayName": "Picardy",
+    "type": "land",
+    "hasCoast": true
+  },
+  "belgium": {
+    "shortCode": "bel",
+    "displayName": "Belgium",
+    "type": "land",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "holland": {
+    "shortCode": "hol",
+    "displayName": "Holland",
+    "type": "land",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "ruhr": {
+    "shortCode": "ruh",
+    "displayName": "Ruhr",
+    "type": "land"
+  },
+  "kiel": {
+    "shortCode": "kie",
+    "displayName": "Kiel",
+    "type": "land",
+    "homeCountry": "germany",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "munich": {
+    "shortCode": "mun",
+    "displayName": "Munich",
+    "type": "land",
+    "homeCountry": "germany",
+    "isSupplyCenter": true
+  },
+  "berlin": {
+    "shortCode": "ber",
+    "displayName": "Berlin",
+    "type": "land",
+    "homeCountry": "germany",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "denmark": {
+    "shortCode": "den",
+    "displayName": "Denmark",
+    "type": "land",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "sweden": {
+    "shortCode": "swe",
+    "displayName": "Sweden",
+    "type": "land",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "norway": {
+    "shortCode": "nor",
+    "displayName": "Norway",
+    "type": "land",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "st_petersburg": {
+    "shortCode": "stp",
+    "displayName": "St. Petersburg",
+    "type": "land",
+    "homeCountry": "russia",
+    "hasCoast": true,
+    "isSupplyCenter": true,
+    "coasts": [
+      "nc",
+      "sc"
+    ]
+  },
+  "finland": {
+    "shortCode": "fin",
+    "displayName": "Finland",
+    "type": "land",
+    "hasCoast": true
+  },
+  "livonia": {
+    "shortCode": "lvn",
+    "displayName": "Livonia",
+    "type": "land",
+    "hasCoast": true
+  },
+  "prussia": {
+    "shortCode": "pru",
+    "displayName": "Prussia",
+    "type": "land",
+    "hasCoast": true
+  },
+  "ukraine": {
+    "shortCode": "ukr",
+    "displayName": "Ukraine",
+    "type": "land"
+  },
+  "moscow": {
+    "shortCode": "mos",
+    "displayName": "Moscow",
+    "type": "land",
+    "homeCountry": "russia",
+    "isSupplyCenter": true
+  },
+  "sevastopol": {
+    "shortCode": "sev",
+    "displayName": "Sevastopol",
+    "type": "land",
+    "homeCountry": "russia",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "warsaw": {
+    "shortCode": "war",
+    "displayName": "Warsaw",
+    "type": "land",
+    "homeCountry": "russia",
+    "isSupplyCenter": true
+  },
+  "galicia": {
+    "shortCode": "gal",
+    "displayName": "Galicia",
+    "type": "land"
+  },
+  "bohemia": {
+    "shortCode": "boh",
+    "displayName": "Bohemia",
+    "type": "land"
+  },
+  "vienna": {
+    "shortCode": "vie",
+    "displayName": "Vienna",
+    "type": "land",
+    "homeCountry": "austria",
+    "isSupplyCenter": true
+  },
+  "budapest": {
+    "shortCode": "bud",
+    "displayName": "Budapest",
+    "type": "land",
+    "homeCountry": "austria",
+    "isSupplyCenter": true
+  },
+  "trieste": {
+    "shortCode": "tri",
+    "displayName": "Trieste",
+    "type": "land",
+    "homeCountry": "austria",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "tyrolia": {
+    "shortCode": "tyr",
+    "displayName": "Tyrolia",
+    "type": "land"
+  },
+  "venice": {
+    "shortCode": "ven",
+    "displayName": "Venice",
+    "type": "land",
+    "homeCountry": "italy",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "piedmont": {
+    "shortCode": "pie",
+    "displayName": "Piedmont",
+    "type": "land",
+    "hasCoast": true
+  },
+  "rome": {
+    "shortCode": "rom",
+    "displayName": "Rome",
+    "type": "land",
+    "homeCountry": "italy",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "naples": {
+    "shortCode": "nap",
+    "displayName": "Naples",
+    "type": "land",
+    "homeCountry": "italy",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "apulia": {
+    "shortCode": "apu",
+    "displayName": "Apulia",
+    "type": "land",
+    "hasCoast": true
+  },
+  "tuscany": {
+    "shortCode": "tus",
+    "displayName": "Tuscany",
+    "type": "land",
+    "hasCoast": true
+  },
+  "bulgaria": {
+    "shortCode": "bul",
+    "displayName": "Bulgaria",
+    "type": "land",
+    "hasCoast": true,
+    "isSupplyCenter": true,
+    "coasts": [
+      "ec",
+      "sc"
+    ]
+  },
+  "greece": {
+    "shortCode": "gre",
+    "displayName": "Greece",
+    "type": "land",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "serbia": {
+    "shortCode": "ser",
+    "displayName": "Serbia",
+    "type": "land",
+    "isSupplyCenter": true
+  },
+  "albania": {
+    "shortCode": "alb",
+    "displayName": "Albania",
+    "type": "land",
+    "hasCoast": true
+  },
+  "constantinople": {
+    "shortCode": "con",
+    "displayName": "Constantinople",
+    "type": "land",
+    "homeCountry": "turkey",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "ankara": {
+    "shortCode": "ank",
+    "displayName": "Ankara",
+    "type": "land",
+    "homeCountry": "turkey",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "smyrna": {
+    "shortCode": "smy",
+    "displayName": "Smyrna",
+    "type": "land",
+    "homeCountry": "turkey",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "armenia": {
+    "shortCode": "arm",
+    "displayName": "Armenia",
+    "type": "land",
+    "hasCoast": true
+  },
+  "syria": {
+    "shortCode": "syr",
+    "displayName": "Syria",
+    "type": "land",
+    "hasCoast": true
+  },
+  "north_atlantic_ocean": {
+    "shortCode": "nao",
+    "displayName": "North Atlantic Ocean",
+    "type": "sea"
+  },
+  "norwegian_sea": {
+    "shortCode": "nwg",
+    "displayName": "Norwegian Sea",
+    "type": "sea"
+  },
+  "barents_sea": {
+    "shortCode": "bar",
+    "displayName": "Barents Sea",
+    "type": "sea"
+  },
+  "skagerrak": {
+    "shortCode": "ska",
+    "displayName": "Skagerrak",
+    "type": "sea"
+  },
+  "heligoland_bight": {
+    "shortCode": "hel",
+    "displayName": "Heligoland Bight",
+    "type": "sea"
+  },
+  "north_sea": {
+    "shortCode": "nth",
+    "displayName": "North Sea",
+    "type": "sea"
+  },
+  "english_channel": {
+    "shortCode": "eng",
+    "displayName": "English Channel",
+    "type": "sea"
+  },
+  "irish_sea": {
+    "shortCode": "iri",
+    "displayName": "Irish Sea",
+    "type": "sea"
+  },
+  "midatlantic_ocean": {
+    "shortCode": "mao",
+    "displayName": "Mid-Atlantic Ocean",
+    "type": "sea"
+  },
+  "baltic_sea": {
+    "shortCode": "bal",
+    "displayName": "Baltic Sea",
+    "type": "sea"
+  },
+  "gulf_of_bothnia": {
+    "shortCode": "bot",
+    "displayName": "Gulf of Bothnia",
+    "type": "sea"
+  },
+  "adriatic_sea": {
+    "shortCode": "adr",
+    "displayName": "Adriatic Sea",
+    "type": "sea"
+  },
+  "aegean_sea": {
+    "shortCode": "aeg",
+    "displayName": "Aegean Sea",
+    "type": "sea"
+  },
+  "eastern_mediterranean": {
+    "shortCode": "eas",
+    "displayName": "Eastern Mediterranean",
+    "type": "sea"
+  },
+  "ionian_sea": {
+    "shortCode": "ion",
+    "displayName": "Ionian Sea",
+    "type": "sea"
+  },
+  "tyrrhenian_sea": {
+    "shortCode": "tys",
+    "displayName": "Tyrrhenian Sea",
+    "type": "sea"
+  },
+  "western_mediterranean": {
+    "shortCode": "wes",
+    "displayName": "Western Mediterranean",
+    "type": "sea"
+  },
+  "black_sea": {
+    "shortCode": "bla",
+    "displayName": "Black Sea",
+    "type": "sea"
+  },
+  "silesia": {
+    "shortCode": "sil",
+    "displayName": "Silesia",
+    "type": "land"
+  },
+  "tunisia": {
+    "shortCode": "tun",
+    "displayName": "Tunisia",
+    "type": "land",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "north_africa": {
+    "shortCode": "naf",
+    "displayName": "North Africa",
+    "type": "land",
+    "hasCoast": true
+  },
+  "rumania": {
+    "shortCode": "rum",
+    "displayName": "Rumania",
+    "type": "land",
+    "hasCoast": true,
+    "isSupplyCenter": true
+  },
+  "gulf_of_lyon": {
+    "shortCode": "lyo",
+    "displayName": "Gulf of Lyon",
+    "type": "sea"
+  }
+}

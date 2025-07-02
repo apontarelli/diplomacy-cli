@@ -1,0 +1,8 @@
+{
+  "name": "Classic Diplomacy",
+  "shortName": "classic",
+  "description": "The original 1901 European map with 7 great powers",
+  "playerCount": 7,
+  "startYear": 1901,
+  "nations": ["austria", "england", "france", "germany", "italy", "russia", "turkey"]
+}

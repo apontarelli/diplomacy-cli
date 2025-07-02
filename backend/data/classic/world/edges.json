@@ -1,0 +1,2182 @@
+[
+  {
+    "from": "adriatic_sea",
+    "to": "albania",
+    "mode": "sea"
+  },
+  {
+    "from": "adriatic_sea",
+    "to": "apulia",
+    "mode": "sea"
+  },
+  {
+    "from": "adriatic_sea",
+    "to": "ionian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "adriatic_sea",
+    "to": "trieste",
+    "mode": "sea"
+  },
+  {
+    "from": "adriatic_sea",
+    "to": "venice",
+    "mode": "sea"
+  },
+  {
+    "from": "aegean_sea",
+    "to": "bulgaria_sc",
+    "mode": "sea"
+  },
+  {
+    "from": "aegean_sea",
+    "to": "constantinople",
+    "mode": "sea"
+  },
+  {
+    "from": "aegean_sea",
+    "to": "eastern_mediterranean",
+    "mode": "sea"
+  },
+  {
+    "from": "aegean_sea",
+    "to": "greece",
+    "mode": "sea"
+  },
+  {
+    "from": "aegean_sea",
+    "to": "ionian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "aegean_sea",
+    "to": "smyrna",
+    "mode": "sea"
+  },
+  {
+    "from": "albania",
+    "to": "adriatic_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "albania",
+    "to": "greece",
+    "mode": "both"
+  },
+  {
+    "from": "albania",
+    "to": "ionian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "albania",
+    "to": "serbia",
+    "mode": "land"
+  },
+  {
+    "from": "albania",
+    "to": "trieste",
+    "mode": "both"
+  },
+  {
+    "from": "ankara",
+    "to": "armenia",
+    "mode": "both"
+  },
+  {
+    "from": "ankara",
+    "to": "black_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "ankara",
+    "to": "constantinople",
+    "mode": "both"
+  },
+  {
+    "from": "ankara",
+    "to": "smyrna",
+    "mode": "land"
+  },
+  {
+    "from": "apulia",
+    "to": "adriatic_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "apulia",
+    "to": "ionian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "apulia",
+    "to": "naples",
+    "mode": "both"
+  },
+  {
+    "from": "apulia",
+    "to": "rome",
+    "mode": "land"
+  },
+  {
+    "from": "apulia",
+    "to": "venice",
+    "mode": "both"
+  },
+  {
+    "from": "armenia",
+    "to": "ankara",
+    "mode": "both"
+  },
+  {
+    "from": "armenia",
+    "to": "black_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "armenia",
+    "to": "sevastopol",
+    "mode": "both"
+  },
+  {
+    "from": "armenia",
+    "to": "smyrna",
+    "mode": "land"
+  },
+  {
+    "from": "armenia",
+    "to": "syria",
+    "mode": "land"
+  },
+  {
+    "from": "baltic_sea",
+    "to": "berlin",
+    "mode": "sea"
+  },
+  {
+    "from": "baltic_sea",
+    "to": "gulf_of_bothnia",
+    "mode": "sea"
+  },
+  {
+    "from": "baltic_sea",
+    "to": "denmark",
+    "mode": "sea"
+  },
+  {
+    "from": "baltic_sea",
+    "to": "kiel",
+    "mode": "sea"
+  },
+  {
+    "from": "baltic_sea",
+    "to": "livonia",
+    "mode": "sea"
+  },
+  {
+    "from": "baltic_sea",
+    "to": "prussia",
+    "mode": "sea"
+  },
+  {
+    "from": "baltic_sea",
+    "to": "sweden",
+    "mode": "sea"
+  },
+  {
+    "from": "barents_sea",
+    "to": "norway",
+    "mode": "sea"
+  },
+  {
+    "from": "barents_sea",
+    "to": "norwegian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "barents_sea",
+    "to": "st_petersburg_nc",
+    "mode": "sea"
+  },
+  {
+    "from": "belgium",
+    "to": "burgundy",
+    "mode": "land"
+  },
+  {
+    "from": "belgium",
+    "to": "english_channel",
+    "mode": "sea"
+  },
+  {
+    "from": "belgium",
+    "to": "holland",
+    "mode": "both"
+  },
+  {
+    "from": "belgium",
+    "to": "north_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "belgium",
+    "to": "picardy",
+    "mode": "both"
+  },
+  {
+    "from": "belgium",
+    "to": "ruhr",
+    "mode": "land"
+  },
+  {
+    "from": "berlin",
+    "to": "baltic_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "berlin",
+    "to": "kiel",
+    "mode": "both"
+  },
+  {
+    "from": "berlin",
+    "to": "munich",
+    "mode": "land"
+  },
+  {
+    "from": "berlin",
+    "to": "prussia",
+    "mode": "both"
+  },
+  {
+    "from": "berlin",
+    "to": "silesia",
+    "mode": "land"
+  },
+  {
+    "from": "black_sea",
+    "to": "ankara",
+    "mode": "sea"
+  },
+  {
+    "from": "black_sea",
+    "to": "armenia",
+    "mode": "sea"
+  },
+  {
+    "from": "black_sea",
+    "to": "bulgaria_ec",
+    "mode": "sea"
+  },
+  {
+    "from": "black_sea",
+    "to": "constantinople",
+    "mode": "sea"
+  },
+  {
+    "from": "black_sea",
+    "to": "rumania",
+    "mode": "sea"
+  },
+  {
+    "from": "black_sea",
+    "to": "sevastopol",
+    "mode": "sea"
+  },
+  {
+    "from": "bohemia",
+    "to": "galicia",
+    "mode": "land"
+  },
+  {
+    "from": "bohemia",
+    "to": "munich",
+    "mode": "land"
+  },
+  {
+    "from": "bohemia",
+    "to": "silesia",
+    "mode": "land"
+  },
+  {
+    "from": "bohemia",
+    "to": "tyrolia",
+    "mode": "land"
+  },
+  {
+    "from": "bohemia",
+    "to": "vienna",
+    "mode": "land"
+  },
+  {
+    "from": "gulf_of_bothnia",
+    "to": "baltic_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "gulf_of_bothnia",
+    "to": "finland",
+    "mode": "sea"
+  },
+  {
+    "from": "gulf_of_bothnia",
+    "to": "livonia",
+    "mode": "sea"
+  },
+  {
+    "from": "gulf_of_bothnia",
+    "to": "st_petersburg_sc",
+    "mode": "sea"
+  },
+  {
+    "from": "gulf_of_bothnia",
+    "to": "sweden",
+    "mode": "sea"
+  },
+  {
+    "from": "brest",
+    "to": "english_channel",
+    "mode": "sea"
+  },
+  {
+    "from": "brest",
+    "to": "gascony",
+    "mode": "both"
+  },
+  {
+    "from": "brest",
+    "to": "midatlantic_ocean",
+    "mode": "sea"
+  },
+  {
+    "from": "brest",
+    "to": "paris",
+    "mode": "land"
+  },
+  {
+    "from": "brest",
+    "to": "picardy",
+    "mode": "both"
+  },
+  {
+    "from": "budapest",
+    "to": "galicia",
+    "mode": "land"
+  },
+  {
+    "from": "budapest",
+    "to": "rumania",
+    "mode": "land"
+  },
+  {
+    "from": "budapest",
+    "to": "serbia",
+    "mode": "land"
+  },
+  {
+    "from": "budapest",
+    "to": "trieste",
+    "mode": "land"
+  },
+  {
+    "from": "budapest",
+    "to": "vienna",
+    "mode": "land"
+  },
+  {
+    "from": "bulgaria",
+    "to": "constantinople",
+    "mode": "land"
+  },
+  {
+    "from": "bulgaria",
+    "to": "greece",
+    "mode": "land"
+  },
+  {
+    "from": "bulgaria",
+    "to": "rumania",
+    "mode": "land"
+  },
+  {
+    "from": "bulgaria",
+    "to": "serbia",
+    "mode": "land"
+  },
+  {
+    "from": "bulgaria_ec",
+    "to": "black_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "bulgaria_ec",
+    "to": "constantinople",
+    "mode": "sea"
+  },
+  {
+    "from": "bulgaria_ec",
+    "to": "rumania",
+    "mode": "sea"
+  },
+  {
+    "from": "bulgaria_sc",
+    "to": "aegean_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "bulgaria_sc",
+    "to": "constantinople",
+    "mode": "sea"
+  },
+  {
+    "from": "bulgaria_sc",
+    "to": "greece",
+    "mode": "sea"
+  },
+  {
+    "from": "burgundy",
+    "to": "belgium",
+    "mode": "land"
+  },
+  {
+    "from": "burgundy",
+    "to": "gascony",
+    "mode": "land"
+  },
+  {
+    "from": "burgundy",
+    "to": "marseilles",
+    "mode": "land"
+  },
+  {
+    "from": "burgundy",
+    "to": "munich",
+    "mode": "land"
+  },
+  {
+    "from": "burgundy",
+    "to": "paris",
+    "mode": "land"
+  },
+  {
+    "from": "burgundy",
+    "to": "picardy",
+    "mode": "land"
+  },
+  {
+    "from": "burgundy",
+    "to": "ruhr",
+    "mode": "land"
+  },
+  {
+    "from": "clyde",
+    "to": "edinburgh",
+    "mode": "both"
+  },
+  {
+    "from": "clyde",
+    "to": "liverpool",
+    "mode": "both"
+  },
+  {
+    "from": "clyde",
+    "to": "north_atlantic_ocean",
+    "mode": "sea"
+  },
+  {
+    "from": "clyde",
+    "to": "norwegian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "constantinople",
+    "to": "aegean_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "constantinople",
+    "to": "ankara",
+    "mode": "both"
+  },
+  {
+    "from": "constantinople",
+    "to": "black_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "constantinople",
+    "to": "bulgaria",
+    "mode": "land"
+  },
+  {
+    "from": "constantinople",
+    "to": "bulgaria_ec",
+    "mode": "sea"
+  },
+  {
+    "from": "constantinople",
+    "to": "bulgaria_sc",
+    "mode": "sea"
+  },
+  {
+    "from": "constantinople",
+    "to": "smyrna",
+    "mode": "both"
+  },
+  {
+    "from": "denmark",
+    "to": "baltic_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "denmark",
+    "to": "heligoland_bight",
+    "mode": "sea"
+  },
+  {
+    "from": "denmark",
+    "to": "kiel",
+    "mode": "both"
+  },
+  {
+    "from": "denmark",
+    "to": "north_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "denmark",
+    "to": "skagerrak",
+    "mode": "sea"
+  },
+  {
+    "from": "denmark",
+    "to": "sweden",
+    "mode": "both"
+  },
+  {
+    "from": "eastern_mediterranean",
+    "to": "aegean_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "eastern_mediterranean",
+    "to": "ionian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "eastern_mediterranean",
+    "to": "smyrna",
+    "mode": "sea"
+  },
+  {
+    "from": "eastern_mediterranean",
+    "to": "syria",
+    "mode": "sea"
+  },
+  {
+    "from": "edinburgh",
+    "to": "clyde",
+    "mode": "both"
+  },
+  {
+    "from": "edinburgh",
+    "to": "liverpool",
+    "mode": "land"
+  },
+  {
+    "from": "edinburgh",
+    "to": "north_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "edinburgh",
+    "to": "norwegian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "edinburgh",
+    "to": "york",
+    "mode": "both"
+  },
+  {
+    "from": "english_channel",
+    "to": "belgium",
+    "mode": "sea"
+  },
+  {
+    "from": "english_channel",
+    "to": "brest",
+    "mode": "sea"
+  },
+  {
+    "from": "english_channel",
+    "to": "irish_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "english_channel",
+    "to": "london",
+    "mode": "sea"
+  },
+  {
+    "from": "english_channel",
+    "to": "midatlantic_ocean",
+    "mode": "sea"
+  },
+  {
+    "from": "english_channel",
+    "to": "north_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "english_channel",
+    "to": "picardy",
+    "mode": "sea"
+  },
+  {
+    "from": "english_channel",
+    "to": "wales",
+    "mode": "sea"
+  },
+  {
+    "from": "finland",
+    "to": "gulf_of_bothnia",
+    "mode": "sea"
+  },
+  {
+    "from": "finland",
+    "to": "norway",
+    "mode": "land"
+  },
+  {
+    "from": "finland",
+    "to": "st_petersburg",
+    "mode": "land"
+  },
+  {
+    "from": "finland",
+    "to": "st_petersburg_sc",
+    "mode": "sea"
+  },
+  {
+    "from": "finland",
+    "to": "sweden",
+    "mode": "both"
+  },
+  {
+    "from": "galicia",
+    "to": "bohemia",
+    "mode": "land"
+  },
+  {
+    "from": "galicia",
+    "to": "budapest",
+    "mode": "land"
+  },
+  {
+    "from": "galicia",
+    "to": "rumania",
+    "mode": "land"
+  },
+  {
+    "from": "galicia",
+    "to": "silesia",
+    "mode": "land"
+  },
+  {
+    "from": "galicia",
+    "to": "ukraine",
+    "mode": "land"
+  },
+  {
+    "from": "galicia",
+    "to": "vienna",
+    "mode": "land"
+  },
+  {
+    "from": "galicia",
+    "to": "warsaw",
+    "mode": "land"
+  },
+  {
+    "from": "gascony",
+    "to": "brest",
+    "mode": "both"
+  },
+  {
+    "from": "gascony",
+    "to": "burgundy",
+    "mode": "land"
+  },
+  {
+    "from": "gascony",
+    "to": "midatlantic_ocean",
+    "mode": "sea"
+  },
+  {
+    "from": "gascony",
+    "to": "marseilles",
+    "mode": "land"
+  },
+  {
+    "from": "gascony",
+    "to": "paris",
+    "mode": "land"
+  },
+  {
+    "from": "gascony",
+    "to": "spain",
+    "mode": "land"
+  },
+  {
+    "from": "gascony",
+    "to": "spain_nc",
+    "mode": "sea"
+  },
+  {
+    "from": "greece",
+    "to": "aegean_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "greece",
+    "to": "albania",
+    "mode": "both"
+  },
+  {
+    "from": "greece",
+    "to": "bulgaria",
+    "mode": "land"
+  },
+  {
+    "from": "greece",
+    "to": "bulgaria_sc",
+    "mode": "sea"
+  },
+  {
+    "from": "greece",
+    "to": "ionian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "greece",
+    "to": "serbia",
+    "mode": "land"
+  },
+  {
+    "from": "heligoland_bight",
+    "to": "denmark",
+    "mode": "sea"
+  },
+  {
+    "from": "heligoland_bight",
+    "to": "holland",
+    "mode": "sea"
+  },
+  {
+    "from": "heligoland_bight",
+    "to": "kiel",
+    "mode": "sea"
+  },
+  {
+    "from": "heligoland_bight",
+    "to": "north_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "holland",
+    "to": "belgium",
+    "mode": "both"
+  },
+  {
+    "from": "holland",
+    "to": "heligoland_bight",
+    "mode": "sea"
+  },
+  {
+    "from": "holland",
+    "to": "kiel",
+    "mode": "both"
+  },
+  {
+    "from": "holland",
+    "to": "north_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "holland",
+    "to": "ruhr",
+    "mode": "land"
+  },
+  {
+    "from": "ionian_sea",
+    "to": "adriatic_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "ionian_sea",
+    "to": "aegean_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "ionian_sea",
+    "to": "albania",
+    "mode": "sea"
+  },
+  {
+    "from": "ionian_sea",
+    "to": "apulia",
+    "mode": "sea"
+  },
+  {
+    "from": "ionian_sea",
+    "to": "eastern_mediterranean",
+    "mode": "sea"
+  },
+  {
+    "from": "ionian_sea",
+    "to": "greece",
+    "mode": "sea"
+  },
+  {
+    "from": "ionian_sea",
+    "to": "naples",
+    "mode": "sea"
+  },
+  {
+    "from": "ionian_sea",
+    "to": "tunisia",
+    "mode": "sea"
+  },
+  {
+    "from": "ionian_sea",
+    "to": "tyrrhenian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "irish_sea",
+    "to": "english_channel",
+    "mode": "sea"
+  },
+  {
+    "from": "irish_sea",
+    "to": "liverpool",
+    "mode": "sea"
+  },
+  {
+    "from": "irish_sea",
+    "to": "midatlantic_ocean",
+    "mode": "sea"
+  },
+  {
+    "from": "irish_sea",
+    "to": "north_atlantic_ocean",
+    "mode": "sea"
+  },
+  {
+    "from": "irish_sea",
+    "to": "wales",
+    "mode": "sea"
+  },
+  {
+    "from": "kiel",
+    "to": "baltic_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "kiel",
+    "to": "berlin",
+    "mode": "both"
+  },
+  {
+    "from": "kiel",
+    "to": "denmark",
+    "mode": "both"
+  },
+  {
+    "from": "kiel",
+    "to": "heligoland_bight",
+    "mode": "sea"
+  },
+  {
+    "from": "kiel",
+    "to": "holland",
+    "mode": "both"
+  },
+  {
+    "from": "kiel",
+    "to": "munich",
+    "mode": "land"
+  },
+  {
+    "from": "kiel",
+    "to": "ruhr",
+    "mode": "land"
+  },
+  {
+    "from": "london",
+    "to": "english_channel",
+    "mode": "sea"
+  },
+  {
+    "from": "london",
+    "to": "north_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "london",
+    "to": "wales",
+    "mode": "both"
+  },
+  {
+    "from": "london",
+    "to": "york",
+    "mode": "both"
+  },
+  {
+    "from": "livonia",
+    "to": "baltic_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "livonia",
+    "to": "gulf_of_bothnia",
+    "mode": "sea"
+  },
+  {
+    "from": "livonia",
+    "to": "moscow",
+    "mode": "land"
+  },
+  {
+    "from": "livonia",
+    "to": "prussia",
+    "mode": "both"
+  },
+  {
+    "from": "livonia",
+    "to": "st_petersburg",
+    "mode": "land"
+  },
+  {
+    "from": "livonia",
+    "to": "st_petersburg_sc",
+    "mode": "sea"
+  },
+  {
+    "from": "livonia",
+    "to": "warsaw",
+    "mode": "land"
+  },
+  {
+    "from": "liverpool",
+    "to": "clyde",
+    "mode": "both"
+  },
+  {
+    "from": "liverpool",
+    "to": "edinburgh",
+    "mode": "land"
+  },
+  {
+    "from": "liverpool",
+    "to": "irish_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "liverpool",
+    "to": "north_atlantic_ocean",
+    "mode": "sea"
+  },
+  {
+    "from": "liverpool",
+    "to": "wales",
+    "mode": "both"
+  },
+  {
+    "from": "liverpool",
+    "to": "york",
+    "mode": "land"
+  },
+  {
+    "from": "gulf_of_lyon",
+    "to": "marseilles",
+    "mode": "sea"
+  },
+  {
+    "from": "gulf_of_lyon",
+    "to": "piedmont",
+    "mode": "sea"
+  },
+  {
+    "from": "gulf_of_lyon",
+    "to": "spain_sc",
+    "mode": "sea"
+  },
+  {
+    "from": "gulf_of_lyon",
+    "to": "tuscany",
+    "mode": "sea"
+  },
+  {
+    "from": "gulf_of_lyon",
+    "to": "tyrrhenian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "gulf_of_lyon",
+    "to": "western_mediterranean",
+    "mode": "sea"
+  },
+  {
+    "from": "midatlantic_ocean",
+    "to": "brest",
+    "mode": "sea"
+  },
+  {
+    "from": "midatlantic_ocean",
+    "to": "english_channel",
+    "mode": "sea"
+  },
+  {
+    "from": "midatlantic_ocean",
+    "to": "gascony",
+    "mode": "sea"
+  },
+  {
+    "from": "midatlantic_ocean",
+    "to": "irish_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "midatlantic_ocean",
+    "to": "north_africa",
+    "mode": "sea"
+  },
+  {
+    "from": "midatlantic_ocean",
+    "to": "north_atlantic_ocean",
+    "mode": "sea"
+  },
+  {
+    "from": "midatlantic_ocean",
+    "to": "portugal",
+    "mode": "sea"
+  },
+  {
+    "from": "midatlantic_ocean",
+    "to": "spain_nc",
+    "mode": "sea"
+  },
+  {
+    "from": "midatlantic_ocean",
+    "to": "spain_sc",
+    "mode": "sea"
+  },
+  {
+    "from": "midatlantic_ocean",
+    "to": "western_mediterranean",
+    "mode": "sea"
+  },
+  {
+    "from": "marseilles",
+    "to": "burgundy",
+    "mode": "land"
+  },
+  {
+    "from": "marseilles",
+    "to": "gascony",
+    "mode": "land"
+  },
+  {
+    "from": "marseilles",
+    "to": "gulf_of_lyon",
+    "mode": "sea"
+  },
+  {
+    "from": "marseilles",
+    "to": "piedmont",
+    "mode": "both"
+  },
+  {
+    "from": "marseilles",
+    "to": "spain",
+    "mode": "land"
+  },
+  {
+    "from": "marseilles",
+    "to": "spain_sc",
+    "mode": "sea"
+  },
+  {
+    "from": "moscow",
+    "to": "livonia",
+    "mode": "land"
+  },
+  {
+    "from": "moscow",
+    "to": "sevastopol",
+    "mode": "land"
+  },
+  {
+    "from": "moscow",
+    "to": "st_petersburg",
+    "mode": "land"
+  },
+  {
+    "from": "moscow",
+    "to": "ukraine",
+    "mode": "land"
+  },
+  {
+    "from": "moscow",
+    "to": "warsaw",
+    "mode": "land"
+  },
+  {
+    "from": "munich",
+    "to": "berlin",
+    "mode": "land"
+  },
+  {
+    "from": "munich",
+    "to": "bohemia",
+    "mode": "land"
+  },
+  {
+    "from": "munich",
+    "to": "burgundy",
+    "mode": "land"
+  },
+  {
+    "from": "munich",
+    "to": "kiel",
+    "mode": "land"
+  },
+  {
+    "from": "munich",
+    "to": "ruhr",
+    "mode": "land"
+  },
+  {
+    "from": "munich",
+    "to": "silesia",
+    "mode": "land"
+  },
+  {
+    "from": "munich",
+    "to": "tyrolia",
+    "mode": "land"
+  },
+  {
+    "from": "north_africa",
+    "to": "midatlantic_ocean",
+    "mode": "sea"
+  },
+  {
+    "from": "north_africa",
+    "to": "tunisia",
+    "mode": "both"
+  },
+  {
+    "from": "north_africa",
+    "to": "western_mediterranean",
+    "mode": "sea"
+  },
+  {
+    "from": "north_atlantic_ocean",
+    "to": "clyde",
+    "mode": "sea"
+  },
+  {
+    "from": "north_atlantic_ocean",
+    "to": "irish_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "north_atlantic_ocean",
+    "to": "liverpool",
+    "mode": "sea"
+  },
+  {
+    "from": "north_atlantic_ocean",
+    "to": "midatlantic_ocean",
+    "mode": "sea"
+  },
+  {
+    "from": "north_atlantic_ocean",
+    "to": "norwegian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "naples",
+    "to": "apulia",
+    "mode": "both"
+  },
+  {
+    "from": "naples",
+    "to": "ionian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "naples",
+    "to": "rome",
+    "mode": "both"
+  },
+  {
+    "from": "naples",
+    "to": "tyrrhenian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "norway",
+    "to": "barents_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "norway",
+    "to": "finland",
+    "mode": "land"
+  },
+  {
+    "from": "norway",
+    "to": "north_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "norway",
+    "to": "norwegian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "norway",
+    "to": "skagerrak",
+    "mode": "sea"
+  },
+  {
+    "from": "norway",
+    "to": "st_petersburg",
+    "mode": "land"
+  },
+  {
+    "from": "norway",
+    "to": "st_petersburg_nc",
+    "mode": "sea"
+  },
+  {
+    "from": "norway",
+    "to": "sweden",
+    "mode": "both"
+  },
+  {
+    "from": "north_sea",
+    "to": "belgium",
+    "mode": "sea"
+  },
+  {
+    "from": "north_sea",
+    "to": "denmark",
+    "mode": "sea"
+  },
+  {
+    "from": "north_sea",
+    "to": "edinburgh",
+    "mode": "sea"
+  },
+  {
+    "from": "north_sea",
+    "to": "english_channel",
+    "mode": "sea"
+  },
+  {
+    "from": "north_sea",
+    "to": "heligoland_bight",
+    "mode": "sea"
+  },
+  {
+    "from": "north_sea",
+    "to": "holland",
+    "mode": "sea"
+  },
+  {
+    "from": "north_sea",
+    "to": "london",
+    "mode": "sea"
+  },
+  {
+    "from": "north_sea",
+    "to": "norway",
+    "mode": "sea"
+  },
+  {
+    "from": "north_sea",
+    "to": "norwegian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "north_sea",
+    "to": "skagerrak",
+    "mode": "sea"
+  },
+  {
+    "from": "north_sea",
+    "to": "york",
+    "mode": "sea"
+  },
+  {
+    "from": "norwegian_sea",
+    "to": "barents_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "norwegian_sea",
+    "to": "clyde",
+    "mode": "sea"
+  },
+  {
+    "from": "norwegian_sea",
+    "to": "edinburgh",
+    "mode": "sea"
+  },
+  {
+    "from": "norwegian_sea",
+    "to": "north_atlantic_ocean",
+    "mode": "sea"
+  },
+  {
+    "from": "norwegian_sea",
+    "to": "norway",
+    "mode": "sea"
+  },
+  {
+    "from": "norwegian_sea",
+    "to": "north_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "paris",
+    "to": "brest",
+    "mode": "land"
+  },
+  {
+    "from": "paris",
+    "to": "burgundy",
+    "mode": "land"
+  },
+  {
+    "from": "paris",
+    "to": "gascony",
+    "mode": "land"
+  },
+  {
+    "from": "paris",
+    "to": "picardy",
+    "mode": "land"
+  },
+  {
+    "from": "picardy",
+    "to": "belgium",
+    "mode": "both"
+  },
+  {
+    "from": "picardy",
+    "to": "brest",
+    "mode": "both"
+  },
+  {
+    "from": "picardy",
+    "to": "burgundy",
+    "mode": "land"
+  },
+  {
+    "from": "picardy",
+    "to": "english_channel",
+    "mode": "sea"
+  },
+  {
+    "from": "picardy",
+    "to": "paris",
+    "mode": "land"
+  },
+  {
+    "from": "piedmont",
+    "to": "gulf_of_lyon",
+    "mode": "sea"
+  },
+  {
+    "from": "piedmont",
+    "to": "marseilles",
+    "mode": "both"
+  },
+  {
+    "from": "piedmont",
+    "to": "tuscany",
+    "mode": "both"
+  },
+  {
+    "from": "piedmont",
+    "to": "tyrolia",
+    "mode": "land"
+  },
+  {
+    "from": "piedmont",
+    "to": "venice",
+    "mode": "land"
+  },
+  {
+    "from": "portugal",
+    "to": "midatlantic_ocean",
+    "mode": "sea"
+  },
+  {
+    "from": "portugal",
+    "to": "spain",
+    "mode": "land"
+  },
+  {
+    "from": "portugal",
+    "to": "spain_nc",
+    "mode": "sea"
+  },
+  {
+    "from": "portugal",
+    "to": "spain_sc",
+    "mode": "sea"
+  },
+  {
+    "from": "prussia",
+    "to": "baltic_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "prussia",
+    "to": "berlin",
+    "mode": "both"
+  },
+  {
+    "from": "prussia",
+    "to": "livonia",
+    "mode": "both"
+  },
+  {
+    "from": "prussia",
+    "to": "silesia",
+    "mode": "land"
+  },
+  {
+    "from": "prussia",
+    "to": "warsaw",
+    "mode": "land"
+  },
+  {
+    "from": "rome",
+    "to": "apulia",
+    "mode": "land"
+  },
+  {
+    "from": "rome",
+    "to": "naples",
+    "mode": "both"
+  },
+  {
+    "from": "rome",
+    "to": "tuscany",
+    "mode": "both"
+  },
+  {
+    "from": "rome",
+    "to": "tyrrhenian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "rome",
+    "to": "venice",
+    "mode": "land"
+  },
+  {
+    "from": "ruhr",
+    "to": "belgium",
+    "mode": "land"
+  },
+  {
+    "from": "ruhr",
+    "to": "burgundy",
+    "mode": "land"
+  },
+  {
+    "from": "ruhr",
+    "to": "holland",
+    "mode": "land"
+  },
+  {
+    "from": "ruhr",
+    "to": "kiel",
+    "mode": "land"
+  },
+  {
+    "from": "ruhr",
+    "to": "munich",
+    "mode": "land"
+  },
+  {
+    "from": "rumania",
+    "to": "black_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "rumania",
+    "to": "budapest",
+    "mode": "land"
+  },
+  {
+    "from": "rumania",
+    "to": "bulgaria",
+    "mode": "land"
+  },
+  {
+    "from": "rumania",
+    "to": "bulgaria_ec",
+    "mode": "sea"
+  },
+  {
+    "from": "rumania",
+    "to": "galicia",
+    "mode": "land"
+  },
+  {
+    "from": "rumania",
+    "to": "serbia",
+    "mode": "land"
+  },
+  {
+    "from": "rumania",
+    "to": "sevastopol",
+    "mode": "both"
+  },
+  {
+    "from": "rumania",
+    "to": "ukraine",
+    "mode": "land"
+  },
+  {
+    "from": "serbia",
+    "to": "albania",
+    "mode": "land"
+  },
+  {
+    "from": "serbia",
+    "to": "budapest",
+    "mode": "land"
+  },
+  {
+    "from": "serbia",
+    "to": "bulgaria",
+    "mode": "land"
+  },
+  {
+    "from": "serbia",
+    "to": "greece",
+    "mode": "land"
+  },
+  {
+    "from": "serbia",
+    "to": "rumania",
+    "mode": "land"
+  },
+  {
+    "from": "serbia",
+    "to": "trieste",
+    "mode": "land"
+  },
+  {
+    "from": "sevastopol",
+    "to": "armenia",
+    "mode": "both"
+  },
+  {
+    "from": "sevastopol",
+    "to": "black_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "sevastopol",
+    "to": "moscow",
+    "mode": "land"
+  },
+  {
+    "from": "sevastopol",
+    "to": "rumania",
+    "mode": "both"
+  },
+  {
+    "from": "sevastopol",
+    "to": "ukraine",
+    "mode": "land"
+  },
+  {
+    "from": "silesia",
+    "to": "berlin",
+    "mode": "land"
+  },
+  {
+    "from": "silesia",
+    "to": "bohemia",
+    "mode": "land"
+  },
+  {
+    "from": "silesia",
+    "to": "galicia",
+    "mode": "land"
+  },
+  {
+    "from": "silesia",
+    "to": "munich",
+    "mode": "land"
+  },
+  {
+    "from": "silesia",
+    "to": "prussia",
+    "mode": "land"
+  },
+  {
+    "from": "silesia",
+    "to": "warsaw",
+    "mode": "land"
+  },
+  {
+    "from": "skagerrak",
+    "to": "denmark",
+    "mode": "sea"
+  },
+  {
+    "from": "skagerrak",
+    "to": "norway",
+    "mode": "sea"
+  },
+  {
+    "from": "skagerrak",
+    "to": "north_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "skagerrak",
+    "to": "sweden",
+    "mode": "sea"
+  },
+  {
+    "from": "smyrna",
+    "to": "aegean_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "smyrna",
+    "to": "ankara",
+    "mode": "land"
+  },
+  {
+    "from": "smyrna",
+    "to": "armenia",
+    "mode": "land"
+  },
+  {
+    "from": "smyrna",
+    "to": "constantinople",
+    "mode": "both"
+  },
+  {
+    "from": "smyrna",
+    "to": "eastern_mediterranean",
+    "mode": "sea"
+  },
+  {
+    "from": "smyrna",
+    "to": "syria",
+    "mode": "both"
+  },
+  {
+    "from": "spain",
+    "to": "gascony",
+    "mode": "land"
+  },
+  {
+    "from": "spain",
+    "to": "marseilles",
+    "mode": "land"
+  },
+  {
+    "from": "spain",
+    "to": "portugal",
+    "mode": "land"
+  },
+  {
+    "from": "spain_nc",
+    "to": "gascony",
+    "mode": "sea"
+  },
+  {
+    "from": "spain_nc",
+    "to": "midatlantic_ocean",
+    "mode": "sea"
+  },
+  {
+    "from": "spain_nc",
+    "to": "portugal",
+    "mode": "sea"
+  },
+  {
+    "from": "spain_sc",
+    "to": "gulf_of_lyon",
+    "mode": "sea"
+  },
+  {
+    "from": "spain_sc",
+    "to": "midatlantic_ocean",
+    "mode": "sea"
+  },
+  {
+    "from": "spain_sc",
+    "to": "marseilles",
+    "mode": "sea"
+  },
+  {
+    "from": "spain_sc",
+    "to": "portugal",
+    "mode": "sea"
+  },
+  {
+    "from": "spain_sc",
+    "to": "western_mediterranean",
+    "mode": "sea"
+  },
+  {
+    "from": "st_petersburg",
+    "to": "finland",
+    "mode": "land"
+  },
+  {
+    "from": "st_petersburg",
+    "to": "livonia",
+    "mode": "land"
+  },
+  {
+    "from": "st_petersburg",
+    "to": "moscow",
+    "mode": "land"
+  },
+  {
+    "from": "st_petersburg",
+    "to": "norway",
+    "mode": "land"
+  },
+  {
+    "from": "st_petersburg_nc",
+    "to": "barents_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "st_petersburg_nc",
+    "to": "norway",
+    "mode": "sea"
+  },
+  {
+    "from": "st_petersburg_sc",
+    "to": "gulf_of_bothnia",
+    "mode": "sea"
+  },
+  {
+    "from": "st_petersburg_sc",
+    "to": "finland",
+    "mode": "sea"
+  },
+  {
+    "from": "st_petersburg_sc",
+    "to": "livonia",
+    "mode": "sea"
+  },
+  {
+    "from": "sweden",
+    "to": "baltic_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "sweden",
+    "to": "gulf_of_bothnia",
+    "mode": "sea"
+  },
+  {
+    "from": "sweden",
+    "to": "denmark",
+    "mode": "both"
+  },
+  {
+    "from": "sweden",
+    "to": "finland",
+    "mode": "both"
+  },
+  {
+    "from": "sweden",
+    "to": "norway",
+    "mode": "both"
+  },
+  {
+    "from": "sweden",
+    "to": "skagerrak",
+    "mode": "sea"
+  },
+  {
+    "from": "syria",
+    "to": "armenia",
+    "mode": "land"
+  },
+  {
+    "from": "syria",
+    "to": "eastern_mediterranean",
+    "mode": "sea"
+  },
+  {
+    "from": "syria",
+    "to": "smyrna",
+    "mode": "both"
+  },
+  {
+    "from": "trieste",
+    "to": "adriatic_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "trieste",
+    "to": "albania",
+    "mode": "both"
+  },
+  {
+    "from": "trieste",
+    "to": "budapest",
+    "mode": "land"
+  },
+  {
+    "from": "trieste",
+    "to": "serbia",
+    "mode": "land"
+  },
+  {
+    "from": "trieste",
+    "to": "tyrolia",
+    "mode": "land"
+  },
+  {
+    "from": "trieste",
+    "to": "venice",
+    "mode": "both"
+  },
+  {
+    "from": "trieste",
+    "to": "vienna",
+    "mode": "land"
+  },
+  {
+    "from": "tunisia",
+    "to": "ionian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "tunisia",
+    "to": "north_africa",
+    "mode": "both"
+  },
+  {
+    "from": "tunisia",
+    "to": "tyrrhenian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "tunisia",
+    "to": "western_mediterranean",
+    "mode": "sea"
+  },
+  {
+    "from": "tuscany",
+    "to": "gulf_of_lyon",
+    "mode": "sea"
+  },
+  {
+    "from": "tuscany",
+    "to": "piedmont",
+    "mode": "both"
+  },
+  {
+    "from": "tuscany",
+    "to": "rome",
+    "mode": "both"
+  },
+  {
+    "from": "tuscany",
+    "to": "tyrrhenian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "tuscany",
+    "to": "venice",
+    "mode": "land"
+  },
+  {
+    "from": "tyrolia",
+    "to": "bohemia",
+    "mode": "land"
+  },
+  {
+    "from": "tyrolia",
+    "to": "munich",
+    "mode": "land"
+  },
+  {
+    "from": "tyrolia",
+    "to": "piedmont",
+    "mode": "land"
+  },
+  {
+    "from": "tyrolia",
+    "to": "trieste",
+    "mode": "land"
+  },
+  {
+    "from": "tyrolia",
+    "to": "venice",
+    "mode": "land"
+  },
+  {
+    "from": "tyrolia",
+    "to": "vienna",
+    "mode": "land"
+  },
+  {
+    "from": "tyrrhenian_sea",
+    "to": "ionian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "tyrrhenian_sea",
+    "to": "gulf_of_lyon",
+    "mode": "sea"
+  },
+  {
+    "from": "tyrrhenian_sea",
+    "to": "naples",
+    "mode": "sea"
+  },
+  {
+    "from": "tyrrhenian_sea",
+    "to": "rome",
+    "mode": "sea"
+  },
+  {
+    "from": "tyrrhenian_sea",
+    "to": "tunisia",
+    "mode": "sea"
+  },
+  {
+    "from": "tyrrhenian_sea",
+    "to": "tuscany",
+    "mode": "sea"
+  },
+  {
+    "from": "tyrrhenian_sea",
+    "to": "western_mediterranean",
+    "mode": "sea"
+  },
+  {
+    "from": "ukraine",
+    "to": "galicia",
+    "mode": "land"
+  },
+  {
+    "from": "ukraine",
+    "to": "moscow",
+    "mode": "land"
+  },
+  {
+    "from": "ukraine",
+    "to": "rumania",
+    "mode": "land"
+  },
+  {
+    "from": "ukraine",
+    "to": "sevastopol",
+    "mode": "land"
+  },
+  {
+    "from": "ukraine",
+    "to": "warsaw",
+    "mode": "land"
+  },
+  {
+    "from": "venice",
+    "to": "adriatic_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "venice",
+    "to": "apulia",
+    "mode": "both"
+  },
+  {
+    "from": "venice",
+    "to": "piedmont",
+    "mode": "land"
+  },
+  {
+    "from": "venice",
+    "to": "rome",
+    "mode": "land"
+  },
+  {
+    "from": "venice",
+    "to": "trieste",
+    "mode": "both"
+  },
+  {
+    "from": "venice",
+    "to": "tuscany",
+    "mode": "land"
+  },
+  {
+    "from": "venice",
+    "to": "tyrolia",
+    "mode": "land"
+  },
+  {
+    "from": "vienna",
+    "to": "bohemia",
+    "mode": "land"
+  },
+  {
+    "from": "vienna",
+    "to": "budapest",
+    "mode": "land"
+  },
+  {
+    "from": "vienna",
+    "to": "galicia",
+    "mode": "land"
+  },
+  {
+    "from": "vienna",
+    "to": "trieste",
+    "mode": "land"
+  },
+  {
+    "from": "vienna",
+    "to": "tyrolia",
+    "mode": "land"
+  },
+  {
+    "from": "wales",
+    "to": "english_channel",
+    "mode": "sea"
+  },
+  {
+    "from": "wales",
+    "to": "irish_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "wales",
+    "to": "london",
+    "mode": "both"
+  },
+  {
+    "from": "wales",
+    "to": "liverpool",
+    "mode": "both"
+  },
+  {
+    "from": "wales",
+    "to": "york",
+    "mode": "land"
+  },
+  {
+    "from": "warsaw",
+    "to": "galicia",
+    "mode": "land"
+  },
+  {
+    "from": "warsaw",
+    "to": "livonia",
+    "mode": "land"
+  },
+  {
+    "from": "warsaw",
+    "to": "moscow",
+    "mode": "land"
+  },
+  {
+    "from": "warsaw",
+    "to": "prussia",
+    "mode": "land"
+  },
+  {
+    "from": "warsaw",
+    "to": "silesia",
+    "mode": "land"
+  },
+  {
+    "from": "warsaw",
+    "to": "ukraine",
+    "mode": "land"
+  },
+  {
+    "from": "western_mediterranean",
+    "to": "gulf_of_lyon",
+    "mode": "sea"
+  },
+  {
+    "from": "western_mediterranean",
+    "to": "midatlantic_ocean",
+    "mode": "sea"
+  },
+  {
+    "from": "western_mediterranean",
+    "to": "north_africa",
+    "mode": "sea"
+  },
+  {
+    "from": "western_mediterranean",
+    "to": "spain_sc",
+    "mode": "sea"
+  },
+  {
+    "from": "western_mediterranean",
+    "to": "tunisia",
+    "mode": "sea"
+  },
+  {
+    "from": "western_mediterranean",
+    "to": "tyrrhenian_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "york",
+    "to": "edinburgh",
+    "mode": "both"
+  },
+  {
+    "from": "york",
+    "to": "london",
+    "mode": "both"
+  },
+  {
+    "from": "york",
+    "to": "liverpool",
+    "mode": "land"
+  },
+  {
+    "from": "york",
+    "to": "north_sea",
+    "mode": "sea"
+  },
+  {
+    "from": "york",
+    "to": "wales",
+    "mode": "land"
+  }
+]
