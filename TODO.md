@@ -125,7 +125,9 @@ This phased approach builds from the inside out, ensuring each layer rests on a 
 - **Comprehensive Testing**: 6 test functions covering basic scenarios and edge cases ✅
 
 ## 🎯 Current Focus
-### Phase 1.5: Multi-Pass Resolution Engine - Specialized Components
+### Phase 1.6: Integration & Testing
+
+**Phase 1.5 COMPLETED** ✅ - Multi-Pass Resolution Engine with all core Diplomacy rules implemented
 
 ## 🏗️ Hybrid Resolution Architecture Decision
 
@@ -311,17 +313,22 @@ This approach gives us the performance characteristics we need while maintaining
 - Integration with ResolutionEngine.processConvoys() ✅
 - Architectural refactor: eliminated string re-parsing with structured data ✅
 
-#### Task 1.5.3: Support System  
-**File**: `backend/internal/game/resolution/support.go` (new)
-- Support cutting logic using conflict maps
-- Strength calculation with typed support relationships
-- ResolutionEngine.processSupports() and cutSupports() methods
+#### Task 1.5.3: Support System ✅
+**File**: `backend/internal/game/resolution/engine.go` ✅
+- Support cutting logic with self-attack rule prevention ✅
+- Strength calculation with typed support relationships ✅
+- Multi-pass convergence support for convoy-support interaction ✅
+- Comprehensive testing including critical Diplomacy rules ✅
 
-#### Task 1.5.4: Conflict Resolution
-**File**: `backend/internal/game/resolution/conflict.go` (new)
-- Move conflict detection using territory->indices maps
-- Bouncing and dislodgement logic with OrderOutcome updates
-- ResolutionEngine.resolveConflicts() and detectDislodgements()
+#### Task 1.5.4: Dislodgement Detection & Friendly Unit Protection ✅
+**File**: `backend/internal/game/resolution/engine.go` ✅
+- Implement proper dislodgement detection logic ✅
+- **Implement friendly unit protection rule in resolveConflicts()** ✅
+  - Friendly units cannot dislodge each other but can bounce enemy attacks ✅
+  - Critical Diplomacy rule now correctly implemented ✅
+- Handle unit displacement when losing conflicts ✅
+- Integration with existing conflict resolution system ✅
+- Add comprehensive tests for dislodgement and friendly protection scenarios ✅
 
 #### Task 1.5.5: Main Resolution Engine ✅
 **File**: `backend/internal/game/resolution/engine.go` ✅
@@ -347,6 +354,7 @@ This approach gives us the performance characteristics we need while maintaining
 - Diplomacy Adjudicator Test Cases
 - Automated compliance testing
 - Regression test suite
+- **NOTE**: Re-evaluate DATC v3.0 test extraction and automation for comprehensive test coverage
 
 ---
 
@@ -387,26 +395,29 @@ The semantic validator should work with **parsed orders**, not raw strings.
 - ✅ Semantic validator can be designed knowing exact `Order` structure
 
 ## Next Immediate Task
-**Task 1.5.3**: Implement Support System in `backend/internal/game/resolution/support.go`
+**Task 1.6.1**: Full Pipeline Integration - End-to-end testing and multi-turn game progression
 
-**Rationale**: With convoy path discovery complete and architectural refactor finished, we need to implement the support cutting logic. This is crucial for proper Diplomacy resolution:
-1. Support cutting when a supporting unit is attacked
-2. Strength calculation with typed support relationships  
-3. Integration with ResolutionEngine.processSupports() and cutSupports() methods
+**What Was Implemented**:
+- ✅ **Friendly unit protection rule** - Critical Diplomacy rule now correctly implemented
+- ✅ **Proper dislodgement detection** - Units are correctly dislodged by successful attacks
+- ✅ **Enhanced conflict resolution** - Handles complex scenarios with friendly protection
+- ✅ **Comprehensive testing** - 3 new test files with 8 test scenarios covering edge cases
+- ✅ **Integration verified** - All existing tests still pass (13 total test functions)
 
-**Implementation Approach**: 
-- Create support.go with support cutting logic using conflict maps
-- Implement strength calculation with typed support relationships
-- Replace the stub ResolutionEngine.processSupports() and cutSupports() methods
-- Add comprehensive tests for support scenarios
+**Key Features Added**:
+- `hasFriendlyProtection()` method implementing the critical Diplomacy rule
+- Enhanced `detectDislodgements()` with proper logic for successful attacks
+- Fixed `NewTerritory` initialization for Move orders (was a critical bug)
+- Comprehensive test coverage for friendly protection and dislodgement scenarios
 
 **Current Status**: 
+- ✅ **Phase 1.5 COMPLETE** - Multi-Pass Resolution Engine with all core Diplomacy rules
 - ✅ Convoy system complete with ProvinceCoast value objects
-- ✅ Multi-pass resolution engine working with convoy integration
-- ✅ All tests passing (10 test functions)
-- 🎯 Ready for support system implementation
-
-**After Support System**: Implement advanced conflict resolution and dislodgement detection.
+- ✅ Support system complete with self-attack rule and multi-pass convergence  
+- ✅ Conflict resolution complete with friendly protection and dislodgement
+- ✅ Multi-pass resolution engine working with all systems integrated
+- ✅ All tests passing with comprehensive coverage
+- 🎯 **Ready for Phase 1.6** - Integration & Testing
 
 ---
 
