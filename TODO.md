@@ -308,10 +308,10 @@ internal/ Packages
 - internal/game/loader/interface.go: Defines the MapLoader interface, abstracting how maps are loaded.
 - internal/game/loader/json_loader.go: An implementation of MapLoader that loads the classic map from JSON files.
 - internal/game/validation/: A sub-package implementing the complete validation pipeline.
-- internal/game/validation/syntax.go: Parses and normalizes raw order strings into structured orders.
-- internal/game/validation/semantic.go: Validates orders against game rules and current state.
-- internal/game/validation/orchestrator.go: Coordinates the syntax → semantic → resolution pipeline.
-- internal/game/validation/types.go: Validation result types and error handling.
+- internal/game/validation/lexer.go: Tokenizes raw order strings with normalization and error detection.
+- internal/game/validation/parser.go: Comprehensive order parsing system with all order types and phase-aware registry.
+- internal/game/validation/semantic.go: (Future) Validates parsed orders against game rules and current state.
+- internal/game/validation/types.go: Token types, validation result types, and error handling.
 - internal/game/validation/*_test.go: Comprehensive unit tests for all validation components.
 - internal/game/resolution/: A sub-package implementing the multi-pass resolution engine.
 - internal/game/resolution/types.go: SoA data structures and resolution maps for performance.
