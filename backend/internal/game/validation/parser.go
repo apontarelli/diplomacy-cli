@@ -3,6 +3,7 @@ package validation
 import (
 	"diplomacy-cli/backend/internal/game"
 	"fmt"
+	"strings"
 )
 
 type OrderParserFunc func(tokens []Token, resolver *ProvinceResolver) (*game.Order, error)
@@ -16,8 +17,8 @@ type OrderParserRegistry struct {
 func NewOrderParserRegistry() *OrderParserRegistry {
 	return &OrderParserRegistry{
 		MovementParsers: []OrderParserFunc{
-			parseSupportMove,
 			parseConvoy,
+			parseSupportMove,
 			parseSupportHold,
 			parseMove,
 			parseHold,
@@ -33,6 +34,9 @@ func NewOrderParserRegistry() *OrderParserRegistry {
 }
 
 func (opr *OrderParserRegistry) ParseOrder(tokens []Token, phase game.Phase, resolver *ProvinceResolver) (*game.Order, error) {
+	// Combine adjacent province tokens to handle multi-word province names
+	tokens = combineProvinceTokens(tokens)
+
 	var parsers []OrderParserFunc
 
 	switch phase {
@@ -46,16 +50,56 @@ func (opr *OrderParserRegistry) ParseOrder(tokens []Token, phase game.Phase, res
 		return nil, fmt.Errorf("unknown phase: %s", phase)
 	}
 
-	var lastError error
+	var errors []error
 	for _, parser := range parsers {
 		order, err := parser(tokens, resolver)
 		if err == nil {
 			return order, nil
 		}
-		lastError = err
+		errors = append(errors, err)
 	}
 
-	return nil, fmt.Errorf("failed to parse order: %v", lastError)
+	// Return the most informative error
+	bestError := selectBestError(errors)
+	return nil, fmt.Errorf("failed to parse order: %v", bestError)
+}
+
+// combineProvinceTokens combines adjacent PROVINCE tokens to handle multi-word province names
+func combineProvinceTokens(tokens []Token) []Token {
+	if len(tokens) <= 1 {
+		return tokens
+	}
+
+	var result []Token
+	i := 0
+
+	for i < len(tokens) {
+		if tokens[i].Type == PROVINCE {
+			// Start combining province tokens
+			combined := tokens[i].Value
+			j := i + 1
+
+			// Combine consecutive PROVINCE tokens
+			for j < len(tokens) && tokens[j].Type == PROVINCE {
+				combined += " " + tokens[j].Value
+				j++
+			}
+
+			// Create a new combined token
+			result = append(result, Token{
+				Type:     PROVINCE,
+				Value:    combined,
+				Position: tokens[i].Position,
+			})
+			i = j
+		} else {
+			// Non-province token, add as-is
+			result = append(result, tokens[i])
+			i++
+		}
+	}
+
+	return result
 }
 
 func parseMove(tokens []Token, resolver *ProvinceResolver) (*game.Order, error) {
@@ -262,10 +306,23 @@ func parseConvoy(tokens []Token, resolver *ProvinceResolver) (*game.Order, error
 	var unitType game.UnitType
 	var fromToken, convoyFromToken, convoyToToken Token
 
-	if len(tokens) == 6 && tokens[0].Type == UNIT_TYPE && tokens[1].Type == PROVINCE &&
+	if len(tokens) == 7 && tokens[0].Type == UNIT_TYPE && tokens[1].Type == PROVINCE &&
+		tokens[2].Type == CONVOY && tokens[3].Type == UNIT_TYPE && tokens[4].Type == PROVINCE &&
+		tokens[5].Type == DASH && tokens[6].Type == PROVINCE {
+		// DATC format: "F North Sea Convoys A Yorkshire - Yorkshire"
+		switch tokens[0].Value {
+		case "fleet", "f":
+			unitType = game.Fleet
+		default:
+			return nil, fmt.Errorf("only fleets can convoy, got: %s", tokens[0].Value)
+		}
+		fromToken = tokens[1]
+		convoyFromToken = tokens[4]
+		convoyToToken = tokens[6]
+	} else if len(tokens) == 6 && tokens[0].Type == UNIT_TYPE && tokens[1].Type == PROVINCE &&
 		tokens[2].Type == CONVOY && tokens[3].Type == PROVINCE &&
 		tokens[4].Type == DASH && tokens[5].Type == PROVINCE {
-
+		// Standard format: "F North Sea C Yorkshire - Yorkshire"
 		switch tokens[0].Value {
 		case "fleet", "f":
 			unitType = game.Fleet
@@ -278,6 +335,7 @@ func parseConvoy(tokens []Token, resolver *ProvinceResolver) (*game.Order, error
 	} else if len(tokens) == 5 && tokens[0].Type == PROVINCE &&
 		tokens[1].Type == CONVOY && tokens[2].Type == PROVINCE &&
 		tokens[3].Type == DASH && tokens[4].Type == PROVINCE {
+		// No unit type format: "North Sea C Yorkshire - Yorkshire"
 		fromToken = tokens[0]
 		convoyFromToken = tokens[2]
 		convoyToToken = tokens[4]
@@ -463,4 +521,32 @@ func areAdjacent(fromProv *game.Province, toProvince, fromCoast, toCoast string)
 	}
 
 	return false
+}
+
+// selectBestError returns the most informative error from a list of parser errors
+func selectBestError(errors []error) error {
+	if len(errors) == 0 {
+		return fmt.Errorf("no errors to select from")
+	}
+
+	// Priority order for error types (most informative first)
+	priorities := []string{
+		"not adjacent",      // Adjacency errors are most informative
+		"does not exist",    // Province existence errors
+		"invalid unit type", // Unit type errors
+		"invalid province",  // Province validation errors
+		"invalid.*format",   // Format errors are least informative
+	}
+
+	// Find the highest priority error
+	for _, priority := range priorities {
+		for _, err := range errors {
+			if strings.Contains(err.Error(), priority) {
+				return err
+			}
+		}
+	}
+
+	// If no priority match, return the first error
+	return errors[0]
 }

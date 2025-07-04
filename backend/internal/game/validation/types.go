@@ -63,6 +63,9 @@ func NewProvinceResolver(board *game.Board) *ProvinceResolver {
 			resolver.shortcuts[province.ShortCode] = name
 		}
 		resolver.shortcuts[name] = name
+		if province.DisplayName != "" {
+			resolver.shortcuts[strings.ToLower(province.DisplayName)] = name
+		}
 	}
 
 	return resolver
@@ -79,6 +82,11 @@ func (pr *ProvinceResolver) ResolveProvince(identifier string) (string, bool) {
 	}
 
 	if canonical, exists := pr.shortcuts[identifier]; exists {
+		return canonical, true
+	}
+
+	normalized := strings.ToLower(identifier)
+	if canonical, exists := pr.shortcuts[normalized]; exists {
 		return canonical, true
 	}
 
@@ -107,11 +115,12 @@ func (pr *ProvinceResolver) ParseCoast(identifier string) (string, string, bool)
 
 			province := pr.provinces[canonical]
 			if province != nil {
-				if _, hasCoast := province.CoastNeighbors[coastPart]; hasCoast {
-					return canonical, coastPart, true
+				// Normalize coast part to lowercase for comparison
+				normalizedCoast := strings.ToLower(coastPart)
+				if _, hasCoast := province.CoastNeighbors[normalizedCoast]; hasCoast {
+					return canonical, normalizedCoast, true
 				}
 			}
-
 			return "", "", false
 		}
 	}
