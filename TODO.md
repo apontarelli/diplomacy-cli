@@ -304,11 +304,12 @@ This approach gives us the performance characteristics we need while maintaining
 - ResolvedOrder and OrderOutcome types ✅
 - Lookup map types and structures ✅
 
-#### Task 1.5.2: Convoy Path Discovery
-**File**: `backend/internal/game/resolution/convoy.go` (new)
-- BFS-based convoy path finding with ConvoyKey caching
-- Convoy chain validation using engine state
-- Integration with ResolutionEngine.processConvoys()
+#### Task 1.5.2: Convoy Path Discovery ✅
+**File**: `backend/internal/game/resolution/convoy.go` ✅
+- BFS-based convoy path finding with ProvinceCoast value objects ✅
+- Convoy chain validation using engine state ✅
+- Integration with ResolutionEngine.processConvoys() ✅
+- Architectural refactor: eliminated string re-parsing with structured data ✅
 
 #### Task 1.5.3: Support System  
 **File**: `backend/internal/game/resolution/support.go` (new)
@@ -386,22 +387,26 @@ The semantic validator should work with **parsed orders**, not raw strings.
 - ✅ Semantic validator can be designed knowing exact `Order` structure
 
 ## Next Immediate Task
-**Task 1.5.2**: Implement Convoy Path Discovery in `backend/internal/game/resolution/convoy.go`
+**Task 1.5.3**: Implement Support System in `backend/internal/game/resolution/support.go`
 
-**Rationale**: With the resolution engine foundation complete, we need to implement the convoy path discovery system. This is the most complex part of Diplomacy resolution and the key reason for the multi-pass algorithm:
-1. Convoy paths can change when convoy fleets get dislodged
-2. BFS-based pathfinding through available convoy fleets
-3. ConvoyKey caching for performance optimization
-4. Integration with the existing ResolutionEngine.processConvoys() method
+**Rationale**: With convoy path discovery complete and architectural refactor finished, we need to implement the support cutting logic. This is crucial for proper Diplomacy resolution:
+1. Support cutting when a supporting unit is attacked
+2. Strength calculation with typed support relationships  
+3. Integration with ResolutionEngine.processSupports() and cutSupports() methods
 
 **Implementation Approach**: 
-- Create convoy.go with BFS pathfinding algorithm from Python PoC
-- Implement ConvoyKey-based caching system
-- Handle convoy chain validation and disruption detection
-- Replace the stub ResolutionEngine.processConvoys() method
-- Add comprehensive tests for convoy scenarios
+- Create support.go with support cutting logic using conflict maps
+- Implement strength calculation with typed support relationships
+- Replace the stub ResolutionEngine.processSupports() and cutSupports() methods
+- Add comprehensive tests for support scenarios
 
-**After Convoy Discovery**: Implement support cutting logic and advanced conflict resolution.
+**Current Status**: 
+- ✅ Convoy system complete with ProvinceCoast value objects
+- ✅ Multi-pass resolution engine working with convoy integration
+- ✅ All tests passing (10 test functions)
+- 🎯 Ready for support system implementation
+
+**After Support System**: Implement advanced conflict resolution and dislodgement detection.
 
 ---
 

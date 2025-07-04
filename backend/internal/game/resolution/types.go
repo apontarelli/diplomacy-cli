@@ -39,9 +39,36 @@ type OrderOutcome struct {
 	FailureReason string
 }
 
+type ProvinceCoast struct {
+	Province string
+	Coast    string
+}
+
+func NewProvinceCoast(province, coast string) ProvinceCoast {
+	return ProvinceCoast{
+		Province: province,
+		Coast:    coast,
+	}
+}
+
+func (pc ProvinceCoast) String() string {
+	if pc.Coast == "" {
+		return pc.Province
+	}
+	return pc.Province + "/" + pc.Coast
+}
+
+func (pc ProvinceCoast) IsEmpty() bool {
+	return pc.Province == ""
+}
+
+func (pc ProvinceCoast) HasCoast() bool {
+	return pc.Coast != ""
+}
+
 type ConvoyKey struct {
-	Origin      string
-	Destination string
+	Origin      ProvinceCoast
+	Destination ProvinceCoast
 }
 
 type ResolutionEngine struct {
@@ -51,7 +78,7 @@ type ResolutionEngine struct {
 	strength          []int
 	conflicts         map[string][]int
 	supports          map[string][]int
-	convoys           map[ConvoyKey][]string
+	convoys           map[ConvoyKey][]ProvinceCoast
 	ordersByUnit      map[string]int
 	ordersByTerritory map[string]int
 }
@@ -85,7 +112,7 @@ func NewResolutionEngine(orders []*game.Order, board *game.Board) *ResolutionEng
 		strength:          strength,
 		conflicts:         make(map[string][]int),
 		supports:          make(map[string][]int),
-		convoys:           make(map[ConvoyKey][]string),
+		convoys:           make(map[ConvoyKey][]ProvinceCoast),
 		ordersByUnit:      make(map[string]int),
 		ordersByTerritory: make(map[string]int),
 	}

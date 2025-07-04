@@ -104,13 +104,20 @@ func (re *ResolutionEngine) processMoves() {
 		isAdjacent := re.IsAdjacent(order.OrigTerritory, destination, order.UnitType)
 
 		if order.UnitType == game.Army {
-			convoyKey := ConvoyKey{Origin: order.OrigTerritory, Destination: destination}
-			hasConvoyPath := len(re.convoys[convoyKey]) > 0
+			origin := NewProvinceCoast(order.OrigTerritory, order.FromCoast)
+			dest := NewProvinceCoast(destination, order.ToCoast)
+			convoyKey := ConvoyKey{Origin: origin, Destination: dest}
+			convoyPath, hasConvoyPath := re.convoys[convoyKey]
 
 			if isAdjacent || hasConvoyPath {
 				order.NewTerritory = destination
 				if hasConvoyPath {
-					re.outcomes[i].ConvoyPath = re.convoys[convoyKey]
+					// Convert ProvinceCoast path to string path for outcome
+					stringPath := make([]string, len(convoyPath))
+					for j, pc := range convoyPath {
+						stringPath[j] = pc.String()
+					}
+					re.outcomes[i].ConvoyPath = stringPath
 				}
 			} else {
 				re.outcomes[i].Result = MoveNoConvoy
@@ -185,17 +192,17 @@ func (re *ResolutionEngine) assignFinalOutcomes() {
 	}
 }
 
-func (re *ResolutionEngine) copyConvoyPaths() map[ConvoyKey][]string {
-	result := make(map[ConvoyKey][]string)
+func (re *ResolutionEngine) copyConvoyPaths() map[ConvoyKey][]ProvinceCoast {
+	result := make(map[ConvoyKey][]ProvinceCoast)
 	for key, path := range re.convoys {
-		pathCopy := make([]string, len(path))
+		pathCopy := make([]ProvinceCoast, len(path))
 		copy(pathCopy, path)
 		result[key] = pathCopy
 	}
 	return result
 }
 
-func (re *ResolutionEngine) convoyPathsEqual(a, b map[ConvoyKey][]string) bool {
+func (re *ResolutionEngine) convoyPathsEqual(a, b map[ConvoyKey][]ProvinceCoast) bool {
 	if len(a) != len(b) {
 		return false
 	}
@@ -206,18 +213,14 @@ func (re *ResolutionEngine) convoyPathsEqual(a, b map[ConvoyKey][]string) bool {
 			return false
 		}
 
-		for i, territory := range pathA {
-			if territory != pathB[i] {
+		for i, pc := range pathA {
+			if pc != pathB[i] {
 				return false
 			}
 		}
 	}
 
 	return true
-}
-
-func (re *ResolutionEngine) processConvoys() {
-	re.convoys = make(map[ConvoyKey][]string)
 }
 
 func (re *ResolutionEngine) cutSupports() {
