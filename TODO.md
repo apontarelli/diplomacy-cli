@@ -119,36 +119,207 @@ This phased approach builds from the inside out, ensuring each layer rests on a 
 ## 🎯 Current Focus
 ### Phase 1.5: Multi-Pass Resolution Engine
 
+## 🏗️ Hybrid Resolution Architecture Decision
+
+After analyzing the Python PoC's Structure of Arrays (SoA) approach and Go's idioms, we've decided on a **Hybrid Approach** that combines the performance benefits of data-oriented design with Go's type safety and maintainability.
+
+### Why Not Pure SoA in Go?
+
+**Problems with Direct SoA Translation:**
+- **Type Safety Loss**: 18+ parallel arrays lose compile-time length consistency guarantees
+- **Verbose Code**: Go lacks Python's dynamic typing and dataclass convenience
+- **Error Prone**: Manual index synchronization across arrays
+- **Maintenance Burden**: Adding fields requires updating multiple arrays and all functions
+
+**Example of Problematic Pure SoA:**
+```go
+// ❌ Pure SoA - Error prone and verbose
+type ResolutionSoA struct {
+    UnitID           []string
+    OwnerID          []string  
+    UnitType         []UnitType
+    OrigTerritory    []string
+    OrderType        []OrderType
+    MoveDestination  []string
+    SupportOrigin    []string
+    // ... 12 more parallel arrays
+}
+```
+
+### ✅ Recommended Hybrid Approach
+
+**Core Principle**: Use idiomatic Go structs with performance-conscious design patterns from data-oriented programming.
+
+#### 1. Resolution Engine Structure
+```go
+type ResolutionEngine struct {
+    // Input data - slice of structs for type safety
+    orders    []*ResolvedOrder
+    
+    // Working data - separate arrays for performance-critical operations
+    outcomes  []OrderOutcome
+    strength  []int
+    
+    // Lookup maps - efficient access patterns
+    conflicts map[string][]int        // territory -> order indices
+    supports  map[string][]int        // supported unit -> supporter indices
+    convoys   map[ConvoyKey][]string  // convoy path cache
+}
+
+type ResolvedOrder struct {
+    *Order                    // Embed parsed order
+    Index         int         // Position in resolution arrays
+    OrigTerritory string      // Normalized territory name
+    NewTerritory  string      // Resolved destination
+}
+
+type OrderOutcome struct {
+    Result       OrderResult
+    Dislodged    bool
+    SupportCut   bool
+    ConvoyPath   []string
+    Strength     int
+}
+```
+
+#### 2. Performance-Critical Hot Paths
+For operations that iterate over all orders (strength calculation, conflict detection), we use array-based processing:
+
+```go
+// Hot path: Calculate strength for all orders
+func (re *ResolutionEngine) calculateStrength() {
+    // Reset strength to base value
+    for i := range re.strength {
+        re.strength[i] = 1
+    }
+    
+    // Add support strength in batch
+    for supportedUnit, supporterIndices := range re.supports {
+        if supportedIdx := re.findOrderIndex(supportedUnit); supportedIdx != -1 {
+            for _, supporterIdx := range supporterIndices {
+                if !re.outcomes[supporterIdx].SupportCut {
+                    re.strength[supportedIdx]++
+                }
+            }
+        }
+    }
+}
+```
+
+#### 3. Type-Safe Lookup Maps
+Instead of error-prone parallel array indexing, use strongly-typed maps:
+
+```go
+type ConvoyKey struct {
+    Origin      string
+    Destination string
+}
+
+// Efficient lookups without index synchronization issues
+func (re *ResolutionEngine) buildLookupMaps() {
+    re.conflicts = make(map[string][]int)
+    re.supports = make(map[string][]int)
+    
+    for i, order := range re.orders {
+        // Territory conflicts
+        dest := order.NewTerritory
+        re.conflicts[dest] = append(re.conflicts[dest], i)
+        
+        // Support relationships
+        if order.Type == Support {
+            target := order.SupportTarget
+            re.supports[target] = append(re.supports[target], i)
+        }
+    }
+}
+```
+
+### Benefits of Hybrid Approach
+
+1. **Type Safety**: Compiler catches mismatched data relationships
+2. **Performance**: Cache-friendly arrays for hot paths, efficient maps for lookups
+3. **Maintainability**: Clear data relationships, easy to extend
+4. **Go Idioms**: Follows Go conventions and patterns
+5. **Debugging**: Easier to inspect and debug than parallel arrays
+6. **Testing**: Can test individual components in isolation
+
+### Implementation Strategy
+
+#### Phase 1.5.1: Core Types and Engine Structure
+```go
+// File: backend/internal/game/resolution/types.go
+type ResolutionEngine struct { /* ... */ }
+type ResolvedOrder struct { /* ... */ }
+type OrderOutcome struct { /* ... */ }
+type ConvoyKey struct { /* ... */ }
+
+// File: backend/internal/game/resolution/engine.go  
+func NewResolutionEngine(orders []*Order) *ResolutionEngine
+func (re *ResolutionEngine) Resolve() error
+func (re *ResolutionEngine) GetResults() []OrderOutcome
+```
+
+#### Phase 1.5.2: Specialized Components
+Each component operates on the shared engine state but focuses on specific concerns:
+
+```go
+// File: backend/internal/game/resolution/convoy.go
+func (re *ResolutionEngine) processConvoys()
+func (re *ResolutionEngine) findConvoyPath(origin, dest string) []string
+
+// File: backend/internal/game/resolution/support.go  
+func (re *ResolutionEngine) processSupports()
+func (re *ResolutionEngine) cutSupports()
+
+// File: backend/internal/game/resolution/conflict.go
+func (re *ResolutionEngine) resolveConflicts()
+func (re *ResolutionEngine) detectDislodgements()
+```
+
+### Migration from Python PoC
+
+The hybrid approach preserves the Python PoC's algorithmic insights while adapting to Go's strengths:
+
+| Python PoC Concept | Go Hybrid Implementation |
+|-------------------|-------------------------|
+| `ResolutionSoA` parallel arrays | `ResolutionEngine` with typed structs + performance arrays |
+| `ResolutionMaps` lookups | Strongly-typed maps (`conflicts`, `supports`, `convoys`) |
+| Index-based operations | Method calls on engine with clear data relationships |
+| Multi-pass algorithm | Same algorithm, cleaner implementation |
+| Convoy path flattening | `ConvoyKey` map with cached paths |
+
+This approach gives us the performance characteristics we need while maintaining Go's type safety and readability advantages.
+
 #### Task 1.5.1: Resolution Data Structures
 **File**: `backend/internal/game/resolution/types.go` (new)
-- Structure of Arrays (SoA) for performance
-- ResolutionSoA with parallel arrays
-- ResolutionMaps for efficient lookups
+- ResolutionEngine with hybrid approach
+- ResolvedOrder and OrderOutcome types
+- Lookup map types and structures
 
 #### Task 1.5.2: Convoy Path Discovery
 **File**: `backend/internal/game/resolution/convoy.go` (new)
-- BFS-based convoy path finding
-- Convoy chain validation
-- Integration with move resolution
+- BFS-based convoy path finding with ConvoyKey caching
+- Convoy chain validation using engine state
+- Integration with ResolutionEngine.processConvoys()
 
-#### Task 1.5.3: Support System
+#### Task 1.5.3: Support System  
 **File**: `backend/internal/game/resolution/support.go` (new)
-- Support cutting logic
-- Strength calculation
-- Support effectiveness determination
+- Support cutting logic using conflict maps
+- Strength calculation with typed support relationships
+- ResolutionEngine.processSupports() and cutSupports() methods
 
 #### Task 1.5.4: Conflict Resolution
 **File**: `backend/internal/game/resolution/conflict.go` (new)
-- Move conflict detection
-- Bouncing and dislodgement logic
-- Final territory assignment
+- Move conflict detection using territory->indices maps
+- Bouncing and dislodgement logic with OrderOutcome updates
+- ResolutionEngine.resolveConflicts() and detectDislodgements()
 
 #### Task 1.5.5: Main Resolution Engine
 **File**: `backend/internal/game/resolution/engine.go` (new)
-- Multi-pass iterative algorithm
-- Convoy path stabilization loop
-- Integration of all components
-- Final outcome assignment
+- Multi-pass iterative algorithm with hybrid data structures
+- Convoy path stabilization loop using ConvoyKey maps
+- NewResolutionEngine() constructor and Resolve() orchestrator
+- GetResults() for final OrderOutcome extraction
 
 #### Task 1.5.6: Resolution Tests
 **Files**: `backend/internal/game/resolution/*_test.go`
@@ -207,21 +378,23 @@ The semantic validator should work with **parsed orders**, not raw strings.
 - ✅ Semantic validator can be designed knowing exact `Order` structure
 
 ## Next Immediate Task
-**Task 1.5.1**: Implement Resolution Data Structures in `backend/internal/game/resolution/types.go`
+**Task 1.5.1**: Implement Hybrid Resolution Data Structures in `backend/internal/game/resolution/types.go`
 
-**Rationale**: With parsing complete, we need the resolution engine foundation. The Structure of Arrays (SoA) pattern from the Python PoC enables:
-1. High-performance resolution with cache-friendly data access
-2. Efficient batch operations on orders
-3. Clean separation between resolution data and domain objects
-4. Foundation for the multi-pass iterative algorithm
+**Rationale**: With parsing complete, we need the resolution engine foundation. The Hybrid approach combines the Python PoC's performance insights with Go's type safety:
+1. Type-safe structs prevent index synchronization errors
+2. Performance arrays for hot paths (strength calculation, conflict detection)
+3. Efficient lookup maps replace error-prone parallel array indexing
+4. Clean integration with existing Order and GameState types
+5. Maintainable and extensible architecture
 
 **Implementation Approach**: 
-- Create ResolutionSoA with parallel arrays for orders, outcomes, strengths
-- Implement ResolutionMaps for efficient lookups by province/unit
-- Design for the multi-pass convoy discovery algorithm
-- Ensure compatibility with existing Order and GameState types
+- Create ResolutionEngine with hybrid data structures
+- Define ResolvedOrder and OrderOutcome types for type safety
+- Implement lookup maps (conflicts, supports, convoys) for efficient access
+- Design for multi-pass algorithm with clear data flow
+- Ensure seamless integration with existing validation pipeline
 
-**After Resolution Types**: Implement convoy path discovery, support system, and conflict resolution components.
+**After Resolution Types**: Implement convoy discovery, support processing, and conflict resolution using the hybrid engine.
 
 ---
 
