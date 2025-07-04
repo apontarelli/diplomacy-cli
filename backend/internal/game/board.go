@@ -18,7 +18,6 @@ const (
 
 type Nation string
 
-// Hard-coded nations for the classic ruleset. To be replaced with dynamic config
 const (
 	Austria Nation = "austria"
 	England Nation = "england"

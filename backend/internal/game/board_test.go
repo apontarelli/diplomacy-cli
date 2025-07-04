@@ -201,14 +201,12 @@ func TestPlaceUnit_OccupiedProvince(t *testing.T) {
 	}
 	board.AddProvince(province)
 
-	// Place first unit
 	unit1 := &Unit{Type: Army, Owner: France, Province: "paris"}
 	err := board.PlaceUnit(unit1)
 	if err != nil {
 		t.Fatalf("Failed to place first unit: %v", err)
 	}
 
-	// Try to place second unit in same province
 	unit2 := &Unit{Type: Army, Owner: Germany, Province: "paris"}
 	err = board.PlaceUnit(unit2)
 	if err == nil {

@@ -96,7 +96,6 @@ func TestAddRawOrder(t *testing.T) {
 		t.Errorf("Expected 'A Par-Bur', got '%s'", orders[0])
 	}
 
-	// Add second order
 	err = state.AddRawOrder(France, "F Bre-MAO")
 	if err != nil {
 		t.Errorf("AddRawOrder() failed: %v", err)
@@ -107,7 +106,6 @@ func TestAddRawOrder(t *testing.T) {
 		t.Errorf("Expected 2 orders, got %d", len(orders))
 	}
 
-	// Add order for different nation
 	err = state.AddRawOrder(Germany, "A Ber-Kie")
 	if err != nil {
 		t.Errorf("AddRawOrder() failed: %v", err)
@@ -118,7 +116,6 @@ func TestAddRawOrder(t *testing.T) {
 		t.Errorf("Expected 1 German order, got %d", len(germanOrders))
 	}
 
-	// France should still have 2 orders
 	frenchOrders := state.GetRawOrdersForNation(France)
 	if len(frenchOrders) != 2 {
 		t.Errorf("Expected 2 French orders, got %d", len(frenchOrders))
@@ -147,7 +144,6 @@ func TestAddPlayer(t *testing.T) {
 		t.Errorf("Expected player1 for France, got '%s'", game.Players[France])
 	}
 
-	// Add another player
 	err = game.AddPlayer(Germany, "player2")
 	if err != nil {
 		t.Errorf("AddPlayer() failed: %v", err)
@@ -233,7 +229,6 @@ func TestAdvanceToNextPhase(t *testing.T) {
 	board := NewBoard()
 	state := NewGameState(board, SpringMovement, 1901)
 
-	// Add some orders to verify they get cleared
 	state.AddRawOrder(France, "A Par-Bur")
 	state.AddRawOrder(Germany, "A Ber-Kie")
 
@@ -319,7 +314,6 @@ func TestAdvanceToNextPhase(t *testing.T) {
 				t.Errorf("Expected year %d, got %d", tt.expectedYear, state.Year)
 			}
 
-			// Verify orders are cleared
 			if len(state.RawOrders) != 0 {
 				t.Error("RawOrders should be cleared after phase advance")
 			}
@@ -330,7 +324,6 @@ func TestAdvanceToNextPhase(t *testing.T) {
 func TestGameStateClone(t *testing.T) {
 	board := NewBoard()
 
-	// Add a province and unit to the board
 	province := &Province{
 		Name:           "paris",
 		ShortCode:      "par",
@@ -352,13 +345,11 @@ func TestGameStateClone(t *testing.T) {
 	originalState.SupplyCenters[France] = []string{"paris", "marseilles"}
 	originalState.SupplyCenters[Germany] = []string{"berlin", "munich"}
 
-	// Set a specific creation time for testing
 	testTime := time.Date(2023, 1, 1, 12, 0, 0, 0, time.UTC)
 	originalState.CreatedAt = testTime
 
 	cloned := originalState.Clone()
 
-	// Verify basic fields are copied
 	if cloned.Phase != originalState.Phase {
 		t.Errorf("Phase not cloned correctly: expected %s, got %s", originalState.Phase, cloned.Phase)
 	}
@@ -371,7 +362,6 @@ func TestGameStateClone(t *testing.T) {
 		t.Error("CreatedAt not cloned correctly")
 	}
 
-	// Verify RawOrders are deep copied
 	if len(cloned.RawOrders) != len(originalState.RawOrders) {
 		t.Error("RawOrders length mismatch")
 	}
@@ -381,13 +371,11 @@ func TestGameStateClone(t *testing.T) {
 		t.Error("French orders not cloned correctly")
 	}
 
-	// Verify modifying clone doesn't affect original
 	cloned.AddRawOrder(France, "F Bre-MAO")
 	if len(originalState.GetRawOrdersForNation(France)) != 1 {
 		t.Error("Modifying cloned orders affected original")
 	}
 
-	// Verify SupplyCenters are deep copied
 	if len(cloned.SupplyCenters[France]) != 2 {
 		t.Error("Supply centers not cloned correctly")
 	}
@@ -397,12 +385,10 @@ func TestGameStateClone(t *testing.T) {
 		t.Error("Modifying cloned supply centers affected original")
 	}
 
-	// Verify board is cloned (not just referenced)
 	if cloned.Board == originalState.Board {
 		t.Error("Board should be cloned, not referenced")
 	}
 
-	// Verify board contents are cloned
 	clonedUnit := cloned.Board.GetUnit("paris")
 	if clonedUnit == nil {
 		t.Error("Unit not found in cloned board")
@@ -412,7 +398,6 @@ func TestGameStateClone(t *testing.T) {
 		t.Error("Unit should be cloned, not referenced")
 	}
 
-	// Verify modifying cloned board doesn't affect original
 	cloned.Board.RemoveUnit("paris")
 	if originalState.Board.GetUnit("paris") == nil {
 		t.Error("Modifying cloned board affected original")

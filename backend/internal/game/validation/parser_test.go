@@ -504,7 +504,6 @@ func TestParseOrderIntegration(t *testing.T) {
 	_, resolver := setupTestBoard(t)
 	registry := NewOrderParserRegistry()
 
-	// Test a complete parsing pipeline
 	rawOrders := []string{
 		"a par - bur",
 		"f lon hold",
