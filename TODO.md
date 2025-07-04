@@ -94,105 +94,76 @@ This phased approach builds from the inside out, ensuring each layer rests on a 
 - **JSONLoader**: Complete implementation for loading classic Diplomacy map ✅
 - **Coast Handling**: Support for complex provinces with multiple coasts ✅
 - **Comprehensive Testing**: Full test coverage including edge cases ✅
+- **Classic Map Data**: Complete JSON data files for provinces, edges, nations, starting positions ✅
+
+### Phase 1.3: Syntax Parser Foundation
+- **Core Type System**: Token types, error handling, parser interfaces ✅
+- **Lexer Implementation**: Complete tokenization with normalization and error detection ✅
+- **Province Resolver**: Handle abbreviations and space-to-underscore conversion ✅
+- **Comprehensive Testing**: Full test suite with 100% pass rate ✅
+- **Coast Support**: Handle multi-coast provinces like `stp/sc` ✅
+- **Abbreviation Support**: Keywords (`s` → SUPPORT) and unit types (`a` → UNIT_TYPE) ✅
+
+### Phase 1.4: Order-Specific Parsers Implementation ✅
+- **Single File Architecture**: All parsers in `parser.go` following Python PoC pattern ✅
+- **Move Parser**: Handles `A par - bur`, `par - bur`, `F stp/sc - bot` with adjacency validation ✅
+- **Hold Parser**: Handles `A par hold`, `par h` with coast support ✅
+- **Support Parsers**: Both support hold (`A bur s par`) and support move (`A bur s par - pic`) ✅
+- **Convoy Parser**: Handles `F eng c lon - bel` with fleet-only validation ✅
+- **Build/Disband Parsers**: Handles `build army paris` and `disband army paris` ✅
+- **Parser Registry**: Phase-aware parsing with fallback mechanism ✅
+- **Comprehensive Testing**: 100% test coverage with integration tests ✅
+- **Province Resolution**: Full abbreviation and coast support ✅
+- **Error Handling**: Detailed error messages with context ✅
 
 ## 🎯 Current Focus
-### Phase 1.3: Validation Pipeline Implementation
+### Phase 1.5: Multi-Pass Resolution Engine
 
-**Current State**: There's an existing `semantic.go` file with compilation errors due to missing types and interfaces. The file needs to be updated to work with our current domain model.
-
-#### Task 1.3.1: Implement Syntax Parser (Priority)
-**File**: `backend/internal/game/validation/syntax.go` (new)
-- Parse raw order strings (e.g., "A par - bur", "F lon S A wal - bel")
-- Normalize input and handle variations (case, whitespace, abbreviations)
-- Convert to structured `Order` objects matching our domain model
-- Return `SyntaxResult` with parsing errors and parsed orders
-- Handle all order types: Move, Hold, Support, Convoy
-
-#### Task 1.3.2: Create Validation Result Types  
-**File**: `backend/internal/game/validation/types.go` (new)
-- `SyntaxResult` struct for order parsing results
-- `SemanticResult` struct for rule validation results  
-- `ValidationError` types for pipeline errors
-- Pipeline interfaces for orchestration
-
-#### Task 1.3.3: Fix Existing Semantic Validation
-**File**: `backend/internal/game/validation/semantic.go` (fix existing)
-- Update to work with parsed `[]*Order` instead of `sv.state.Orders`
-- Fix coast handling to use `CoastNeighbors` map instead of `Coasts` field
-- Use string coast names instead of `game.Coast` type
-- Integrate with syntax parser output
-- Add support for all order types (Support, Convoy)
-
-#### Task 1.3.3: Enhance Semantic Validation
-**File**: `backend/internal/game/validation/semantic.go` (enhance existing)
-- Support all order types (Move, Hold, Support, Convoy)
-- Comprehensive rule validation
-- Phase-specific validation logic
-- Return SemanticResult with detailed errors
-
-#### Task 1.3.4: Create Validation Orchestrator
-**File**: `backend/internal/game/validation/orchestrator.go` (new)
-- Coordinate `RawOrders` → syntax → semantic validation pipeline
-- Convert `GameState.RawOrders` to parsed orders via syntax parser
-- Pass parsed orders to semantic validator
-- Handle duplicate orders and auto-hold for missing orders
-- Aggregate results by player and unit
-- Prepare validated orders for resolution engine
-
-#### Task 1.3.5: Write Validation Tests
-**Files**: `backend/internal/game/validation/*_test.go`
-- Unit tests for syntax parsing
-- Semantic validation rule tests
-- Pipeline integration tests
-- Edge cases and error conditions
-
-### Phase 1.4: Multi-Pass Resolution Engine
-
-#### Task 1.4.1: Resolution Data Structures
+#### Task 1.5.1: Resolution Data Structures
 **File**: `backend/internal/game/resolution/types.go` (new)
 - Structure of Arrays (SoA) for performance
 - ResolutionSoA with parallel arrays
 - ResolutionMaps for efficient lookups
 
-#### Task 1.4.2: Convoy Path Discovery
+#### Task 1.5.2: Convoy Path Discovery
 **File**: `backend/internal/game/resolution/convoy.go` (new)
 - BFS-based convoy path finding
 - Convoy chain validation
 - Integration with move resolution
 
-#### Task 1.4.3: Support System
+#### Task 1.5.3: Support System
 **File**: `backend/internal/game/resolution/support.go` (new)
 - Support cutting logic
 - Strength calculation
 - Support effectiveness determination
 
-#### Task 1.4.4: Conflict Resolution
+#### Task 1.5.4: Conflict Resolution
 **File**: `backend/internal/game/resolution/conflict.go` (new)
 - Move conflict detection
 - Bouncing and dislodgement logic
 - Final territory assignment
 
-#### Task 1.4.5: Main Resolution Engine
+#### Task 1.5.5: Main Resolution Engine
 **File**: `backend/internal/game/resolution/engine.go` (new)
 - Multi-pass iterative algorithm
 - Convoy path stabilization loop
 - Integration of all components
 - Final outcome assignment
 
-#### Task 1.4.6: Resolution Tests
+#### Task 1.5.6: Resolution Tests
 **Files**: `backend/internal/game/resolution/*_test.go`
 - Component unit tests
 - Integration tests
 - DATC compliance tests
 
-### Phase 1.5: Integration & Testing
+### Phase 1.6: Integration & Testing
 
-#### Task 1.5.1: Full Pipeline Integration
+#### Task 1.6.1: Full Pipeline Integration
 - End-to-end tests (raw orders → final state)
 - Multi-turn game progression
 - Performance testing
 
-#### Task 1.5.2: DATC Implementation
+#### Task 1.6.2: DATC Implementation
 - Diplomacy Adjudicator Test Cases
 - Automated compliance testing
 - Regression test suite
@@ -236,15 +207,21 @@ The semantic validator should work with **parsed orders**, not raw strings.
 - ✅ Semantic validator can be designed knowing exact `Order` structure
 
 ## Next Immediate Task
-**Task 1.3.1**: Build Syntax Parser in `backend/internal/game/validation/syntax.go`
+**Task 1.5.1**: Implement Resolution Data Structures in `backend/internal/game/resolution/types.go`
 
-**Rationale**: Semantic validation needs parsed orders to work properly. Building syntax first enables:
-1. Converting `GameState.RawOrders` to `[]*Order` objects
-2. Proper testing of semantic validation with real parsed orders  
-3. Natural pipeline flow that matches our domain model
-4. Ability to fix semantic.go with correct input types
+**Rationale**: With parsing complete, we need the resolution engine foundation. The Structure of Arrays (SoA) pattern from the Python PoC enables:
+1. High-performance resolution with cache-friendly data access
+2. Efficient batch operations on orders
+3. Clean separation between resolution data and domain objects
+4. Foundation for the multi-pass iterative algorithm
 
-**After Syntax Parser**: Fix semantic.go to work with parsed orders and our actual domain model.
+**Implementation Approach**: 
+- Create ResolutionSoA with parallel arrays for orders, outcomes, strengths
+- Implement ResolutionMaps for efficient lookups by province/unit
+- Design for the multi-pass convoy discovery algorithm
+- Ensure compatibility with existing Order and GameState types
+
+**After Resolution Types**: Implement convoy path discovery, support system, and conflict resolution components.
 
 ---
 
