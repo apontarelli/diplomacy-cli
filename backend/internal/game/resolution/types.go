@@ -90,11 +90,17 @@ func NewResolutionEngine(orders []*game.Order, board *game.Board) *ResolutionEng
 
 	for i, order := range orders {
 		unitKey := makeUnitKey(order.From, order.FromCoast)
+
+		newTerritory := order.From // Default for Hold orders
+		if order.Type == game.Move {
+			newTerritory = order.To
+		}
+
 		resolvedOrders[i] = &ResolvedOrder{
 			Order:         order,
 			Index:         i,
 			OrigTerritory: order.From,
-			NewTerritory:  order.From,
+			NewTerritory:  newTerritory,
 			UnitKey:       unitKey,
 		}
 

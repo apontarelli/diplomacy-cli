@@ -13,10 +13,11 @@ func (re *ResolutionEngine) Resolve() error {
 	maxIterations := 10
 	for iteration := range maxIterations {
 		prevConvoyPaths := re.copyConvoyPaths()
+		prevSupportCuts := re.copySupportCuts()
 
 		re.executeResolutionPass()
 
-		if re.convoyPathsEqual(prevConvoyPaths, re.convoys) {
+		if re.convoyPathsEqual(prevConvoyPaths, re.convoys) && re.supportCutsEqual(prevSupportCuts) {
 			break
 		}
 
@@ -112,7 +113,7 @@ func (re *ResolutionEngine) processMoves() {
 			if isAdjacent || hasConvoyPath {
 				order.NewTerritory = destination
 				if hasConvoyPath {
-					// Convert ProvinceCoast path to string path for outcome
+
 					stringPath := make([]string, len(convoyPath))
 					for j, pc := range convoyPath {
 						stringPath[j] = pc.String()
@@ -223,16 +224,116 @@ func (re *ResolutionEngine) convoyPathsEqual(a, b map[ConvoyKey][]ProvinceCoast)
 	return true
 }
 
+func (re *ResolutionEngine) copySupportCuts() []bool {
+	result := make([]bool, len(re.outcomes))
+	for i, outcome := range re.outcomes {
+		result[i] = outcome.SupportCut
+	}
+	return result
+}
+
+func (re *ResolutionEngine) supportCutsEqual(prev []bool) bool {
+	if len(prev) != len(re.outcomes) {
+		return false
+	}
+
+	for i, prevCut := range prev {
+		if prevCut != re.outcomes[i].SupportCut {
+			return false
+		}
+	}
+
+	return true
+}
+
 func (re *ResolutionEngine) cutSupports() {
 	for i := range re.outcomes {
 		re.outcomes[i].SupportCut = false
 	}
+
+	for i, order := range re.orders {
+		if order.Type != game.Move {
+			continue
+		}
+
+		if order.To == "" || order.To == order.From {
+			continue
+		}
+
+		destination := order.To
+
+		supporterIndex := re.FindOrderByTerritory(destination)
+		if supporterIndex == -1 {
+			continue
+		}
+
+		supporterOrder := re.orders[supporterIndex]
+		if supporterOrder.Type != game.Support {
+			continue
+		}
+
+		if re.isSelfAttackSupportCut(i, supporterIndex) {
+			continue
+		}
+
+		re.outcomes[supporterIndex].SupportCut = true
+	}
+}
+
+func (re *ResolutionEngine) isSelfAttackSupportCut(attackerIndex, supporterIndex int) bool {
+	attacker := re.orders[attackerIndex]
+	supporter := re.orders[supporterIndex]
+
+	supportedUnitKey := makeUnitKey(supporter.SupportTarget, "")
+	supportedIndex := re.FindOrderByUnit(supportedUnitKey, "")
+	if supportedIndex == -1 {
+		return false
+	}
+
+	supported := re.orders[supportedIndex]
+
+	if supported.Type == game.Move && supported.To == attacker.From {
+		return true
+	}
+
+	return false
+}
+
+func (re *ResolutionEngine) hasFriendlyProtection(territory string, conflictIndices []int, winnerIndex int) bool {
+	defenderIndex := re.FindOrderByTerritory(territory)
+	if defenderIndex == -1 {
+		return false
+	}
+
+	defender := re.orders[defenderIndex]
+	winner := re.orders[winnerIndex]
+
+	if winnerIndex == defenderIndex {
+		return false
+	}
+
+	if winner.Owner == defender.Owner {
+		return true
+	}
+
+	for _, conflictIndex := range conflictIndices {
+		if conflictIndex == winnerIndex || conflictIndex == defenderIndex {
+			continue
+		}
+
+		order := re.orders[conflictIndex]
+		if order.Type == game.Move && order.Owner == defender.Owner {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (re *ResolutionEngine) resolveConflicts() {
 	re.rebuildConflictMap()
 
-	for _, orderIndices := range re.conflicts {
+	for territory, orderIndices := range re.conflicts {
 		if len(orderIndices) <= 1 {
 			continue
 		}
@@ -251,7 +352,13 @@ func (re *ResolutionEngine) resolveConflicts() {
 			}
 		}
 
-		if len(winners) > 1 {
+		if len(winners) == 1 && re.hasFriendlyProtection(territory, orderIndices, winners[0]) {
+			for _, idx := range orderIndices {
+				if re.orders[idx].NewTerritory != re.orders[idx].OrigTerritory {
+					re.orders[idx].NewTerritory = re.orders[idx].OrigTerritory
+				}
+			}
+		} else if len(winners) > 1 {
 			for _, idx := range orderIndices {
 				if re.orders[idx].NewTerritory != re.orders[idx].OrigTerritory {
 					re.orders[idx].NewTerritory = re.orders[idx].OrigTerritory
@@ -271,5 +378,29 @@ func (re *ResolutionEngine) resolveConflicts() {
 func (re *ResolutionEngine) detectDislodgements() {
 	for i := range re.outcomes {
 		re.outcomes[i].Dislodged = false
+	}
+
+	for territory, conflictIndices := range re.conflicts {
+		if len(conflictIndices) <= 1 {
+			continue
+		}
+
+		defenderIndex := re.FindOrderByTerritory(territory)
+		if defenderIndex == -1 {
+			continue
+		}
+
+		for _, conflictIndex := range conflictIndices {
+			if conflictIndex == defenderIndex {
+				continue
+			}
+
+			order := re.orders[conflictIndex]
+
+			if order.Type == game.Move && order.NewTerritory == territory && order.OrigTerritory != territory {
+				re.outcomes[defenderIndex].Dislodged = true
+				break
+			}
+		}
 	}
 }
