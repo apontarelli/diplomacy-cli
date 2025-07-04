@@ -116,8 +116,16 @@ This phased approach builds from the inside out, ensuring each layer rests on a 
 - **Province Resolution**: Full abbreviation and coast support ✅
 - **Error Handling**: Detailed error messages with context ✅
 
+### Phase 1.5: Multi-Pass Resolution Engine Foundation ✅
+- **Hybrid Architecture**: ResolutionEngine with type-safe structs + performance arrays ✅
+- **Core Types**: ResolvedOrder, OrderOutcome, ConvoyKey with efficient lookups ✅
+- **Multi-Pass Algorithm**: Convoy path stabilization loop with proper termination ✅
+- **Order Validation**: Support/convoy relationship validation with detailed errors ✅
+- **Basic Resolution**: Move processing, conflict detection, and outcome assignment ✅
+- **Comprehensive Testing**: 6 test functions covering basic scenarios and edge cases ✅
+
 ## 🎯 Current Focus
-### Phase 1.5: Multi-Pass Resolution Engine
+### Phase 1.5: Multi-Pass Resolution Engine - Specialized Components
 
 ## 🏗️ Hybrid Resolution Architecture Decision
 
@@ -290,11 +298,11 @@ The hybrid approach preserves the Python PoC's algorithmic insights while adapti
 
 This approach gives us the performance characteristics we need while maintaining Go's type safety and readability advantages.
 
-#### Task 1.5.1: Resolution Data Structures
-**File**: `backend/internal/game/resolution/types.go` (new)
-- ResolutionEngine with hybrid approach
-- ResolvedOrder and OrderOutcome types
-- Lookup map types and structures
+#### Task 1.5.1: Resolution Data Structures ✅
+**File**: `backend/internal/game/resolution/types.go` ✅
+- ResolutionEngine with hybrid approach ✅
+- ResolvedOrder and OrderOutcome types ✅
+- Lookup map types and structures ✅
 
 #### Task 1.5.2: Convoy Path Discovery
 **File**: `backend/internal/game/resolution/convoy.go` (new)
@@ -314,18 +322,18 @@ This approach gives us the performance characteristics we need while maintaining
 - Bouncing and dislodgement logic with OrderOutcome updates
 - ResolutionEngine.resolveConflicts() and detectDislodgements()
 
-#### Task 1.5.5: Main Resolution Engine
-**File**: `backend/internal/game/resolution/engine.go` (new)
-- Multi-pass iterative algorithm with hybrid data structures
-- Convoy path stabilization loop using ConvoyKey maps
-- NewResolutionEngine() constructor and Resolve() orchestrator
-- GetResults() for final OrderOutcome extraction
+#### Task 1.5.5: Main Resolution Engine ✅
+**File**: `backend/internal/game/resolution/engine.go` ✅
+- Multi-pass iterative algorithm with hybrid data structures ✅
+- Convoy path stabilization loop using ConvoyKey maps ✅
+- NewResolutionEngine() constructor and Resolve() orchestrator ✅
+- GetResults() for final OrderOutcome extraction ✅
 
-#### Task 1.5.6: Resolution Tests
-**Files**: `backend/internal/game/resolution/*_test.go`
-- Component unit tests
-- Integration tests
-- DATC compliance tests
+#### Task 1.5.6: Resolution Tests ✅
+**Files**: `backend/internal/game/resolution/*_test.go` ✅
+- Component unit tests ✅
+- Integration tests ✅
+- DATC compliance tests (basic scenarios covered)
 
 ### Phase 1.6: Integration & Testing
 
@@ -378,23 +386,22 @@ The semantic validator should work with **parsed orders**, not raw strings.
 - ✅ Semantic validator can be designed knowing exact `Order` structure
 
 ## Next Immediate Task
-**Task 1.5.1**: Implement Hybrid Resolution Data Structures in `backend/internal/game/resolution/types.go`
+**Task 1.5.2**: Implement Convoy Path Discovery in `backend/internal/game/resolution/convoy.go`
 
-**Rationale**: With parsing complete, we need the resolution engine foundation. The Hybrid approach combines the Python PoC's performance insights with Go's type safety:
-1. Type-safe structs prevent index synchronization errors
-2. Performance arrays for hot paths (strength calculation, conflict detection)
-3. Efficient lookup maps replace error-prone parallel array indexing
-4. Clean integration with existing Order and GameState types
-5. Maintainable and extensible architecture
+**Rationale**: With the resolution engine foundation complete, we need to implement the convoy path discovery system. This is the most complex part of Diplomacy resolution and the key reason for the multi-pass algorithm:
+1. Convoy paths can change when convoy fleets get dislodged
+2. BFS-based pathfinding through available convoy fleets
+3. ConvoyKey caching for performance optimization
+4. Integration with the existing ResolutionEngine.processConvoys() method
 
 **Implementation Approach**: 
-- Create ResolutionEngine with hybrid data structures
-- Define ResolvedOrder and OrderOutcome types for type safety
-- Implement lookup maps (conflicts, supports, convoys) for efficient access
-- Design for multi-pass algorithm with clear data flow
-- Ensure seamless integration with existing validation pipeline
+- Create convoy.go with BFS pathfinding algorithm from Python PoC
+- Implement ConvoyKey-based caching system
+- Handle convoy chain validation and disruption detection
+- Replace the stub ResolutionEngine.processConvoys() method
+- Add comprehensive tests for convoy scenarios
 
-**After Resolution Types**: Implement convoy discovery, support processing, and conflict resolution using the hybrid engine.
+**After Convoy Discovery**: Implement support cutting logic and advanced conflict resolution.
 
 ---
 
