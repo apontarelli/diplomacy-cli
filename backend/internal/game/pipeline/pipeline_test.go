@@ -9,7 +9,7 @@ import (
 // TestEndToEndPipeline tests the complete pipeline from raw orders to final game state
 func TestEndToEndPipeline(t *testing.T) {
 	// Load the classic map
-	mapLoader := loader.NewJSONLoader("../../data/classic")
+	mapLoader := loader.NewJSONLoader("../../../data/classic")
 	board, err := mapLoader.LoadBoard()
 	if err != nil {
 		t.Fatalf("Failed to load board: %v", err)
