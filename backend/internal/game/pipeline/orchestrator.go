@@ -139,7 +139,7 @@ func (tp *TurnProcessor) validateMovementOrder(order *game.Order, gameState *gam
 	case game.Move:
 		// Check adjacency using board's neighbor lists
 		if !tp.areAdjacent(order.From, order.To, order.UnitType, gameState.Board) {
-			return fmt.Errorf("cannot move from %s to %s: not adjacent", order.From, order.To)
+			return fmt.Errorf("cannot move from %s to %s: not adjacent (unit type: %v)", order.From, order.To, order.UnitType)
 		}
 	case game.Hold:
 		// Hold orders are always valid if unit exists
