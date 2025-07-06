@@ -28,8 +28,8 @@ func NewAdjudicator(orders []Order) *Adjudicator {
 }
 
 // ResolveAll resolves all orders and returns the results.
-func (adj *Adjudicator) ResolveAll() []InternalOrderResult {
-	results := make([]InternalOrderResult, 0, len(adj.orders))
+func (adj *Adjudicator) ResolveAll() []AdjudicationResult {
+	results := make([]AdjudicationResult, 0, len(adj.orders))
 
 	// Reset all orders before resolution
 	for _, order := range adj.orders {
@@ -42,10 +42,12 @@ func (adj *Adjudicator) ResolveAll() []InternalOrderResult {
 			adj.resolve(order, true) // Start with optimistic resolution
 		}
 
-		results = append(results, InternalOrderResult{
-			Order:   *order,
-			Success: order.Resolution(),
-			Reason:  adj.getResolutionReason(order),
+		results = append(results, AdjudicationResult{
+			Order:       *order,
+			Success:     order.Resolution(),
+			Reason:      adj.getResolutionReason(order),
+			Destination: order.Destination,
+			Dislodged:   false, // TODO: Detect dislodgements
 		})
 	}
 

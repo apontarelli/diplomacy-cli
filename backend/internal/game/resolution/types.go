@@ -24,12 +24,34 @@ type Order struct {
 	isVisited  bool // for cycle detection
 }
 
-// InternalOrderResult represents the outcome of an order after adjudication.
-type InternalOrderResult struct {
-	Order   Order
-	Success bool
-	Reason  string // Human-readable explanation of the result
+// AdjudicationResult represents the outcome of an order after adjudication.
+type AdjudicationResult struct {
+	Order       Order
+	Success     bool
+	Reason      string // Human-readable explanation of the result
+	Destination string // Actual destination (same as order.Destination for normal moves)
+	Dislodged   bool   // True if this unit was dislodged
 }
+
+// OrderOutcome provides compatibility with the pipeline interface
+type OrderOutcome struct {
+	Result      string // "move_success", "move_bounced", etc.
+	Destination string // Actual destination (same as order.To for normal moves)
+	Dislodged   bool   // True if this unit was dislodged
+}
+
+// Order result constants for compatibility
+const (
+	MoveSuccess     string = "move_success"
+	MoveBounced     string = "move_bounced"
+	MoveNoConvoy    string = "move_no_convoy"
+	SupportSuccess  string = "support_success"
+	SupportCut      string = "support_cut"
+	ConvoySuccess   string = "convoy_success"
+	ConvoyDisrupted string = "convoy_disrupted"
+	HoldSuccess     string = "hold_success"
+	Dislodged       string = "dislodged"
+)
 
 // String returns a human-readable representation of the order.
 func (o Order) String() string {

@@ -294,24 +294,87 @@ func (tp *TurnProcessor) validateBuildOrder(order *game.Order, gameState *game.G
 	return nil
 }
 
-// resolveOrders executes the multi-pass resolution algorithm
+// resolveOrders executes the recursive resolution algorithm
 func (tp *TurnProcessor) resolveOrders(orders []*game.Order, board *game.Board) ([]resolution.OrderOutcome, error) {
 	fmt.Printf("🔍 resolveOrders called with %d orders\n", len(orders))
 	for i, order := range orders {
 		fmt.Printf("  Order %d: %s %s %s -> %s\n", i, order.Owner, order.UnitType, order.From, order.To)
 	}
 
-	// Create resolution engine
-	engine := resolution.NewResolutionEngine(orders, board)
-
-	// Execute resolution
-	err := engine.Resolve()
-	if err != nil {
-		return nil, err
+	// Convert game.Order to resolution.Order
+	resolutionOrders := make([]resolution.Order, len(orders))
+	for i, order := range orders {
+		resolutionOrders[i] = convertToResolutionOrder(order)
 	}
 
-	// Get results
-	return engine.GetResults(), nil
+	// Create adjudicator and resolve
+	adj := resolution.NewAdjudicator(resolutionOrders)
+	adjResults := adj.ResolveAll()
+
+	// Convert results to OrderOutcome for pipeline compatibility
+	outcomes := make([]resolution.OrderOutcome, len(adjResults))
+	for i, result := range adjResults {
+		outcomes[i] = resolution.OrderOutcome{
+			Result:      getResultString(orders[i], result.Success),
+			Dislodged:   result.Dislodged,
+			Destination: result.Destination,
+		}
+	}
+
+	return outcomes, nil
+}
+
+// convertToResolutionOrder converts a game.Order to resolution.Order
+func convertToResolutionOrder(order *game.Order) resolution.Order {
+	var orderType resolution.OrderType
+	switch order.Type {
+	case game.Move:
+		orderType = resolution.Move
+	case game.Support:
+		orderType = resolution.Support
+	case game.Convoy:
+		orderType = resolution.Convoy
+	case game.Hold:
+		orderType = resolution.Hold
+	default:
+		orderType = resolution.Hold
+	}
+
+	return resolution.Order{
+		Unit:        string(order.UnitType) + " " + order.From,
+		Type:        orderType,
+		Source:      order.From,
+		Destination: order.To,
+		Auxiliary:   order.SupportTarget,
+	}
+}
+
+// getResultString converts success/failure to appropriate result string
+func getResultString(order *game.Order, success bool) string {
+	if success {
+		switch order.Type {
+		case game.Move:
+			return resolution.MoveSuccess
+		case game.Support:
+			return resolution.SupportSuccess
+		case game.Convoy:
+			return resolution.ConvoySuccess
+		case game.Hold:
+			return resolution.HoldSuccess
+		}
+	} else {
+		switch order.Type {
+		case game.Move:
+			return resolution.MoveBounced
+		case game.Support:
+			return resolution.SupportCut
+		case game.Convoy:
+			return resolution.ConvoyDisrupted
+		case game.Hold:
+			return resolution.HoldSuccess // Hold can't really fail
+		}
+	}
+	return "unknown"
 }
 
 // applyResults creates a new game state with resolution results applied
@@ -326,59 +389,7 @@ func (tp *TurnProcessor) applyResults(
 	// Track dislodged units for phase advancement
 	var dislodgedUnits []*game.Unit
 
-	// Handle circular movements specially - two-phase approach
-	// Phase 1: Remove all units involved in circular movements
-	circularMoveUnits := make(map[int]*game.Unit) // orderIndex -> unit
-	for i, order := range orders {
-		if i >= len(results) {
-			continue
-		}
-		result := results[i]
-
-		if order.Type == game.Move && result.IsCircular && result.Result == resolution.MoveSuccess {
-			unit := newState.Board.GetUnit(order.From)
-			if unit != nil {
-				circularMoveUnits[i] = unit
-				newState.Board.RemoveUnit(order.From)
-				fmt.Printf("🔍 Phase 1: Removed circular move unit %s %s from %s\n",
-					unit.Owner, unit.Type, order.From)
-			}
-		}
-	}
-
-	// Phase 2: Place all circular movement units in their new positions
-	for i, unit := range circularMoveUnits {
-		order := orders[i]
-		result := results[i]
-
-		destination := order.To
-		if result.Destination != "" {
-			destination = result.Destination
-		}
-
-		fmt.Printf("🔍 Phase 2: Before move - unit %s %s (from order %d) going to %s\n",
-			unit.Owner, unit.Type, i, destination)
-		unit.Province = destination
-		unit.Coast = order.ToCoast
-		newState.Board.PlaceUnit(unit)
-		fmt.Printf("🔍 Phase 2: After place - unit %s %s at %s\n",
-			unit.Owner, unit.Type, unit.Province)
-
-		// Verify what's actually on the board
-		boardUnit := newState.Board.GetUnit(destination)
-		fmt.Printf("🔍 Phase 2: Board verification - at %s: %s %s\n",
-			destination, boardUnit.Owner, boardUnit.Type)
-	}
-
-	// Debug: Check board state after circular movements
-	fmt.Printf("🔍 Board state after Phase 2 (circular movements):\n")
-	for province, unit := range newState.Board.Units {
-		if unit != nil {
-			fmt.Printf("  %s: %s %s\n", province, unit.Owner, unit.Type)
-		}
-	}
-
-	// Apply non-circular order results
+	// Apply order results - our recursive adjudicator handles everything correctly
 	for i, order := range orders {
 		if i >= len(results) {
 			continue
@@ -388,10 +399,6 @@ func (tp *TurnProcessor) applyResults(
 
 		switch order.Type {
 		case game.Move:
-			// Skip circular movements - already handled above
-			if result.IsCircular {
-				continue
-			}
 			if err := tp.applyMoveResult(newState, order, result, &dislodgedUnits); err != nil {
 				return nil, err
 			}
