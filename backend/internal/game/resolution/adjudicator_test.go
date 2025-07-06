@@ -194,3 +194,42 @@ func TestHoldWithSupport(t *testing.T) {
 		t.Errorf("Expected support to succeed, but it failed: %s", supportResult.Reason)
 	}
 }
+
+func TestCircularMovement(t *testing.T) {
+	// Test a simple 3-unit circular movement: A→B, B→C, C→A
+	// Each unit is moving to a territory occupied by another unit in the cycle
+	orders := []Order{
+		{
+			Unit:        "A Berlin",
+			Type:        Move,
+			Source:      "Berlin",
+			Destination: "Munich",
+		},
+		{
+			Unit:        "A Munich", // This unit is at Munich (destination of Berlin)
+			Type:        Move,
+			Source:      "Munich",
+			Destination: "Vienna",
+		},
+		{
+			Unit:        "A Vienna", // This unit is at Vienna (destination of Munich)
+			Type:        Move,
+			Source:      "Vienna",
+			Destination: "Berlin", // Moving to Berlin (source of first unit)
+		},
+	}
+
+	adj := NewAdjudicator(orders)
+	results := adj.ResolveAll()
+
+	if len(results) != 3 {
+		t.Fatalf("Expected 3 results, got %d", len(results))
+	}
+
+	// All moves in circular movement should succeed
+	for i, result := range results {
+		if !result.Success {
+			t.Errorf("Expected circular move %d to succeed, but it failed: %s", i, result.Reason)
+		}
+	}
+}

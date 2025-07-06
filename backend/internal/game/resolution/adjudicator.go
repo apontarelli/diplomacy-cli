@@ -71,6 +71,7 @@ func (adj *Adjudicator) resolve(order *Order, optimistic bool) bool {
 	// Check for cycle detection
 	if order.isVisited {
 		// We've found a cycle!
+		fmt.Printf("🔄 Cycle detected at %s\n", order.String())
 		adj.cycle = append(adj.cycle, order)
 		adj.recursionHits++
 		adj.uncertain = true
@@ -145,6 +146,12 @@ func (adj *Adjudicator) adjudicateMove(order *Order, optimistic bool) bool {
 	attackStrength := adj.calculateAttackStrength(order, optimistic)
 	holdStrength := adj.calculateHoldStrength(order.Destination, !optimistic)
 
+	// Debug output for circular movement
+	if len(adj.cycle) > 0 {
+		fmt.Printf("🔍 Move %s: attack=%d, hold=%d, optimistic=%t\n",
+			order.String(), attackStrength, holdStrength, optimistic)
+	}
+
 	// Check if we can overcome the hold strength
 	if attackStrength <= holdStrength {
 		return false
@@ -211,12 +218,4 @@ func (adj *Adjudicator) getResolutionReason(order *Order) string {
 		return "Success"
 	}
 	return "Failed"
-}
-
-// applyBackupRule applies backup rules for paradoxical situations.
-func (adj *Adjudicator) applyBackupRule() {
-	// TODO: Implement backup rules
-	// - Circular movement: all moves in cycle succeed
-	// - Convoy paradox: convoy fails (Szykman rule)
-	fmt.Println("Backup rule needed - not yet implemented")
 }
