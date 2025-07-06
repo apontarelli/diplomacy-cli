@@ -1,0 +1,3210 @@
+{
+  "datc_version": "3.0",
+  "extracted_by": "Simple DATC Extractor",
+  "total_test_cases": 163,
+  "test_cases": [
+    {
+      "id": "6.A.1",
+      "name": "MOVING TO AN AREA THAT IS NOT A NEIGHBOUR",
+      "section": "BASIC CHECKS",
+      "category": "basic_checks",
+      "description": "Check if an illegal move (without convoy) will fail.",
+      "orders": {
+        "England": [
+          "F North Sea - Picardy"
+        ]
+      },
+      "expected_outcome": "Order should fail.",
+      "raw_content": "<h4><a name=\"6.A.1\">6.A.1. TEST CASE, MOVING TO AN AREA THAT IS NOT A NEIGHBOUR</a></h4>\n<p>Check if an illegal move (without convoy) will fail.</p>\n<pre>England: \nF North Sea - Picardy\n</pre>\n<p>Order should fail.</p>\n\n"
+    },
+    {
+      "id": "6.A.2",
+      "name": "MOVE ARMY TO SEA",
+      "section": "BASIC CHECKS",
+      "category": "basic_checks",
+      "description": "Check if an army could not be moved to open sea.",
+      "orders": {
+        "England": [
+          "A Liverpool - Irish Sea"
+        ]
+      },
+      "expected_outcome": "Order should fail.",
+      "raw_content": "<h4><a name=\"6.A.2\">6.A.2. TEST CASE, MOVE ARMY TO SEA</a></h4>\n<p>Check if an army could not be moved to open sea.</p>\n<pre>England: \nA Liverpool - Irish Sea\n</pre>\n<p>Order should fail.</p>\n\n"
+    },
+    {
+      "id": "6.A.3",
+      "name": "MOVE FLEET TO LAND",
+      "section": "BASIC CHECKS",
+      "category": "basic_checks",
+      "description": "Check whether a fleet cannot move to land.",
+      "orders": {
+        "Germany": [
+          "F Kiel - Munich"
+        ]
+      },
+      "expected_outcome": "Order should fail.",
+      "raw_content": "<h4><a name=\"6.A.3\">6.A.3. TEST CASE, MOVE FLEET TO LAND</a></h4>\n<p>Check whether a fleet cannot move to land.</p>\n<pre>Germany: \nF Kiel - Munich\n</pre>\n<p>Order should fail.</p>\n\n"
+    },
+    {
+      "id": "6.A.4",
+      "name": "MOVE TO OWN SECTOR",
+      "section": "BASIC CHECKS",
+      "category": "basic_checks",
+      "description": "Moving to the same sector is an illegal move (2023 rulebook, page 7, \"An Army can be ordered to move into an adjacent inland or coastal province.\").",
+      "orders": {
+        "Germany": [
+          "F Kiel - Kiel"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.A.4\">6.A.4. TEST CASE, MOVE TO OWN SECTOR</a></h4>\n<p>Moving to the same sector is an illegal move\n(2023 rulebook, page 7, \"An Army can be ordered to move into\nan adjacent inland or coastal province.\").</p>\n<pre>Germany: \nF Kiel - Kiel\n</pre>\n<p>Program should not crash.</p>\n\n"
+    },
+    {
+      "id": "6.A.5",
+      "name": "MOVE TO OWN SECTOR WITH CONVOY",
+      "section": "BASIC CHECKS",
+      "category": "basic_checks",
+      "description": "Moving to the same sector is still illegal with convoy (2023 rulebook, page 7, \"Note: An Army can move across water provinces from one coastal province to another...\").",
+      "orders": {
+        "England": [
+          "F North Sea Convoys A Yorkshire - Yorkshire",
+          "A Yorkshire - Yorkshire",
+          "A Liverpool Supports A Yorkshire - Yorkshire"
+        ],
+        "Germany": [
+          "F London - Yorkshire",
+          "A Wales Supports F London - Yorkshire"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.A.5\">6.A.5. TEST CASE, MOVE TO OWN SECTOR WITH CONVOY</a></h4>\n<p>Moving to the same sector is still illegal with convoy\n(2023 rulebook, page 7, \"Note: An Army can move across water\nprovinces from one coastal province to another...\").</p>\n<pre>England: \nF North Sea Convoys A Yorkshire - Yorkshire\nA Yorkshire - Yorkshire\nA Liverpool Supports A Yorkshire - Yorkshire\n\nGermany:\nF London - Yorkshire\nA Wales Supports F London - Yorkshire\n</pre>\n<p>The move of the army in Yorkshire is il..."
+    },
+    {
+      "id": "6.A.6",
+      "name": "ORDERING A UNIT OF ANOTHER COUNTRY",
+      "section": "BASIC CHECKS",
+      "category": "basic_checks",
+      "description": "Check whether someone cannot order a unit that is not his own unit.",
+      "orders": {
+        "Germany": [
+          "F London - North Sea"
+        ]
+      },
+      "expected_outcome": "Order should fail.",
+      "raw_content": "<h4><a name=\"6.A.6\">6.A.6. TEST CASE, ORDERING A UNIT OF ANOTHER COUNTRY</a></h4>\n<p>Check whether someone cannot order a unit that is not his own unit.</p>\n<p>England has a fleet in London.</p>\n<pre>Germany: \nF London - North Sea\n</pre>\n<p>Order should fail.</p>\n\n"
+    },
+    {
+      "id": "6.A.7",
+      "name": "ONLY ARMIES CAN BE CONVOYED",
+      "section": "BASIC CHECKS",
+      "category": "basic_checks",
+      "description": "A fleet cannot be convoyed.",
+      "orders": {
+        "England": [
+          "F London - Belgium",
+          "F North Sea Convoys A London - Belgium"
+        ]
+      },
+      "expected_outcome": "Move from London to Belgium should fail.",
+      "raw_content": "<h4><a name=\"6.A.7\">6.A.7. TEST CASE, ONLY ARMIES CAN BE CONVOYED</a></h4>\n<p>A fleet cannot be convoyed.</p>\n<pre>England: \nF London - Belgium\nF North Sea Convoys A London - Belgium\n</pre>\n<p>Move from London to Belgium should fail.</p>\n\n"
+    },
+    {
+      "id": "6.A.8",
+      "name": "SUPPORT TO HOLD YOURSELF IS NOT POSSIBLE",
+      "section": "BASIC CHECKS",
+      "category": "basic_checks",
+      "description": "An army cannot get an additional hold power by supporting itself.",
+      "orders": {
+        "Italy": [
+          "A Venice - Trieste",
+          "A Tyrolia Supports A Venice - Trieste"
+        ],
+        "Austria": [
+          "F Trieste Supports F Trieste"
+        ]
+      },
+      "expected_outcome": "The army in Trieste should be dislodged.",
+      "raw_content": "<h4><a name=\"6.A.8\">6.A.8. TEST CASE, SUPPORT TO HOLD YOURSELF IS NOT POSSIBLE</a></h4>\n<p>An army cannot get an additional hold power by supporting itself.</p>\n<pre>Italy: \nA Venice - Trieste\nA Tyrolia Supports A Venice - Trieste\n\nAustria: \nF Trieste Supports F Trieste\n</pre>\n<p>The army in Trieste should be dislodged.</p>\n\n"
+    },
+    {
+      "id": "6.A.9",
+      "name": "FLEETS MUST FOLLOW COAST IF NOT ON SEA",
+      "section": "BASIC CHECKS",
+      "category": "basic_checks",
+      "description": "If two provinces are adjacent, that does not mean that a fleet can move between those two provinces. An implementation that only holds one list of adjacent provinces for each province is incorrect.",
+      "orders": {
+        "Italy": [
+          "F Rome - Venice"
+        ]
+      },
+      "expected_outcome": "Move fails. An army can go from Rome to Venice, but a fleet cannot.",
+      "raw_content": "<h4><a name=\"6.A.9\">6.A.9. TEST CASE, FLEETS MUST FOLLOW COAST IF NOT ON SEA</a></h4>\n<p>If two provinces are adjacent, that does not mean that a fleet can move between\nthose two provinces. An implementation that only holds one list of adjacent provinces\nfor each province is incorrect.</p>\n<pre>Italy: \nF Rome - Venice\n</pre>\n<p>Move fails. An army can go from Rome to Venice, but a fleet cannot.</p>\n\n"
+    },
+    {
+      "id": "6.A.10",
+      "name": "SUPPORT ON UNREACHABLE DESTINATION NOT POSSIBLE",
+      "section": "BASIC CHECKS",
+      "category": "basic_checks",
+      "description": "The destination of the move that is supported must be reachable by the supporting unit.",
+      "orders": {
+        "Austria": [
+          "A Venice Hold"
+        ],
+        "Italy": [
+          "F Rome Supports A Apulia - Venice",
+          "A Apulia - Venice"
+        ]
+      },
+      "expected_outcome": "The support of Rome is illegal, because Venice cannot be reached from Rome by a fleet. Venice is not dislodged.",
+      "raw_content": "<h4><a name=\"6.A.10\">6.A.10. TEST CASE, SUPPORT ON UNREACHABLE DESTINATION NOT POSSIBLE</a></h4>\n<p>The destination of the move that is supported must be reachable by the supporting unit.</p>\n<pre>Austria: \nA Venice Hold\n\nItaly: \nF Rome Supports A Apulia - Venice\nA Apulia - Venice\n</pre>\n<p>The support of Rome is illegal, because Venice cannot be reached from Rome by a fleet. Venice is not dislodged.</p>\n\n"
+    },
+    {
+      "id": "6.A.11",
+      "name": "SIMPLE BOUNCE",
+      "section": "BASIC CHECKS",
+      "category": "basic_checks",
+      "description": "Two armies bouncing on each other.",
+      "orders": {
+        "Austria": [
+          "A Vienna - Tyrolia"
+        ],
+        "Italy": [
+          "A Venice - Tyrolia"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.A.11\">6.A.11. TEST CASE, SIMPLE BOUNCE</a></h4>\n<p>Two armies bouncing on each other.</p>\n<pre>Austria: \nA Vienna - Tyrolia\n\nItaly: \nA Venice - Tyrolia\n</pre>\n<p>The two units bounce.</p>\n\n"
+    },
+    {
+      "id": "6.A.12",
+      "name": "BOUNCE OF THREE UNITS",
+      "section": "BASIC CHECKS",
+      "category": "basic_checks",
+      "description": "If three units move to the same area, the adjudicator should not bounce the first two units and then let the third unit go to the now open area.",
+      "orders": {
+        "Austria": [
+          "A Vienna - Tyrolia"
+        ],
+        "Germany": [
+          "A Munich - Tyrolia"
+        ],
+        "Italy": [
+          "A Venice - Tyrolia"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.A.12\">6.A.12. TEST CASE, BOUNCE OF THREE UNITS</a></h4>\n<p>If three units move to the same area, the adjudicator should\nnot bounce the first two units and then let the third unit go to\nthe now open area.</p>\n<pre>Austria: \nA Vienna - Tyrolia\n\nGermany: \nA Munich - Tyrolia\n\nItaly: \nA Venice - Tyrolia\n</pre>\n<p>The three units bounce.</p>\n\n<h3><a name=\"6.B\">6.B. TEST CASES, COASTAL ISSUES</a></h3>\n\n"
+    },
+    {
+      "id": "6.B.1",
+      "name": "MOVING WITH UNSPECIFIED COAST WHEN COAST IS NECESSARY",
+      "section": "COASTAL ISSUES",
+      "category": "coastal_issues",
+      "description": "Coast is significant in this case:",
+      "orders": {
+        "France": [
+          "F Portugal - Spain"
+        ]
+      },
+      "expected_outcome": "Move should fail.",
+      "raw_content": "<h4><a name=\"6.B.1\">6.B.1. TEST CASE, MOVING WITH UNSPECIFIED COAST WHEN COAST IS NECESSARY</a></h4>\n<p>Coast is significant in this case:</p>\n<pre>France: \nF Portugal - Spain\n</pre>\n<p>Move should fail.</p>\n\n"
+    },
+    {
+      "id": "6.B.2",
+      "name": "MOVING WITH UNSPECIFIED COAST WHEN COAST IS NOT NECESSARY",
+      "section": "COASTAL ISSUES",
+      "category": "coastal_issues",
+      "description": "There is only one coast possible in this case:",
+      "orders": {
+        "France": [
+          "F Gascony - Spain"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.B.2\">6.B.2. TEST CASE, MOVING WITH UNSPECIFIED COAST WHEN COAST IS NOT NECESSARY</a></h4>\n<p>There is only one coast possible in this case:</p>\n<pre>France: \nF Gascony - Spain\n</pre>\n<p>Since the North Coast is the only coast that can be reached, it seems logical that a move is attempted to the north coast of Spain. See issue <a href=\"#4.B.2\">4.B.2</a>.</p>\n<p><i>I prefer that an attempt is made to the only possible coast, the north coast of Spain.</i></p>\n\n"
+    },
+    {
+      "id": "6.B.3",
+      "name": "MOVING WITH WRONG COAST WHEN COAST IS NOT NECESSARY",
+      "section": "COASTAL ISSUES",
+      "category": "coastal_issues",
+      "description": "If only one coast is possible, but the wrong coast can be specified.",
+      "orders": {
+        "France": [
+          "F Gascony - Spain(sc)"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.B.3\">6.B.3. TEST CASE, MOVING WITH WRONG COAST WHEN COAST IS NOT NECESSARY</a></h4>\n<p>If only one coast is possible, but the wrong coast can be specified.</p>\n<pre>France: \nF Gascony - Spain(sc)\n</pre>\n<p>If the rules are given a lenient interpretation, a move will be attempted to the north coast of Spain. However, this order is very precisely wrong. The order should be declared illegal and fleet should hold. See issue <a href=\"#4.B.3\">4.B.3</a>.</p>\n\n"
+    },
+    {
+      "id": "6.B.4",
+      "name": "SUPPORT TO UNREACHABLE COAST ALLOWED",
+      "section": "COASTAL ISSUES",
+      "category": "coastal_issues",
+      "description": "A fleet can give support to a coast where it cannot go.",
+      "orders": {
+        "France": [
+          "F Gascony - Spain(nc)",
+          "F Marseilles Supports F Gascony - Spain(nc)"
+        ],
+        "Italy": [
+          "F Western Mediterranean - Spain(sc)"
+        ]
+      },
+      "expected_outcome": "Although the fleet in Marseilles cannot go to the north coast it can still support targeting the north coast. So, the support is successful, the move of the fleet in Gascony succeeds and the move of the Italian fleet fails.",
+      "raw_content": "<h4><a name=\"6.B.4\">6.B.4. TEST CASE, SUPPORT TO UNREACHABLE COAST ALLOWED</a></h4>\n<p>A fleet can give support to a coast where it cannot go.</p>\n<pre>France: \nF Gascony - Spain(nc)\nF Marseilles Supports F Gascony - Spain(nc)\n\nItaly: \nF Western Mediterranean - Spain(sc)\n</pre>\n<p>Although the fleet in Marseilles cannot go to the north coast\nit can still support targeting the north coast. So, the support\nis successful, the move of the fleet in Gascony succeeds and the\nmove of the Italian fleet f..."
+    },
+    {
+      "id": "6.B.5",
+      "name": "SUPPORT FROM UNREACHABLE COAST NOT ALLOWED",
+      "section": "COASTAL ISSUES",
+      "category": "coastal_issues",
+      "description": "A fleet cannot give support to an area that cannot be reached from the current coast of the fleet.",
+      "orders": {
+        "France": [
+          "F Marseilles - Gulf of Lyon",
+          "F Spain(nc) Supports F Marseilles - Gulf of Lyon"
+        ],
+        "Italy": [
+          "F Gulf of Lyon Hold"
+        ]
+      },
+      "expected_outcome": "The Gulf of Lyon cannot be reached from the North Coast of Spain. Therefore, the support of Spain is illegal and the fleet in the Gulf of Lyon is not dislodged.",
+      "raw_content": "<h4><a name=\"6.B.5\">6.B.5. TEST CASE, SUPPORT FROM UNREACHABLE COAST NOT ALLOWED</a></h4>\n<p>A fleet cannot give support to an area that cannot be reached\nfrom the current coast of the fleet.</p>\n<pre>France: \nF Marseilles - Gulf of Lyon\nF Spain(nc) Supports F Marseilles - Gulf of Lyon\n\nItaly: \nF Gulf of Lyon Hold\n</pre>\n<p>The Gulf of Lyon cannot be reached from the North Coast of Spain.\nTherefore, the support of Spain is illegal and the fleet in the Gulf\nof Lyon is not dislodged.</p>\n\n"
+    },
+    {
+      "id": "6.B.6",
+      "name": "SUPPORT CAN BE CUT WITH OTHER COAST",
+      "section": "COASTAL ISSUES",
+      "category": "coastal_issues",
+      "description": "Support can be cut from the other coast.",
+      "orders": {
+        "England": [
+          "F Irish Sea Supports F North Atlantic Ocean - Mid-Atlantic Ocean",
+          "F North Atlantic Ocean - Mid-Atlantic Ocean"
+        ],
+        "France": [
+          "F Spain(nc) Supports F Mid-Atlantic Ocean",
+          "F Mid-Atlantic Ocean Hold"
+        ],
+        "Italy": [
+          "F Gulf of Lyon - Spain(sc)"
+        ]
+      },
+      "expected_outcome": "The Italian fleet in the Gulf of Lyon will cut the support in Spain. That means that the French fleet in the Mid Atlantic Ocean will be dislodged by the English fleet in the North Atlantic Ocean.",
+      "raw_content": "<h4><a name=\"6.B.6\">6.B.6. TEST CASE, SUPPORT CAN BE CUT WITH OTHER COAST</a></h4>\n<p>Support can be cut from the other coast.</p>\n<pre>England: \nF Irish Sea Supports F North Atlantic Ocean - Mid-Atlantic Ocean\nF North Atlantic Ocean - Mid-Atlantic Ocean\n\nFrance: \nF Spain(nc) Supports F Mid-Atlantic Ocean\nF Mid-Atlantic Ocean Hold\n\nItaly: \nF Gulf of Lyon - Spain(sc)\n</pre>\n<p>The Italian fleet in the Gulf of Lyon will cut the support in Spain. That means that the French fleet in the Mid Atlantic..."
+    },
+    {
+      "id": "6.B.7",
+      "name": "SUPPORTING OWN UNIT WITH UNSPECIFIED COAST",
+      "section": "COASTAL ISSUES",
+      "category": "coastal_issues",
+      "description": "It is a little bit harsh to reject this.",
+      "orders": {
+        "France": [
+          "F Portugal Supports F Mid-Atlantic Ocean - Spain",
+          "F Mid-Atlantic Ocean - Spain(nc)"
+        ],
+        "Italy": [
+          "F Gulf of Lyon Supports F Western Mediterranean - Spain(sc)",
+          "F Western Mediterranean - Spain(sc)"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.B.7\">6.B.7. TEST CASE, SUPPORTING OWN UNIT WITH UNSPECIFIED COAST</a></h4>\n<p>It is a little bit harsh to reject this.</p>\n<pre>France: \nF Portugal Supports F Mid-Atlantic Ocean - Spain\nF Mid-Atlantic Ocean - Spain(nc)\n\nItaly: \nF Gulf of Lyon Supports F Western Mediterranean - Spain(sc)\nF Western Mediterranean - Spain(sc)\n</pre>\n<p>See issue <a href=\"#4.B.4\">4.B.4</a>.</p>\n<p><i>I prefer that the support succeeds and the Italian fleet in the Western Mediterranean bounces. However,..."
+    },
+    {
+      "id": "6.B.8",
+      "name": "SUPPORTING WITH UNSPECIFIED COAST WHEN ONLY ONE COAST IS POSSIBLE",
+      "section": "COASTAL ISSUES",
+      "category": "coastal_issues",
+      "description": "If coast is omitted while only coast is possible, it should be considered a poorly written order, that should be followed.",
+      "orders": {
+        "France": [
+          "F Portugal Supports F Gascony - Spain",
+          "F Gascony - Spain(nc)"
+        ],
+        "Italy": [
+          "F Gulf of Lyon Supports F Western Mediterranean - Spain(sc)",
+          "F Western Mediterranean - Spain(sc)"
+        ]
+      },
+      "expected_outcome": "Support of Portugal is successful and the Italian fleet in the Western Mediterranean bounces with the French fleet from Gascony.",
+      "raw_content": "<h4><a name=\"6.B.8\">6.B.8. TEST CASE, SUPPORTING WITH UNSPECIFIED COAST WHEN ONLY ONE COAST IS POSSIBLE</a></h4>\n<p>If coast is omitted while only coast is possible, it should be considered a poorly written order, that should be followed.</p>\n<pre>France: \nF Portugal Supports F Gascony - Spain\nF Gascony - Spain(nc)\n\nItaly: \nF Gulf of Lyon Supports F Western Mediterranean - Spain(sc)\nF Western Mediterranean - Spain(sc)\n</pre>\n<p>Support of Portugal is successful and the Italian fleet in the Weste..."
+    },
+    {
+      "id": "6.B.9",
+      "name": "SUPPORTING WITH WRONG COAST",
+      "section": "COASTAL ISSUES",
+      "category": "coastal_issues",
+      "description": "It should be possible to specify a coast and that coast should match.",
+      "orders": {
+        "France": [
+          "F Portugal Supports F Mid-Atlantic Ocean - Spain(nc)",
+          "F Mid-Atlantic Ocean - Spain(sc)"
+        ],
+        "Italy": [
+          "F Gulf of Lyon Supports F Western Mediterranean - Spain(sc)",
+          "F Western Mediterranean - Spain(sc)"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.B.9\">6.B.9. TEST CASE, SUPPORTING WITH WRONG COAST</a></h4>\n<p>It should be possible to specify a coast and that coast should match.</p>\n<pre>France: \nF Portugal Supports F Mid-Atlantic Ocean - Spain(nc)\nF Mid-Atlantic Ocean - Spain(sc)\n\nItaly: \nF Gulf of Lyon Supports F Western Mediterranean - Spain(sc)\nF Western Mediterranean - Spain(sc)\n</pre>\n<p>See issue <a href=\"#4.B.4\">4.B.4</a>. Support of Portugal is invalid and the Italian fleet in the \nWestern Mediterranean moves succes..."
+    },
+    {
+      "id": "6.B.10",
+      "name": "UNIT ORDERED WITH WRONG COAST",
+      "section": "COASTAL ISSUES",
+      "category": "coastal_issues",
+      "description": "A player might specify the wrong coast for the ordered unit.",
+      "orders": {
+        "France": [
+          "F Spain(nc) - Gulf of Lyon"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.B.10\">6.B.10. TEST CASE, UNIT ORDERED WITH WRONG COAST</a></h4>\n<p>A player might specify the wrong coast for the ordered unit.</p>\n<p>France has a fleet on the south coast of Spain and orders:</p>\n<pre>France:\nF Spain(nc) - Gulf of Lyon\n</pre>\n<p>If only perfect orders are accepted, then the move will fail, but since\nthe coast for the ordered unit has no purpose, it might also be ignored\n(see issue <a href=\"#4.B.5\">4.B.5</a>).</p>\n<p><i>I prefer that a move will be attempted.</i>..."
+    },
+    {
+      "id": "6.B.11",
+      "name": "COAST CANNOT BE ORDERED TO CHANGE",
+      "section": "COASTAL ISSUES",
+      "category": "coastal_issues",
+      "description": "The coast cannot change by just ordering the other coast.",
+      "orders": {
+        "France": [
+          "F Spain(sc) - Gulf of Lyon"
+        ]
+      },
+      "expected_outcome": "The move fails.",
+      "raw_content": "<h4><a name=\"6.B.11\">6.B.11. TEST CASE, COAST CANNOT BE ORDERED TO CHANGE</a></h4>\n<p>The coast cannot change by just ordering the other coast.</p>\n<p>France has a fleet on the north coast of Spain and orders:</p>\n<pre>France:\nF Spain(sc) - Gulf of Lyon\n</pre>\n<p>The move fails.</p>\n\n"
+    },
+    {
+      "id": "6.B.12",
+      "name": "ARMY MOVEMENT WITH COASTAL SPECIFICATION",
+      "section": "COASTAL ISSUES",
+      "category": "coastal_issues",
+      "description": "For armies the coasts are irrelevant:",
+      "orders": {
+        "France": [
+          "A Gascony - Spain(nc)"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.B.12\">6.B.12. TEST CASE, ARMY MOVEMENT WITH COASTAL SPECIFICATION</a></h4>\n<p>For armies the coasts are irrelevant:</p>\n<pre>France:\nA Gascony - Spain(nc)\n</pre>\n<p>If only perfect orders are accepted, then the move will fail. But it is also possible that coasts are ignored in this case and a move will be attempted (see issue <a href=\"#4.B.6\">4.B.6</a>).</p>\n<p><i>I prefer that a move will be attempted.</i></p>\n\n"
+    },
+    {
+      "id": "6.B.13",
+      "name": "COASTAL CRAWL NOT ALLOWED",
+      "section": "COASTAL ISSUES",
+      "category": "coastal_issues",
+      "description": "If a fleet is leaving a sector from a certain coast while in the opposite direction another fleet is moving to another coast of the sector, it is still a head-to-head battle. This has been decided in the great revision of the 1961 rules that resulted in the 1971 rules.",
+      "orders": {
+        "Turkey": [
+          "F Bulgaria(sc) - Constantinople",
+          "F Constantinople - Bulgaria(ec)"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.B.13\">6.B.13. TEST CASE, COASTAL CRAWL NOT ALLOWED</a></h4>\n<p>If a fleet is leaving a sector from a certain coast while in the\nopposite direction another fleet is moving to another coast of the\nsector, it is still a head-to-head battle. This has been decided\nin the great revision of the 1961 rules that resulted in the 1971\nrules.</p>\n<pre>Turkey: \nF Bulgaria(sc) - Constantinople\nF Constantinople - Bulgaria(ec)\n</pre>\n<p>Both moves fail.</p>\n\n"
+    },
+    {
+      "id": "6.B.14",
+      "name": "BUILDING WITH UNSPECIFIED COAST",
+      "section": "COASTAL ISSUES",
+      "category": "coastal_issues",
+      "description": "Coast must be specified in certain build cases:",
+      "orders": {
+        "Russia": [
+          "Build F St Petersburg"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.B.14\">6.B.14. TEST CASE, BUILDING WITH UNSPECIFIED COAST</a></h4>\n<p>Coast must be specified in certain build cases:</p>\n<pre>Russia: \nBuild F St Petersburg\n</pre>\n<p>See issue <a href=\"#4.B.7\">4.B.7</a>. Build fails.</p>\n\n"
+    },
+    {
+      "id": "6.B.15",
+      "name": "SUPPORTING FOREIGN UNIT WITH UNSPECIFIED COAST",
+      "section": "COASTAL ISSUES",
+      "category": "coastal_issues",
+      "description": "Opinions differ on this.",
+      "orders": {
+        "France": [
+          "F Portugal Supports F Mid-Atlantic Ocean - Spain"
+        ],
+        "England": [
+          "F Mid-Atlantic Ocean - Spain(nc)"
+        ],
+        "Italy": [
+          "F Gulf of Lyon Supports F Western Mediterranean - Spain(sc)",
+          "F Western Mediterranean - Spain(sc)"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.B.15\">6.B.15. TEST CASE, SUPPORTING FOREIGN UNIT WITH UNSPECIFIED COAST</a></h4>\n<p>Opinions differ on this.</p>\n<pre>France:\nF Portugal Supports F Mid-Atlantic Ocean - Spain\n\nEngland:\nF Mid-Atlantic Ocean - Spain(nc)\n\nItaly: \nF Gulf of Lyon Supports F Western Mediterranean - Spain(sc)\nF Western Mediterranean - Spain(sc)\n</pre>\n<p>See issue <a href=\"#4.B.4\">4.B.4</a>.</p>\n<p><i>Although the move to the north coast of Spain might be a surprise for France, it is hard to believe that..."
+    },
+    {
+      "id": "6.C.1",
+      "name": "THREE ARMY CIRCULAR MOVEMENT",
+      "section": "CIRCULAR MOVEMENT",
+      "category": "circular_movement",
+      "description": "Three units can change place, even in spring 1901.",
+      "orders": {
+        "Turkey": [
+          "F Ankara - Constantinople",
+          "A Constantinople - Smyrna",
+          "A Smyrna - Ankara"
+        ]
+      },
+      "expected_outcome": "All three units will move.",
+      "raw_content": "<h4><a name=\"6.C.1\">6.C.1. TEST CASE, THREE ARMY CIRCULAR MOVEMENT</a></h4>\n<p>Three units can change place, even in spring 1901.</p>\n<pre>Turkey: \nF Ankara - Constantinople\nA Constantinople - Smyrna\nA Smyrna - Ankara\n</pre>\n<p>All three units will move.</p>\n\n"
+    },
+    {
+      "id": "6.C.2",
+      "name": "THREE ARMY CIRCULAR MOVEMENT WITH SUPPORT",
+      "section": "CIRCULAR MOVEMENT",
+      "category": "circular_movement",
+      "description": "Three units can change place, even when one gets support.",
+      "orders": {
+        "Turkey": [
+          "F Ankara - Constantinople",
+          "A Constantinople - Smyrna",
+          "A Smyrna - Ankara",
+          "A Bulgaria Supports F Ankara - Constantinople"
+        ]
+      },
+      "expected_outcome": "Of course, the three units will move, but knowing how programs are written, this can confuse the adjudicator.",
+      "raw_content": "<h4><a name=\"6.C.2\">6.C.2. TEST CASE, THREE ARMY CIRCULAR MOVEMENT WITH SUPPORT</a></h4>\n<p>Three units can change place, even when one gets support.</p>\n<pre>Turkey: \nF Ankara - Constantinople\nA Constantinople - Smyrna\nA Smyrna - Ankara\nA Bulgaria Supports F Ankara - Constantinople\n</pre>\n<p>Of course, the three units will move, but knowing how\nprograms are written, this can confuse the adjudicator.</p>\n\n"
+    },
+    {
+      "id": "6.C.3",
+      "name": "A DISRUPTED THREE ARMY CIRCULAR MOVEMENT",
+      "section": "CIRCULAR MOVEMENT",
+      "category": "circular_movement",
+      "description": "When one of the units bounces, the whole circular movement will hold.",
+      "orders": {
+        "Turkey": [
+          "F Ankara - Constantinople",
+          "A Constantinople - Smyrna",
+          "A Smyrna - Ankara",
+          "A Bulgaria - Constantinople"
+        ]
+      },
+      "expected_outcome": "When one of the units bounces, the whole circular movement will hold.",
+      "raw_content": "<h4><a name=\"6.C.3\">6.C.3. TEST CASE, A DISRUPTED THREE ARMY CIRCULAR MOVEMENT</a></h4>\n<p>When one of the units bounces, the whole circular movement will hold.</p>\n<pre>Turkey: \nF Ankara - Constantinople\nA Constantinople - Smyrna\nA Smyrna - Ankara\nA Bulgaria - Constantinople\n</pre>\n<p>Every unit will keep its place.</p>\n\n"
+    },
+    {
+      "id": "6.C.4",
+      "name": "A CIRCULAR MOVEMENT WITH ATTACKED CONVOY",
+      "section": "CIRCULAR MOVEMENT",
+      "category": "circular_movement",
+      "description": "When the circular movement contains an attacked convoy, the circular movement succeeds. The adjudication algorithm should handle attack of convoys before calculating circular movement.",
+      "orders": {
+        "Austria": [
+          "A Trieste - Serbia",
+          "A Serbia - Bulgaria"
+        ],
+        "Turkey": [
+          "A Bulgaria - Trieste",
+          "F Aegean Sea Convoys A Bulgaria - Trieste",
+          "F Ionian Sea Convoys A Bulgaria - Trieste",
+          "F Adriatic Sea Convoys A Bulgaria - Trieste"
+        ],
+        "Italy": [
+          "F Naples - Ionian Sea"
+        ]
+      },
+      "expected_outcome": "When the circular movement contains an attacked convoy, the circular movement succeeds. The adjudication algorithm should handle attack of convoys before calculating circular movement.",
+      "raw_content": "<h4><a name=\"6.C.4\">6.C.4. TEST CASE, A CIRCULAR MOVEMENT WITH ATTACKED CONVOY</a></h4>\n<p>When the circular movement contains an attacked convoy, the circular\nmovement succeeds. The adjudication algorithm should handle attack of\nconvoys before calculating circular movement.</p>\n<pre>Austria: \nA Trieste - Serbia\nA Serbia - Bulgaria\n\nTurkey: \nA Bulgaria - Trieste\nF Aegean Sea Convoys A Bulgaria - Trieste\nF Ionian Sea Convoys A Bulgaria - Trieste\nF Adriatic Sea Convoys A Bulgaria - Trieste\n\nItaly:..."
+    },
+    {
+      "id": "6.C.5",
+      "name": "A DISRUPTED CIRCULAR MOVEMENT DUE TO DISLODGED CONVOY",
+      "section": "CIRCULAR MOVEMENT",
+      "category": "circular_movement",
+      "description": "When the circular movement contains a convoy, the circular movement is disrupted when the convoying fleet is dislodged. The adjudication algorithm should disrupt convoys before calculating circular movement.",
+      "orders": {
+        "Austria": [
+          "A Trieste - Serbia",
+          "A Serbia - Bulgaria"
+        ],
+        "Turkey": [
+          "A Bulgaria - Trieste",
+          "F Aegean Sea Convoys A Bulgaria - Trieste",
+          "F Ionian Sea Convoys A Bulgaria - Trieste",
+          "F Adriatic Sea Convoys A Bulgaria - Trieste"
+        ],
+        "Italy": [
+          "F Naples - Ionian Sea",
+          "F Tunis Supports F Naples - Ionian Sea"
+        ]
+      },
+      "expected_outcome": "When the circular movement contains a convoy, the circular movement is disrupted when the convoying fleet is dislodged. The adjudication algorithm should disrupt convoys before calculating circular movement.",
+      "raw_content": "<h4><a name=\"6.C.5\">6.C.5. TEST CASE, A DISRUPTED CIRCULAR MOVEMENT DUE TO DISLODGED CONVOY</a></h4>\n<p>When the circular movement contains a convoy, the circular\nmovement is disrupted when the convoying fleet is dislodged.\nThe adjudication algorithm should disrupt convoys before calculating\ncircular movement.</p>\n<pre>Austria: \nA Trieste - Serbia\nA Serbia - Bulgaria\n\nTurkey: \nA Bulgaria - Trieste\nF Aegean Sea Convoys A Bulgaria - Trieste\nF Ionian Sea Convoys A Bulgaria - Trieste\nF Adriatic Sea ..."
+    },
+    {
+      "id": "6.C.6",
+      "name": "TWO ARMIES WITH TWO CONVOYS",
+      "section": "CIRCULAR MOVEMENT",
+      "category": "circular_movement",
+      "description": "Two armies can swap places even when they are not adjacent.",
+      "orders": {
+        "England": [
+          "F North Sea Convoys A London - Belgium",
+          "A London - Belgium"
+        ],
+        "France": [
+          "F English Channel Convoys A Belgium - London",
+          "A Belgium - London"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.C.6\">6.C.6. TEST CASE, TWO ARMIES WITH TWO CONVOYS</a></h4>\n<p>Two armies can swap places even when they are not adjacent.</p>\n<pre>England: \nF North Sea Convoys A London - Belgium\nA London - Belgium\n\nFrance: \nF English Channel Convoys A Belgium - London\nA Belgium - London\n</pre>\n<p>Both convoys should succeed.</p>\n\n"
+    },
+    {
+      "id": "6.C.7",
+      "name": "DISRUPTED UNIT SWAP",
+      "section": "CIRCULAR MOVEMENT",
+      "category": "circular_movement",
+      "description": "If in a swap one of the unit bounces, then the swap fails.",
+      "orders": {
+        "England": [
+          "F North Sea Convoys A London - Belgium",
+          "A London - Belgium"
+        ],
+        "France": [
+          "F English Channel Convoys A Belgium - London",
+          "A Belgium - London",
+          "A Burgundy - Belgium"
+        ]
+      },
+      "expected_outcome": "If in a swap one of the unit bounces, then the swap fails.",
+      "raw_content": "<h4><a name=\"6.C.7\">6.C.7. TEST CASE, DISRUPTED UNIT SWAP</a></h4>\n<p>If in a swap one of the unit bounces, then the swap fails.</p>\n<pre>England: \nF North Sea Convoys A London - Belgium\nA London - Belgium\n\nFrance: \nF English Channel Convoys A Belgium - London\nA Belgium - London\nA Burgundy - Belgium\n</pre>\n<p>None of the units will succeed to move.</p>\n\n"
+    },
+    {
+      "id": "6.C.8",
+      "name": "NO SELF DISLODGEMENT IN DISRUPTED CIRCULAR MOVEMENT",
+      "section": "CIRCULAR MOVEMENT",
+      "category": "circular_movement",
+      "description": "Self dislodgement is prohibited as usual in circular movement.",
+      "orders": {
+        "Turkey": [
+          "F Constantinople - Black Sea",
+          "A Bulgaria - Constantinople",
+          "A Smyrna Supports A Bulgaria - Constantinople"
+        ],
+        "Russia": [
+          "F Black Sea - Bulgaria(ec)",
+          "Austria",
+          "A Serbia - Bulgaria"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.C.8\">6.C.8. TEST CASE, NO SELF DISLODGEMENT IN DISRUPTED CIRCULAR MOVEMENT</a></h4>\n<p>Self dislodgement is prohibited as usual in circular movement.</p>\n<pre>Turkey:\nF Constantinople - Black Sea\nA Bulgaria - Constantinople\nA Smyrna Supports A Bulgaria - Constantinople\n\nRussia:\nF Black Sea - Bulgaria(ec)\n\nAustria\nA Serbia - Bulgaria\n</pre>\n<p>None of the units will succeed to move.</p>\n\n"
+    },
+    {
+      "id": "6.C.9",
+      "name": "NO HELP IN DISLODGEMENT OF OWN UNIT IN DISRUPTED CIRCULAR MOVEMENT",
+      "section": "CIRCULAR MOVEMENT",
+      "category": "circular_movement",
+      "description": "Helping to dislodge your own unit is prohibited as usual in circular movement.",
+      "orders": {
+        "Turkey": [
+          "F Constantinople - Black Sea",
+          "A Smyrna Supports A Bulgaria - Constantinople"
+        ],
+        "Russia": [
+          "F Black Sea - Bulgaria(ec)",
+          "Austria",
+          "A Serbia - Bulgaria",
+          "A Bulgaria - Constantinople"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.C.9\">6.C.9. TEST CASE, NO HELP IN DISLODGEMENT OF OWN UNIT IN DISRUPTED CIRCULAR MOVEMENT</a></h4>\n<p>Helping to dislodge your own unit is prohibited as usual in circular movement.</p>\n<pre>Turkey:\nF Constantinople - Black Sea\nA Smyrna Supports A Bulgaria - Constantinople\n\nRussia:\nF Black Sea - Bulgaria(ec)\n\nAustria\nA Serbia - Bulgaria\nA Bulgaria - Constantinople\n</pre>\n<p>None of the units will succeed to move.</p>\n\n<h3><a name=\"6.D\">6.D. TEST CASES, SUPPORTS AND DISLODGES</a></h..."
+    },
+    {
+      "id": "6.D.1",
+      "name": "SUPPORTED HOLD CAN PREVENT DISLODGEMENT",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "The simplest support to hold order.",
+      "orders": {
+        "Austria": [
+          "F Adriatic Sea Supports A Trieste - Venice",
+          "A Trieste - Venice"
+        ],
+        "Italy": [
+          "A Venice Hold",
+          "A Tyrolia Supports A Venice"
+        ]
+      },
+      "expected_outcome": "The support of Tyrolia prevents the army in Venice from being dislodged. The army in Trieste will not move.",
+      "raw_content": "<h4><a name=\"6.D.1\">6.D.1. TEST CASE, SUPPORTED HOLD CAN PREVENT DISLODGEMENT</a></h4>\n<p>The simplest support to hold order.</p>\n<pre>Austria: \nF Adriatic Sea Supports A Trieste - Venice\nA Trieste - Venice\n\nItaly: \nA Venice Hold\nA Tyrolia Supports A Venice\n</pre>\n<p>The support of Tyrolia prevents the army in Venice from being dislodged. The army in Trieste will not move.</p>\n\n"
+    },
+    {
+      "id": "6.D.2",
+      "name": "A MOVE CUTS SUPPORT ON HOLD",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "The simplest support on hold cut.",
+      "orders": {
+        "Austria": [
+          "F Adriatic Sea Supports A Trieste - Venice",
+          "A Trieste - Venice",
+          "A Vienna - Tyrolia"
+        ],
+        "Italy": [
+          "A Venice Hold",
+          "A Tyrolia Supports A Venice"
+        ]
+      },
+      "expected_outcome": "The support of Tyrolia is cut by the army in Vienna. That means that the army in Venice is dislodged by the army from Trieste.",
+      "raw_content": "<h4><a name=\"6.D.2\">6.D.2. TEST CASE, A MOVE CUTS SUPPORT ON HOLD</a></h4>\n<p>The simplest support on hold cut.</p>\n<pre>Austria: \nF Adriatic Sea Supports A Trieste - Venice\nA Trieste - Venice\nA Vienna - Tyrolia\n\nItaly: \nA Venice Hold\nA Tyrolia Supports A Venice\n</pre>\n<p>The support of Tyrolia is cut by the army in Vienna. That means that the\narmy in Venice is dislodged by the army from Trieste.</p>\n\n"
+    },
+    {
+      "id": "6.D.3",
+      "name": "A MOVE CUTS SUPPORT ON MOVE",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "The simplest support on move cut.",
+      "orders": {
+        "Austria": [
+          "F Adriatic Sea Supports A Trieste - Venice",
+          "A Trieste - Venice"
+        ],
+        "Italy": [
+          "A Venice Hold",
+          "F Ionian Sea - Adriatic Sea"
+        ]
+      },
+      "expected_outcome": "The support of the fleet in the Adriatic Sea is cut. That means that the army in Venice will not be dislodged and the army in Trieste stays in Trieste.",
+      "raw_content": "<h4><a name=\"6.D.3\">6.D.3. TEST CASE, A MOVE CUTS SUPPORT ON MOVE</a></h4>\n<p>The simplest support on move cut.</p>\n<pre>Austria: \nF Adriatic Sea Supports A Trieste - Venice\nA Trieste - Venice\n\nItaly: \nA Venice Hold\nF Ionian Sea - Adriatic Sea\n</pre>\n<p>The support of the fleet in the Adriatic Sea is cut. That means that the\narmy in Venice will not be dislodged and the army in Trieste stays in Trieste.</p>\n\n"
+    },
+    {
+      "id": "6.D.4",
+      "name": "SUPPORT TO HOLD ON UNIT SUPPORTING A HOLD ALLOWED",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "A unit that is supporting a hold, can receive a hold support.",
+      "orders": {
+        "Germany": [
+          "A Berlin Supports F Kiel",
+          "F Kiel Supports A Berlin"
+        ],
+        "Russia": [
+          "F Baltic Sea Supports A Prussia - Berlin",
+          "A Prussia - Berlin"
+        ]
+      },
+      "expected_outcome": "The Russian move from Prussia to Berlin fails.",
+      "raw_content": "<h4><a name=\"6.D.4\">6.D.4. TEST CASE, SUPPORT TO HOLD ON UNIT SUPPORTING A HOLD ALLOWED</a></h4>\n<p>A unit that is supporting a hold, can receive a hold support.</p>\n<pre>Germany: \nA Berlin Supports F Kiel\nF Kiel Supports A Berlin\n\nRussia: \nF Baltic Sea Supports A Prussia - Berlin\nA Prussia - Berlin\n</pre>\n<p>The Russian move from Prussia to Berlin fails.</p>\n\n"
+    },
+    {
+      "id": "6.D.5",
+      "name": "SUPPORT TO HOLD ON UNIT SUPPORTING A MOVE ALLOWED",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "A unit that is supporting a move, can receive a hold support.",
+      "orders": {
+        "Germany": [
+          "A Berlin Supports A Munich - Silesia",
+          "F Kiel Supports A Berlin",
+          "A Munich - Silesia"
+        ],
+        "Russia": [
+          "F Baltic Sea Supports A Prussia - Berlin",
+          "A Prussia - Berlin"
+        ]
+      },
+      "expected_outcome": "The Russian move from Prussia to Berlin fails.",
+      "raw_content": "<h4><a name=\"6.D.5\">6.D.5. TEST CASE, SUPPORT TO HOLD ON UNIT SUPPORTING A MOVE ALLOWED</a></h4>\n<p>A unit that is supporting a move, can receive a hold support.</p>\n<pre>Germany: \nA Berlin Supports A Munich - Silesia\nF Kiel Supports A Berlin\nA Munich - Silesia\n\nRussia: \nF Baltic Sea Supports A Prussia - Berlin\nA Prussia - Berlin\n</pre>\n<p>The Russian move from Prussia to Berlin fails.</p>\n\n"
+    },
+    {
+      "id": "6.D.6",
+      "name": "SUPPORT TO HOLD ON CONVOYING UNIT ALLOWED",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "A unit that is convoying, can receive a hold support.",
+      "orders": {
+        "Germany": [
+          "A Berlin - Sweden",
+          "F Baltic Sea Convoys A Berlin - Sweden",
+          "F Prussia Supports F Baltic Sea"
+        ],
+        "Russia": [
+          "F Livonia - Baltic Sea",
+          "F Gulf of Bothnia Supports F Livonia - Baltic Sea"
+        ]
+      },
+      "expected_outcome": "The Russian move from Livonia to the Baltic Sea fails. The convoy from Berlin to Sweden succeeds.",
+      "raw_content": "<h4><a name=\"6.D.6\">6.D.6. TEST CASE, SUPPORT TO HOLD ON CONVOYING UNIT ALLOWED</a></h4>\n<p>A unit that is convoying, can receive a hold support.</p>\n<pre>Germany: \nA Berlin - Sweden\nF Baltic Sea Convoys A Berlin - Sweden\nF Prussia Supports F Baltic Sea\n\nRussia: \nF Livonia - Baltic Sea\nF Gulf of Bothnia Supports F Livonia - Baltic Sea\n</pre>\n<p>The Russian move from Livonia to the Baltic Sea fails. The convoy from Berlin to Sweden succeeds.</p>\n\n"
+    },
+    {
+      "id": "6.D.7",
+      "name": "SUPPORT TO HOLD ON MOVING UNIT NOT ALLOWED",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "A unit that is moving, cannot receive a hold support for the situation that the move fails.",
+      "orders": {
+        "Germany": [
+          "F Baltic Sea - Sweden",
+          "F Prussia Supports F Baltic Sea"
+        ],
+        "Russia": [
+          "F Livonia - Baltic Sea",
+          "F Gulf of Bothnia Supports F Livonia - Baltic Sea",
+          "A Finland - Sweden"
+        ]
+      },
+      "expected_outcome": "A unit that is moving, cannot receive a hold support for the situation that the move fails.",
+      "raw_content": "<h4><a name=\"6.D.7\">6.D.7. TEST CASE, SUPPORT TO HOLD ON MOVING UNIT NOT ALLOWED</a></h4>\n<p>A unit that is moving, cannot receive a hold support for the situation that the move fails.</p>\n<pre>Germany: \nF Baltic Sea - Sweden\nF Prussia Supports F Baltic Sea\n\nRussia: \nF Livonia - Baltic Sea\nF Gulf of Bothnia Supports F Livonia - Baltic Sea\nA Finland - Sweden\n</pre>\n<p>The support of the fleet in Prussia fails. The fleet in Baltic Sea will bounce\non the Russian army in Finland and will be dislodge..."
+    },
+    {
+      "id": "6.D.8",
+      "name": "FAILED CONVOY CANNOT RECEIVE HOLD SUPPORT",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "If a convoy fails because of disruption of the convoy or when the right convoy orders are not given, then the army to be convoyed cannot receive support in hold, since it still tried to move.",
+      "orders": {
+        "Austria": [
+          "F Ionian Sea Hold",
+          "A Serbia Supports A Albania - Greece",
+          "A Albania - Greece"
+        ],
+        "Turkey": [
+          "A Greece - Naples",
+          "A Bulgaria Supports A Greece"
+        ]
+      },
+      "expected_outcome": "If a convoy fails because of disruption of the convoy or when the right convoy orders are not given, then the army to be convoyed cannot receive support in hold, since it still tried to move.",
+      "raw_content": "<h4><a name=\"6.D.8\">6.D.8. TEST CASE, FAILED CONVOY CANNOT RECEIVE HOLD SUPPORT</a></h4>\n<p>If a convoy fails because of disruption of the convoy or when the right convoy\norders are not given, then the army to be convoyed cannot receive support in hold, since it still tried to move.</p>\n<pre>Austria: \nF Ionian Sea Hold\nA Serbia Supports A Albania - Greece\nA Albania - Greece\n\nTurkey: \nA Greece - Naples\nA Bulgaria Supports A Greece\n</pre>\n<p>There was a possible convoy from Greece to Naples, befor..."
+    },
+    {
+      "id": "6.D.9",
+      "name": "SUPPORT TO MOVE ON HOLDING UNIT NOT ALLOWED",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "A unit that is holding cannot receive a support in moving.",
+      "orders": {
+        "Italy": [
+          "A Venice - Trieste",
+          "A Tyrolia Supports A Venice - Trieste"
+        ],
+        "Austria": [
+          "A Albania Supports A Trieste - Serbia",
+          "A Trieste Hold"
+        ]
+      },
+      "expected_outcome": "The support of the army in Albania fails and the army in Trieste is dislodged by the army from Venice.",
+      "raw_content": "<h4><a name=\"6.D.9\">6.D.9. TEST CASE, SUPPORT TO MOVE ON HOLDING UNIT NOT ALLOWED</a></h4>\n<p>A unit that is holding cannot receive a support in moving.</p>\n<pre>Italy: \nA Venice - Trieste\nA Tyrolia Supports A Venice - Trieste\n\nAustria: \nA Albania Supports A Trieste - Serbia\nA Trieste Hold\n</pre>\n<p>The support of the army in Albania fails and the army in Trieste is dislodged by the army from Venice.</p>\n\n"
+    },
+    {
+      "id": "6.D.10",
+      "name": "SELF DISLODGMENT PROHIBITED",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "A unit may not dislodge a unit of the same great power.",
+      "orders": {
+        "Germany": [
+          "A Berlin Hold",
+          "F Kiel - Berlin",
+          "A Munich Supports F Kiel - Berlin"
+        ]
+      },
+      "expected_outcome": "Move to Berlin fails.",
+      "raw_content": "<h4><a name=\"6.D.10\">6.D.10. TEST CASE, SELF DISLODGMENT PROHIBITED</a></h4>\n<p>A unit may not dislodge a unit of the same great power.</p>\n<pre>Germany: \nA Berlin Hold\nF Kiel - Berlin\nA Munich Supports F Kiel - Berlin\n</pre>\n<p>Move to Berlin fails.</p>\n\n"
+    },
+    {
+      "id": "6.D.11",
+      "name": "NO SELF DISLODGMENT OF RETURNING UNIT",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "Idem.",
+      "orders": {
+        "Germany": [
+          "A Berlin - Prussia",
+          "F Kiel - Berlin",
+          "A Munich Supports F Kiel - Berlin"
+        ],
+        "Russia": [
+          "A Warsaw - Prussia"
+        ]
+      },
+      "expected_outcome": "Army in Berlin bounces, but is not dislodged by own unit.",
+      "raw_content": "<h4><a name=\"6.D.11\">6.D.11. TEST CASE, NO SELF DISLODGMENT OF RETURNING UNIT</a></h4>\n<p>Idem.</p>\n<pre>Germany: \nA Berlin - Prussia\nF Kiel - Berlin\nA Munich Supports F Kiel - Berlin\n\nRussia: \nA Warsaw - Prussia\n</pre>\n<p>Army in Berlin bounces, but is not dislodged by own unit.</p>\n\n"
+    },
+    {
+      "id": "6.D.12",
+      "name": "SUPPORTING A FOREIGN UNIT TO DISLODGE OWN UNIT PROHIBITED",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "You may not help another power in dislodging your own unit.",
+      "orders": {
+        "Austria": [
+          "F Trieste Hold",
+          "A Vienna Supports A Venice - Trieste"
+        ],
+        "Italy": [
+          "A Venice - Trieste"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.D.12\">6.D.12. TEST CASE, SUPPORTING A FOREIGN UNIT TO DISLODGE OWN UNIT PROHIBITED</a></h4>\n<p>You may not help another power in dislodging your own unit.</p>\n<pre>Austria: \nF Trieste Hold\nA Vienna Supports A Venice - Trieste\n\nItaly: \nA Venice - Trieste\n</pre>\n<p>No dislodgment of fleet in Trieste.</p>\n\n"
+    },
+    {
+      "id": "6.D.13",
+      "name": "SUPPORTING A FOREIGN UNIT TO DISLODGE A RETURNING OWN UNIT PROHIBITED",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "Idem.",
+      "orders": {
+        "Austria": [
+          "F Trieste - Adriatic Sea",
+          "A Vienna Supports A Venice - Trieste"
+        ],
+        "Italy": [
+          "A Venice - Trieste",
+          "F Apulia - Adriatic Sea"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.D.13\">6.D.13. TEST CASE, SUPPORTING A FOREIGN UNIT TO DISLODGE A RETURNING OWN UNIT PROHIBITED</a></h4>\n<p>Idem.</p>\n<pre>Austria: \nF Trieste - Adriatic Sea\nA Vienna Supports A Venice - Trieste\n\nItaly: \nA Venice - Trieste\nF Apulia - Adriatic Sea\n</pre>\n<p>No dislodgment of fleet in Trieste.</p>\n\n"
+    },
+    {
+      "id": "6.D.14",
+      "name": "SUPPORTING A FOREIGN UNIT IS NOT ENOUGH TO PREVENT DISLODGEMENT",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "If a foreign unit has enough support to dislodge your unit, you may not prevent that dislodgement by supporting the attack.",
+      "orders": {
+        "Austria": [
+          "F Trieste Hold",
+          "A Vienna Supports A Venice - Trieste"
+        ],
+        "Italy": [
+          "A Venice - Trieste",
+          "A Tyrolia Supports A Venice - Trieste",
+          "F Adriatic Sea Supports A Venice - Trieste"
+        ]
+      },
+      "expected_outcome": "The fleet in Trieste is dislodged.",
+      "raw_content": "<h4><a name=\"6.D.14\">6.D.14. TEST CASE, SUPPORTING A FOREIGN UNIT IS NOT ENOUGH TO PREVENT DISLODGEMENT</a></h4>\n<p>If a foreign unit has enough support to dislodge your unit, you may not prevent that dislodgement by supporting the attack.</p>\n<pre>Austria:\nF Trieste Hold\nA Vienna Supports A Venice - Trieste\n\nItaly:\nA Venice - Trieste\nA Tyrolia Supports A Venice - Trieste\nF Adriatic Sea Supports A Venice - Trieste\n</pre>\n<p>The fleet in Trieste is dislodged.</p>\n\n"
+    },
+    {
+      "id": "6.D.15",
+      "name": "DEFENDER CANNOT CUT SUPPORT FOR ATTACK ON ITSELF",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "A unit that is attacked by a supported unit cannot prevent dislodgement by guessing which of the units will do the support.",
+      "orders": {
+        "Russia": [
+          "F Constantinople Supports F Black Sea - Ankara",
+          "F Black Sea - Ankara"
+        ],
+        "Turkey": [
+          "F Ankara - Constantinople"
+        ]
+      },
+      "expected_outcome": "The support of Constantinople is not cut and the fleet in Ankara is dislodged by the fleet in the Black Sea.",
+      "raw_content": "<h4><a name=\"6.D.15\">6.D.15. TEST CASE, DEFENDER CANNOT CUT SUPPORT FOR ATTACK ON ITSELF</a></h4>\n<p>A unit that is attacked by a supported unit cannot prevent dislodgement by guessing which of the units will do the support.</p>\n<pre>Russia: \nF Constantinople Supports F Black Sea - Ankara\nF Black Sea - Ankara\n\nTurkey: \nF Ankara - Constantinople\n</pre>\n<p>The support of Constantinople is not cut and the fleet in Ankara is dislodged by the fleet in the Black Sea.</p>\n\n"
+    },
+    {
+      "id": "6.D.16",
+      "name": "CONVOYING A UNIT DISLODGING A UNIT OF SAME POWER IS ALLOWED",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "It is allowed to convoy a foreign unit that dislodges your own unit is allowed.",
+      "orders": {
+        "England": [
+          "A London Hold",
+          "F North Sea Convoys A Belgium - London"
+        ],
+        "France": [
+          "F English Channel Supports A Belgium - London",
+          "A Belgium - London"
+        ]
+      },
+      "expected_outcome": "The English army in London is dislodged by the French army coming from Belgium.",
+      "raw_content": "<h4><a name=\"6.D.16\">6.D.16. TEST CASE, CONVOYING A UNIT DISLODGING A UNIT OF SAME POWER IS ALLOWED</a></h4>\n<p>It is allowed to convoy a foreign unit that dislodges your own unit is allowed.</p>\n<pre>England: \nA London Hold\nF North Sea Convoys A Belgium - London\n\nFrance: \nF English Channel Supports A Belgium - London\nA Belgium - London\n</pre>\n<p>The English army in London is dislodged by the French army\ncoming from Belgium.</p>\n\n"
+    },
+    {
+      "id": "6.D.17",
+      "name": "DISLODGEMENT CUTS SUPPORTS",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "The famous dislodge rule.",
+      "orders": {
+        "Russia": [
+          "F Constantinople Supports F Black Sea - Ankara",
+          "F Black Sea - Ankara"
+        ],
+        "Turkey": [
+          "F Ankara - Constantinople",
+          "A Smyrna Supports F Ankara - Constantinople",
+          "A Armenia - Ankara"
+        ]
+      },
+      "expected_outcome": "The Russian fleet in Constantinople is dislodged. This cuts the support to from Black Sea to Ankara. Black Sea will bounce with the army from Armenia.",
+      "raw_content": "<h4><a name=\"6.D.17\">6.D.17. TEST CASE, DISLODGEMENT CUTS SUPPORTS</a></h4>\n<p>The famous dislodge rule.</p>\n<pre>Russia: \nF Constantinople Supports F Black Sea - Ankara\nF Black Sea - Ankara\n\nTurkey: \nF Ankara - Constantinople\nA Smyrna Supports F Ankara - Constantinople\nA Armenia - Ankara\n</pre>\n<p>The Russian fleet in Constantinople is dislodged. This cuts the support to from Black Sea to Ankara. Black Sea will bounce with the army from Armenia.</p>\n\n"
+    },
+    {
+      "id": "6.D.18",
+      "name": "A SURVIVING UNIT WILL SUSTAIN SUPPORT",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "Idem. But now with an additional hold that prevents dislodgement.",
+      "orders": {
+        "Russia": [
+          "F Constantinople Supports F Black Sea - Ankara",
+          "F Black Sea - Ankara",
+          "A Bulgaria Supports F Constantinople"
+        ],
+        "Turkey": [
+          "F Ankara - Constantinople",
+          "A Smyrna Supports F Ankara - Constantinople",
+          "A Armenia - Ankara"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.D.18\">6.D.18. TEST CASE, A SURVIVING UNIT WILL SUSTAIN SUPPORT</a></h4>\n<p>Idem. But now with an additional hold that prevents dislodgement.</p>\n<pre>Russia: \nF Constantinople Supports F Black Sea - Ankara\nF Black Sea - Ankara\nA Bulgaria Supports F Constantinople\n\nTurkey: \nF Ankara - Constantinople\nA Smyrna Supports F Ankara - Constantinople\nA Armenia - Ankara\n</pre>\n<p>The Russian fleet in the Black Sea will dislodge the Turkish fleet in Ankara.</p>\n\n"
+    },
+    {
+      "id": "6.D.19",
+      "name": "EVEN WHEN SURVIVING IS IN ALTERNATIVE WAY",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "Now, the dislodgement is prevented because the support comes from a Russian army:",
+      "orders": {
+        "Russia": [
+          "F Constantinople Supports F Black Sea - Ankara",
+          "F Black Sea - Ankara",
+          "A Smyrna Supports F Ankara - Constantinople"
+        ],
+        "Turkey": [
+          "F Ankara - Constantinople"
+        ]
+      },
+      "expected_outcome": "The Russian fleet in Constantinople is not dislodged, because one of the supports is of Russian origin. The support from Black Sea to Ankara will sustain and the fleet in Ankara will be dislodged.",
+      "raw_content": "<h4><a name=\"6.D.19\">6.D.19. TEST CASE, EVEN WHEN SURVIVING IS IN ALTERNATIVE WAY</a></h4>\n<p>Now, the dislodgement is prevented because the support comes from a Russian army:</p>\n<pre>Russia: \nF Constantinople Supports F Black Sea - Ankara\nF Black Sea - Ankara\nA Smyrna Supports F Ankara - Constantinople\n\nTurkey: \nF Ankara - Constantinople\n</pre>\n<p>The Russian fleet in Constantinople is not dislodged, because\none of the supports is of Russian origin. The support from\nBlack Sea to Ankara will su..."
+    },
+    {
+      "id": "6.D.20",
+      "name": "UNIT CANNOT CUT SUPPORT OF ITS OWN COUNTRY",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "Although this is not mentioned in all rulebooks, it is generally accepted that when a unit attacks another unit of the same Great Power, it will not cut support.",
+      "orders": {
+        "England": [
+          "F London Supports F North Sea - English Channel",
+          "F North Sea - English Channel",
+          "A Yorkshire - London"
+        ],
+        "France": [
+          "F English Channel Hold"
+        ]
+      },
+      "expected_outcome": "The army in York does not cut support. This means that the fleet in the English Channel is dislodged by the fleet in the North Sea.",
+      "raw_content": "<h4><a name=\"6.D.20\">6.D.20. TEST CASE, UNIT CANNOT CUT SUPPORT OF ITS OWN COUNTRY</a></h4>\n<p>Although this is not mentioned in all rulebooks, it is generally accepted that when a unit attacks another unit of the same Great Power, it will not cut support.</p>\n<pre>England: \nF London Supports F North Sea - English Channel\nF North Sea - English Channel\nA Yorkshire - London\n\nFrance: \nF English Channel Hold\n</pre>\n<p>The army in York does not cut support. This means that the fleet\nin the English Ch..."
+    },
+    {
+      "id": "6.D.21",
+      "name": "DISLODGING DOES NOT CANCEL A SUPPORT CUT",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "Sometimes there is the question whether a dislodged moving unit does not cut support (similar to the dislodge rule). This is not the case.",
+      "orders": {
+        "Austria": [
+          "F Trieste Hold"
+        ],
+        "Italy": [
+          "A Venice - Trieste",
+          "A Tyrolia Supports A Venice - Trieste"
+        ],
+        "Germany": [
+          "A Munich - Tyrolia"
+        ],
+        "Russia": [
+          "A Silesia - Munich",
+          "A Berlin Supports A Silesia - Munich"
+        ]
+      },
+      "expected_outcome": "Sometimes there is the question whether a dislodged moving unit does not cut support (similar to the dislodge rule). This is not the case.",
+      "raw_content": "<h4><a name=\"6.D.21\">6.D.21. TEST CASE, DISLODGING DOES NOT CANCEL A SUPPORT CUT</a></h4>\n<p>Sometimes there is the question whether a dislodged moving unit\ndoes not cut support (similar to the dislodge rule). This is not\nthe case.\n</p><pre>Austria: \nF Trieste Hold\n \nItaly: \nA Venice - Trieste\nA Tyrolia Supports A Venice - Trieste\n       \nGermany: \nA Munich - Tyrolia\n\nRussia: \nA Silesia - Munich\nA Berlin Supports A Silesia - Munich\n</pre>\n<p>Although the German army is dislodged, it still cuts t..."
+    },
+    {
+      "id": "6.D.22",
+      "name": "IMPOSSIBLE FLEET MOVE CANNOT BE SUPPORTED",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "If a fleet tries moves to a land area it seems pointless to support the fleet, since the move will fail anyway. However, in such case, the support is also invalid for defense purposes.",
+      "orders": {
+        "Germany": [
+          "F Kiel - Munich",
+          "A Burgundy Supports F Kiel - Munich"
+        ],
+        "Russia": [
+          "A Munich - Kiel",
+          "A Berlin Supports A Munich - Kiel"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.D.22\">6.D.22. TEST CASE, IMPOSSIBLE FLEET MOVE CANNOT BE SUPPORTED</a></h4>\n<p>If a fleet tries moves to a land area it seems pointless to support the fleet,\nsince the move will fail anyway. However, in such case, the support is also invalid\nfor defense purposes.</p>\n<pre>Germany: \nF Kiel - Munich\nA Burgundy Supports F Kiel - Munich\n\nRussia: \nA Munich - Kiel\nA Berlin Supports A Munich - Kiel\n</pre>\n<p>The German move from Kiel to Munich is illegal (fleets cannot go to Munich). Ill..."
+    },
+    {
+      "id": "6.D.23",
+      "name": "IMPOSSIBLE COAST MOVE CANNOT BE SUPPORTED",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "Comparable with the previous test case, but now the fleet move is impossible for coastal reasons.",
+      "orders": {
+        "Italy": [
+          "F Gulf of Lyon - Spain(sc)",
+          "F Western Mediterranean Supports F Gulf of Lyon - Spain(sc)"
+        ],
+        "France": [
+          "F Spain(nc) - Gulf of Lyon",
+          "F Marseilles Supports F Spain(nc) - Gulf of Lyon"
+        ]
+      },
+      "expected_outcome": "The French move from Spain North Coast to Gulf of Lyon is illegal (wrong coast). Therefore, the support from Marseilles fails and the fleet in Spain is dislodged.",
+      "raw_content": "<h4><a name=\"6.D.23\">6.D.23. TEST CASE, IMPOSSIBLE COAST MOVE CANNOT BE SUPPORTED</a></h4>\n<p>Comparable with the previous test case, but now the fleet move is impossible for coastal reasons.</p>\n<pre>Italy: \nF Gulf of Lyon - Spain(sc)\nF Western Mediterranean Supports F Gulf of Lyon - Spain(sc)\n\nFrance: \nF Spain(nc) - Gulf of Lyon\nF Marseilles Supports F Spain(nc) - Gulf of Lyon\n</pre>\n<p>The French move from Spain North Coast to Gulf of Lyon is illegal (wrong\ncoast). Therefore, the support from..."
+    },
+    {
+      "id": "6.D.24",
+      "name": "IMPOSSIBLE ARMY MOVE CANNOT BE SUPPORTED",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "Comparable with the previous test case, but now an army tries to move into sea and the support is used in a beleaguered garrison.",
+      "orders": {
+        "France": [
+          "A Marseilles - Gulf of Lyon",
+          "F Spain(sc) Supports A Marseilles - Gulf of Lyon"
+        ],
+        "Italy": [
+          "F Gulf of Lyon Hold"
+        ],
+        "Turkey": [
+          "F Tyrrhenian Sea Supports F Western Mediterranean - Gulf of Lyon",
+          "F Western Mediterranean - Gulf of Lyon"
+        ]
+      },
+      "expected_outcome": "The French move from Marseilles to Gulf of Lyon is illegal (an army cannot go to sea). Therefore, the support from Spain fails and there is no beleaguered garrison. The fleet in the Gulf of Lyon is dislodged by the Turkish fleet in the Western Mediterranean.",
+      "raw_content": "<h4><a name=\"6.D.24\">6.D.24. TEST CASE, IMPOSSIBLE ARMY MOVE CANNOT BE SUPPORTED</a></h4>\n<p>Comparable with the previous test case, but now an army tries to move into sea and the support is used in a beleaguered garrison.</p>\n<pre>France: \nA Marseilles - Gulf of Lyon\nF Spain(sc) Supports A Marseilles - Gulf of Lyon\n\nItaly: \nF Gulf of Lyon Hold\n\nTurkey: \nF Tyrrhenian Sea Supports F Western Mediterranean - Gulf of Lyon\nF Western Mediterranean - Gulf of Lyon\n</pre>\n<p>The French move from Marseill..."
+    },
+    {
+      "id": "6.D.25",
+      "name": "FAILING HOLD SUPPORT CAN BE SUPPORTED",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "If an adjudicator fails on one of the previous three test cases, then the bug should be removed with care. A failing move cannot be supported, but a failing hold support, because of some preconditions (unmatching order) can still be supported.",
+      "orders": {
+        "Germany": [
+          "A Berlin Supports A Prussia",
+          "F Kiel Supports A Berlin"
+        ],
+        "Russia": [
+          "F Baltic Sea Supports A Prussia - Berlin",
+          "A Prussia - Berlin"
+        ]
+      },
+      "expected_outcome": "If an adjudicator fails on one of the previous three test cases, then the bug should be removed with care. A failing move cannot be supported, but a failing hold support, because of some preconditions (unmatching order) can still be supported.",
+      "raw_content": "<h4><a name=\"6.D.25\">6.D.25. TEST CASE, FAILING HOLD SUPPORT CAN BE SUPPORTED</a></h4>\n<p>If an adjudicator fails on one of the previous three test cases, then the\nbug should be removed with care. A failing move cannot be supported, but\na failing hold support, because of some preconditions (unmatching order) can still be supported.</p>\n<pre>Germany: \nA Berlin Supports A Prussia\nF Kiel Supports A Berlin\n\nRussia: \nF Baltic Sea Supports A Prussia - Berlin\nA Prussia - Berlin\n</pre>\n<p>Although the s..."
+    },
+    {
+      "id": "6.D.26",
+      "name": "FAILING MOVE SUPPORT CAN BE SUPPORTED",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "Similar as the previous test case, but now with an unmatched support to move.",
+      "orders": {
+        "Germany": [
+          "A Berlin Supports A Prussia - Silesia",
+          "F Kiel Supports A Berlin"
+        ],
+        "Russia": [
+          "F Baltic Sea Supports A Prussia - Berlin",
+          "A Prussia - Berlin"
+        ]
+      },
+      "expected_outcome": "Again, Berlin will not be dislodged.",
+      "raw_content": "<h4><a name=\"6.D.26\">6.D.26. TEST CASE, FAILING MOVE SUPPORT CAN BE SUPPORTED</a></h4>\n<p>Similar as the previous test case, but now with an unmatched support to move.</p>\n<pre>Germany: \nA Berlin Supports A Prussia - Silesia\nF Kiel Supports A Berlin\n\nRussia: \nF Baltic Sea Supports A Prussia - Berlin\nA Prussia - Berlin\n</pre>\n<p>Again, Berlin will not be dislodged.</p>\n\n"
+    },
+    {
+      "id": "6.D.27",
+      "name": "FAILING CONVOY CAN BE SUPPORTED",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "Similar as the previous test case, but now with an unmatched convoy.",
+      "orders": {
+        "England": [
+          "F Sweden - Baltic Sea",
+          "F Denmark Supports F Sweden - Baltic Sea"
+        ],
+        "Germany": [
+          "A Berlin Hold"
+        ],
+        "Russia": [
+          "F Baltic Sea Convoys A Berlin - Livonia",
+          "F Prussia Supports F Baltic Sea"
+        ]
+      },
+      "expected_outcome": "The convoy order in the Baltic Sea is unmatched and fails. However, the support of Prussia on the Baltic Sea is still valid and the fleet in the Baltic Sea is not dislodged.",
+      "raw_content": "<h4><a name=\"6.D.27\">6.D.27. TEST CASE, FAILING CONVOY CAN BE SUPPORTED</a></h4>\n<p>Similar as the previous test case, but now with an unmatched convoy.</p>\n<pre>England: \nF Sweden - Baltic Sea\nF Denmark Supports F Sweden - Baltic Sea\n\nGermany: \nA Berlin Hold\n\nRussia: \nF Baltic Sea Convoys A Berlin - Livonia\nF Prussia Supports F Baltic Sea\n</pre>\n<p>The convoy order in the Baltic Sea is unmatched and fails. However, the\nsupport of Prussia on the Baltic Sea is still valid and the fleet in the Bal..."
+    },
+    {
+      "id": "6.D.28",
+      "name": "IMPOSSIBLE MOVE AND SUPPORT",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "An impossible move is \"illegal\" and should be ignored.",
+      "orders": {
+        "Austria": [
+          "A Budapest Supports F Rumania"
+        ],
+        "Russia": [
+          "F Rumania - Holland"
+        ],
+        "Turkey": [
+          "F Black Sea - Rumania",
+          "A Bulgaria Supports F Black Sea - Rumania"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.D.28\">6.D.28. TEST CASE, IMPOSSIBLE MOVE AND SUPPORT</a></h4>\n<p>An impossible move is \"illegal\" and should be ignored.</p>\n<pre>Austria: \nA Budapest Supports F Rumania\n\nRussia: \nF Rumania - Holland\n\nTurkey: \nF Black Sea - Rumania\nA Bulgaria Supports F Black Sea - Rumania\n</pre>\n<p>See issue <a href=\"#4.E.1\">4.E.1</a>. Illegal orders are ignored. Without an order, Rumania holds and receives support. The fleet in Rumania is not dislodged.</p>\n\n"
+    },
+    {
+      "id": "6.D.29",
+      "name": "MOVE TO IMPOSSIBLE COAST AND SUPPORT",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "Similar to the previous test case, but now the move \"illegal\" due the wrong coast.",
+      "orders": {
+        "Austria": [
+          "A Budapest Supports F Rumania"
+        ],
+        "Russia": [
+          "F Rumania - Bulgaria(sc)"
+        ],
+        "Turkey": [
+          "F Black Sea - Rumania",
+          "A Bulgaria Supports F Black Sea - Rumania"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.D.29\">6.D.29. TEST CASE, MOVE TO IMPOSSIBLE COAST AND SUPPORT</a></h4>\n<p>Similar to the previous test case, but now the move  \"illegal\" due the wrong coast.</p>\n<pre>Austria: \nA Budapest Supports F Rumania\n\nRussia: \nF Rumania - Bulgaria(sc)\n\nTurkey: \nF Black Sea - Rumania\nA Bulgaria Supports F Black Sea - Rumania\n</pre>\n<p>See issue <a href=\"#4.E.1\">4.E.1</a>. Illegal orders are ignored. Without an order, Rumania holds and receives support. The fleet in Rumania is not dislodged.<..."
+    },
+    {
+      "id": "6.D.30",
+      "name": "MOVE WITHOUT COAST AND SUPPORT",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "Similar to the previous test case, but now the move is \"illegal\" due to missing coast.",
+      "orders": {
+        "Italy": [
+          "F Aegean Sea Supports F Constantinople"
+        ],
+        "Russia": [
+          "F Constantinople - Bulgaria"
+        ],
+        "Turkey": [
+          "F Black Sea - Constantinople",
+          "A Bulgaria Supports F Black Sea - Constantinople"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.D.30\">6.D.30. TEST CASE, MOVE WITHOUT COAST AND SUPPORT</a></h4>\n<p>Similar to the previous test case, but now the move is \"illegal\" due to missing coast.</p>\n<pre>Italy: \nF Aegean Sea Supports F Constantinople\n\nRussia: \nF Constantinople - Bulgaria\n\nTurkey: \nF Black Sea - Constantinople\nA Bulgaria Supports F Black Sea - Constantinople\n</pre>\n<p>See issue <a href=\"#4.E.1\">4.E.1</a>. Illegal orders are ignored. Without an order, Constantinople holds and receives support. The fleet i..."
+    },
+    {
+      "id": "6.D.31",
+      "name": "A TRICKY IMPOSSIBLE SUPPORT",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "A support order can be impossible for complex reasons.",
+      "orders": {
+        "Austria": [
+          "A Rumania - Armenia"
+        ],
+        "Turkey": [
+          "F Black Sea Supports A Rumania - Armenia"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.D.31\">6.D.31. TEST CASE, A TRICKY IMPOSSIBLE SUPPORT</a></h4>\n<p>A support order can be impossible for complex reasons.\n</p><pre>Austria: \nA Rumania - Armenia\n\nTurkey: \nF Black Sea Supports A Rumania - Armenia\n</pre>\n<p>Although the army in Rumania can move to Armenia and\nthe fleet in the Black Sea can also go to Armenia, the\nsupport is still not possible. The reason is that the\nonly possible convoy is through the Black Sea and a fleet\ncannot convoy and support at the same time.</..."
+    },
+    {
+      "id": "6.D.32",
+      "name": "A MISSING FLEET",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "The previous test cases contained an order that was impossible even when some other pieces on the board where changed. In this test case, the order is impossible, but only for that situation.",
+      "orders": {
+        "England": [
+          "F Edinburgh Supports A Liverpool - Yorkshire",
+          "A Liverpool - Yorkshire"
+        ],
+        "France": [
+          "F London Supports A Yorkshire"
+        ],
+        "Germany": [
+          "A Yorkshire - Holland"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.D.32\">6.D.32. TEST CASE, A MISSING FLEET</a></h4>\n<p>The previous test cases contained an order that was impossible\neven when some other pieces on the board where changed. In this \ntest case, the order is impossible, but only for that situation.\n</p>\n<pre>England: \nF Edinburgh Supports A Liverpool - Yorkshire\nA Liverpool - Yorkshire\n\nFrance: \nF London Supports A Yorkshire\n\nGermany: \nA Yorkshire - Holland\n</pre>\n<p>The German order to Yorkshire cannot be executed, because\nthere is ..."
+    },
+    {
+      "id": "6.D.33",
+      "name": "UNWANTED SUPPORT ALLOWED",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "A self standoff can be broken by an unwanted support.",
+      "orders": {
+        "Austria": [
+          "A Serbia - Budapest",
+          "A Vienna - Budapest"
+        ],
+        "Russia": [
+          "A Galicia Supports A Serbia - Budapest"
+        ],
+        "Turkey": [
+          "A Bulgaria - Serbia"
+        ]
+      },
+      "expected_outcome": "Due to the Russian support, the army in Serbia advances to Budapest. This enables Turkey to capture Serbia with the army in Bulgaria.",
+      "raw_content": "<h4><a name=\"6.D.33\">6.D.33. TEST CASE, UNWANTED SUPPORT ALLOWED</a></h4>\n<p>A self standoff can be broken by an unwanted support.</p>\n<pre>Austria: \nA Serbia - Budapest\nA Vienna - Budapest\n\nRussia: \nA Galicia Supports A Serbia - Budapest\n\nTurkey: \nA Bulgaria - Serbia\n</pre>\n<p>Due to the Russian support, the army in Serbia advances to\nBudapest. This enables Turkey to capture Serbia with the army\nin Bulgaria.</p>\n\n"
+    },
+    {
+      "id": "6.D.34",
+      "name": "SUPPORT TARGETING OWN AREA NOT ALLOWED",
+      "section": "SUPPORTS AND DISLODGES",
+      "category": "supports_dislodges",
+      "description": "Support targeting the area where the supporting unit is standing, is illegal.",
+      "orders": {
+        "Germany": [
+          "A Berlin - Prussia",
+          "A Silesia Supports A Berlin - Prussia",
+          "F Baltic Sea Supports A Berlin - Prussia",
+          "A Berlin - Prussia",
+          "F Kiel - Berlin",
+          "A Silesia Supports A Berlin - Prussia"
+        ],
+        "Italy": [
+          "A Prussia Supports Livonia - Prussia"
+        ],
+        "Russia": [
+          "A Warsaw Supports A Livonia - Prussia",
+          "A Livonia - Prussia",
+          "A Prussia - Berlin"
+        ]
+      },
+      "expected_outcome": "Russia and Italy wanted to get rid of the Italian army in Prussia (to build an Italian fleet somewhere else). However, they didn't want a possible German attack on Prussia to succeed. They invented this odd order of Italy. It was intended that the attack of the army in Livonia would have strength three, so it would be capable to prevent the possible German attack to succeed. However, the order of Italy is illegal, because a unit may only support to an area where the unit can go by itself. A unit can't go to the area it is already standing, so the Italian order is illegal and the German move from Berlin succeeds. Even if it would be legal, the German move from Berlin would still succeed, because the support of Prussia is cut by Livonia and Berlin.",
+      "raw_content": "<h4><a name=\"6.D.34\">6.D.34. TEST CASE, SUPPORT TARGETING OWN AREA NOT ALLOWED</a></h4>\n<p>Support targeting the area where the supporting unit is standing, is illegal.</p>\n<pre>Germany:\nA Berlin - Prussia\nA Silesia Supports A Berlin - Prussia\nF Baltic Sea Supports A Berlin - Prussia\n\nItaly:\nA Prussia Supports Livonia - Prussia\n\nRussia:\nA Warsaw Supports A Livonia - Prussia\nA Livonia - Prussia\n</pre>\n<p>Russia and Italy wanted to get rid of the Italian army in\nPrussia (to build an Italian fleet ..."
+    },
+    {
+      "id": "6.E.2",
+      "name": "NO SELF DISLODGEMENT IN HEAD-TO-HEAD BATTLE",
+      "section": "HEAD-TO-HEAD BATTLES AND BELEAGUERED GARRISON",
+      "category": "head_to_head",
+      "description": "Self dislodgement is not allowed. This also counts for head-to-head battles.",
+      "orders": {
+        "Germany": [
+          "A Berlin - Kiel",
+          "F Kiel - Berlin",
+          "A Munich Supports A Berlin - Kiel"
+        ]
+      },
+      "expected_outcome": "No unit will move.",
+      "raw_content": "<h4><a name=\"6.E.2\">6.E.2. TEST CASE, NO SELF DISLODGEMENT IN HEAD-TO-HEAD BATTLE</a></h4>\n<p>Self dislodgement is not allowed. This also counts for head-to-head battles.</p>\n<pre>Germany: \nA Berlin - Kiel\nF Kiel - Berlin\nA Munich Supports A Berlin - Kiel\n</pre>\n<p>No unit will move.</p>\n\n"
+    },
+    {
+      "id": "6.E.3",
+      "name": "NO HELP IN DISLODGING OWN UNIT",
+      "section": "HEAD-TO-HEAD BATTLES AND BELEAGUERED GARRISON",
+      "category": "head_to_head",
+      "description": "It is not possible to help a foreign power dislodge own unit in a head-to-head battle.",
+      "orders": {
+        "Germany": [
+          "A Berlin - Kiel",
+          "A Munich Supports F Kiel - Berlin"
+        ],
+        "England": [
+          "F Kiel - Berlin"
+        ]
+      },
+      "expected_outcome": "No unit will move.",
+      "raw_content": "<h4><a name=\"6.E.3\">6.E.3. TEST CASE, NO HELP IN DISLODGING OWN UNIT</a></h4>\n<p>It is not possible to help a foreign power dislodge own unit in a head-to-head battle.</p>\n<pre>Germany: \nA Berlin - Kiel\nA Munich Supports F Kiel - Berlin\n\nEngland: \nF Kiel - Berlin\n</pre>\n<p>No unit will move.</p>\n\n"
+    },
+    {
+      "id": "6.E.4",
+      "name": "NON-DISLODGED LOSER STILL HAS EFFECT",
+      "section": "HEAD-TO-HEAD BATTLES AND BELEAGUERED GARRISON",
+      "category": "head_to_head",
+      "description": "If in an unbalanced head-to-head battle the loser is not dislodged, it still has an effect on the area of the attacker.",
+      "orders": {
+        "Germany": [
+          "F Holland - North Sea",
+          "F Helgoland Bight Supports F Holland - North Sea",
+          "F Skagerrak Supports F Holland - North Sea"
+        ],
+        "France": [
+          "F North Sea - Holland",
+          "F Belgium Supports F North Sea - Holland"
+        ],
+        "England": [
+          "F Edinburgh Supports F Norwegian Sea - North Sea",
+          "F Yorkshire Supports F Norwegian Sea - North Sea",
+          "F Norwegian Sea - North Sea"
+        ],
+        "Austria": [
+          "A Kiel Supports A Ruhr - Holland",
+          "A Ruhr - Holland"
+        ]
+      },
+      "expected_outcome": "If in an unbalanced head-to-head battle the loser is not dislodged, it still has an effect on the area of the attacker.",
+      "raw_content": "<h4><a name=\"6.E.4\">6.E.4. TEST CASE, NON-DISLODGED LOSER STILL HAS EFFECT</a></h4>\n<p>If in an unbalanced head-to-head battle the loser is not\ndislodged, it still has an effect on the area of the attacker.</p>\n<pre>Germany: \nF Holland - North Sea\nF Helgoland Bight Supports F Holland - North Sea\nF Skagerrak Supports F Holland - North Sea\n\nFrance: \nF North Sea - Holland\nF Belgium Supports F North Sea - Holland\n\nEngland: \nF Edinburgh Supports F Norwegian Sea - North Sea\nF Yorkshire Supports F Norw..."
+    },
+    {
+      "id": "6.E.5",
+      "name": "LOSER DISLODGED BY ANOTHER ARMY STILL HAS EFFECT",
+      "section": "HEAD-TO-HEAD BATTLES AND BELEAGUERED GARRISON",
+      "category": "head_to_head",
+      "description": "If in an unbalanced head-to-head battle the loser is dislodged by a unit not part of the head-to-head battle, the loser still has an effect on the area of the winner of the head-to-head battle.",
+      "orders": {
+        "Germany": [
+          "F Holland - North Sea",
+          "F Helgoland Bight Supports F Holland - North Sea",
+          "F Skagerrak Supports F Holland - North Sea"
+        ],
+        "France": [
+          "F North Sea - Holland",
+          "F Belgium Supports F North Sea - Holland"
+        ],
+        "England": [
+          "F Edinburgh Supports F Norwegian Sea - North Sea",
+          "F Yorkshire Supports F Norwegian Sea - North Sea",
+          "F Norwegian Sea - North Sea",
+          "F London Supports F Norwegian Sea - North Sea"
+        ],
+        "Austria": [
+          "A Kiel Supports A Ruhr - Holland",
+          "A Ruhr - Holland"
+        ]
+      },
+      "expected_outcome": "If in an unbalanced head-to-head battle the loser is dislodged by a unit not part of the head-to-head battle, the loser still has an effect on the area of the winner of the head-to-head battle.",
+      "raw_content": "<h4><a name=\"6.E.5\">6.E.5. TEST CASE, LOSER DISLODGED BY ANOTHER ARMY STILL HAS EFFECT</a></h4>\n<p>If in an unbalanced head-to-head battle the loser is dislodged\nby a unit not part of the head-to-head battle, the loser still has an effect on the area of the winner of the head-to-head battle.</p>\n<pre>Germany: \nF Holland - North Sea\nF Helgoland Bight Supports F Holland - North Sea\nF Skagerrak Supports F Holland - North Sea\n\nFrance: \nF North Sea - Holland\nF Belgium Supports F North Sea - Holland\n\n..."
+    },
+    {
+      "id": "6.E.6",
+      "name": "NOT DISLODGE BECAUSE OF OWN SUPPORT STILL HAS EFFECT",
+      "section": "HEAD-TO-HEAD BATTLES AND BELEAGUERED GARRISON",
+      "category": "head_to_head",
+      "description": "If in an unbalanced head-to-head battle the loser is not dislodged because the winner had help of a unit of the loser, the loser still has an effect on the area of the winner.",
+      "orders": {
+        "Germany": [
+          "F Holland - North Sea",
+          "F Helgoland Bight Supports F Holland - North Sea"
+        ],
+        "France": [
+          "F North Sea - Holland",
+          "F Belgium Supports F North Sea - Holland",
+          "F English Channel Supports F Holland - North Sea"
+        ],
+        "Austria": [
+          "A Kiel Supports A Ruhr - Holland",
+          "A Ruhr - Holland"
+        ]
+      },
+      "expected_outcome": "If in an unbalanced head-to-head battle the loser is not dislodged because the winner had help of a unit of the loser, the loser still has an effect on the area of the winner.",
+      "raw_content": "<h4><a name=\"6.E.6\">6.E.6. TEST CASE, NOT DISLODGE BECAUSE OF OWN SUPPORT STILL HAS EFFECT</a></h4>\n<p>If in an unbalanced head-to-head battle the loser is not dislodged\nbecause the winner had help of a unit of the loser, the loser still has an effect on the area of the winner.</p>\n<pre>Germany: \nF Holland - North Sea\nF Helgoland Bight Supports F Holland - North Sea\n\nFrance: \nF North Sea - Holland\nF Belgium Supports F North Sea - Holland\nF English Channel Supports F Holland - North Sea\n\nAustria:..."
+    },
+    {
+      "id": "6.E.7",
+      "name": "NO SELF DISLODGEMENT WITH BELEAGUERED GARRISON",
+      "section": "HEAD-TO-HEAD BATTLES AND BELEAGUERED GARRISON",
+      "category": "head_to_head",
+      "description": "An attempt at self dislodgement can be combined with a beleaguered garrison. Such self dislodgment is still not possible.",
+      "orders": {
+        "England": [
+          "F North Sea Hold",
+          "F Yorkshire Supports F Norway - North Sea"
+        ],
+        "Germany": [
+          "F Holland Supports F Helgoland Bight - North Sea",
+          "F Helgoland Bight - North Sea"
+        ],
+        "Russia": [
+          "F Skagerrak Supports F Norway - North Sea",
+          "F Norway - North Sea"
+        ]
+      },
+      "expected_outcome": "Although the Russians beat the German attack (with the support of Yorkshire) and the two Russian fleets are enough to dislodge the fleet in the North Sea, the fleet in the North Sea is not dislodged, since it would not be dislodged if the English fleet in Yorkshire would not give support. This is a typical bug that can happen if a grand winner is calculated of a contested area (instead of calculating every move separately). Of the contested area the North Sea, the Russians are the grand winner with a strength of three, but this doesn't mean that they can advance.",
+      "raw_content": "<h4><a name=\"6.E.7\">6.E.7. TEST CASE, NO SELF DISLODGEMENT WITH BELEAGUERED GARRISON</a></h4>\n<p>An attempt at self dislodgement can be combined with a beleaguered\ngarrison. Such self dislodgment is still not possible.</p>\n<pre>England: \nF North Sea Hold\nF Yorkshire Supports F Norway - North Sea\n\nGermany: \nF Holland Supports F Helgoland Bight - North Sea\nF Helgoland Bight - North Sea\n\nRussia: \nF Skagerrak Supports F Norway - North Sea\nF Norway - North Sea\n</pre>\n<p>Although the Russians beat the..."
+    },
+    {
+      "id": "6.E.8",
+      "name": "NO SELF DISLODGEMENT WITH BELEAGUERED GARRISON AND HEAD-TO-HEAD BATTLE",
+      "section": "HEAD-TO-HEAD BATTLES AND BELEAGUERED GARRISON",
+      "category": "head_to_head",
+      "description": "Similar to the previous test case, but now the beleaguered fleet is also engaged in a head-to-head battle.",
+      "orders": {
+        "England": [
+          "F North Sea - Norway",
+          "F Yorkshire Supports F Norway - North Sea"
+        ],
+        "Germany": [
+          "F Holland Supports F Helgoland Bight - North Sea",
+          "F Helgoland Bight - North Sea"
+        ],
+        "Russia": [
+          "F Skagerrak Supports F Norway - North Sea",
+          "F Norway - North Sea"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.E.8\">6.E.8. TEST CASE, NO SELF DISLODGEMENT WITH BELEAGUERED GARRISON AND HEAD-TO-HEAD BATTLE</a></h4>\n<p>Similar to the previous test case, but now the beleaguered fleet is also engaged in a head-to-head battle.</p>\n<pre>England: \nF North Sea - Norway\nF Yorkshire Supports F Norway - North Sea\n\nGermany: \nF Holland Supports F Helgoland Bight - North Sea\nF Helgoland Bight - North Sea\n\nRussia: \nF Skagerrak Supports F Norway - North Sea\nF Norway - North Sea\n</pre>\n<p>Again, none of th..."
+    },
+    {
+      "id": "6.E.9",
+      "name": "ALMOST SELF DISLODGEMENT WITH BELEAGUERED GARRISON",
+      "section": "HEAD-TO-HEAD BATTLES AND BELEAGUERED GARRISON",
+      "category": "head_to_head",
+      "description": "Similar to the previous test case, but now the beleaguered fleet is moving away.",
+      "orders": {
+        "England": [
+          "F North Sea - Norwegian Sea",
+          "F Yorkshire Supports F Norway - North Sea"
+        ],
+        "Germany": [
+          "F Holland Supports F Helgoland Bight - North Sea",
+          "F Helgoland Bight - North Sea"
+        ],
+        "Russia": [
+          "F Skagerrak Supports F Norway - North Sea",
+          "F Norway - North Sea"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.E.9\">6.E.9. TEST CASE, ALMOST SELF DISLODGEMENT WITH BELEAGUERED GARRISON</a></h4>\n<p>Similar to the previous test case, but now the beleaguered fleet is moving away.</p>\n<pre>England: \nF North Sea - Norwegian Sea\nF Yorkshire Supports F Norway - North Sea\n\nGermany: \nF Holland Supports F Helgoland Bight - North Sea\nF Helgoland Bight - North Sea\n\nRussia: \nF Skagerrak Supports F Norway - North Sea\nF Norway - North Sea\n</pre>\n<p>Both the fleet in the North Sea and the fleet in Norway ..."
+    },
+    {
+      "id": "6.E.10",
+      "name": "ALMOST CIRCULAR MOVEMENT WITH NO SELF DISLODGEMENT WITH BELEAGUERED GARRISON",
+      "section": "HEAD-TO-HEAD BATTLES AND BELEAGUERED GARRISON",
+      "category": "head_to_head",
+      "description": "Similar to the previous test case, but now the beleaguered fleet is in circular movement with the weaker attacker. So, the circular movement fails.",
+      "orders": {
+        "England": [
+          "F North Sea - Denmark",
+          "F Yorkshire Supports F Norway - North Sea"
+        ],
+        "Germany": [
+          "F Holland Supports F Helgoland Bight - North Sea",
+          "F Helgoland Bight - North Sea",
+          "F Denmark - Helgoland Bight"
+        ],
+        "Russia": [
+          "F Skagerrak Supports F Norway - North Sea",
+          "F Norway - North Sea"
+        ]
+      },
+      "expected_outcome": "Similar to the previous test case, but now the beleaguered fleet is in circular movement with the weaker attacker. So, the circular movement fails.",
+      "raw_content": "<h4><a name=\"6.E.10\">6.E.10. TEST CASE, ALMOST CIRCULAR MOVEMENT WITH NO SELF DISLODGEMENT WITH BELEAGUERED GARRISON</a></h4>\n<p>Similar to the previous test case, but now the beleaguered fleet is in circular movement\nwith the weaker attacker. So, the circular movement fails.</p>\n<pre>England: \nF North Sea - Denmark\nF Yorkshire Supports F Norway - North Sea\n\nGermany: \nF Holland Supports F Helgoland Bight - North Sea\nF Helgoland Bight - North Sea\nF Denmark - Helgoland Bight\n\nRussia: \nF Skagerrak ..."
+    },
+    {
+      "id": "6.E.11",
+      "name": "NO SELF DISLODGEMENT WITH BELEAGUERED GARRISON, UNIT SWAP WITH ADJACENT CONVOYING AND TWO COASTS",
+      "section": "HEAD-TO-HEAD BATTLES AND BELEAGUERED GARRISON",
+      "category": "head_to_head",
+      "description": "Similar to the previous test case, but now the beleaguered fleet is in a unit swap with the stronger attacker. So, the unit swap succeeds. To make the situation more complex, the swap is on an area with two coasts.",
+      "orders": {
+        "France": [
+          "A Spain - Portugal via convoy",
+          "F Mid-Atlantic Ocean Convoys A Spain - Portugal",
+          "F Gulf of Lyon Supports F Portugal - Spain(nc)"
+        ],
+        "Germany": [
+          "A Marseilles Supports A Gascony - Spain",
+          "A Gascony - Spain"
+        ],
+        "Italy": [
+          "F Portugal - Spain(nc)",
+          "F Western Mediterranean Supports F Portugal - Spain(nc)"
+        ]
+      },
+      "expected_outcome": "Similar to the previous test case, but now the beleaguered fleet is in a unit swap with the stronger attacker. So, the unit swap succeeds. To make the situation more complex, the swap is on an area with two coasts.",
+      "raw_content": "<h4><a name=\"6.E.11\">6.E.11. TEST CASE, NO SELF DISLODGEMENT WITH BELEAGUERED GARRISON, UNIT SWAP WITH ADJACENT CONVOYING AND TWO COASTS</a></h4>\n<p>Similar to the previous test case, but now the beleaguered fleet is in a unit swap\nwith the stronger attacker. So, the unit swap succeeds. To make the situation more complex,\nthe swap is on an area with two coasts.</p>\n<pre>France: \nA Spain - Portugal via convoy\nF Mid-Atlantic Ocean Convoys A Spain - Portugal\nF Gulf of Lyon Supports F Portugal - Spa..."
+    },
+    {
+      "id": "6.E.12",
+      "name": "SUPPORT ON ATTACK ON OWN UNIT CAN BE USED FOR OTHER MEANS",
+      "section": "HEAD-TO-HEAD BATTLES AND BELEAGUERED GARRISON",
+      "category": "head_to_head",
+      "description": "A support on an attack on your own unit still has an effect. It can prevent that another army will dislodge the unit.",
+      "orders": {
+        "Austria": [
+          "A Budapest - Rumania",
+          "A Serbia Supports A Vienna - Budapest"
+        ],
+        "Italy": [
+          "A Vienna - Budapest"
+        ],
+        "Russia": [
+          "A Galicia - Budapest",
+          "A Rumania Supports A Galicia - Budapest"
+        ]
+      },
+      "expected_outcome": "The support of Serbia on the Italian army prevents that the Russian army in Galicia will advance. No army will move.",
+      "raw_content": "<h4><a name=\"6.E.12\">6.E.12. TEST CASE, SUPPORT ON ATTACK ON OWN UNIT CAN BE USED FOR OTHER MEANS</a></h4>\n<p>A support on an attack on your own unit still has an effect. It\ncan prevent that another army will dislodge the unit.</p>\n<pre>Austria: \nA Budapest - Rumania\nA Serbia Supports A Vienna - Budapest\n\nItaly: \nA Vienna - Budapest\n\nRussia: \nA Galicia - Budapest\nA Rumania Supports A Galicia - Budapest\n</pre>\n<p>The support of Serbia on the Italian army prevents that the\nRussian army in Galicia ..."
+    },
+    {
+      "id": "6.E.13",
+      "name": "THREE WAY BELEAGUERED GARRISON",
+      "section": "HEAD-TO-HEAD BATTLES AND BELEAGUERED GARRISON",
+      "category": "head_to_head",
+      "description": "In a beleaguered garrison from three sides, the adjudicator may not let two attacks fail and then let the third succeed.",
+      "orders": {
+        "England": [
+          "F Edinburgh Supports F Yorkshire - North Sea",
+          "F Yorkshire - North Sea"
+        ],
+        "France": [
+          "F Belgium - North Sea",
+          "F English Channel Supports F Belgium - North Sea"
+        ],
+        "Germany": [
+          "F North Sea Hold"
+        ],
+        "Russia": [
+          "F Norwegian Sea - North Sea",
+          "F Norway Supports F Norwegian Sea - North Sea"
+        ]
+      },
+      "expected_outcome": "None of the fleets move. The German fleet in the North Sea is not dislodged.",
+      "raw_content": "<h4><a name=\"6.E.13\">6.E.13. TEST CASE, THREE WAY BELEAGUERED GARRISON</a></h4>\n<p>In a beleaguered garrison from three sides, the adjudicator may not \nlet two attacks fail and then let the third succeed.</p>\n<pre>England: \nF Edinburgh Supports F Yorkshire - North Sea\nF Yorkshire - North Sea\n\nFrance: \nF Belgium - North Sea\nF English Channel Supports F Belgium - North Sea\n\nGermany: \nF North Sea Hold\n\nRussia: \nF Norwegian Sea - North Sea\nF Norway Supports F Norwegian Sea - North Sea\n</pre>\n<p>None..."
+    },
+    {
+      "id": "6.E.14",
+      "name": "ILLEGAL HEAD-TO-HEAD BATTLE CAN STILL DEFEND",
+      "section": "HEAD-TO-HEAD BATTLES AND BELEAGUERED GARRISON",
+      "category": "head_to_head",
+      "description": "If in a head-to-head battle, one of the units makes an illegal move, then that unit still has the possibility to defend against attacks with strength of one.",
+      "orders": {
+        "England": [
+          "A Liverpool - Edinburgh"
+        ],
+        "Russia": [
+          "F Edinburgh - Liverpool"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.E.14\">6.E.14. TEST CASE, ILLEGAL HEAD-TO-HEAD BATTLE CAN STILL DEFEND</a></h4>\n<p>If in a head-to-head battle, one of the units makes an illegal\nmove, then that unit still has the possibility to defend against attacks with strength of one.</p>\n<pre>England: \nA Liverpool - Edinburgh\n\nRussia: \nF Edinburgh - Liverpool\n</pre>\n<p>The move of the Russian fleet is illegal, but can still prevent the English army from entering Edinburgh. So, none of the units move.</p>\n\n"
+    },
+    {
+      "id": "6.E.15",
+      "name": "THE FRIENDLY HEAD-TO-HEAD BATTLE",
+      "section": "HEAD-TO-HEAD BATTLES AND BELEAGUERED GARRISON",
+      "category": "head_to_head",
+      "description": "In this case each unit in the head-to-head battle prevents that the other unit from being dislodged.",
+      "orders": {
+        "England": [
+          "F Holland Supports A Ruhr - Kiel",
+          "A Ruhr - Kiel"
+        ],
+        "France": [
+          "A Kiel - Berlin",
+          "A Munich Supports A Kiel - Berlin",
+          "A Silesia Supports A Kiel - Berlin"
+        ],
+        "Germany": [
+          "A Berlin - Kiel",
+          "F Denmark Supports A Berlin - Kiel",
+          "F Helgoland Bight Supports A Berlin - Kiel"
+        ],
+        "Russia": [
+          "F Baltic Sea Supports A Prussia - Berlin",
+          "A Prussia - Berlin"
+        ]
+      },
+      "expected_outcome": "In this case each unit in the head-to-head battle prevents that the other unit from being dislodged.",
+      "raw_content": "<h4><a name=\"6.E.15\">6.E.15. TEST CASE, THE FRIENDLY HEAD-TO-HEAD BATTLE</a></h4>\n<p>In this case each unit in the head-to-head battle prevents that the other unit from being dislodged.</p>\n<pre>England:\nF Holland Supports A Ruhr - Kiel\nA Ruhr - Kiel\n\nFrance:\nA Kiel - Berlin\nA Munich Supports A Kiel - Berlin\nA Silesia Supports A Kiel - Berlin\n\nGermany:\nA Berlin - Kiel\nF Denmark Supports A Berlin - Kiel\nF Helgoland Bight Supports A Berlin - Kiel\n\nRussia:\nF Baltic Sea Supports A Prussia - Berlin\nA..."
+    },
+    {
+      "id": "6.F.1",
+      "name": "NO CONVOY IN COASTAL AREAS",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "A fleet in a coastal area may not convoy.",
+      "orders": {
+        "Turkey": [
+          "A Greece - Sevastopol",
+          "F Aegean Sea Convoys A Greece - Sevastopol",
+          "F Constantinople Convoys A Greece - Sevastopol",
+          "F Black Sea Convoys A Greece - Sevastopol"
+        ]
+      },
+      "expected_outcome": "The convoy in Constantinople is not possible. So, the army in Greece will not move to Sevastopol.",
+      "raw_content": "<h4><a name=\"6.F.1\">6.F.1. TEST CASE, NO CONVOY IN COASTAL AREAS</a></h4>\n<p>A fleet in a coastal area may not convoy.</p>\n<pre>Turkey: \nA Greece - Sevastopol\nF Aegean Sea Convoys A Greece - Sevastopol\nF Constantinople Convoys A Greece - Sevastopol\nF Black Sea Convoys A Greece - Sevastopol\n</pre>\n<p>The convoy in Constantinople is not possible. So, the army in Greece will not move to Sevastopol.</p>\n\n"
+    },
+    {
+      "id": "6.F.2",
+      "name": "AN ARMY BEING CONVOYED CAN BOUNCE AS NORMAL",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "Armies being convoyed bounce on other units just as armies that are not being convoyed.",
+      "orders": {
+        "England": [
+          "F English Channel Convoys A London - Brest",
+          "A London - Brest"
+        ],
+        "France": [
+          "A Paris - Brest"
+        ]
+      },
+      "expected_outcome": "The English army in London bounces on the French army in Paris. Both units do not move.",
+      "raw_content": "<h4><a name=\"6.F.2\">6.F.2. TEST CASE, AN ARMY BEING CONVOYED CAN BOUNCE AS NORMAL</a></h4>\n<p>Armies being convoyed bounce on other units just as armies that are not being convoyed.</p>\n<pre>England: \nF English Channel Convoys A London - Brest\nA London - Brest\n\nFrance: \nA Paris - Brest\n</pre>\n<p>The English army in London bounces on the French army in Paris. Both units do not move.</p>\n\n"
+    },
+    {
+      "id": "6.F.3",
+      "name": "AN ARMY BEING CONVOYED CAN RECEIVE SUPPORT",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "Armies being convoyed can receive support as in any other move.",
+      "orders": {
+        "England": [
+          "F English Channel Convoys A London - Brest",
+          "A London - Brest",
+          "F Mid-Atlantic Ocean Supports A London - Brest"
+        ],
+        "France": [
+          "A Paris - Brest"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.F.3\">6.F.3. TEST CASE, AN ARMY BEING CONVOYED CAN RECEIVE SUPPORT</a></h4>\n<p>Armies being convoyed can receive support as in any other move.</p>\n<pre>England: \nF English Channel Convoys A London - Brest\nA London - Brest\nF Mid-Atlantic Ocean Supports A London - Brest\n\nFrance: \nA Paris - Brest\n</pre>\n<p>The army in London receives support and beats the army in Paris. This means\nthat the army London will end in Brest and the French army in Paris stays in Paris.</p>\n\n"
+    },
+    {
+      "id": "6.F.4",
+      "name": "AN ATTACKED CONVOY IS NOT DISRUPTED",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "A convoy can only be disrupted by dislodging the fleets. Attacking is not sufficient.",
+      "orders": {
+        "England": [
+          "F North Sea Convoys A London - Holland",
+          "A London - Holland"
+        ],
+        "Germany": [
+          "F Skagerrak - North Sea"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.F.4\">6.F.4. TEST CASE, AN ATTACKED CONVOY IS NOT DISRUPTED</a></h4>\n<p>A convoy can only be disrupted by dislodging the fleets. Attacking is not sufficient.</p>\n<pre>England: \nF North Sea Convoys A London - Holland\nA London - Holland\n\nGermany: \nF Skagerrak - North Sea\n</pre>\n<p>The army in London will successfully convoy and end in Holland.</p>\n\n"
+    },
+    {
+      "id": "6.F.5",
+      "name": "A BELEAGUERED CONVOY IS NOT DISRUPTED",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "Even when a convoy is in a beleaguered garrison it is not disrupted.",
+      "orders": {
+        "England": [
+          "F North Sea Convoys A London - Holland",
+          "A London - Holland"
+        ],
+        "France": [
+          "F English Channel - North Sea",
+          "F Belgium Supports F English Channel - North Sea"
+        ],
+        "Germany": [
+          "F Skagerrak - North Sea",
+          "F Denmark Supports F Skagerrak - North Sea"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.F.5\">6.F.5. TEST CASE, A BELEAGUERED CONVOY IS NOT DISRUPTED</a></h4>\n<p>Even when a convoy is in a beleaguered garrison it is not disrupted.</p>\n<pre>England: \nF North Sea Convoys A London - Holland\nA London - Holland\n\nFrance: \nF English Channel - North Sea\nF Belgium Supports F English Channel - North Sea\n\nGermany: \nF Skagerrak - North Sea\nF Denmark Supports F Skagerrak - North Sea\n</pre>\n<p>The army in London will successfully convoy and end in Holland.</p>\n\n"
+    },
+    {
+      "id": "6.F.6",
+      "name": "DISLODGED CONVOY DOES NOT CUT SUPPORT",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "When a fleet of a convoy is dislodged, the convoy is completely cancelled. So, no support is cut.",
+      "orders": {
+        "England": [
+          "F North Sea Convoys A London - Holland",
+          "A London - Holland"
+        ],
+        "Germany": [
+          "A Holland Supports A Belgium",
+          "A Belgium Supports A Holland",
+          "F Helgoland Bight Supports F Skagerrak - North Sea",
+          "F Skagerrak - North Sea"
+        ],
+        "France": [
+          "A Picardy - Belgium",
+          "A Burgundy Supports A Picardy - Belgium"
+        ]
+      },
+      "expected_outcome": "When a fleet of a convoy is dislodged, the convoy is completely cancelled. So, no support is cut.",
+      "raw_content": "<h4><a name=\"6.F.6\">6.F.6. TEST CASE, DISLODGED CONVOY DOES NOT CUT SUPPORT</a></h4>\n<p>When a fleet of a convoy is dislodged, the convoy is completely cancelled. So, no support is cut.</p>\n<pre>England: \nF North Sea Convoys A London - Holland\nA London - Holland\n\nGermany: \nA Holland Supports A Belgium\nA Belgium Supports A Holland\nF Helgoland Bight Supports F Skagerrak - North Sea\nF Skagerrak - North Sea\n\nFrance: \nA Picardy - Belgium\nA Burgundy Supports A Picardy - Belgium\n</pre>\n<p>The hold orde..."
+    },
+    {
+      "id": "6.F.7",
+      "name": "DISLODGED CONVOY DOES NOT CAUSE CONTESTED AREA",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "When a fleet of a convoy is dislodged, the landing area is not contested, so other units can retreat to that area.",
+      "orders": {
+        "England": [
+          "F North Sea Convoys A London - Holland",
+          "A London - Holland"
+        ],
+        "Germany": [
+          "F Helgoland Bight Supports F Skagerrak - North Sea",
+          "F Skagerrak - North Sea"
+        ]
+      },
+      "expected_outcome": "When a fleet of a convoy is dislodged, the landing area is not contested, so other units can retreat to that area.",
+      "raw_content": "<h4><a name=\"6.F.7\">6.F.7. TEST CASE, DISLODGED CONVOY DOES NOT CAUSE CONTESTED AREA</a></h4>\n<p>When a fleet of a convoy is dislodged, the landing area is\nnot contested, so other units can retreat to that area.</p>\n<pre>England: \nF North Sea Convoys A London - Holland\nA London - Holland\n\nGermany: \nF Helgoland Bight Supports F Skagerrak - North Sea\nF Skagerrak - North Sea\n</pre>\n<p>The dislodged English fleet can retreat to Holland.</p>\n\n"
+    },
+    {
+      "id": "6.F.8",
+      "name": "DISLODGED CONVOY DOES NOT CAUSE A BOUNCE",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "When a fleet of a convoy is dislodged, then there will be no bounce in the landing area.",
+      "orders": {
+        "England": [
+          "F North Sea Convoys A London - Holland",
+          "A London - Holland"
+        ],
+        "Germany": [
+          "F Helgoland Bight Supports F Skagerrak - North Sea",
+          "F Skagerrak - North Sea",
+          "A Belgium - Holland"
+        ]
+      },
+      "expected_outcome": "When a fleet of a convoy is dislodged, then there will be no bounce in the landing area.",
+      "raw_content": "<h4><a name=\"6.F.8\">6.F.8. TEST CASE, DISLODGED CONVOY DOES NOT CAUSE A BOUNCE</a></h4>\n<p>When a fleet of a convoy is dislodged, then there will be\nno bounce in the landing area.</p>\n<pre>England: \nF North Sea Convoys A London - Holland\nA London - Holland\n\nGermany: \nF Helgoland Bight Supports F Skagerrak - North Sea\nF Skagerrak - North Sea\nA Belgium - Holland\n</pre>\n<p>The army in Belgium will not bounce and move to Holland.</p>\n\n"
+    },
+    {
+      "id": "6.F.9",
+      "name": "DISLODGE OF MULTI-ROUTE CONVOY",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "When a fleet of a convoy with multiple routes is dislodged, the result depends on the rulebook that is used.",
+      "orders": {
+        "England": [
+          "F English Channel Convoys A London - Belgium",
+          "F North Sea Convoys A London - Belgium",
+          "A London - Belgium"
+        ],
+        "France": [
+          "F Brest Supports F Mid-Atlantic Ocean - English Channel",
+          "F Mid-Atlantic Ocean - English Channel"
+        ]
+      },
+      "expected_outcome": "When a fleet of a convoy with multiple routes is dislodged, the result depends on the rulebook that is used.",
+      "raw_content": "<h4><a name=\"6.F.9\">6.F.9. TEST CASE, DISLODGE OF MULTI-ROUTE CONVOY</a></h4>\n<p>When a fleet of a convoy with multiple routes is dislodged,\nthe result depends on the rulebook that is used.</p>\n<pre>England: \nF English Channel Convoys A London - Belgium\nF North Sea Convoys A London - Belgium\nA London - Belgium\n\nFrance: \nF Brest Supports F Mid-Atlantic Ocean - English Channel\nF Mid-Atlantic Ocean - English Channel\n</pre>\n<p>The French fleet in Mid Atlantic Ocean will dislodge the convoying fleet ..."
+    },
+    {
+      "id": "6.F.10",
+      "name": "DISLODGE OF MULTI-ROUTE CONVOY WITH FOREIGN FLEET",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "When the 1971 rulebook is used \"unwanted\" multi-route convoys are possible.",
+      "orders": {
+        "England": [
+          "F North Sea Convoys A London - Belgium",
+          "A London - Belgium"
+        ],
+        "Germany": [
+          "F English Channel Convoys A London - Belgium"
+        ],
+        "France": [
+          "F Brest Supports F Mid-Atlantic Ocean - English Channel",
+          "F Mid-Atlantic Ocean - English Channel"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.F.10\">6.F.10. TEST CASE, DISLODGE OF MULTI-ROUTE CONVOY WITH FOREIGN FLEET</a></h4>\n<p>When the 1971 rulebook is used \"unwanted\" multi-route convoys are possible.</p>\n<pre>England: \nF North Sea Convoys A London - Belgium\nA London - Belgium\n\nGermany: \nF English Channel Convoys A London - Belgium\n\nFrance: \nF Brest Supports F Mid-Atlantic Ocean - English Channel\nF Mid-Atlantic Ocean - English Channel\n</pre>\n<p>The same as in the previous test case, the French fleet in Mid Atlantic Oc..."
+    },
+    {
+      "id": "6.F.11",
+      "name": "DISLODGE OF MULTI-ROUTE CONVOY WITH ONLY FOREIGN FLEETS",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "With the 1971 rulebook one could adopt a rule (DPTG) that foreign fleets are not used when not necessary, but this doesn't prevent an \"unwanted\" convoy when all convoying fleets are foreign.",
+      "orders": {
+        "England": [
+          "A London - Belgium"
+        ],
+        "Germany": [
+          "F English Channel Convoys A London - Belgium"
+        ],
+        "Russia": [
+          "F North Sea Convoys A London - Belgium"
+        ],
+        "France": [
+          "F Brest Supports F Mid-Atlantic Ocean - English Channel",
+          "F Mid-Atlantic Ocean - English Channel"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.F.11\">6.F.11. TEST CASE, DISLODGE OF MULTI-ROUTE CONVOY WITH ONLY FOREIGN FLEETS</a></h4>\n<p>With the 1971 rulebook one could adopt a rule (DPTG) that foreign fleets are not used when not necessary, but this doesn't prevent an \"unwanted\" convoy when all convoying fleets are foreign.</p>\n<pre>England: \nA London - Belgium\n\nGermany: \nF English Channel Convoys A London - Belgium\n\nRussia: \nF North Sea Convoys A London - Belgium\n\nFrance: \nF Brest Supports F Mid-Atlantic Ocean - English ..."
+    },
+    {
+      "id": "6.F.12",
+      "name": "DISLODGED CONVOYING FLEET NOT ON ROUTE",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "No description found",
+      "orders": {
+        "England": [
+          "F English Channel Convoys A London - Belgium",
+          "A London - Belgium",
+          "F Irish Sea Convoys A London - Belgium"
+        ],
+        "France": [
+          "F North Atlantic Ocean Supports F Mid-Atlantic Ocean - Irish Sea",
+          "F Mid-Atlantic Ocean - Irish Sea"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.F.12\">6.F.12. TEST CASE, DISLODGED CONVOYING FLEET NOT ON ROUTE</a></h4>\n<p>When the rule is used that convoys are disrupted when one of the routes is disrupted (see issue <a href=\"#4.A.1\">4.A.1</a>), the convoy is not necessarily disrupted when one of the fleets ordered to convoy is dislodged.</p>\n<pre>England: \nF English Channel Convoys A London - Belgium\nA London - Belgium\nF Irish Sea Convoys A London - Belgium\n\nFrance: \nF North Atlantic Ocean Supports F Mid-Atlantic Ocean - Ir..."
+    },
+    {
+      "id": "6.F.13",
+      "name": "THE UNWANTED ALTERNATIVE",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "This situation is not difficult to adjudicate, but it shows that even if someone wants to convoy, the player might not want an alternative route for the convoy.",
+      "orders": {
+        "England": [
+          "A London - Belgium",
+          "F North Sea Convoys A London - Belgium"
+        ],
+        "France": [
+          "F English Channel Convoys A London - Belgium"
+        ],
+        "Germany": [
+          "F Holland Supports F Denmark - North Sea",
+          "F Denmark - North Sea"
+        ]
+      },
+      "expected_outcome": "The convoy of the army in London succeeds and the fleet in Denmark dislodges the fleet in the North Sea.",
+      "raw_content": "<h4><a name=\"6.F.13\">6.F.13. TEST CASE, THE UNWANTED ALTERNATIVE</a></h4>\n<p>This situation is not difficult to adjudicate, but it shows that even if someone wants to convoy, the player might not want an alternative route for the convoy.</p>\n<pre>England: \nA London - Belgium\nF North Sea Convoys A London - Belgium\n\nFrance: \nF English Channel Convoys A London - Belgium\n\nGermany: \nF Holland Supports F Denmark - North Sea\nF Denmark - North Sea\n</pre>\n<p>If France and German are allies, England want ..."
+    },
+    {
+      "id": "6.F.14",
+      "name": "SIMPLE CONVOY PARADOX",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "The most common paradox is when the attacked unit supports an attack on one of the convoying fleets.",
+      "orders": {
+        "England": [
+          "F London Supports F Wales - English Channel",
+          "F Wales - English Channel"
+        ],
+        "France": [
+          "A Brest - London",
+          "F English Channel Convoys A Brest - London"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.F.14\">6.F.14. TEST CASE, SIMPLE CONVOY PARADOX</a></h4>\n<p>The most common paradox is when the attacked unit\nsupports an attack on one of the convoying fleets.</p>\n<pre>England: \nF London Supports F Wales - English Channel\nF Wales - English Channel\n\nFrance: \nA Brest - London\nF English Channel Convoys A Brest - London\n</pre>\n<p>See issue <a href=\"#4.A.2\">4.A.2</a></p>\n<p>According to all rulebooks (<i>including the Szykman rule which I prefer</i>), the support of London is not cut...."
+    },
+    {
+      "id": "6.F.15",
+      "name": "SIMPLE CONVOY PARADOX WITH ADDITIONAL CONVOY",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "Paradox rules only apply on the paradox core.",
+      "orders": {
+        "England": [
+          "F London Supports F Wales - English Channel",
+          "F Wales - English Channel"
+        ],
+        "France": [
+          "A Brest - London",
+          "F English Channel Convoys A Brest - London"
+        ],
+        "Italy": [
+          "F Irish Sea Convoys A North Africa - Wales",
+          "F Mid-Atlantic Ocean Convoys A North Africa - Wales",
+          "A North Africa - Wales"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.F.15\">6.F.15. TEST CASE, SIMPLE CONVOY PARADOX WITH ADDITIONAL CONVOY</a></h4>\n<p>Paradox rules only apply on the paradox core.</p>\n<pre>England: \nF London Supports F Wales - English Channel\nF Wales - English Channel\n\nFrance: \nA Brest - London\nF English Channel Convoys A Brest - London\n\nItaly: \nF Irish Sea Convoys A North Africa - Wales\nF Mid-Atlantic Ocean Convoys A North Africa - Wales\nA North Africa - Wales\n</pre>\n<p>The adjudication of the paradox in the English Channel should..."
+    },
+    {
+      "id": "6.F.16",
+      "name": "PANDIN'S PARADOX",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "In Pandin's paradox, the attacked unit protects the convoying fleet by a beleaguered garrison.",
+      "orders": {
+        "England": [
+          "F London Supports F Wales - English Channel",
+          "F Wales - English Channel"
+        ],
+        "France": [
+          "A Brest - London",
+          "F English Channel Convoys A Brest - London"
+        ],
+        "Germany": [
+          "F North Sea Supports F Belgium - English Channel",
+          "F Belgium - English Channel"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.F.16\">6.F.16. TEST CASE, PANDIN'S PARADOX</a></h4>\n<p>In Pandin's paradox, the attacked unit protects the convoying\nfleet by a beleaguered garrison.</p>\n<pre>England: \nF London Supports F Wales - English Channel\nF Wales - English Channel\n\nFrance: \nA Brest - London\nF English Channel Convoys A Brest - London\n\nGermany: \nF North Sea Supports F Belgium - English Channel\nF Belgium - English Channel\n</pre>\n<p>See issue <a href=\"#4.A.2\">4.A.2</a></p>\n<p>According to all rulebooks (<i>incl..."
+    },
+    {
+      "id": "6.F.17",
+      "name": "PANDIN'S EXTENDED PARADOX",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "In Pandin's extended paradox, the attacked unit protects the convoying fleet by a beleaguered garrison and the attacked unit can dislodge the unit that gives the protection.",
+      "orders": {
+        "England": [
+          "F London Supports F Wales - English Channel",
+          "F Wales - English Channel"
+        ],
+        "France": [
+          "A Brest - London",
+          "F English Channel Convoys A Brest - London",
+          "F Yorkshire Supports A Brest - London"
+        ],
+        "Germany": [
+          "F North Sea Supports F Belgium - English Channel",
+          "F Belgium - English Channel"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.F.17\">6.F.17. TEST CASE, PANDIN'S EXTENDED PARADOX</a></h4>\n<p>In Pandin's extended paradox, the attacked unit protects the convoying\nfleet by a beleaguered garrison and the attacked unit can dislodge the unit that gives the protection.</p>\n<pre>England: \nF London Supports F Wales - English Channel\nF Wales - English Channel\n\nFrance: \nA Brest - London\nF English Channel Convoys A Brest - London\nF Yorkshire Supports A Brest - London\n\nGermany: \nF North Sea Supports F Belgium - English..."
+    },
+    {
+      "id": "6.F.18",
+      "name": "BETRAYAL PARADOX",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "The betrayal paradox is comparable to Pandin's paradox, but now the attacked unit directly supports the convoying fleet. Of course, this will only happen when the player of the attacked unit is betrayed.",
+      "orders": {
+        "England": [
+          "F North Sea Convoys A London - Belgium",
+          "A London - Belgium",
+          "F English Channel Supports A London - Belgium"
+        ],
+        "France": [
+          "F Belgium Supports F North Sea"
+        ],
+        "Germany": [
+          "F Helgoland Bight Supports F Skagerrak - North Sea",
+          "F Skagerrak - North Sea"
+        ]
+      },
+      "expected_outcome": "According to the 1982 rules the French support on the North Sea will not be cut. So, the fleet in the North Sea will not be dislodged by the Germans and the army in London will dislodge the French army in Belgium.",
+      "raw_content": "<h4><a name=\"6.F.18\">6.F.18. TEST CASE, BETRAYAL PARADOX</a></h4>\n<p>The betrayal paradox is comparable to Pandin's paradox, but now\nthe attacked unit directly supports the convoying fleet. Of course,\nthis will only happen when the player of the attacked unit is\nbetrayed.</p>\n<pre>England: \nF North Sea Convoys A London - Belgium\nA London - Belgium\nF English Channel Supports A London - Belgium\n\nFrance: \nF Belgium Supports F North Sea\n\nGermany: \nF Helgoland Bight Supports F Skagerrak - North Sea\nF..."
+    },
+    {
+      "id": "6.F.19",
+      "name": "MULTI-ROUTE CONVOY DISRUPTION PARADOX",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "The situation becomes more complex when the convoy has alternative routes.",
+      "orders": {
+        "France": [
+          "A Tunis - Naples",
+          "F Tyrrhenian Sea Convoys A Tunis - Naples",
+          "F Ionian Sea Convoys A Tunis - Naples"
+        ],
+        "Italy": [
+          "F Naples Supports F Rome - Tyrrhenian Sea",
+          "F Rome - Tyrrhenian Sea"
+        ]
+      },
+      "expected_outcome": "According to the 2000/2023 rules the fleet in the Tyrrhenian Sea is not \"necessary\" for the convoy and the support of Naples is cut and the fleet in the Tyrrhenian Sea is not dislodged.",
+      "raw_content": "<h4><a name=\"6.F.19\">6.F.19. TEST CASE, MULTI-ROUTE CONVOY DISRUPTION PARADOX</a></h4>\n<p>The situation becomes more complex when the convoy has alternative routes.\n</p><pre>France: \nA Tunis - Naples\nF Tyrrhenian Sea Convoys A Tunis - Naples\nF Ionian Sea Convoys A Tunis - Naples\n\nItaly: \nF Naples Supports F Rome - Tyrrhenian Sea\nF Rome - Tyrrhenian Sea\n</pre>\n<p>Now, two issues play a role. The rule about disruption of\nmulti-route convoys (issue <a href=\"#4.A.1\">4.A.1</a>) and the determination ..."
+    },
+    {
+      "id": "6.F.20",
+      "name": "UNWANTED MULTI-ROUTE CONVOY PARADOX",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "The 1982 paradox rule allows some creative defense.",
+      "orders": {
+        "France": [
+          "A Tunis - Naples",
+          "F Tyrrhenian Sea Convoys A Tunis - Naples"
+        ],
+        "Italy": [
+          "F Naples Supports F Ionian Sea",
+          "F Ionian Sea Convoys A Tunis - Naples"
+        ],
+        "Turkey": [
+          "F Aegean Sea Supports F Eastern Mediterranean - Ionian Sea",
+          "F Eastern Mediterranean - Ionian Sea"
+        ]
+      },
+      "expected_outcome": "With the 1982 rules the support in Naples is not cut, because it is supporting an action in a body of water that contains a convoying fleet. That means that the fleet in the Ionian Sea is not dislodged.",
+      "raw_content": "<h4><a name=\"6.F.20\">6.F.20. TEST CASE, UNWANTED MULTI-ROUTE CONVOY PARADOX</a></h4>\n<p>The 1982 paradox rule allows some creative defense.</p>\n<pre>France: \nA Tunis - Naples\nF Tyrrhenian Sea Convoys A Tunis - Naples\n\nItaly: \nF Naples Supports F Ionian Sea\nF Ionian Sea Convoys A Tunis - Naples\n\nTurkey: \nF Aegean Sea Supports F Eastern Mediterranean - Ionian Sea\nF Eastern Mediterranean - Ionian Sea\n</pre>\n<p>Again, two issues play a role. The rule about disruption of\nmulti-route convoys (issue <a..."
+    },
+    {
+      "id": "6.F.21",
+      "name": "DAD'S ARMY CONVOY",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "The 1982 paradox rule has as side effect that convoying armies do not cut support in some situations that are not paradoxical.",
+      "orders": {
+        "Russia": [
+          "A Edinburgh Supports A Norway - Clyde",
+          "F Norwegian Sea Convoys A Norway - Clyde",
+          "A Norway - Clyde"
+        ],
+        "France": [
+          "F Irish Sea Supports F Mid-Atlantic Ocean - North Atlantic Ocean",
+          "F Mid-Atlantic Ocean - North Atlantic Ocean"
+        ],
+        "England": [
+          "A Liverpool - Clyde via convoy",
+          "F North Atlantic Ocean Convoys A Liverpool - Clyde",
+          "F Clyde Supports F North Atlantic Ocean"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.F.21\">6.F.21. TEST CASE, DAD'S ARMY CONVOY</a></h4>\n<p>The 1982 paradox rule has as side effect that convoying armies do not cut support in some situations that are not paradoxical.</p>\n<pre>Russia: \nA Edinburgh Supports A Norway - Clyde\nF Norwegian Sea Convoys A Norway - Clyde\nA Norway - Clyde\n\nFrance: \nF Irish Sea Supports F Mid-Atlantic Ocean - North Atlantic Ocean\nF Mid-Atlantic Ocean - North Atlantic Ocean\n\nEngland: \nA Liverpool - Clyde via convoy\nF North Atlantic Ocean Convo..."
+    },
+    {
+      "id": "6.F.22",
+      "name": "SECOND ORDER PARADOX WITH TWO RESOLUTIONS",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "Two convoys are involved in a second order paradox.",
+      "orders": {
+        "England": [
+          "F Edinburgh - North Sea",
+          "F London Supports F Edinburgh - North Sea"
+        ],
+        "France": [
+          "A Brest - London",
+          "F English Channel Convoys A Brest - London"
+        ],
+        "Germany": [
+          "F Belgium Supports F Picardy - English Channel",
+          "F Picardy - English Channel"
+        ],
+        "Russia": [
+          "A Norway - Belgium",
+          "F North Sea Convoys A Norway - Belgium"
+        ]
+      },
+      "expected_outcome": "Without any paradox rule, there are two consistent resolutions. The supports of the English fleet in London and the German fleet in Picardy are not cut. That means that the French fleet in the English Channel and the Russian fleet in the North Sea are dislodged, which makes it impossible to cut the support. The other resolution is that the supports of the English fleet in London the German fleet in Picardy are cut. In that case the French fleet in the English Channel and the Russian fleet in the North Sea will survive and will not be dislodged. This gives the possibility to cut the support.",
+      "raw_content": "<h4><a name=\"6.F.22\">6.F.22. TEST CASE, SECOND ORDER PARADOX WITH TWO RESOLUTIONS</a></h4>\n<p>Two convoys are involved in a second order paradox.</p>\n<pre>England: \nF Edinburgh - North Sea\nF London Supports F Edinburgh - North Sea\n\nFrance: \nA Brest - London\nF English Channel Convoys A Brest - London\n\nGermany: \nF Belgium Supports F Picardy - English Channel\nF Picardy - English Channel\n\nRussia: \nA Norway - Belgium\nF North Sea Convoys A Norway - Belgium\n</pre>\n<p>Without any paradox rule, there are..."
+    },
+    {
+      "id": "6.F.23",
+      "name": "SECOND ORDER PARADOX WITH TWO EXCLUSIVE CONVOYS",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "In this paradox there are two consistent resolutions, but where the two convoys do not fail or succeed at the same time.",
+      "orders": {
+        "England": [
+          "F Edinburgh - North Sea",
+          "F Yorkshire Supports F Edinburgh - North Sea"
+        ],
+        "France": [
+          "A Brest - London",
+          "F English Channel Convoys A Brest - London"
+        ],
+        "Germany": [
+          "F Belgium Supports F English Channel",
+          "F London Supports F North Sea"
+        ],
+        "Italy": [
+          "F Mid-Atlantic Ocean - English Channel",
+          "F Irish Sea Supports F Mid-Atlantic Ocean - English Channel"
+        ],
+        "Russia": [
+          "A Norway - Belgium",
+          "F North Sea Convoys A Norway - Belgium"
+        ]
+      },
+      "expected_outcome": "Without any paradox rule, there are two consistent resolutions. In one resolution, the convoy in the English Channel is dislodged by the fleet in the Mid-Atlantic Ocean, while the convoy in the North Sea succeeds. In the other resolution, it is the other way around. The convoy in the North Sea is dislodged by the fleet in Edinburgh, while the convoy in the English Channel succeeds.",
+      "raw_content": "<h4><a name=\"6.F.23\">6.F.23. TEST CASE, SECOND ORDER PARADOX WITH TWO EXCLUSIVE CONVOYS</a></h4>\n<p>In this paradox there are two consistent resolutions, but where the two convoys do not fail or succeed at the same time.</p>\n<pre>England: \nF Edinburgh - North Sea\nF Yorkshire Supports F Edinburgh - North Sea\n\nFrance: \nA Brest - London\nF English Channel Convoys A Brest - London\n\nGermany: \nF Belgium Supports F English Channel\nF London Supports F North Sea\n\nItaly: \nF Mid-Atlantic Ocean - English Cha..."
+    },
+    {
+      "id": "6.F.24",
+      "name": "SECOND ORDER PARADOX WITH NO RESOLUTION",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "As first order paradoxes, second order paradoxes come in two flavors, with two resolutions or no resolution.",
+      "orders": {
+        "England": [
+          "F Edinburgh - North Sea",
+          "F London Supports F Edinburgh - North Sea",
+          "F Irish Sea - English Channel",
+          "F Mid-Atlantic Ocean Supports F Irish Sea - English Channel"
+        ],
+        "France": [
+          "A Brest - London",
+          "F English Channel Convoys A Brest - London",
+          "F Belgium Supports F English Channel"
+        ],
+        "Russia": [
+          "A Norway - Belgium",
+          "F North Sea Convoys A Norway - Belgium"
+        ]
+      },
+      "expected_outcome": "When no paradox rule is used, there is no consistent resolution. If the French support in Belgium is cut, the French fleet in the English Channel will be dislodged. That means that the support of London will not be cut and the fleet in Edinburgh will dislodge the Russian fleet in the North Sea. In this way the support in Belgium is not cut! But if the support in Belgium is not cut, the Russian fleet in the North Sea will not be dislodged and the army in Norway can cut the support in Belgium.",
+      "raw_content": "<h4><a name=\"6.F.24\">6.F.24. TEST CASE, SECOND ORDER PARADOX WITH NO RESOLUTION</a></h4>\n<p>As first order paradoxes, second order paradoxes come in two\nflavors, with two resolutions or no resolution.</p>\n<pre>England: \nF Edinburgh - North Sea\nF London Supports F Edinburgh - North Sea\nF Irish Sea - English Channel\nF Mid-Atlantic Ocean Supports F Irish Sea - English Channel\n\nFrance: \nA Brest - London\nF English Channel Convoys A Brest - London\nF Belgium Supports F English Channel\n\nRussia: \nA Norwa..."
+    },
+    {
+      "id": "6.F.25",
+      "name": "CUT SUPPORT LAST",
+      "section": "CONVOYS",
+      "category": "convoys",
+      "description": "For manual play the rule of thumb is, cut support first. However, in below example the support of Holland is some of the last orders to adjudicated.",
+      "orders": {
+        "Germany": [
+          "A Rhur - Belgium",
+          "A Holland Supports Rhur - Belgium",
+          "A Denmark - Norway",
+          "F Skagerrak Convoys Denmark - Norway",
+          "A Finland Supports Denmark - Norway"
+        ],
+        "England": [
+          "A Yorkshire - Holland",
+          "F North Sea Convoys Yorkshire - Holland",
+          "F Helgoland Bight Supports Yorkshire - Holland",
+          "A Belgium Hold"
+        ],
+        "Russia": [
+          "F Norwegian Sea - North Sea",
+          "F Norway Supports Norwegian Sea - North Sea",
+          "F Sweden - Skagerrak"
+        ]
+      },
+      "expected_outcome": "The fleet in Sweden fails to disrupt the convoy in Skagerrak. The move from Denmark to Norway succeeds and cuts the support of Norway. The fleet in the Norwegian Sea fails to disrupt the convoy in North Sea. The move from Yorkshire to Holland succeeds and cuts the support of Holland. The move from Rhur fails to dislodge the army in Belgium.",
+      "raw_content": "<h4><a name=\"6.F.25\">6.F.25. TEST CASE, CUT SUPPORT LAST</a></h4>\n<p>For manual play the rule of thumb is, cut support first. However, in below example the support of Holland is some of the last orders to adjudicated.</p>\n<pre>Germany:\nA Rhur - Belgium\nA Holland Supports Rhur - Belgium\nA Denmark - Norway\nF Skagerrak Convoys Denmark - Norway\nA Finland Supports Denmark - Norway\n\nEngland:\nA Yorkshire - Holland\nF North Sea Convoys Yorkshire - Holland\nF Helgoland Bight Supports Yorkshire - Holland\nA ..."
+    },
+    {
+      "id": "6.G.1",
+      "name": "TWO UNITS CAN SWAP PROVINCES BY CONVOY",
+      "section": "CONVOYING TO ADJACENT PROVINCES",
+      "category": "adjacent_convoys",
+      "description": "The only way to swap two units, is by convoy.",
+      "orders": {
+        "England": [
+          "A Norway - Sweden",
+          "F Skagerrak Convoys A Norway - Sweden"
+        ],
+        "Russia": [
+          "A Sweden - Norway"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.G.1\">6.G.1. TEST CASE, TWO UNITS CAN SWAP PROVINCES BY CONVOY</a></h4>\n<p>The only way to swap two units, is by convoy.</p>\n<pre>England: \nA Norway - Sweden\nF Skagerrak Convoys A Norway - Sweden\n\nRussia: \nA Sweden - Norway\n</pre>\n<p>If explicit adjacent convoying is used (DPTG, see issue\n<a href=\"#4.A.3\">4.A.3</a>), then it is just a head-to-head battle. However, all rulebooks (<i>which I prefer</i>) allow that convoy intent is given by a convoying fleet of same country. So, swap ..."
+    },
+    {
+      "id": "6.G.2",
+      "name": "KIDNAPPING AN ARMY",
+      "section": "CONVOYING TO ADJACENT PROVINCES",
+      "category": "adjacent_convoys",
+      "description": "Germany promised England to support to dislodge the Russian fleet in Sweden and it promised Russia to support to dislodge the English army in Norway. Instead, the joking German orders a convoy.",
+      "orders": {
+        "England": [
+          "A Norway - Sweden"
+        ],
+        "Russia": [
+          "F Sweden - Norway"
+        ],
+        "Germany": [
+          "F Skagerrak Convoys A Norway - Sweden"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.G.2\">6.G.2. TEST CASE, KIDNAPPING AN ARMY</a></h4>\n<p>Germany promised England to support to dislodge the Russian fleet in Sweden\nand it promised Russia to support to dislodge the English army in Norway. Instead, the joking German orders a convoy.</p>\n<pre>England: \nA Norway - Sweden\n\nRussia: \nF Sweden - Norway\n\nGermany: \nF Skagerrak Convoys A Norway - Sweden\n</pre>\n<p>See issue <a href=\"#4.A.3\">4.A.3</a>. If the 1971 rulebook is used, then the army in Norway is kidnapped and swap..."
+    },
+    {
+      "id": "6.G.3",
+      "name": "AN UNWANTED DISRUPTED CONVOY TO ADJACENT PROVINCE",
+      "section": "CONVOYING TO ADJACENT PROVINCES",
+      "category": "adjacent_convoys",
+      "description": "One can try to convoy an army unwanted with a fleet that is almost certainly dislodged. However, this trick should not work.",
+      "orders": {
+        "France": [
+          "F Brest - English Channel",
+          "A Picardy - Belgium",
+          "A Burgundy Supports A Picardy - Belgium",
+          "F Mid-Atlantic Ocean Supports F Brest - English Channel"
+        ],
+        "England": [
+          "F English Channel Convoys A Picardy - Belgium"
+        ]
+      },
+      "expected_outcome": "One can try to convoy an army unwanted with a fleet that is almost certainly dislodged. However, this trick should not work.",
+      "raw_content": "<h4><a name=\"6.G.3\">6.G.3. TEST CASE, AN UNWANTED DISRUPTED CONVOY TO ADJACENT PROVINCE</a></h4>\n<p>One can try to convoy an army unwanted with a fleet that is almost certainly dislodged. However, this trick should not work.</p>\n<pre>France: \nF Brest - English Channel\nA Picardy - Belgium\nA Burgundy Supports A Picardy - Belgium\nF Mid-Atlantic Ocean Supports F Brest - English Channel\n \nEngland: \nF English Channel Convoys A Picardy - Belgium\n</pre>\n<p>See issue <a href=\"#4.A.3\">4.A.3</a>. The 1982/..."
+    },
+    {
+      "id": "6.G.4",
+      "name": "AN UNWANTED DISRUPTED CONVOY TO ADJACENT PROVINCE AND OPPOSITE MOVE",
+      "section": "CONVOYING TO ADJACENT PROVINCES",
+      "category": "adjacent_convoys",
+      "description": "In the situation of the previous test case, it was rather clear that the army didn't want to take the convoy. But what if there is an army moving in opposite direction?",
+      "orders": {
+        "France": [
+          "F Brest - English Channel",
+          "A Picardy - Belgium",
+          "A Burgundy Supports A Picardy - Belgium",
+          "F Mid-Atlantic Ocean Supports F Brest - English Channel"
+        ],
+        "England": [
+          "F English Channel Convoys A Picardy - Belgium",
+          "A Belgium - Picardy"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.G.4\">6.G.4. TEST CASE, AN UNWANTED DISRUPTED CONVOY TO ADJACENT PROVINCE AND OPPOSITE MOVE</a></h4>\n<p>In the situation of the previous test case, it was rather\nclear that the army didn't want to take the convoy. But what\nif there is an army moving in opposite direction?</p>\n<pre>France: \nF Brest - English Channel\nA Picardy - Belgium\nA Burgundy Supports A Picardy - Belgium\nF Mid-Atlantic Ocean Supports F Brest - English Channel\n \nEngland: \nF English Channel Convoys A Picardy - Bel..."
+    },
+    {
+      "id": "6.G.5",
+      "name": "SWAPPING WITH MULTIPLE FLEETS WITH ONE OWN FLEET",
+      "section": "CONVOYING TO ADJACENT PROVINCES",
+      "category": "adjacent_convoys",
+      "description": "One fleet is sufficient to show the intent to convoy.",
+      "orders": {
+        "Italy": [
+          "A Rome - Apulia",
+          "F Tyrrhenian Sea Convoys A Apulia - Rome"
+        ],
+        "Turkey": [
+          "A Apulia - Rome",
+          "F Ionian Sea Convoys A Apulia - Rome"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.G.5\">6.G.5. TEST CASE, SWAPPING WITH MULTIPLE FLEETS WITH ONE OWN FLEET</a></h4>\n<p>One fleet is sufficient to show the intent to convoy.</p><pre>Italy: \nA Rome - Apulia\nF Tyrrhenian Sea Convoys A Apulia - Rome\n\nTurkey:  \nA Apulia - Rome\nF Ionian Sea Convoys A Apulia - Rome\n</pre>\n<p>If explicit adjacent convoying is used (DPTG, see issue\n<a href=\"#4.A.3\">4.A.3</a>), then it is just a head-to-head battle. However, all rulebooks (<i>which I prefer</i>) allow that convoy intent is g..."
+    },
+    {
+      "id": "6.G.6",
+      "name": "SWAPPING WITH UNINTENDED INTENT",
+      "section": "CONVOYING TO ADJACENT PROVINCES",
+      "category": "adjacent_convoys",
+      "description": "The intent is questionable.",
+      "orders": {
+        "England": [
+          "A Liverpool - Edinburgh",
+          "F English Channel Convoys A Liverpool - Edinburgh"
+        ],
+        "Germany": [
+          "A Edinburgh - Liverpool"
+        ],
+        "France": [
+          "F Irish Sea Hold",
+          "F North Sea Hold"
+        ],
+        "Russia": [
+          "F Norwegian Sea Convoys A Liverpool - Edinburgh",
+          "F North Atlantic Ocean Convoys A Liverpool - Edinburgh"
+        ]
+      },
+      "expected_outcome": "When explicit adjacent convoying is used (DPTG), then the English army did not receive an order to move by convoy. So, it is just a head-to-head battle and both the army in Edinburgh and Liverpool will not move.",
+      "raw_content": "<h4><a name=\"6.G.6\">6.G.6. TEST CASE, SWAPPING WITH UNINTENDED INTENT</a></h4>\n<p>The intent is questionable.</p>\n<pre>England: \nA Liverpool - Edinburgh\nF English Channel Convoys A Liverpool - Edinburgh\n\nGermany: \nA Edinburgh - Liverpool\n\nFrance: \nF Irish Sea Hold\nF North Sea Hold\n\nRussia: \nF Norwegian Sea Convoys A Liverpool - Edinburgh\nF North Atlantic Ocean Convoys A Liverpool - Edinburgh\n</pre>\n<p>Here England intended to convoy via the French fleets in the Irish Sea and the North Sea. Howev..."
+    },
+    {
+      "id": "6.G.7",
+      "name": "SWAPPING WITH ILLEGAL INTENT",
+      "section": "CONVOYING TO ADJACENT PROVINCES",
+      "category": "adjacent_convoys",
+      "description": "Can the intent be made clear with an impossible order?",
+      "orders": {
+        "England": [
+          "F Skagerrak Convoys A Sweden - Norway",
+          "F Norway - Sweden"
+        ],
+        "Russia": [
+          "A Sweden - Norway",
+          "F Gulf of Bothnia Convoys A Sweden - Norway"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.G.7\">6.G.7. TEST CASE, SWAPPING WITH ILLEGAL INTENT</a></h4>\n<p>Can the intent be made clear with an impossible order?</p>\n<pre>England: \nF Skagerrak Convoys A Sweden - Norway\nF Norway - Sweden\n\nRussia: \nA Sweden - Norway\nF Gulf of Bothnia Convoys A Sweden - Norway\n</pre>\n<p>See issue <a href=\"#4.A.3\">4.A.3</a> and <a href=\"#4.E.1\">4.E.1</a>.</p>\n<p>In case the 1971 rules are used, the intent is not important and the units in Norway and Sweden swap.</p>\n<p>With the 2023 rules (<i>..."
+    },
+    {
+      "id": "6.G.8",
+      "name": "EXPLICIT CONVOY THAT ISN'T THERE",
+      "section": "CONVOYING TO ADJACENT PROVINCES",
+      "category": "adjacent_convoys",
+      "description": "What to do when a unit is explicitly ordered to move via convoy and the convoy is not there?",
+      "orders": {
+        "France": [
+          "A Belgium - Holland via convoy"
+        ],
+        "England": [
+          "F North Sea - Helgoland Bight",
+          "A Holland - Kiel"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.G.8\">6.G.8. TEST CASE, EXPLICIT CONVOY THAT ISN'T THERE</a></h4>\n<p>What to do when a unit is explicitly ordered to move via\nconvoy and the convoy is not there?\n</p><pre>France: \nA Belgium - Holland via convoy\n\nEngland: \nF North Sea - Helgoland Bight\nA Holland - Kiel\n</pre>\n<p>The French army in Belgium intended to move convoyed with the\nEnglish fleet in the North Sea. But England changed its\nplans.</p>\n<p>See issue <a href=\"#4.A.3\">4.A.3</a>.</p>\n<p>In case of 1971 or 1982 rulebo..."
+    },
+    {
+      "id": "6.G.9",
+      "name": "SWAPPED OR DISLODGED?",
+      "section": "CONVOYING TO ADJACENT PROVINCES",
+      "category": "adjacent_convoys",
+      "description": "If played according to the DPTG, then an army is only convoyed to an adjacent province if it is tagged with \"via convoy\". This means that the Russian army in Sweden is dislodged by the army from Norway.",
+      "orders": {
+        "England": [
+          "A Norway - Sweden",
+          "F Skagerrak Convoys A Norway - Sweden",
+          "F Finland Supports A Norway - Sweden"
+        ],
+        "Russia": [
+          "A Sweden - Norway"
+        ]
+      },
+      "expected_outcome": "If played according to the DPTG, then an army is only convoyed to an adjacent province if it is tagged with \"via convoy\". This means that the Russian army in Sweden is dislodged by the army from Norway.",
+      "raw_content": "<h4><a name=\"6.G.9\">6.G.9. TEST CASE, SWAPPED OR DISLODGED?</a></h4>\n<p>In the following situation the English army in Norway will\nend in all cases in Sweden. But whether it is convoyed or not\nhas effect on the Russian army. In case of convoy the Russian\narmy ends in Norway and in case of a land route the Russian\narmy is dislodged (see issue <a href=\"#4.A.3\">4.A.3</a>).</p>\n<pre>England: \nA Norway - Sweden\nF Skagerrak Convoys A Norway - Sweden\nF Finland Supports A Norway - Sweden\n\nRussia: \nA Swe..."
+    },
+    {
+      "id": "6.G.10",
+      "name": "SWAPPED OR AN HEAD-TO-HEAD BATTLE?",
+      "section": "CONVOYING TO ADJACENT PROVINCES",
+      "category": "adjacent_convoys",
+      "description": "Can a dislodged unit have effect on the attacker's area, when the attacker moved by convoy?",
+      "orders": {
+        "England": [
+          "A Norway - Sweden via convoy",
+          "F Denmark Supports A Norway - Sweden",
+          "F Finland Supports A Norway - Sweden"
+        ],
+        "Germany": [
+          "F Skagerrak Convoys A Norway - Sweden"
+        ],
+        "Russia": [
+          "A Sweden - Norway",
+          "F Barents Sea Supports A Sweden - Norway"
+        ],
+        "France": [
+          "F Norwegian Sea - Norway",
+          "F North Sea Supports F Norwegian Sea - Norway"
+        ]
+      },
+      "expected_outcome": "Can a dislodged unit have effect on the attacker's area, when the attacker moved by convoy?",
+      "raw_content": "<h4><a name=\"6.G.10\">6.G.10. TEST CASE, SWAPPED OR AN HEAD-TO-HEAD BATTLE?</a></h4>\n<p>Can a dislodged unit have effect on the attacker's area, when the attacker moved by convoy?</p>\n<pre>England: \nA Norway - Sweden via convoy\nF Denmark Supports A Norway - Sweden\nF Finland Supports A Norway - Sweden\n\nGermany:\nF Skagerrak Convoys A Norway - Sweden\n \nRussia: \nA Sweden - Norway\nF Barents Sea Supports A Sweden - Norway\n\nFrance: \nF Norwegian Sea - Norway\nF North Sea Supports F Norwegian Sea - Norway\n..."
+    },
+    {
+      "id": "6.G.11",
+      "name": "A CONVOY TO AN ADJACENT PROVINCE WITH A PARADOX",
+      "section": "CONVOYING TO ADJACENT PROVINCES",
+      "category": "adjacent_convoys",
+      "description": "In this case the convoy route is available when the land route is chosen and the convoy route is not available when the convoy route is chosen.",
+      "orders": {
+        "England": [
+          "F Norway Supports F North Sea - Skagerrak",
+          "F North Sea - Skagerrak"
+        ],
+        "Russia": [
+          "A Sweden - Norway",
+          "F Skagerrak Convoys A Sweden - Norway",
+          "F Barents Sea Supports A Sweden - Norway"
+        ]
+      },
+      "expected_outcome": "In case of the 1971 rulebook the move from Sweden to Norway is not a convoy (because Norway is not moving in opposite direction) and the English fleet in Norway is dislodged and the fleet in Skagerrak will not be dislodged.",
+      "raw_content": "<h4><a name=\"6.G.11\">6.G.11. TEST CASE, A CONVOY TO AN ADJACENT PROVINCE WITH A PARADOX</a></h4>\n<p>In this case the convoy route is available when the land\nroute is chosen and the convoy route is not available when\nthe convoy route is chosen.</p>\n<pre>England: \nF Norway Supports F North Sea - Skagerrak\nF North Sea - Skagerrak\n\nRussia: \nA Sweden - Norway\nF Skagerrak Convoys A Sweden - Norway\nF Barents Sea Supports A Sweden - Norway\n</pre>\n<p>See issue <a href=\"#4.A.2\">4.A.2</a> and <a href=\"#4.A..."
+    },
+    {
+      "id": "6.G.12",
+      "name": "SWAPPING TWO UNITS WITH TWO CONVOYS",
+      "section": "CONVOYING TO ADJACENT PROVINCES",
+      "category": "adjacent_convoys",
+      "description": "Of course, two armies can also swap by when they are both convoyed.",
+      "orders": {
+        "England": [
+          "A Liverpool - Edinburgh via convoy",
+          "F North Atlantic Ocean Convoys A Liverpool - Edinburgh",
+          "F Norwegian Sea Convoys A Liverpool - Edinburgh"
+        ],
+        "Germany": [
+          "A Edinburgh - Liverpool via convoy",
+          "F North Sea Convoys A Edinburgh - Liverpool",
+          "F English Channel Convoys A Edinburgh - Liverpool",
+          "F Irish Sea Convoys A Edinburgh - Liverpool"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.G.12\">6.G.12. TEST CASE, SWAPPING TWO UNITS WITH TWO CONVOYS</a></h4>\n<p>Of course, two armies can also swap by when they are both convoyed.</p>\n<pre>England: \nA Liverpool - Edinburgh via convoy\nF North Atlantic Ocean Convoys A Liverpool - Edinburgh\nF Norwegian Sea Convoys A Liverpool - Edinburgh\n\nGermany: \nA Edinburgh - Liverpool via convoy\nF North Sea Convoys A Edinburgh - Liverpool\nF English Channel Convoys A Edinburgh - Liverpool\nF Irish Sea Convoys A Edinburgh - Liverpool\n</p..."
+    },
+    {
+      "id": "6.G.13",
+      "name": "SUPPORT CUT ON ATTACK ON ITSELF VIA CONVOY",
+      "section": "CONVOYING TO ADJACENT PROVINCES",
+      "category": "adjacent_convoys",
+      "description": "If a unit is attacked by a supported unit, it is not possible to prevent dislodgement by trying to cut the support. But what, if a move is attempted via a convoy?",
+      "orders": {
+        "Austria": [
+          "F Adriatic Sea Convoys A Trieste - Venice",
+          "A Trieste - Venice via convoy"
+        ],
+        "Italy": [
+          "A Venice Supports F Albania - Trieste",
+          "F Albania - Trieste"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.G.13\">6.G.13. TEST CASE, SUPPORT CUT ON ATTACK ON ITSELF VIA CONVOY</a></h4>\n<p>If a unit is attacked by a supported unit, it is not possible to prevent \ndislodgement by trying to cut the support. But what, if a move is attempted via a convoy?</p>\n<pre>Austria: \nF Adriatic Sea Convoys A Trieste - Venice\nA Trieste - Venice via convoy\n\nItaly: \nA Venice Supports F Albania - Trieste\nF Albania - Trieste\n</pre>\n<p>First it should be mentioned that if for issue <a href=\"#4.A.3\">4.A.3</a>..."
+    },
+    {
+      "id": "6.G.14",
+      "name": "BOUNCE BY CONVOY TO ADJACENT PROVINCE",
+      "section": "CONVOYING TO ADJACENT PROVINCES",
+      "category": "adjacent_convoys",
+      "description": "Again, the army in Sweden is bounced by the fleet in the Norwegian Sea. The army in Norway will move to Sweden and dislodge the Russian army.",
+      "orders": {
+        "England": [
+          "A Norway - Sweden",
+          "F Denmark Supports A Norway - Sweden",
+          "F Finland Supports A Norway - Sweden"
+        ],
+        "France": [
+          "F Norwegian Sea - Norway",
+          "F North Sea Supports F Norwegian Sea - Norway"
+        ],
+        "Germany": [
+          "F Skagerrak Convoys A Sweden - Norway"
+        ],
+        "Russia": [
+          "A Sweden - Norway via convoy",
+          "F Barents Sea Supports A Sweden - Norway"
+        ]
+      },
+      "expected_outcome": "Again, the army in Sweden is bounced by the fleet in the Norwegian Sea. The army in Norway will move to Sweden and dislodge the Russian army.",
+      "raw_content": "<h4><a name=\"6.G.14\">6.G.14. TEST CASE, BOUNCE BY CONVOY TO ADJACENT PROVINCE</a></h4>\n<p>Similar to test case <a href=\"#6.G.10\">6.G.10</a>, but now the other unit is taking the convoy.</p>\n<pre>England: \nA Norway - Sweden\nF Denmark Supports A Norway - Sweden\nF Finland Supports A Norway - Sweden\n\nFrance: \nF Norwegian Sea - Norway\nF North Sea Supports F Norwegian Sea - Norway\n\nGermany: \nF Skagerrak Convoys A Sweden - Norway\n\nRussia: \nA Sweden - Norway via convoy\nF Barents Sea Supports A Sweden - ..."
+    },
+    {
+      "id": "6.G.15",
+      "name": "BOUNCE AND DISLODGE WITH DOUBLE CONVOY",
+      "section": "CONVOYING TO ADJACENT PROVINCES",
+      "category": "adjacent_convoys",
+      "description": "The French army in Belgium is bounced by the army from Yorkshire. The army in London move to Belgium, dislodging the unit there.",
+      "orders": {
+        "England": [
+          "F North Sea Convoys A London - Belgium",
+          "A Holland Supports A London - Belgium",
+          "A Yorkshire - London",
+          "A London - Belgium via convoy"
+        ],
+        "France": [
+          "F English Channel Convoys A Belgium - London",
+          "A Belgium - London via convoy"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.G.15\">6.G.15. TEST CASE, BOUNCE AND DISLODGE WITH DOUBLE CONVOY</a></h4>\n<p>Similar to test case <a href=\"#6.G.10\">6.G.10</a>, but now both units\nuse a convoy and without some support.</p>\n<pre>England: \nF North Sea Convoys A London - Belgium\nA Holland Supports A London - Belgium\nA Yorkshire - London\nA London - Belgium via convoy\n\nFrance: \nF English Channel Convoys A Belgium - London\nA Belgium - London via convoy\n</pre>\n<p>The French army in Belgium is bounced by the\narmy from Yor..."
+    },
+    {
+      "id": "6.G.16",
+      "name": "THE TWO UNIT IN ONE AREA BUG, MOVING BY CONVOY",
+      "section": "CONVOYING TO ADJACENT PROVINCES",
+      "category": "adjacent_convoys",
+      "description": "If the adjudicator is not correctly implemented, this may lead to a resolution where two units end up in the same area.",
+      "orders": {
+        "England": [
+          "A Norway - Sweden",
+          "A Denmark Supports A Norway - Sweden",
+          "F Baltic Sea Supports A Norway - Sweden",
+          "F North Sea - Norway"
+        ],
+        "Russia": [
+          "A Sweden - Norway via convoy",
+          "F Skagerrak Convoys A Sweden - Norway",
+          "F Norwegian Sea Supports A Sweden - Norway"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.G.16\">6.G.16. TEST CASE, THE TWO UNIT IN ONE AREA BUG, MOVING BY CONVOY</a></h4>\n<p>If the adjudicator is not correctly implemented, this may lead to a resolution where two units end up in the same area.</p>\n<pre>England: \nA Norway - Sweden\nA Denmark Supports A Norway - Sweden\nF Baltic Sea Supports A Norway - Sweden\nF North Sea - Norway\n\nRussia: \nA Sweden - Norway via convoy\nF Skagerrak Convoys A Sweden - Norway\nF Norwegian Sea Supports A Sweden - Norway\n</pre>\n<p>See decision det..."
+    },
+    {
+      "id": "6.G.17",
+      "name": "THE TWO UNIT IN ONE AREA BUG, MOVING OVER LAND",
+      "section": "CONVOYING TO ADJACENT PROVINCES",
+      "category": "adjacent_convoys",
+      "description": "Similar to the previous test case, but now the other unit moves by convoy.",
+      "orders": {
+        "England": [
+          "A Norway - Sweden via convoy",
+          "A Denmark Supports A Norway - Sweden",
+          "F Baltic Sea Supports A Norway - Sweden",
+          "F Skagerrak Convoys A Norway - Sweden",
+          "F North Sea - Norway"
+        ],
+        "Russia": [
+          "A Sweden - Norway",
+          "F Norwegian Sea Supports A Sweden - Norway"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.G.17\">6.G.17. TEST CASE, THE TWO UNIT IN ONE AREA BUG, MOVING OVER LAND</a></h4>\n<p>Similar to the previous test case, but now the other unit moves by convoy.</p>\n<pre>England: \nA Norway - Sweden via convoy\nA Denmark Supports A Norway - Sweden\nF Baltic Sea Supports A Norway - Sweden\nF Skagerrak Convoys A Norway - Sweden\nF North Sea - Norway\n\nRussia: \nA Sweden - Norway\nF Norwegian Sea Supports A Sweden - Norway\n</pre>\n<p>Sweden and Norway are swapped, while the fleet in the\nNorth S..."
+    },
+    {
+      "id": "6.G.18",
+      "name": "THE TWO UNIT IN ONE AREA BUG, WITH DOUBLE CONVOY",
+      "section": "CONVOYING TO ADJACENT PROVINCES",
+      "category": "adjacent_convoys",
+      "description": "Similar to the previous test case, but now both units move by convoy.",
+      "orders": {
+        "England": [
+          "F North Sea Convoys A London - Belgium",
+          "A Holland Supports A London - Belgium",
+          "A Yorkshire - London",
+          "A London - Belgium",
+          "A Ruhr Supports A London - Belgium"
+        ],
+        "France": [
+          "F English Channel Convoys A Belgium - London",
+          "A Belgium - London",
+          "A Wales Supports A Belgium - London"
+        ]
+      },
+      "expected_outcome": "Belgium and London are swapped, while the army in Yorkshire fails to move to London.",
+      "raw_content": "<h4><a name=\"6.G.18\">6.G.18. TEST CASE, THE TWO UNIT IN ONE AREA BUG, WITH DOUBLE CONVOY</a></h4>\n<p>Similar to the previous test case, but now both units move by convoy.</p>\n<pre>England: \nF North Sea Convoys A London - Belgium\nA Holland Supports A London - Belgium\nA Yorkshire - London\nA London - Belgium\nA Ruhr Supports A London - Belgium\n\nFrance: \nF English Channel Convoys A Belgium - London\nA Belgium - London\nA Wales Supports A Belgium - London\n</pre>\n<p>Belgium and London are swapped, while ..."
+    },
+    {
+      "id": "6.G.19",
+      "name": "SWAPPING WITH INTENT OF UNNECESSARY CONVOY",
+      "section": "CONVOYING TO ADJACENT PROVINCES",
+      "category": "adjacent_convoys",
+      "description": "Can the intent made clear by the order of a fleet that is not necessary?",
+      "orders": {
+        "France": [
+          "A Marseilles - Spain",
+          "F Western Mediterranean Convoys A Marseilles - Spain"
+        ],
+        "Italy": [
+          "F Gulf of Lyon Convoys A Marseilles - Spain",
+          "A Spain - Marseilles"
+        ]
+      },
+      "expected_outcome": "The point of interest is that there is a convoy route from Marseilles, Gulf of Lyon, Western Mediterranean to Spain. However, the fleet in Western Mediterranean is not necessary for this convoy and not necessary for any other convoy route. Therefore, this order should be considered illegal. Webbased adjudicators should not give this order as an option.",
+      "raw_content": "<h4><a name=\"6.G.19\">6.G.19. TEST CASE, SWAPPING WITH INTENT OF UNNECESSARY CONVOY</a></h4>\n<p>Can the intent made clear by the order of a fleet that is not necessary?</p>\n<pre>France: \nA Marseilles - Spain\nF Western Mediterranean Convoys A Marseilles - Spain\n\nItaly:\nF Gulf of Lyon Convoys A Marseilles - Spain\nA Spain - Marseilles\n</pre>\n<p>See issue <a href=\"#4.A.3\">4.A.3</a> and <a href=\"#4.E.1\">4.E.1</a>.</p>\n<p>In case the 1971 rules are used, the intent is not important and the units in Mar..."
+    },
+    {
+      "id": "6.G.20",
+      "name": "EXPLICIT CONVOY TO ADJACENT PROVINCE DISRUPTED",
+      "section": "CONVOYING TO ADJACENT PROVINCES",
+      "category": "adjacent_convoys",
+      "description": "If a move to adjacent province was explicit via convoy, and the convoy is disrupted, should it fall back to the land route?",
+      "orders": {
+        "France": [
+          "F Brest - English Channel",
+          "A Picardy - Belgium via Convoy",
+          "A Burgundy Supports A Picardy - Belgium",
+          "F Mid-Atlantic Ocean Supports F Brest - English Channel"
+        ],
+        "England": [
+          "F English Channel Convoys A Picardy - Belgium"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.G.20\">6.G.20. TEST CASE, EXPLICIT CONVOY TO ADJACENT PROVINCE DISRUPTED</a></h4>\n<p>If a move to adjacent province was explicit via convoy, and the convoy is disrupted, should it fall back to the land route?</p>\n<pre>France: \nF Brest - English Channel\nA Picardy - Belgium via Convoy\nA Burgundy Supports A Picardy - Belgium\nF Mid-Atlantic Ocean Supports F Brest - English Channel\n \nEngland: \nF English Channel Convoys A Picardy - Belgium\n</pre>\n<p>This situation is not applicable for t..."
+    },
+    {
+      "id": "6.H.1",
+      "name": "NO SUPPORTS DURING RETREAT",
+      "section": "RETREATING",
+      "category": "retreating",
+      "description": "Supports are not allowed in the retreat phase.",
+      "orders": {
+        "Austria": [
+          "F Trieste Hold",
+          "A Serbia Hold",
+          "F Trieste - Albania",
+          "A Serbia Supports F Trieste - Albania"
+        ],
+        "Turkey": [
+          "F Greece Hold",
+          "F Greece - Albania"
+        ],
+        "Italy": [
+          "A Venice Supports A Tyrolia - Trieste",
+          "A Tyrolia - Trieste",
+          "F Ionian Sea - Greece",
+          "F Aegean Sea Supports F Ionian Sea - Greece"
+        ]
+      },
+      "expected_outcome": "The fleet in Trieste and the fleet in Greece are dislodged. If the retreat orders are as follows:",
+      "raw_content": "<h4><a name=\"6.H.1\">6.H.1. TEST CASE, NO SUPPORTS DURING RETREAT</a></h4>\n<p>Supports are not allowed in the retreat phase.</p>\n<pre>Austria: \nF Trieste Hold\nA Serbia Hold\n\nTurkey: \nF Greece Hold\n\nItaly: \nA Venice Supports A Tyrolia - Trieste\nA Tyrolia - Trieste\nF Ionian Sea - Greece\nF Aegean Sea Supports F Ionian Sea - Greece\n</pre>\n<p>The fleet in Trieste and the fleet in Greece are dislodged. If the retreat orders are as follows:</p>\n<pre>Austria: \nF Trieste - Albania\nA Serbia Supports F Trie..."
+    },
+    {
+      "id": "6.H.2",
+      "name": "NO SUPPORTS FROM RETREATING UNIT",
+      "section": "RETREATING",
+      "category": "retreating",
+      "description": "Even a retreating unit cannot give support.",
+      "orders": {
+        "England": [
+          "A Liverpool - Edinburgh",
+          "F Yorkshire Supports A Liverpool - Edinburgh",
+          "F Norway Hold",
+          "F Norway - North Sea"
+        ],
+        "Germany": [
+          "A Kiel Supports A Ruhr - Holland",
+          "A Ruhr - Holland"
+        ],
+        "Russia": [
+          "F Edinburgh Hold",
+          "A Sweden Supports A Finland - Norway",
+          "A Finland - Norway",
+          "F Holland Hold",
+          "F Edinburgh - North Sea",
+          "F Holland Supports F Edinburgh - North Sea"
+        ]
+      },
+      "expected_outcome": "The English fleet in Norway and the Russian fleets in Edinburgh and Holland are dislodged. If the following retreat orders are given:",
+      "raw_content": "<h4><a name=\"6.H.2\">6.H.2. TEST CASE, NO SUPPORTS FROM RETREATING UNIT</a></h4>\n<p>Even a retreating unit cannot give support.</p>\n<pre>England: \nA Liverpool - Edinburgh\nF Yorkshire Supports A Liverpool - Edinburgh\nF Norway Hold\n\nGermany: \nA Kiel Supports A Ruhr - Holland\nA Ruhr - Holland\n\nRussia: \nF Edinburgh Hold\nA Sweden Supports A Finland - Norway\nA Finland - Norway\nF Holland Hold\n</pre>\n<p>The English fleet in Norway and the Russian fleets in Edinburgh and\nHolland are dislodged. If the foll..."
+    },
+    {
+      "id": "6.H.3",
+      "name": "NO CONVOY DURING RETREAT",
+      "section": "RETREATING",
+      "category": "retreating",
+      "description": "Convoys during retreat are not allowed.",
+      "orders": {
+        "England": [
+          "F North Sea Hold",
+          "A Holland Hold",
+          "A Holland - Yorkshire",
+          "F North Sea Convoys A Holland - Yorkshire"
+        ],
+        "Germany": [
+          "F Kiel Supports A Ruhr - Holland",
+          "A Ruhr - Holland"
+        ]
+      },
+      "expected_outcome": "The English army in Holland is dislodged. If England orders the following in retreat:",
+      "raw_content": "<h4><a name=\"6.H.3\">6.H.3. TEST CASE, NO CONVOY DURING RETREAT</a></h4>\n<p>Convoys during retreat are not allowed.</p>\n<pre>England: \nF North Sea Hold\nA Holland Hold\n\nGermany: \nF Kiel Supports A Ruhr - Holland\nA Ruhr - Holland\n</pre>\n<p>The English army in Holland is dislodged. If England orders the following in retreat:</p>\n<pre>England: \nA Holland - Yorkshire\nF North Sea Convoys A Holland - Yorkshire\n</pre>\n<p>The convoy order is illegal. The army in Holland is disbanded.</p>\n\n"
+    },
+    {
+      "id": "6.H.4",
+      "name": "NO OTHER MOVES DURING RETREAT",
+      "section": "RETREATING",
+      "category": "retreating",
+      "description": "Of course, you may not do any other move during a retreat. But look if the adjudicator checks for it.",
+      "orders": {
+        "England": [
+          "F North Sea Hold",
+          "A Holland Hold",
+          "A Holland - Belgium",
+          "F North Sea - Norwegian Sea"
+        ],
+        "Germany": [
+          "F Kiel Supports A Ruhr - Holland",
+          "A Ruhr - Holland"
+        ]
+      },
+      "expected_outcome": "The English army in Holland is dislodged. If England orders the following in retreat:",
+      "raw_content": "<h4><a name=\"6.H.4\">6.H.4. TEST CASE, NO OTHER MOVES DURING RETREAT</a></h4>\n<p>Of course, you may not do any other move during a retreat. But look if the adjudicator checks for it.</p>\n<pre>England: \nF North Sea Hold\nA Holland Hold\n\nGermany: \nF Kiel Supports A Ruhr - Holland\nA Ruhr - Holland\n</pre>\n<p>The English army in Holland is dislodged. If England orders the following in retreat:</p>\n<pre>England: \nA Holland - Belgium\nF North Sea - Norwegian Sea\n</pre>\n<p>The fleet in the North Sea is not..."
+    },
+    {
+      "id": "6.H.5",
+      "name": "A UNIT MAY NOT RETREAT TO THE AREA FROM WHICH IT IS ATTACKED",
+      "section": "RETREATING",
+      "category": "retreating",
+      "description": "Well, that would be of course stupid. Still, the adjudicator must be tested on this.",
+      "orders": {
+        "Russia": [
+          "F Constantinople Supports F Black Sea - Ankara",
+          "F Black Sea - Ankara"
+        ],
+        "Turkey": [
+          "F Ankara Hold"
+        ]
+      },
+      "expected_outcome": "Fleet in Ankara is dislodged and may not retreat to Black Sea.",
+      "raw_content": "<h4><a name=\"6.H.5\">6.H.5. TEST CASE, A UNIT MAY NOT RETREAT TO THE AREA FROM WHICH IT IS ATTACKED</a></h4>\n<p>Well, that would be of course stupid. Still, the adjudicator must be tested on this.</p>\n<pre>Russia: \nF Constantinople Supports F Black Sea - Ankara\nF Black Sea - Ankara\n\nTurkey: \nF Ankara Hold\n</pre>\n<p>Fleet in Ankara is dislodged and may not retreat to Black Sea.</p>\n\n"
+    },
+    {
+      "id": "6.H.6",
+      "name": "UNIT MAY NOT RETREAT TO A CONTESTED AREA",
+      "section": "RETREATING",
+      "category": "retreating",
+      "description": "Standoff prevents retreat to the area.",
+      "orders": {
+        "Austria": [
+          "A Budapest Supports A Trieste - Vienna",
+          "A Trieste - Vienna"
+        ],
+        "Germany": [
+          "A Munich - Bohemia",
+          "A Silesia - Bohemia"
+        ],
+        "Italy": [
+          "A Vienna Hold"
+        ]
+      },
+      "expected_outcome": "The Italian army in Vienna is dislodged. It may not retreat to Bohemia.",
+      "raw_content": "<h4><a name=\"6.H.6\">6.H.6. TEST CASE, UNIT MAY NOT RETREAT TO A CONTESTED AREA</a></h4>\n<p>Standoff prevents retreat to the area.</p>\n<pre>Austria: \nA Budapest Supports A Trieste - Vienna\nA Trieste - Vienna\n\nGermany: \nA Munich - Bohemia\nA Silesia - Bohemia\n\nItaly: \nA Vienna Hold\n</pre>\n<p>The Italian army in Vienna is dislodged. It may not retreat to Bohemia.</p>\n\n"
+    },
+    {
+      "id": "6.H.7",
+      "name": "MULTIPLE RETREAT TO SAME AREA WILL DISBAND UNITS",
+      "section": "RETREATING",
+      "category": "retreating",
+      "description": "There can only be one unit in an area.",
+      "orders": {
+        "Austria": [
+          "A Budapest Supports A Trieste - Vienna",
+          "A Trieste - Vienna"
+        ],
+        "Germany": [
+          "A Munich Supports A Silesia - Bohemia",
+          "A Silesia - Bohemia"
+        ],
+        "Italy": [
+          "A Vienna Hold",
+          "A Bohemia Hold",
+          "A Bohemia - Tyrolia",
+          "A Vienna - Tyrolia"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.H.7\">6.H.7. TEST CASE, MULTIPLE RETREAT TO SAME AREA WILL DISBAND UNITS</a></h4>\n<p>There can only be one unit in an area.</p>\n<pre>Austria: \nA Budapest Supports A Trieste - Vienna\nA Trieste - Vienna\n\nGermany: \nA Munich Supports A Silesia - Bohemia\nA Silesia - Bohemia\n\nItaly: \nA Vienna Hold\nA Bohemia Hold\n</pre>\n<p>If Italy orders the following for retreat:</p>\n<pre>Italy: \nA Bohemia - Tyrolia\nA Vienna - Tyrolia\n</pre>\n<p>Both armies will be disbanded.</p>\n\n"
+    },
+    {
+      "id": "6.H.8",
+      "name": "TRIPLE RETREAT TO SAME AREA WILL DISBAND UNITS",
+      "section": "RETREATING",
+      "category": "retreating",
+      "description": "When three units retreat to the same area, then all three units are disbanded.",
+      "orders": {
+        "England": [
+          "A Liverpool - Edinburgh",
+          "F Yorkshire Supports A Liverpool - Edinburgh",
+          "F Norway Hold",
+          "F Norway - North Sea"
+        ],
+        "Germany": [
+          "A Kiel Supports A Ruhr - Holland",
+          "A Ruhr - Holland"
+        ],
+        "Russia": [
+          "F Edinburgh Hold",
+          "A Sweden Supports A Finland - Norway",
+          "A Finland - Norway",
+          "F Holland Hold",
+          "F Edinburgh - North Sea",
+          "F Holland - North Sea"
+        ]
+      },
+      "expected_outcome": "The fleets in Norway, Edinburgh and Holland are dislodged. If the following retreat orders are given:",
+      "raw_content": "<h4><a name=\"6.H.8\">6.H.8. TEST CASE, TRIPLE RETREAT TO SAME AREA WILL DISBAND UNITS</a></h4>\n<p>When three units retreat to the same area, then all three units are disbanded.</p>\n<pre>England: \nA Liverpool - Edinburgh\nF Yorkshire Supports A Liverpool - Edinburgh\nF Norway Hold\n\nGermany: \nA Kiel Supports A Ruhr - Holland\nA Ruhr - Holland\n\nRussia: \nF Edinburgh Hold\nA Sweden Supports A Finland - Norway\nA Finland - Norway\nF Holland Hold\n</pre>\n<p>The fleets in Norway, Edinburgh and Holland are dislo..."
+    },
+    {
+      "id": "6.H.9",
+      "name": "DISLODGED UNIT WILL NOT MAKE ATTACKERS AREA CONTESTED",
+      "section": "RETREATING",
+      "category": "retreating",
+      "description": "An army can follow.",
+      "orders": {
+        "England": [
+          "F Helgoland Bight - Kiel",
+          "F Denmark Supports F Helgoland Bight - Kiel"
+        ],
+        "Germany": [
+          "A Berlin - Prussia",
+          "F Kiel Hold",
+          "A Silesia Supports A Berlin - Prussia"
+        ],
+        "Russia": [
+          "A Prussia - Berlin"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.H.9\">6.H.9. TEST CASE, DISLODGED UNIT WILL NOT MAKE ATTACKERS AREA CONTESTED</a></h4>\n<p>An army can follow.</p>\n<pre>England: \nF Helgoland Bight - Kiel\nF Denmark Supports F Helgoland Bight - Kiel\n\nGermany: \nA Berlin - Prussia\nF Kiel Hold\nA Silesia Supports A Berlin - Prussia\n\nRussia: \nA Prussia - Berlin\n</pre>\n<p>The fleet in Kiel can retreat to Berlin.</p>\n\n"
+    },
+    {
+      "id": "6.H.10",
+      "name": "NOT RETREATING TO ATTACKER DOES NOT MEAN CONTESTED",
+      "section": "RETREATING",
+      "category": "retreating",
+      "description": "An army cannot retreat to the area of the attacker. The easiest way to program that, is to mark that area as \"contested\". However, this is not correct. Another army may retreat to that area.",
+      "orders": {
+        "England": [
+          "A Kiel Hold",
+          "A Kiel - Berlin"
+        ],
+        "Germany": [
+          "A Berlin - Kiel",
+          "A Munich Supports A Berlin - Kiel",
+          "A Prussia Hold",
+          "A Prussia - Berlin"
+        ],
+        "Russia": [
+          "A Warsaw - Prussia",
+          "A Silesia Supports A Warsaw - Prussia"
+        ]
+      },
+      "expected_outcome": "The armies in Kiel and Prussia are dislodged. The English army in Kiel cannot retreat to Berlin, but the army in Prussia can retreat to Berlin. Suppose the following retreat orders are given:",
+      "raw_content": "<h4><a name=\"6.H.10\">6.H.10. TEST CASE, NOT RETREATING TO ATTACKER DOES NOT MEAN CONTESTED</a></h4>\n<p>An army cannot retreat to the area of the attacker. The easiest way to program that, is to mark that area as \"contested\". However, this is not correct. Another army may retreat to that area.</p>\n<pre>England: \nA Kiel Hold\n\nGermany: \nA Berlin - Kiel\nA Munich Supports A Berlin - Kiel\nA Prussia Hold\n\nRussia: \nA Warsaw - Prussia\nA Silesia Supports A Warsaw - Prussia\n</pre>\n<p>The armies in Kiel and..."
+    },
+    {
+      "id": "6.H.11",
+      "name": "RETREAT WHEN DISLODGED BY ADJACENT CONVOY",
+      "section": "RETREATING",
+      "category": "retreating",
+      "description": "If a unit is dislodged by an army via convoy, the question arises whether the dislodged army can retreat to the original province of the convoyed army. This is only relevant in case the convoy was to an adjacent province.",
+      "orders": {
+        "France": [
+          "A Gascony - Marseilles via convoy",
+          "A Burgundy Supports A Gascony - Marseilles",
+          "F Mid-Atlantic Ocean Convoys A Gascony - Marseilles",
+          "F Western Mediterranean Convoys A Gascony - Marseilles",
+          "F Gulf of Lyon Convoys A Gascony - Marseilles"
+        ],
+        "Italy": [
+          "A Marseilles Hold"
+        ]
+      },
+      "expected_outcome": "If a unit is dislodged by an army via convoy, the question arises whether the dislodged army can retreat to the original province of the convoyed army. This is only relevant in case the convoy was to an adjacent province.",
+      "raw_content": "<h4><a name=\"6.H.11\">6.H.11. TEST CASE, RETREAT WHEN DISLODGED BY ADJACENT CONVOY</a></h4>\n<p>If a unit is dislodged by an army via convoy, the question arises\nwhether the dislodged army can retreat to the original province of the\nconvoyed army. This is only relevant in case the convoy was to an adjacent province.</p>\n<pre>France: \nA Gascony - Marseilles via convoy\nA Burgundy Supports A Gascony - Marseilles\nF Mid-Atlantic Ocean Convoys A Gascony - Marseilles\nF Western Mediterranean Convoys A Gas..."
+    },
+    {
+      "id": "6.H.12",
+      "name": "RETREAT WHEN DISLODGED BY ADJACENT CONVOY WHILE TRYING TO DO THE SAME",
+      "section": "RETREATING",
+      "category": "retreating",
+      "description": "The previous test case can be made more extra ordinary, when both armies tried to move by convoy.",
+      "orders": {
+        "England": [
+          "A Liverpool - Edinburgh via convoy",
+          "F Irish Sea Convoys A Liverpool - Edinburgh",
+          "F English Channel Convoys A Liverpool - Edinburgh",
+          "F North Sea Convoys A Liverpool - Edinburgh"
+        ],
+        "France": [
+          "F Brest - English Channel",
+          "F Mid-Atlantic Ocean Supports F Brest - English Channel"
+        ],
+        "Russia": [
+          "A Edinburgh - Liverpool via convoy",
+          "F Norwegian Sea Convoys A Edinburgh - Liverpool",
+          "F North Atlantic Ocean Convoys A Edinburgh - Liverpool",
+          "A Clyde Supports A Edinburgh - Liverpool"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.H.12\">6.H.12. TEST CASE, RETREAT WHEN DISLODGED BY ADJACENT CONVOY WHILE TRYING TO DO THE SAME</a></h4>\n<p>The previous test case can be made more extra ordinary, when\nboth armies tried to move by convoy.</p>\n<pre>England: \nA Liverpool - Edinburgh via convoy\nF Irish Sea Convoys A Liverpool - Edinburgh\nF English Channel Convoys A Liverpool - Edinburgh\nF North Sea Convoys A Liverpool - Edinburgh\n\nFrance: \nF Brest - English Channel\nF Mid-Atlantic Ocean Supports F Brest - English Chan..."
+    },
+    {
+      "id": "6.H.13",
+      "name": "NO RETREAT WITH CONVOY IN MOVEMENT PHASE",
+      "section": "RETREATING",
+      "category": "retreating",
+      "description": "The areas where a unit may retreat to, must be determined during the movement phase. Care should be taken that a convoy ordered in the movement phase cannot be used in the retreat phase.",
+      "orders": {
+        "England": [
+          "A Picardy Hold",
+          "F English Channel Convoys A Picardy - London"
+        ],
+        "France": [
+          "A Paris - Picardy",
+          "A Brest Supports A Paris - Picardy"
+        ]
+      },
+      "expected_outcome": "The dislodged army in Picardy cannot retreat to London.",
+      "raw_content": "<h4><a name=\"6.H.13\">6.H.13. TEST CASE, NO RETREAT WITH CONVOY IN MOVEMENT PHASE</a></h4>\n<p>The areas where a unit may retreat to, must be determined during the\nmovement phase. Care should be taken that a convoy ordered in the movement phase\ncannot be used in the retreat phase.</p>\n<pre>England: \nA Picardy Hold\nF English Channel Convoys A Picardy - London\n\nFrance: \nA Paris - Picardy\nA Brest Supports A Paris - Picardy\n</pre>\n<p>The dislodged army in Picardy cannot retreat to London.</p>\n\n"
+    },
+    {
+      "id": "6.H.14",
+      "name": "NO RETREAT WITH SUPPORT IN MOVEMENT PHASE",
+      "section": "RETREATING",
+      "category": "retreating",
+      "description": "Comparable to the previous test case, a support given in the movement phase cannot be used in the retreat phase.",
+      "orders": {
+        "England": [
+          "A Picardy Hold",
+          "F English Channel Supports A Picardy - Belgium",
+          "A Picardy - Belgium"
+        ],
+        "France": [
+          "A Paris - Picardy",
+          "A Brest Supports A Paris - Picardy",
+          "A Burgundy Hold",
+          "A Burgundy - Belgium"
+        ],
+        "Germany": [
+          "A Munich Supports A Marseilles - Burgundy",
+          "A Marseilles - Burgundy"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.H.14\">6.H.14. TEST CASE, NO RETREAT WITH SUPPORT IN MOVEMENT PHASE</a></h4>\n<p>Comparable to the previous test case, a support given in the movement phase cannot be used in the retreat phase.</p>\n<pre>England: \nA Picardy Hold\nF English Channel Supports A Picardy - Belgium\n\nFrance: \nA Paris - Picardy\nA Brest Supports A Paris - Picardy\nA Burgundy Hold\n\nGermany: \nA Munich Supports A Marseilles - Burgundy\nA Marseilles - Burgundy\n</pre>\n<p>After the movement phase the following retreat..."
+    },
+    {
+      "id": "6.H.15",
+      "name": "NO COASTAL CRAWL IN RETREAT",
+      "section": "RETREATING",
+      "category": "retreating",
+      "description": "You cannot go to the other coast from where the attacker came from.",
+      "orders": {
+        "England": [
+          "F Portugal Hold"
+        ],
+        "France": [
+          "F Spain(sc) - Portugal",
+          "F Mid-Atlantic Ocean Supports F Spain(sc) - Portugal"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.H.15\">6.H.15. TEST CASE, NO COASTAL CRAWL IN RETREAT</a></h4>\n<p>You cannot go to the other coast from where the attacker came from.</p>\n<pre>England: \nF Portugal Hold\n\nFrance: \nF Spain(sc) - Portugal\nF Mid-Atlantic Ocean Supports F Spain(sc) - Portugal\n</pre>\n<p>The English fleet in Portugal is destroyed and cannot\nretreat to Spain(nc).</p>\n\n"
+    },
+    {
+      "id": "6.H.16",
+      "name": "CONTESTED FOR BOTH COASTS",
+      "section": "RETREATING",
+      "category": "retreating",
+      "description": "If a coast is contested, the other is not available for retreat.",
+      "orders": {
+        "France": [
+          "F Mid-Atlantic Ocean - Spain(nc)",
+          "F Gascony - Spain(nc)",
+          "F Western Mediterranean Hold"
+        ],
+        "Italy": [
+          "F Tunis Supports F Tyrrhenian Sea - Western Mediterranean",
+          "F Tyrrhenian Sea - Western Mediterranean"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.H.16\">6.H.16. TEST CASE, CONTESTED FOR BOTH COASTS</a></h4>\n<p>If a coast is contested, the other is not available for retreat.</p>\n<pre>France: \nF Mid-Atlantic Ocean - Spain(nc)\nF Gascony - Spain(nc)\nF Western Mediterranean Hold\n\nItaly: \nF Tunis Supports F Tyrrhenian Sea - Western Mediterranean\nF Tyrrhenian Sea - Western Mediterranean\n</pre>\n<p>The French fleet in the Western Mediterranean cannot\nretreat to Spain(sc).</p>\n\n<h3><a name=\"6.I\">6.I. TEST CASES, BUILDING</a></h3>\n\n"
+    },
+    {
+      "id": "6.I.1",
+      "name": "TOO MANY BUILD ORDERS",
+      "section": "BUILDING",
+      "category": "building",
+      "description": "Check how program reacts when someone orders too many builds.",
+      "orders": {
+        "Germany": [
+          "Build A Warsaw",
+          "Build A Kiel",
+          "Build A Munich"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.I.1\">6.I.1. TEST CASE, TOO MANY BUILD ORDERS</a></h4>\n<p>Check how program reacts when someone orders too many builds.</p>\n<p>Germany may build one:</p>\n<pre>Germany:\nBuild A Warsaw\nBuild A Kiel\nBuild A Munich\n</pre>\n<p>Program should not build all three, but handle it in another\nway. See issue <a href=\"#4.D.4\">4.D.4</a>.</p>\n<p><i>I prefer that the build orders are just handled one by one\nuntil all allowed units are build. According to this preference,\nthe build in Warsaw fails, ..."
+    },
+    {
+      "id": "6.I.2",
+      "name": "FLEETS CANNOT BE BUILD IN LAND AREAS",
+      "section": "BUILDING",
+      "category": "building",
+      "description": "Physical this is possible, but it is still not allowed.",
+      "orders": {
+        "Russia": [
+          "Build F Moscow"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.I.2\">6.I.2. TEST CASE, FLEETS CANNOT BE BUILD IN LAND AREAS</a></h4>\n<p>Physical this is possible, but it is still not allowed.</p>\n<p>Russia has one build and Moscow is empty.</p>\n<pre>Russia:\nBuild F Moscow\n</pre>\n<p>See issue <a href=\"#4.C.4\">4.C.4</a>. Some game masters will change the order and build an army in Moscow.</p>\n<p><i>I prefer that the build fails.</i></p>\n\n"
+    },
+    {
+      "id": "6.I.3",
+      "name": "SUPPLY CENTER MUST BE EMPTY FOR BUILDING",
+      "section": "BUILDING",
+      "category": "building",
+      "description": "You can't have two units in a sector. So, you can't build when there is a unit in the supply center.",
+      "orders": {
+        "Germany": [
+          "Build A Berlin"
+        ]
+      },
+      "expected_outcome": "Build fails.",
+      "raw_content": "<h4><a name=\"6.I.3\">6.I.3. TEST CASE, SUPPLY CENTER MUST BE EMPTY FOR BUILDING</a></h4>\n<p>You can't have two units in a sector. So, you can't build\nwhen there is a unit in the supply center.</p>\n<p>Germany may build a unit but has an army in Berlin. Germany\norders the following:</p>\n<pre>Germany:\nBuild A Berlin\n</pre>\n<p>Build fails.</p>\n\n"
+    },
+    {
+      "id": "6.I.4",
+      "name": "BOTH COASTS MUST BE EMPTY FOR BUILDING",
+      "section": "BUILDING",
+      "category": "building",
+      "description": "If a sector is occupied on one coast, the other coast cannot be used for building.",
+      "orders": {
+        "Russia": [
+          "Build A St Petersburg(nc)"
+        ]
+      },
+      "expected_outcome": "Build fails.",
+      "raw_content": "<h4><a name=\"6.I.4\">6.I.4. TEST CASE, BOTH COASTS MUST BE EMPTY FOR BUILDING</a></h4>\n<p>If a sector is occupied on one coast, the other coast cannot be used for building.</p>\n<p>Russia may build a unit and has a fleet in St Petersburg(sc). Russia orders the following:</p>\n<pre>Russia:\nBuild A St Petersburg(nc)\n</pre>\n<p>Build fails.</p>\n\n"
+    },
+    {
+      "id": "6.I.5",
+      "name": "BUILDING IN HOME SUPPLY CENTER THAT IS NOT OWNED",
+      "section": "BUILDING",
+      "category": "building",
+      "description": "Building a unit is only allowed when supply center is a home supply center and is owned. If not owned, build fails.",
+      "orders": {
+        "Germany": [
+          "Build A Berlin"
+        ]
+      },
+      "expected_outcome": "Building a unit is only allowed when supply center is a home supply center and is owned. If not owned, build fails.",
+      "raw_content": "<h4><a name=\"6.I.5\">6.I.5. TEST CASE, BUILDING IN HOME SUPPLY CENTER THAT IS NOT OWNED</a></h4>\n<p>Building a unit is only allowed when supply center is a home\nsupply center and is owned. If not owned, build fails.\n</p><p>Russia captured Berlin in Fall, but left in the next year. Germany captured other supply centers, but without recapturing Berling it may not build in Berlin.</p>\n<pre>Germany:\nBuild A Berlin\n</pre>\n<p>Build fails.</p>\n\n"
+    },
+    {
+      "id": "6.I.6",
+      "name": "BUILDING IN OWNED SUPPLY CENTER THAT IS NOT A HOME SUPPLY CENTER",
+      "section": "BUILDING",
+      "category": "building",
+      "description": "Building a unit is only allowed when supply center is a home supply center and is owned. If it is not a home supply center, the build fails.",
+      "orders": {
+        "Germany": [
+          "Build A Warsaw"
+        ]
+      },
+      "expected_outcome": "Building a unit is only allowed when supply center is a home supply center and is owned. If it is not a home supply center, the build fails.",
+      "raw_content": "<h4><a name=\"6.I.6\">6.I.6. TEST CASE, BUILDING IN OWNED SUPPLY CENTER THAT IS NOT A HOME SUPPLY CENTER</a></h4>\n<p>Building a unit is only allowed when supply center is a home\nsupply center and is owned. If it is not a home supply center, the build fails.</p>\n<p>Germany owns Warsaw, Warsaw is empty and Germany may build one unit.</p>\n<pre>Germany:\nBuild A Warsaw\n</pre>\n<p>Build fails.</p>\n\n"
+    },
+    {
+      "id": "6.I.7",
+      "name": "ONLY ONE BUILD IN A HOME SUPPLY CENTER",
+      "section": "BUILDING",
+      "category": "building",
+      "description": "If you may build two units, you can still only build one in a supply center.",
+      "orders": {
+        "Russia": [
+          "Build A Moscow",
+          "Build A Moscow"
+        ]
+      },
+      "expected_outcome": "The second build should fail.",
+      "raw_content": "<h4><a name=\"6.I.7\">6.I.7. TEST CASE, ONLY ONE BUILD IN A HOME SUPPLY CENTER</a></h4>\n<p>If you may build two units, you can still only build one in a supply center.</p>\n<p>Russia owns Moscow, Moscow is empty and Russia may build two units.</p>\n<pre>Russia:\nBuild A Moscow\nBuild A Moscow\n</pre>\n<p>The second build should fail.</p>\n\n<h3><a name=\"6.J\">6.J. TEST CASES, CIVIL DISORDER AND DISBANDS</a></h3>\n\n"
+    },
+    {
+      "id": "6.J.1",
+      "name": "TOO MANY DISBAND ORDERS",
+      "section": "CIVIL DISORDER AND DISBANDS",
+      "category": "civil_disorder",
+      "description": "Check how program reacts when someone orders too many disbands.",
+      "orders": {
+        "France": [
+          "Remove F Gulf of Lyon",
+          "Remove A Picardy",
+          "Remove A Paris"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.J.1\">6.J.1. TEST CASE, TOO MANY DISBAND ORDERS</a></h4>\n<p>Check how program reacts when someone orders too many disbands.</p>\n<p>France has to disband one and has an army in Paris and Picardy.</p>\n<pre>France:\nRemove F Gulf of Lyon\nRemove A Picardy\nRemove A Paris\n</pre>\n<p>Program should not disband both Paris and Picardy, but should handle\nit in a different way. See also issue <a href=\"#4.D.6\">4.D.6</a>.</p>\n<p><i>I prefer that the disband orders are handled one by one. Accordin..."
+    },
+    {
+      "id": "6.J.2",
+      "name": "REMOVING THE SAME UNIT TWICE",
+      "section": "CIVIL DISORDER AND DISBANDS",
+      "category": "civil_disorder",
+      "description": "If you have to remove two units, you can always try to trick the computer by removing the same unit twice.",
+      "orders": {
+        "France": [
+          "Remove A Paris",
+          "Remove A Paris"
+        ]
+      },
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.J.2\">6.J.2. TEST CASE, REMOVING THE SAME UNIT TWICE</a></h4>\n<p>If you have to remove two units, you can always try to trick the\ncomputer by removing the same unit twice.</p>\n<p>France has to disband two and has an army in Paris.</p>\n<pre>France:\nRemove A Paris\nRemove A Paris\n</pre>\n<p>Program should remove army in Paris and remove another unit by using the civil disorder rules.</p>\n\n"
+    },
+    {
+      "id": "6.J.3",
+      "name": "CIVIL DISORDER TWO ARMIES WITH DIFFERENT DISTANCE",
+      "section": "CIVIL DISORDER AND DISBANDS",
+      "category": "civil_disorder",
+      "description": "When a player forgets to disband a unit, the civil disorder rules must be applied. When two armies have different distance from the home supply centers, then the army with the greatest distance has to be removed.",
+      "orders": {},
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.J.3\">6.J.3. TEST CASE, CIVIL DISORDER TWO ARMIES WITH DIFFERENT DISTANCE</a></h4>\n<p>When a player forgets to disband a unit, the civil disorder\nrules must be applied. When two armies have different distance\nfrom the home supply centers, then the army with the greatest\ndistance has to be removed.</p>\n<pre>Russia has to remove one.\nRussia owns supply center St Petersburg.\nRussia has armies in Livonia and Sweden.\nRussia does not order a disband.\n</pre>\n<p>The army in Sweden is remov..."
+    },
+    {
+      "id": "6.J.4",
+      "name": "CIVIL DISORDER TWO ARMIES WITH EQUAL DISTANCE",
+      "section": "CIVIL DISORDER AND DISBANDS",
+      "category": "civil_disorder",
+      "description": "If two armies have equal distance from the home supply centers, then alphabetical order is used.",
+      "orders": {},
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.J.4\">6.J.4. TEST CASE, CIVIL DISORDER TWO ARMIES WITH EQUAL DISTANCE</a></h4>\n<p>If two armies have equal distance from the home supply centers, then alphabetical order is used.</p>\n<pre>Russia has to remove one.\nRussia owns Moscow.\nRussia has armies in Livonia and Ukraine.\nRussia does not order a disband.\n</pre>\n<p>Both armies have distance one. The Livonia army is removed, because it appears first in alphabetical order.</p>\n\n"
+    },
+    {
+      "id": "6.J.5",
+      "name": "CIVIL DISORDER TWO FLEETS WITH DIFFERENT DISTANCE",
+      "section": "CIVIL DISORDER AND DISBANDS",
+      "category": "civil_disorder",
+      "description": "If two fleets have different distance from the home supply centers, then the fleet with the greatest distance has to be removed. Note that fleets cannot go over land.",
+      "orders": {},
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.J.5\">6.J.5 TEST CASE, CIVIL DISORDER TWO FLEETS WITH DIFFERENT DISTANCE</a></h4>\n<p>If two fleets have different distance from the home supply centers,\nthen the fleet with the greatest distance has to be removed. Note that fleets cannot go over land.</p>\n<pre>Russia has to remove one.\nRussia owns St Petersburg.\nRussia has fleets in Skagerrak and Berlin.\nRussia does not order a disband.\n</pre>\n<p>The distance of the fleet in Berlin is three, the fleet in Skagerrak has distance two ..."
+    },
+    {
+      "id": "6.J.6",
+      "name": "CIVIL DISORDER TWO FLEETS WITH EQUAL DISTANCE",
+      "section": "CIVIL DISORDER AND DISBANDS",
+      "category": "civil_disorder",
+      "description": "Alphabetical order is used, when two fleets have equal distance to the home supply centers.",
+      "orders": {},
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.J.6\">6.J.6. TEST CASE, CIVIL DISORDER TWO FLEETS WITH EQUAL DISTANCE</a></h4>\n<p>Alphabetical order is used, when two fleets have equal distance to the home supply centers.</p>\n<pre>Russia has to remove one.\nRussia owns Munich.\nRussia has fleets in Gulf of Bothnia and North Sea.\nRussia does not order a disband.\n</pre>\n<p>Note, that in 2023 rules distance is calculated to owned supply centers (instead of home supply centers). Also, for distance calculations both armies and fleets c..."
+    },
+    {
+      "id": "6.J.7",
+      "name": "CIVIL DISORDER TWO FLEETS AND ARMY WITH EQUAL DISTANCE",
+      "section": "CIVIL DISORDER AND DISBANDS",
+      "category": "civil_disorder",
+      "description": "In removal, the fleet has precedence over an army. In this case there are two fleets, to make the test more complex.",
+      "orders": {},
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.J.7\">6.J.7. TEST CASE, CIVIL DISORDER TWO FLEETS AND ARMY WITH EQUAL DISTANCE</a></h4>\n<p>In removal, the fleet has precedence over an army. In this case there are two\nfleets, to make the test more complex.</p>\n<pre>Russia has to remove one.\nRussia owns St Petersburg and Warsaw.\nRussia has an army in Bohemia, a fleet in Skagerrak and a fleet in the North Sea.\nRussia does not order a disband.\n</pre>\n<p>The distances of the army and the fleets to one of the owned supply centers\nare ..."
+    },
+    {
+      "id": "6.J.8",
+      "name": "CIVIL DISORDER A FLEET WITH SHORTER DISTANCE THEN THE ARMY",
+      "section": "CIVIL DISORDER AND DISBANDS",
+      "category": "civil_disorder",
+      "description": "If the fleet has a shorter distance than the army, the army is removed.",
+      "orders": {},
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.J.8\">6.J.8. TEST CASE, CIVIL DISORDER A FLEET WITH SHORTER DISTANCE THEN THE ARMY</a></h4>\n<p>If the fleet has a shorter distance than the army, the army is removed.</p>\n<pre>Russia has to remove one.\nRussia has an army in Tyrolia and a fleet in the Baltic Sea.\nRussia owns Warsaw.\nRussia does not order a disband.\n</pre>\n<p>The distance of the army to Warsaw is three while the distance of the fleet is two. So, the army is removed.</p>\n\n"
+    },
+    {
+      "id": "6.J.9",
+      "name": "CIVIL DISORDER MUST BE COUNTED FROM BOTH COASTS",
+      "section": "CIVIL DISORDER AND DISBANDS",
+      "category": "civil_disorder",
+      "description": "Distance must be calculated from both coasts.",
+      "orders": {},
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.J.9\">6.J.9. TEST CASE, CIVIL DISORDER MUST BE COUNTED FROM BOTH COASTS</a></h4>\n<p>Distance must be calculated from both coasts.</p>\n<pre>Russia has to remove one.\nRussia owns St Petersburg and Sevastopol.\nRussia has armies in Greece and Sevastopol and a fleet in the Baltic Sea.\nRussia does not order a disband.\n</pre>\n<p>The distance of the fleet to St Petersburg(nc) is three but to St Petersburg(sc) is two. So, the army in Greece must be removed.</p>\n<pre>Russia has to remove one..."
+    },
+    {
+      "id": "6.J.10",
+      "name": "CIVIL DISORDER COUNTING CONVOYING DISTANCE",
+      "section": "CIVIL DISORDER AND DISBANDS",
+      "category": "civil_disorder",
+      "description": "For calculating the distance for armies all areas must be considered.",
+      "orders": {},
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.J.10\">6.J.10. TEST CASE, CIVIL DISORDER COUNTING CONVOYING DISTANCE</a></h4>\n<p>For calculating the distance for armies all areas must be considered.</p>\n<pre>Italy has to remove one.\nItaly owns Naples.\nItaly has armies in Greece and Piedmont.\nItaly does not order a disband.\n</pre>\n<p>The distance from Greece to owned supply center is five over land. However, for distance calculation it can go over water and arrive in two steps. The army in Piedmont has to be removed.</p>\n\n"
+    },
+    {
+      "id": "6.J.11",
+      "name": "DISTANCE TO OWNED SUPPLY CENTER",
+      "section": "CIVIL DISORDER AND DISBANDS",
+      "category": "civil_disorder",
+      "description": "The 2023 rules say that distance must be calculated to owned supply center instead of home supply center (as it was in the older rulebooks).",
+      "orders": {},
+      "expected_outcome": "No outcome specified",
+      "raw_content": "<h4><a name=\"6.J.11\">6.J.11. TEST CASE, DISTANCE TO OWNED SUPPLY CENTER</a></h4>\n<p>The 2023 rules say that distance must be calculated to owned supply center instead of home supply center (as it was in the older rulebooks).</p>\n<pre>Italy has to remove one.\nItaly owns Warsaw.\nItaly has armies in Warsaw and Tuscany.\nItaly does not order a disband.\n</pre>\n<p>The army in Tuscany is removed and Italy will continue defending its supply center in Warsaw. Under older rulebooks the army in Tuscany was ..."
+    }
+  ]
+}
