@@ -86,15 +86,15 @@ func TestDATCD2_SimplestSupportOnHoldCut(t *testing.T) {
 		Province: "tyrolia",
 	}
 
-	// Add orders (using parser-compatible format without unit types)
+	// Add orders (using parser-compatible format with unit types)
 	gameState.RawOrders[game.Austria] = []string{
-		"adriatic sea supports trieste - venice",
-		"trieste - venice",
-		"vienna - tyrolia",
+		"f adriatic_sea s trieste - venice",
+		"a trieste - venice",
+		"a vienna - tyrolia",
 	}
 	gameState.RawOrders[game.Italy] = []string{
-		"venice hold",
-		"tyrolia supports venice",
+		"a venice hold",
+		"a tyrolia s venice",
 	}
 
 	// Process turn
@@ -130,14 +130,14 @@ func TestDATCD3_MoveCutsSupportOnMove(t *testing.T) {
 		Province: "ionian_sea",
 	}
 
-	// Add orders (using parser-compatible format without unit types)
+	// Add orders (using parser-compatible format with unit types)
 	gameState.RawOrders[game.Austria] = []string{
-		"adriatic sea supports trieste - venice",
-		"trieste - venice",
+		"f adriatic_sea s trieste - venice",
+		"a trieste - venice",
 	}
 	gameState.RawOrders[game.Italy] = []string{
-		"venice hold",
-		"ionian sea - adriatic sea",
+		"a venice hold",
+		"f ionian_sea - adriatic_sea",
 	}
 
 	// Process turn
@@ -173,14 +173,14 @@ func TestDATCD4_SupportToHoldOnUnitSupportingHoldAllowed(t *testing.T) {
 		Province: "prussia",
 	}
 
-	// Add orders (using parser-compatible format without unit types)
+	// Add orders (using parser-compatible format with unit types)
 	gameState.RawOrders[game.Germany] = []string{
-		"berlin supports kiel",
-		"kiel supports berlin",
+		"a berlin s kiel",
+		"f kiel s berlin",
 	}
 	gameState.RawOrders[game.Russia] = []string{
-		"baltic sea supports prussia - berlin",
-		"prussia - berlin",
+		"f baltic_sea s prussia - berlin",
+		"a prussia - berlin",
 	}
 
 	// Process turn
@@ -221,15 +221,15 @@ func TestDATCD5_SupportToHoldOnUnitSupportingMoveAllowed(t *testing.T) {
 		Province: "prussia",
 	}
 
-	// Add orders (using parser-compatible format without unit types)
+	// Add orders (using parser-compatible format with unit types)
 	gameState.RawOrders[game.Germany] = []string{
-		"berlin supports munich - silesia",
-		"kiel supports berlin",
-		"munich - silesia",
+		"a berlin s munich - silesia",
+		"f kiel s berlin",
+		"a munich - silesia",
 	}
 	gameState.RawOrders[game.Russia] = []string{
-		"baltic sea supports prussia - berlin",
-		"prussia - berlin",
+		"f baltic_sea s prussia - berlin",
+		"a prussia - berlin",
 	}
 
 	// Process turn
