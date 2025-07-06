@@ -37,6 +37,8 @@ type OrderOutcome struct {
 	ConvoyPath    []string
 	Strength      int
 	FailureReason string
+	Destination   string // The actual destination (may differ from original order due to circular movements)
+	IsCircular    bool   // True if this order is part of a circular movement
 }
 
 type ProvinceCoast struct {
@@ -71,6 +73,32 @@ type ConvoyKey struct {
 	Destination ProvinceCoast
 }
 
+type CircularMovement struct {
+	OrderIndices []int    // Orders participating in the cycle
+	Territories  []string // Territories in the cycle
+	IsValid      bool     // Whether the cycle is valid
+	HasConvoy    bool     // Whether any move uses convoy
+}
+
+type MovementNode struct {
+	Territory  string
+	OrderIndex int
+	Visited    bool
+	InStack    bool
+}
+
+type MovementEdge struct {
+	From       string
+	To         string
+	OrderIndex int
+	IsConvoy   bool
+}
+
+type MovementGraph struct {
+	Nodes map[string]*MovementNode
+	Edges []*MovementEdge
+}
+
 type ResolutionEngine struct {
 	orders            []*ResolvedOrder
 	board             *game.Board
@@ -81,6 +109,8 @@ type ResolutionEngine struct {
 	convoys           map[ConvoyKey][]ProvinceCoast
 	ordersByUnit      map[string]int
 	ordersByTerritory map[string]int
+	circularMovements []CircularMovement
+	protectedMoves    map[int]bool
 }
 
 func NewResolutionEngine(orders []*game.Order, board *game.Board) *ResolutionEngine {
@@ -121,6 +151,8 @@ func NewResolutionEngine(orders []*game.Order, board *game.Board) *ResolutionEng
 		convoys:           make(map[ConvoyKey][]ProvinceCoast),
 		ordersByUnit:      make(map[string]int),
 		ordersByTerritory: make(map[string]int),
+		circularMovements: make([]CircularMovement, 0),
+		protectedMoves:    make(map[int]bool),
 	}
 
 	engine.buildLookupMaps()
@@ -204,5 +236,47 @@ func (re *ResolutionEngine) IsAdjacent(from, to string, unitType game.UnitType) 
 		return slices.Contains(province.FleetNeighbors, to)
 	}
 
+	return false
+}
+
+// Helper functions for movement graph
+func (mg *MovementGraph) AddNode(territory string, orderIndex int) {
+	if mg.Nodes == nil {
+		mg.Nodes = make(map[string]*MovementNode)
+	}
+	mg.Nodes[territory] = &MovementNode{
+		Territory:  territory,
+		OrderIndex: orderIndex,
+		Visited:    false,
+		InStack:    false,
+	}
+}
+
+func (mg *MovementGraph) AddEdge(from, to string, orderIndex int, isConvoy bool) {
+	edge := &MovementEdge{
+		From:       from,
+		To:         to,
+		OrderIndex: orderIndex,
+		IsConvoy:   isConvoy,
+	}
+	mg.Edges = append(mg.Edges, edge)
+}
+
+func (mg *MovementGraph) GetOutgoingEdges(territory string) []*MovementEdge {
+	var edges []*MovementEdge
+	for _, edge := range mg.Edges {
+		if edge.From == territory {
+			edges = append(edges, edge)
+		}
+	}
+	return edges
+}
+
+func contains(slice []int, item int) bool {
+	for _, v := range slice {
+		if v == item {
+			return true
+		}
+	}
 	return false
 }

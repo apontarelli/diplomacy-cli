@@ -6,8 +6,10 @@ import (
 )
 
 func (re *ResolutionEngine) Resolve() error {
+	fmt.Printf("🔍 ResolutionEngine.Resolve() called\n")
+
 	if err := re.validateOrderRelationships(); err != nil {
-		return fmt.Errorf("order validation failed: %w", err)
+		return err
 	}
 
 	maxIterations := 10
@@ -34,6 +36,7 @@ func (re *ResolutionEngine) Resolve() error {
 func (re *ResolutionEngine) executeResolutionPass() {
 	re.processConvoys()
 	re.processMoves()
+	re.detectCircularMovements() // NEW: Detect circular movements before conflict resolution
 	re.cutSupports()
 	re.calculateStrength()
 	re.resolveConflicts()
@@ -58,6 +61,12 @@ func (re *ResolutionEngine) validateOrderRelationships() error {
 				if supportedOrder.Type != game.Move || supportedOrder.To != order.SupportDestination {
 					re.outcomes[i].Result = SupportInvalid
 					re.outcomes[i].FailureReason = fmt.Sprintf("supported unit is not moving to %s", order.SupportDestination)
+				} else {
+					// Check for "help in dislodgement of own unit" - a unit cannot support a move that would dislodge its own country's unit
+					if re.wouldSupportHelpDislodgeOwnUnit(i, supportedIndex) {
+						re.outcomes[i].Result = SupportInvalid
+						re.outcomes[i].FailureReason = "cannot help dislodge own unit"
+					}
 				}
 			} else {
 				if supportedOrder.Type != game.Hold {
@@ -110,6 +119,13 @@ func (re *ResolutionEngine) processMoves() {
 			convoyKey := ConvoyKey{Origin: origin, Destination: dest}
 			convoyPath, hasConvoyPath := re.convoys[convoyKey]
 
+			// Debug convoy path finding
+			fmt.Printf("🔍 Army move %s->%s: adjacent=%v, hasConvoyPath=%v\n",
+				order.OrigTerritory, destination, isAdjacent, hasConvoyPath)
+			if hasConvoyPath {
+				fmt.Printf("  Convoy path length: %d\n", len(convoyPath))
+			}
+
 			if isAdjacent || hasConvoyPath {
 				order.NewTerritory = destination
 				if hasConvoyPath {
@@ -123,6 +139,7 @@ func (re *ResolutionEngine) processMoves() {
 			} else {
 				re.outcomes[i].Result = MoveNoConvoy
 				re.outcomes[i].FailureReason = "no adjacent path or convoy available"
+				fmt.Printf("❌ Army move %s->%s marked as MoveNoConvoy\n", order.OrigTerritory, destination)
 			}
 		} else if order.UnitType == game.Fleet {
 			if isAdjacent {
@@ -159,7 +176,12 @@ func (re *ResolutionEngine) calculateStrength() {
 }
 
 func (re *ResolutionEngine) assignFinalOutcomes() {
+	fmt.Printf("🔍 assignFinalOutcomes called with %d orders\n", len(re.orders))
+
 	for i, order := range re.orders {
+		fmt.Printf("  Order %d: %s %s %s->%s, NewTerritory=%s, Result=%s\n",
+			i, order.Owner, order.UnitType, order.OrigTerritory, order.To, order.NewTerritory, re.outcomes[i].Result)
+
 		if re.outcomes[i].Result != "" {
 			continue
 		}
@@ -173,6 +195,7 @@ func (re *ResolutionEngine) assignFinalOutcomes() {
 		case game.Move:
 			if order.NewTerritory == order.To {
 				re.outcomes[i].Result = MoveSuccess
+				re.outcomes[i].Destination = order.NewTerritory
 			} else {
 				re.outcomes[i].Result = MoveBounced
 			}
@@ -299,6 +322,29 @@ func (re *ResolutionEngine) isSelfAttackSupportCut(attackerIndex, supporterIndex
 	return false
 }
 
+// wouldSupportHelpDislodgeOwnUnit checks if a support order would help dislodge a unit of the same country
+func (re *ResolutionEngine) wouldSupportHelpDislodgeOwnUnit(supporterIndex, supportedIndex int) bool {
+	supporter := re.orders[supporterIndex]
+	supported := re.orders[supportedIndex]
+
+	// Find what unit is currently at the destination of the supported move
+	destinationIndex := re.FindOrderByTerritory(supported.To)
+	if destinationIndex == -1 {
+		// No unit at destination, so no dislodgement
+		return false
+	}
+
+	destinationOrder := re.orders[destinationIndex]
+
+	// Check if the unit at the destination belongs to the same country as the supporter
+	if destinationOrder.Owner == supporter.Owner {
+		// This support would help dislodge a unit of the same country
+		return true
+	}
+
+	return false
+}
+
 func (re *ResolutionEngine) hasFriendlyProtection(territory string, conflictIndices []int, winnerIndex int) bool {
 	defenderIndex := re.FindOrderByTerritory(territory)
 	if defenderIndex == -1 {
@@ -334,7 +380,32 @@ func (re *ResolutionEngine) resolveConflicts() {
 	re.rebuildConflictMap()
 
 	for territory, orderIndices := range re.conflicts {
+		// Check if there's a unit defending this territory (even if it's moving out)
+		defenderIndex := re.FindOrderByTerritory(territory)
+		if defenderIndex != -1 && len(orderIndices) == 1 {
+			// Single attacker vs defender - check if attack strength > hold strength
+			attackerIndex := orderIndices[0]
+			attacker := re.orders[attackerIndex]
+
+			if attacker.Type == game.Move && attacker.NewTerritory == territory {
+				attackStrength := re.strength[attackerIndex]
+				holdStrength := 1 // Base hold strength
+
+				// TODO: Add support for holding
+
+				if attackStrength <= holdStrength {
+					// Attack fails - insufficient strength to dislodge defender
+					re.orders[attackerIndex].NewTerritory = re.orders[attackerIndex].OrigTerritory
+				}
+			}
+		}
+
 		if len(orderIndices) <= 1 {
+			continue
+		}
+
+		// Skip territories involved in protected circular movements
+		if re.isProtectedByCircularMovement(territory, orderIndices) {
 			continue
 		}
 
@@ -352,29 +423,34 @@ func (re *ResolutionEngine) resolveConflicts() {
 			}
 		}
 
-		if len(winners) == 1 && re.hasFriendlyProtection(territory, orderIndices, winners[0]) {
-			for _, idx := range orderIndices {
-				if re.orders[idx].NewTerritory != re.orders[idx].OrigTerritory {
-					re.orders[idx].NewTerritory = re.orders[idx].OrigTerritory
+		if len(winners) == 1 {
+			// Single winner case
+			winner := winners[0]
+			if re.hasFriendlyProtection(territory, orderIndices, winner) {
+				// Friendly protection prevents the move
+				for _, idx := range orderIndices {
+					if re.orders[idx].NewTerritory != re.orders[idx].OrigTerritory {
+						re.orders[idx].NewTerritory = re.orders[idx].OrigTerritory
+					}
 				}
-			}
-		} else if len(winners) > 1 {
-			for _, idx := range orderIndices {
-				if re.orders[idx].NewTerritory != re.orders[idx].OrigTerritory {
-					re.orders[idx].NewTerritory = re.orders[idx].OrigTerritory
+			} else {
+				// Winner succeeds, others fail
+				for _, idx := range orderIndices {
+					if idx != winner && re.orders[idx].NewTerritory != re.orders[idx].OrigTerritory {
+						re.orders[idx].NewTerritory = re.orders[idx].OrigTerritory
+					}
 				}
 			}
 		} else {
-			winner := winners[0]
+			// Multiple winners (tie) - all moves fail
 			for _, idx := range orderIndices {
-				if idx != winner && re.orders[idx].NewTerritory != re.orders[idx].OrigTerritory {
+				if re.orders[idx].NewTerritory != re.orders[idx].OrigTerritory {
 					re.orders[idx].NewTerritory = re.orders[idx].OrigTerritory
 				}
 			}
 		}
 	}
 }
-
 func (re *ResolutionEngine) detectDislodgements() {
 	for i := range re.outcomes {
 		re.outcomes[i].Dislodged = false
@@ -403,4 +479,15 @@ func (re *ResolutionEngine) detectDislodgements() {
 			}
 		}
 	}
+}
+
+// isProtectedByCircularMovement checks if a territory is protected by a circular movement
+func (re *ResolutionEngine) isProtectedByCircularMovement(territory string, orderIndices []int) bool {
+	// Check if any of the orders attacking this territory are part of a protected circular movement
+	for _, orderIndex := range orderIndices {
+		if re.protectedMoves[orderIndex] {
+			return true
+		}
+	}
+	return false
 }

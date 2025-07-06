@@ -133,7 +133,13 @@ func CreateDATCGameState(t *testing.T) *game.GameState {
 		t.Fatalf("Failed to load board: %v", err)
 	}
 
-	return game.NewGameState(board, game.SpringMovement, 1901)
+	// Create a fresh board by cloning the template to avoid test interference
+	freshBoard := &game.Board{
+		Provinces: board.Provinces,
+		Units:     make(map[string]*game.Unit), // Fresh empty units map
+	}
+
+	return game.NewGameState(freshBoard, game.SpringMovement, 1901)
 }
 
 // ValidateExpectedOutcome validates the test result against the expected DATC outcome

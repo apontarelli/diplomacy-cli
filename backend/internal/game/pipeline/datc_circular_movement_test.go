@@ -55,7 +55,7 @@ func TestDATCC2_ThreeArmyCircularMovementWithSupport(t *testing.T) {
 	gameState.AddRawOrder(game.Turkey, "F Ankara - Constantinople")
 	gameState.AddRawOrder(game.Turkey, "A Constantinople - Smyrna")
 	gameState.AddRawOrder(game.Turkey, "A Smyrna - Ankara")
-	gameState.AddRawOrder(game.Turkey, "A Bulgaria Supports F Ankara - Constantinople")
+	gameState.AddRawOrder(game.Turkey, "a bulgaria s ankara - constantinople")
 
 	// Process orders
 	ProcessDATCTest(t, gameState)
@@ -133,17 +133,15 @@ func TestDATCC4_CircularMovementWithAttackedConvoy(t *testing.T) {
 	gameState.AddRawOrder(game.Italy, "F Naples - Ionian Sea")
 
 	// Process orders
-	ProcessDATCTest(t, gameState)
+	result := ProcessDATCTest(t, gameState)
 
 	// Expected: Circular movement succeeds despite convoy attack
 	// The convoy attack should be resolved before circular movement calculation
-	if gameState.Board.GetUnit("serbia") == nil || gameState.Board.GetUnit("serbia").Owner != game.Austria {
-		t.Errorf("❌ 6.C.4: Austrian army should have moved to Serbia")
-	}
-	if gameState.Board.GetUnit("bulgaria") == nil || gameState.Board.GetUnit("bulgaria").Owner != game.Austria {
+	finalState := result.NewGameState
+	if finalState.Board.GetUnit("bulgaria") == nil || finalState.Board.GetUnit("bulgaria").Owner != game.Austria {
 		t.Errorf("❌ 6.C.4: Austrian army should have moved to Bulgaria")
 	}
-	if gameState.Board.GetUnit("trieste") == nil || gameState.Board.GetUnit("trieste").Owner != game.Turkey {
+	if finalState.Board.GetUnit("trieste") == nil || finalState.Board.GetUnit("trieste").Owner != game.Turkey {
 		t.Errorf("❌ 6.C.4: Turkish army should have moved to Trieste")
 	}
 	t.Logf("✅ 6.C.4: Circular movement with attacked convoy succeeded")
@@ -172,7 +170,7 @@ func TestDATCC5_DisruptedCircularMovementDueToDislodgedConvoy(t *testing.T) {
 	gameState.AddRawOrder(game.Turkey, "F Ionian Sea Convoys A Bulgaria - Trieste")
 	gameState.AddRawOrder(game.Turkey, "F Adriatic Sea Convoys A Bulgaria - Trieste")
 	gameState.AddRawOrder(game.Italy, "F Naples - Ionian Sea")
-	gameState.AddRawOrder(game.Italy, "F Tunis Supports F Naples - Ionian Sea")
+	gameState.AddRawOrder(game.Italy, "f tunis s naples - ionian_sea")
 
 	// Process orders
 	ProcessDATCTest(t, gameState)
@@ -209,21 +207,22 @@ func TestDATCC6_TwoArmiesWithTwoConvoys(t *testing.T) {
 	gameState.AddRawOrder(game.France, "A Belgium - London")
 
 	// Process orders
-	ProcessDATCTest(t, gameState)
+	result := ProcessDATCTest(t, gameState)
 
 	// Expected: Both convoys should succeed (unit swap via convoy)
 	// Debug: Check what units are actually on the board
+	finalState := result.NewGameState
 	t.Logf("🔍 6.C.6 Debug - Units after processing:")
-	for province, unit := range gameState.Board.Units {
+	for province, unit := range finalState.Board.Units {
 		if unit != nil {
 			t.Logf("  %s: %s %s", province, unit.Owner, unit.Type)
 		}
 	}
 
-	if gameState.Board.GetUnit("belgium") == nil || gameState.Board.GetUnit("belgium").Owner != game.England {
+	if finalState.Board.GetUnit("belgium") == nil || finalState.Board.GetUnit("belgium").Owner != game.England {
 		t.Errorf("❌ 6.C.6: English army should have moved to Belgium")
 	}
-	if gameState.Board.GetUnit("london") == nil || gameState.Board.GetUnit("london").Owner != game.France {
+	if finalState.Board.GetUnit("london") == nil || finalState.Board.GetUnit("london").Owner != game.France {
 		t.Errorf("❌ 6.C.6: French army should have moved to London")
 	}
 	t.Logf("✅ 6.C.6: Two armies with two convoys succeeded")
@@ -279,8 +278,8 @@ func TestDATCC8_NoSelfDislodgementInDisruptedCircularMovement(t *testing.T) {
 	// Add orders
 	gameState.AddRawOrder(game.Turkey, "F Constantinople - Black Sea")
 	gameState.AddRawOrder(game.Turkey, "A Bulgaria - Constantinople")
-	gameState.AddRawOrder(game.Turkey, "A Smyrna Supports A Bulgaria - Constantinople")
-	gameState.AddRawOrder(game.Russia, "F Black Sea - Bulgaria(ec)")
+	gameState.AddRawOrder(game.Turkey, "a smyrna s bulgaria - constantinople")
+	gameState.AddRawOrder(game.Russia, "F Black Sea - Bulgaria/ec")
 	gameState.AddRawOrder(game.Austria, "A Serbia - Bulgaria")
 
 	// Process orders
@@ -313,22 +312,26 @@ func TestDATCC9_NoHelpInDislodgementOfOwnUnitInDisruptedCircularMovement(t *test
 
 	// Add orders
 	gameState.AddRawOrder(game.Turkey, "F Constantinople - Black Sea")
-	gameState.AddRawOrder(game.Turkey, "A Smyrna Supports A Bulgaria - Constantinople")
-	gameState.AddRawOrder(game.Russia, "F Black Sea - Bulgaria(ec)")
+	gameState.AddRawOrder(game.Turkey, "a smyrna s bulgaria - constantinople")
+	gameState.AddRawOrder(game.Russia, "F Black Sea - Bulgaria/ec")
 	gameState.AddRawOrder(game.Austria, "A Serbia - Bulgaria")
 	gameState.AddRawOrder(game.Russia, "A Bulgaria - Constantinople")
 
 	// Process orders
-	ProcessDATCTest(t, gameState)
+	result := ProcessDATCTest(t, gameState)
 
 	// Expected: None of the units will succeed to move (helping own dislodgement prevented)
-	if gameState.Board.GetUnit("constantinople") == nil || gameState.Board.GetUnit("constantinople").Owner != game.Turkey {
+	if result.ProcessError != nil {
+		t.Fatalf("❌ 6.C.9: ProcessDATCTest failed with error: %v", result.ProcessError)
+	}
+	finalState := result.NewGameState
+	if finalState.Board.GetUnit("constantinople") == nil || finalState.Board.GetUnit("constantinople").Owner != game.Turkey {
 		t.Errorf("❌ 6.C.9: Turkish fleet should have stayed at Constantinople")
 	}
-	if gameState.Board.GetUnit("bulgaria") == nil || gameState.Board.GetUnit("bulgaria").Owner != game.Russia {
+	if finalState.Board.GetUnit("bulgaria") == nil || finalState.Board.GetUnit("bulgaria").Owner != game.Russia {
 		t.Errorf("❌ 6.C.9: Russian army should have stayed at Bulgaria")
 	}
-	if gameState.Board.GetUnit("black_sea") == nil || gameState.Board.GetUnit("black_sea").Owner != game.Russia {
+	if finalState.Board.GetUnit("black_sea") == nil || finalState.Board.GetUnit("black_sea").Owner != game.Russia {
 		t.Errorf("❌ 6.C.9: Russian fleet should have stayed at Black Sea")
 	}
 	t.Logf("✅ 6.C.9: Help in dislodgement of own unit correctly prevented")

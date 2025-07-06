@@ -242,6 +242,7 @@ func (tp *TurnProcessor) validateMoveAdjacency(order *game.Order, gameState *gam
 
 // hasConvoyOrders checks if there are convoy orders that could enable the given army move
 func (tp *TurnProcessor) hasConvoyOrders(from, to string, gameState *game.GameState) bool {
+	fmt.Printf("🔍 hasConvoyOrders checking for convoy from %s to %s\n", from, to)
 	for _, orders := range gameState.RawOrders {
 		for _, rawOrder := range orders {
 			// Parse the order to check if it's a convoy for this move
@@ -250,19 +251,34 @@ func (tp *TurnProcessor) hasConvoyOrders(from, to string, gameState *game.GameSt
 				continue
 			}
 
+			fmt.Printf("  Checking order: %s (tokens: %d)\n", rawOrder, len(tokens))
+			for i, token := range tokens {
+				fmt.Printf("    [%d]: %s\n", i, token.Value)
+			}
+
 			// Check for convoy order format: "f province c from - to"
 			if len(tokens) >= 6 &&
 				(tokens[1].Value == "c" || tokens[1].Value == "convoy" || tokens[1].Value == "convoys") &&
 				tokens[2].Value == from && tokens[4].Value == to {
+				fmt.Printf("  ✅ Found convoy match (format 1)\n")
 				return true
 			}
 			if len(tokens) >= 7 &&
 				(tokens[2].Value == "c" || tokens[2].Value == "convoy" || tokens[2].Value == "convoys") &&
 				tokens[3].Value == from && tokens[5].Value == to {
+				fmt.Printf("  ✅ Found convoy match (format 2)\n")
+				return true
+			}
+			// Check for format: "f province1 province2 convoys a from - to"
+			if len(tokens) >= 8 &&
+				(tokens[3].Value == "c" || tokens[3].Value == "convoy" || tokens[3].Value == "convoys") &&
+				tokens[5].Value == from && tokens[7].Value == to {
+				fmt.Printf("  ✅ Found convoy match (format 3)\n")
 				return true
 			}
 		}
 	}
+	fmt.Printf("  ❌ No convoy orders found for %s to %s\n", from, to)
 	return false
 }
 
@@ -280,6 +296,11 @@ func (tp *TurnProcessor) validateBuildOrder(order *game.Order, gameState *game.G
 
 // resolveOrders executes the multi-pass resolution algorithm
 func (tp *TurnProcessor) resolveOrders(orders []*game.Order, board *game.Board) ([]resolution.OrderOutcome, error) {
+	fmt.Printf("🔍 resolveOrders called with %d orders\n", len(orders))
+	for i, order := range orders {
+		fmt.Printf("  Order %d: %s %s %s -> %s\n", i, order.Owner, order.UnitType, order.From, order.To)
+	}
+
 	// Create resolution engine
 	engine := resolution.NewResolutionEngine(orders, board)
 
@@ -305,7 +326,59 @@ func (tp *TurnProcessor) applyResults(
 	// Track dislodged units for phase advancement
 	var dislodgedUnits []*game.Unit
 
-	// Apply each order result
+	// Handle circular movements specially - two-phase approach
+	// Phase 1: Remove all units involved in circular movements
+	circularMoveUnits := make(map[int]*game.Unit) // orderIndex -> unit
+	for i, order := range orders {
+		if i >= len(results) {
+			continue
+		}
+		result := results[i]
+
+		if order.Type == game.Move && result.IsCircular && result.Result == resolution.MoveSuccess {
+			unit := newState.Board.GetUnit(order.From)
+			if unit != nil {
+				circularMoveUnits[i] = unit
+				newState.Board.RemoveUnit(order.From)
+				fmt.Printf("🔍 Phase 1: Removed circular move unit %s %s from %s\n",
+					unit.Owner, unit.Type, order.From)
+			}
+		}
+	}
+
+	// Phase 2: Place all circular movement units in their new positions
+	for i, unit := range circularMoveUnits {
+		order := orders[i]
+		result := results[i]
+
+		destination := order.To
+		if result.Destination != "" {
+			destination = result.Destination
+		}
+
+		fmt.Printf("🔍 Phase 2: Before move - unit %s %s (from order %d) going to %s\n",
+			unit.Owner, unit.Type, i, destination)
+		unit.Province = destination
+		unit.Coast = order.ToCoast
+		newState.Board.PlaceUnit(unit)
+		fmt.Printf("🔍 Phase 2: After place - unit %s %s at %s\n",
+			unit.Owner, unit.Type, unit.Province)
+
+		// Verify what's actually on the board
+		boardUnit := newState.Board.GetUnit(destination)
+		fmt.Printf("🔍 Phase 2: Board verification - at %s: %s %s\n",
+			destination, boardUnit.Owner, boardUnit.Type)
+	}
+
+	// Debug: Check board state after circular movements
+	fmt.Printf("🔍 Board state after Phase 2 (circular movements):\n")
+	for province, unit := range newState.Board.Units {
+		if unit != nil {
+			fmt.Printf("  %s: %s %s\n", province, unit.Owner, unit.Type)
+		}
+	}
+
+	// Apply non-circular order results
 	for i, order := range orders {
 		if i >= len(results) {
 			continue
@@ -315,6 +388,10 @@ func (tp *TurnProcessor) applyResults(
 
 		switch order.Type {
 		case game.Move:
+			// Skip circular movements - already handled above
+			if result.IsCircular {
+				continue
+			}
 			if err := tp.applyMoveResult(newState, order, result, &dislodgedUnits); err != nil {
 				return nil, err
 			}
@@ -328,6 +405,14 @@ func (tp *TurnProcessor) applyResults(
 		case game.Convoy:
 			// Convoy orders don't directly change unit positions
 			// Results are already captured in the resolution
+		}
+	}
+
+	// Debug: Check final board state before returning
+	fmt.Printf("🔍 Final board state before return:\n")
+	for province, unit := range newState.Board.Units {
+		if unit != nil {
+			fmt.Printf("  %s: %s %s\n", province, unit.Owner, unit.Type)
 		}
 	}
 
@@ -352,11 +437,21 @@ func (tp *TurnProcessor) applyMoveResult(
 	switch result.Result {
 	case resolution.MoveSuccess:
 		// Move succeeded - relocate unit
+		fmt.Printf("🔍 Applying MoveSuccess: %s %s %s->%s, result.Destination=%s\n",
+			unit.Owner, unit.Type, order.From, order.To, result.Destination)
+		fmt.Printf("  Unit before move: %+v\n", unit)
 		state.Board.RemoveUnit(order.From)
-		unit.Province = order.To
+		// Use Destination from result if set (for circular movements), otherwise use original To
+		destination := order.To
+		if result.Destination != "" {
+			destination = result.Destination
+		}
+		fmt.Printf("  Moving unit to: %s\n", destination)
+		unit.Province = destination
 		unit.Coast = order.ToCoast
+		fmt.Printf("  Unit after move: %+v\n", unit)
 		state.Board.PlaceUnit(unit)
-
+		fmt.Printf("  Unit placed. Board now has at %s: %+v\n", destination, state.Board.GetUnit(destination))
 	case resolution.MoveBounced:
 		// Move bounced - unit stays in place
 		// No action needed
