@@ -1,5 +1,7 @@
 package resolution
 
+import "fmt"
+
 // strength.go implements the four types of strength calculations
 // from the adjudication article: Attack, Hold, Defend, and Prevent.
 
@@ -34,7 +36,47 @@ func (adj *Adjudicator) calculateHoldStrength(territory string, optimistic bool)
 		return 0 // Unoccupied territory has no hold strength
 	}
 
-	strength := 1 // Base strength for occupying unit
+	// CRITICAL: A unit that is moving away provides NO hold strength
+	// BUT only if the move actually succeeds. We need to check move success first.
+	if occupyingOrder.Type == Move && occupyingOrder.Destination != territory {
+		// Check if the move actually succeeds before assuming zero hold strength
+		// Use opposite optimism for move success (pessimistic for hold strength calculation)
+		moveSucceeds := false
+
+		// Prevent infinite recursion by checking if we're already resolving this order
+		if !occupyingOrder.isVisited {
+			moveSucceeds = adj.resolve(occupyingOrder, !optimistic)
+		} else {
+			// If we're in a cycle, use optimistic assumption for now
+			// The cycle detection will handle this properly
+			moveSucceeds = optimistic
+		}
+
+		var strength int
+		if moveSucceeds {
+			fmt.Printf("  🏃 Unit in %s successfully moves to %s, provides 0 hold strength\n",
+				territory, occupyingOrder.Destination)
+			strength = 0 // Moving unit provides no hold strength
+		} else {
+			fmt.Printf("  🛡️ Unit in %s fails to move, stays and provides base strength 1\n", territory)
+			strength = 1 // Failed move means unit stays and provides hold strength
+		}
+
+		// Add support for holding (regardless of whether unit is moving or staying)
+		for _, otherOrder := range adj.orders {
+			if otherOrder.Type == Support && adj.isSupportingHold(otherOrder, territory) {
+				// Support succeeds if we resolve it optimistically (good for hold)
+				if adj.resolve(otherOrder, optimistic) {
+					strength++
+				}
+			}
+		}
+		return strength
+	}
+
+	// Unit is holding (not moving), provides base strength of 1
+	fmt.Printf("  🛡️  Unit in %s is holding, provides base strength 1\n", territory)
+	strength := 1 // Base strength for holding unit
 
 	// Add support for the holding unit
 	for _, otherOrder := range adj.orders {
