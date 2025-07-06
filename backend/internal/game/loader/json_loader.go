@@ -52,12 +52,16 @@ type Province struct {
 	Coasts         []string `json:"coasts"`
 }
 
+// Edge represents a movement connection between two provinces.
+// EdgeType determines which unit types can use this connection:
+//   - "land": armies only
+//   - "sea": fleets only
+//   - "both": both armies and fleets
 type Edge struct {
-	From string `json:"from"`
-	To   string `json:"to"`
-	Mode string `json:"mode"`
+	From     string `json:"from"`
+	To       string `json:"to"`
+	EdgeType string `json:"edgeType"`
 }
-
 type Unit struct {
 	Owner      string `json:"owner"`
 	Type       string `json:"type"`
@@ -118,7 +122,7 @@ func (jl *JSONLoader) LoadBoard() (*game.Board, error) {
 		fromProvince, fromCoast := jl.parseProvinceAndCoast(edge.From)
 		toProvince, toCoast := jl.parseProvinceAndCoast(edge.To)
 
-		switch edge.Mode {
+		switch edge.EdgeType {
 		case "land":
 			armyNeighbors[fromProvince] = addUniqueNeighbor(armyNeighbors[fromProvince], toProvince)
 			armyNeighbors[toProvince] = addUniqueNeighbor(armyNeighbors[toProvince], fromProvince)
@@ -132,11 +136,14 @@ func (jl *JSONLoader) LoadBoard() (*game.Board, error) {
 			if toCoast != "" && coastNeighbors[toProvince] != nil {
 				coastNeighbors[toProvince][toCoast] = addUniqueNeighbor(coastNeighbors[toProvince][toCoast], edge.From)
 			}
-		case "coast":
+		case "both":
+			// "both" edge type means the connection works for both armies and fleets
 			armyNeighbors[fromProvince] = addUniqueNeighbor(armyNeighbors[fromProvince], toProvince)
 			armyNeighbors[toProvince] = addUniqueNeighbor(armyNeighbors[toProvince], fromProvince)
 			fleetNeighbors[fromProvince] = addUniqueNeighbor(fleetNeighbors[fromProvince], toProvince)
 			fleetNeighbors[toProvince] = addUniqueNeighbor(fleetNeighbors[toProvince], fromProvince)
+		default:
+			return nil, fmt.Errorf("unknown edge type '%s' for edge %s -> %s", edge.EdgeType, edge.From, edge.To)
 		}
 	}
 
