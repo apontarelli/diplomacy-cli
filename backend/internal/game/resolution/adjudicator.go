@@ -8,6 +8,7 @@ import (
 // recursive dependency resolution algorithm from the adjudication article.
 type Adjudicator struct {
 	orders        map[string]*Order // Map from unit location to its order
+	orderedOrders []*Order          // Orders in their original input order
 	cycle         []*Order          // Tracks orders in a potential dependency cycle
 	recursionHits int               // Number of times we've hit recursion
 	uncertain     bool              // Whether the current resolution path is uncertain
@@ -16,29 +17,38 @@ type Adjudicator struct {
 // NewAdjudicator creates a new adjudicator for a set of orders.
 func NewAdjudicator(orders []Order) *Adjudicator {
 	orderMap := make(map[string]*Order)
+	orderedOrders := make([]*Order, len(orders))
+
 	for i := range orders {
 		order := &orders[i]
 		orderMap[order.Source] = order
+		orderedOrders[i] = order
 	}
 
 	return &Adjudicator{
-		orders: orderMap,
-		cycle:  make([]*Order, 0),
+		orders:        orderMap,
+		orderedOrders: orderedOrders,
+		cycle:         make([]*Order, 0),
 	}
 }
 
 // ResolveAll resolves all orders and returns the results.
 func (adj *Adjudicator) ResolveAll() []AdjudicationResult {
-	results := make([]AdjudicationResult, 0, len(adj.orders))
+	results := make([]AdjudicationResult, 0, len(adj.orderedOrders))
 
 	// Reset all orders before resolution
-	for _, order := range adj.orders {
+	for _, order := range adj.orderedOrders {
 		order.reset()
 	}
 
-	// Resolve each order
-	for _, order := range adj.orders {
+	// Resolve each order in original input order
+	for _, order := range adj.orderedOrders {
 		if !order.IsResolved() {
+			// Reset adjudicator state before each top-level resolution
+			adj.cycle = adj.cycle[:0]
+			adj.recursionHits = 0
+			adj.uncertain = false
+
 			adj.resolve(order, true) // Start with optimistic resolution
 		}
 
@@ -112,10 +122,29 @@ func (adj *Adjudicator) resolve(order *Order, optimistic bool) bool {
 	}
 
 	// Results disagree - we have a paradox
-	// Apply backup rules if we have a complete cycle
-	if len(adj.cycle) > oldCycleLen {
+	// Check if this order is in the cycle we detected
+	orderInCycle := false
+	for _, o := range adj.cycle {
+		if o == order {
+			orderInCycle = true
+			adj.recursionHits--
+			break
+		}
+	}
+
+	// If we've retreated to the ancestor of the whole cycle, apply backup rules
+	if adj.recursionHits == oldRecursionHits {
+		// Apply backup rule on all orders in the cycle
 		adj.applyBackupRule()
-		return order.resolution
+		adj.cycle = adj.cycle[:oldCycleLen]
+
+		// The backup rule might not have resolved this order, so try again
+		return adj.resolve(order, optimistic)
+	}
+
+	// We're returning from recursion but not at the cycle ancestor yet
+	if !orderInCycle {
+		adj.cycle = append(adj.cycle, order)
 	}
 
 	// Default to optimistic for uncertain outcomes
