@@ -174,6 +174,13 @@ func (adj *Adjudicator) adjudicateMove(order *Order, optimistic bool) bool {
 
 // adjudicateSupport determines if a support order succeeds.
 func (adj *Adjudicator) adjudicateSupport(order *Order, optimistic bool) bool {
+	// First check: Self-dislodgement prevention
+	// A support order fails if it would help dislodge the supporting player's own unit
+	if adj.wouldHelpDislodgeOwnUnit(order) {
+		fmt.Printf("  ❌ Support cut: would help dislodge own unit\n")
+		return false
+	}
+
 	// A support succeeds if the supporting unit is not dislodged
 	// Check if any unit is attacking this supporter
 	for _, otherOrder := range adj.orders {
@@ -220,4 +227,37 @@ func (adj *Adjudicator) getResolutionReason(order *Order) string {
 		return "Success"
 	}
 	return "Failed"
+}
+
+// wouldHelpDislodgeOwnUnit checks if a support order would help dislodge the supporting player's own unit
+func (adj *Adjudicator) wouldHelpDislodgeOwnUnit(supportOrder *Order) bool {
+	if supportOrder.Type != Support {
+		return false
+	}
+
+	// Find the move being supported
+	var supportedMove *Order
+	for _, order := range adj.orders {
+		if order.Type == Move && order.Source == supportOrder.Auxiliary {
+			supportedMove = order
+			break
+		}
+	}
+
+	if supportedMove == nil {
+		return false // No move to support
+	}
+
+	// Check if the supported move would dislodge a unit owned by the same player as the supporter
+	targetLocation := supportedMove.Destination
+	for _, order := range adj.orders {
+		// Look for a unit at the target location that belongs to the same owner as the supporter
+		if order.Source == targetLocation && order.Owner == supportOrder.Owner {
+			fmt.Printf("  🚫 Support from %s would help dislodge own unit at %s\n",
+				supportOrder.Source, targetLocation)
+			return true
+		}
+	}
+
+	return false
 }
