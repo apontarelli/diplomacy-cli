@@ -30,8 +30,8 @@ const (
 func GetLoader(variant MapVariant) MapLoader {
 	switch variant {
 	case Classic:
-		return NewJSONLoader("data/classic")
+		return NewJSONLoader("../../../data/classic")
 	default:
-		return NewJSONLoader("data/classic")
+		return NewJSONLoader("../../../data/classic")
 	}
 }
