@@ -154,7 +154,7 @@ func (adj *Adjudicator) adjudicateMove(order *Order, optimistic bool) bool {
 	for _, otherOrder := range adj.orders {
 		if otherOrder != order && otherOrder.Type == Move && otherOrder.Destination == order.Destination {
 			preventStrength := adj.calculatePreventStrength(otherOrder, !optimistic)
-			if attackStrength < preventStrength {
+			if attackStrength <= preventStrength {
 				return false
 			}
 		}
