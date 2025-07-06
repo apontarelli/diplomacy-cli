@@ -17,6 +17,7 @@ type Order struct {
 	Source      string // Source territory
 	Destination string // Destination territory (for moves)
 	Auxiliary   string // For supports/convoys, the location being supported/convoyed
+	Owner       string // Nation that owns this unit
 
 	// Resolution state - managed by adjudicator
 	isResolved bool

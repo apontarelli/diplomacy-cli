@@ -340,12 +340,30 @@ func convertToResolutionOrder(order *game.Order) resolution.Order {
 		orderType = resolution.Hold
 	}
 
+	// Set auxiliary field and destination based on order type
+	var auxiliary string
+	var destination string
+
+	switch order.Type {
+	case game.Move:
+		destination = order.To
+	case game.Support:
+		auxiliary = order.SupportTarget
+		// Support orders don't move, so no destination
+	case game.Convoy:
+		auxiliary = order.ConvoyTarget
+		// Convoy orders don't move, so no destination
+	case game.Hold:
+		// Hold orders don't move, so no destination
+	}
+
 	return resolution.Order{
 		Unit:        string(order.UnitType) + " " + order.From,
 		Type:        orderType,
 		Source:      order.From,
-		Destination: order.To,
-		Auxiliary:   order.SupportTarget,
+		Destination: destination,
+		Auxiliary:   auxiliary,
+		Owner:       string(order.Owner),
 	}
 }
 
