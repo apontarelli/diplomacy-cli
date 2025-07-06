@@ -137,9 +137,13 @@ func (tp *TurnProcessor) validateOrder(order *game.Order, gameState *game.GameSt
 func (tp *TurnProcessor) validateMovementOrder(order *game.Order, gameState *game.GameState) error {
 	switch order.Type {
 	case game.Move:
-		// Check adjacency using board's neighbor lists
-		if !tp.areAdjacent(order.From, order.To, order.UnitType, gameState.Board) {
-			return fmt.Errorf("cannot move from %s to %s: not adjacent (unit type: %v)", order.From, order.To, order.UnitType)
+		// Check if unit is trying to move to its own location
+		if order.From == order.To {
+			return fmt.Errorf("unit cannot move to its own location")
+		}
+		// Convoy-aware adjacency validation
+		if err := tp.validateMoveAdjacency(order, gameState); err != nil {
+			return err
 		}
 	case game.Hold:
 		// Hold orders are always valid if unit exists
@@ -148,6 +152,17 @@ func (tp *TurnProcessor) validateMovementOrder(order *game.Order, gameState *gam
 		// Validate support target exists
 		if order.SupportTarget == "" {
 			return fmt.Errorf("support order missing target")
+		}
+		// Check for self-support (unit cannot support itself)
+		if order.From == order.SupportTarget {
+			return fmt.Errorf("unit cannot support itself")
+		}
+		// For support move orders, validate that the supporting unit can reach the destination
+		if order.SupportDestination != "" { // This is a support move order
+			unit := gameState.Board.GetUnit(order.From)
+			if !tp.areAdjacent(order.From, order.SupportDestination, unit.Type, gameState.Board) {
+				return fmt.Errorf("supporting unit cannot reach destination %s", order.SupportDestination)
+			}
 		}
 		// Additional support validation would go here
 	case game.Convoy:
@@ -192,6 +207,62 @@ func (tp *TurnProcessor) areAdjacent(from, to string, unitType game.UnitType, bo
 		}
 	}
 
+	return false
+}
+
+// validateMoveAdjacency validates move adjacency with convoy awareness
+func (tp *TurnProcessor) validateMoveAdjacency(order *game.Order, gameState *game.GameState) error {
+	// For fleets, always check normal adjacency (fleets cannot be convoyed)
+	if order.UnitType == game.Fleet {
+		if !tp.areAdjacent(order.From, order.To, order.UnitType, gameState.Board) {
+			return fmt.Errorf("cannot move from %s to %s: not adjacent (unit type: %v)", order.From, order.To, order.UnitType)
+		}
+		return nil
+	}
+
+	// For armies, check if convoy orders exist that could enable this move
+	if order.UnitType == game.Army {
+		// First check normal adjacency
+		if tp.areAdjacent(order.From, order.To, order.UnitType, gameState.Board) {
+			return nil // Adjacent move is always valid
+		}
+
+		// Not adjacent - check if convoy orders exist for this move
+		if tp.hasConvoyOrders(order.From, order.To, gameState) {
+			return nil // Convoy orders exist - let resolution engine validate the path
+		}
+
+		// No convoy orders and not adjacent
+		return fmt.Errorf("cannot move from %s to %s: not adjacent and no convoy orders (unit type: %v)", order.From, order.To, order.UnitType)
+	}
+
+	// Unknown unit type
+	return fmt.Errorf("unknown unit type: %v", order.UnitType)
+}
+
+// hasConvoyOrders checks if there are convoy orders that could enable the given army move
+func (tp *TurnProcessor) hasConvoyOrders(from, to string, gameState *game.GameState) bool {
+	for _, orders := range gameState.RawOrders {
+		for _, rawOrder := range orders {
+			// Parse the order to check if it's a convoy for this move
+			tokens := validation.Tokenize(rawOrder)
+			if len(tokens) < 5 {
+				continue
+			}
+
+			// Check for convoy order format: "f province c from - to"
+			if len(tokens) >= 6 &&
+				(tokens[1].Value == "c" || tokens[1].Value == "convoy" || tokens[1].Value == "convoys") &&
+				tokens[2].Value == from && tokens[4].Value == to {
+				return true
+			}
+			if len(tokens) >= 7 &&
+				(tokens[2].Value == "c" || tokens[2].Value == "convoy" || tokens[2].Value == "convoys") &&
+				tokens[3].Value == from && tokens[5].Value == to {
+				return true
+			}
+		}
+	}
 	return false
 }
 

@@ -141,9 +141,8 @@ func parseMove(tokens []Token, resolver *ProvinceResolver) (*game.Order, error) 
 		return nil, fmt.Errorf("invalid to province: %s", toToken.Value)
 	}
 
-	if err := validateAdjacency(fromProvince, toProvince, fromCoast, toCoast, resolver); err != nil {
-		return nil, err
-	}
+	// Adjacency validation moved to semantic validation layer
+	// This allows convoy-aware validation for army moves
 
 	return &game.Order{
 		Type:      game.Move,
