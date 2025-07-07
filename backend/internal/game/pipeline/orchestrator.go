@@ -296,9 +296,24 @@ func (tp *TurnProcessor) validateBuildOrder(order *game.Order, gameState *game.G
 
 // resolveOrders executes the recursive resolution algorithm
 func (tp *TurnProcessor) resolveOrders(orders []*game.Order, board *game.Board) ([]resolution.OrderOutcome, error) {
-	fmt.Printf("🔍 resolveOrders called with %d orders\n", len(orders))
+	fmt.Printf("🔍 Resolving %d orders\n", len(orders))
 	for i, order := range orders {
-		fmt.Printf("  Order %d: %s %s %s -> %s\n", i, order.Owner, order.UnitType, order.From, order.To)
+		switch order.Type {
+		case game.Move:
+			fmt.Printf("  %d: %s %s %s -> %s\n", i, order.Owner, order.UnitType, order.From, order.To)
+		case game.Convoy:
+			fmt.Printf("  %d: %s %s %s C %s -> %s\n", i, order.Owner, order.UnitType, order.From, order.ConvoyTarget, order.To)
+		case game.Support:
+			if order.SupportDestination != "" {
+				fmt.Printf("  %d: %s %s %s S %s -> %s\n", i, order.Owner, order.UnitType, order.From, order.SupportTarget, order.SupportDestination)
+			} else {
+				fmt.Printf("  %d: %s %s %s S %s\n", i, order.Owner, order.UnitType, order.From, order.SupportTarget)
+			}
+		case game.Hold:
+			fmt.Printf("  %d: %s %s %s H\n", i, order.Owner, order.UnitType, order.From)
+		default:
+			fmt.Printf("  %d: %s %s %s (unknown)\n", i, order.Owner, order.UnitType, order.From)
+		}
 	}
 
 	// Convert game.Order to resolution.Order
@@ -319,6 +334,7 @@ func (tp *TurnProcessor) resolveOrders(orders []*game.Order, board *game.Board) 
 			Dislodged:   result.Dislodged,
 			Destination: result.Destination,
 		}
+		fmt.Printf("  %d: %s\n", i, outcomes[i].Result)
 	}
 
 	return outcomes, nil
@@ -464,13 +480,16 @@ func (tp *TurnProcessor) applyResults(
 	}
 
 	// Phase 2: Remove all units that are moving successfully from their sources
+	fmt.Printf("🔍 Removing units from sources\n")
 	for _, move := range allMoves {
 		if move.result.Result == resolution.MoveSuccess {
+			fmt.Printf("  ✅ %s %s: %s -> %s\n", move.order.Owner, move.order.UnitType, move.order.From, move.order.To)
 			newState.Board.RemoveUnit(move.order.From)
 		}
 	}
 
 	// Phase 3: Place all successfully moving units at their destinations
+	fmt.Printf("🔍 Placing units at destinations\n")
 	for _, move := range allMoves {
 		if move.result.Result == resolution.MoveSuccess {
 			destination := move.order.To
@@ -484,8 +503,10 @@ func (tp *TurnProcessor) applyResults(
 
 			// Place unit at destination
 			if err := newState.Board.PlaceUnit(move.unit); err != nil {
+				fmt.Printf("  ❌ Failed to place %s %s at %s: %v\n", move.unit.Owner, move.unit.Type, destination, err)
 				return nil, fmt.Errorf("failed to place unit at %s: %w", destination, err)
 			}
+			fmt.Printf("  ✅ Placed %s %s at %s\n", move.unit.Owner, move.unit.Type, destination)
 		} else {
 			// Handle failed moves: unit stays in place
 			// For failed moves, the unit should already be in its original position
