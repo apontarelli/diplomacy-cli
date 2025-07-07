@@ -7,8 +7,15 @@ import "fmt"
 
 // calculateAttackStrength calculates the attack strength of a moving unit.
 // Attack strength = 1 (base) + number of supporting units
+// DATC 5.B.8: If PATH fails, attack strength is 0
 func (adj *Adjudicator) calculateAttackStrength(order *Order, optimistic bool) int {
 	if order.Type != Move {
+		return 0
+	}
+
+	// DATC 5.B.8: If the PATH of the move order fails, then the ATTACK STRENGTH is zero
+	if !adj.hasValidPath(order, optimistic) {
+		fmt.Printf("  🚫 PATH invalid for %s, attack strength = 0\\n", order.String())
 		return 0
 	}
 
@@ -45,10 +52,13 @@ func (adj *Adjudicator) calculateHoldStrength(territory string, optimistic bool)
 
 		// Prevent infinite recursion by checking if we're already resolving this order
 		if !occupyingOrder.isVisited {
+			fmt.Printf("    🔄 Hold strength calling resolve on %s (optimistic=%t)\n", occupyingOrder.String(), !optimistic)
 			moveSucceeds = adj.resolve(occupyingOrder, !optimistic)
 		} else {
 			// If we're in a cycle, use optimistic assumption for now
 			// The cycle detection will handle this properly
+			fmt.Printf("    🔄 Hold strength: %s already visited, using optimistic=%t\n", occupyingOrder.String(), optimistic)
+			adj.uncertain = true // Mark as uncertain due to cycle
 			moveSucceeds = optimistic
 		}
 
@@ -104,13 +114,32 @@ func (adj *Adjudicator) calculateDefendStrength(order *Order, optimistic bool) i
 
 // calculatePreventStrength calculates the prevent strength of a competing move.
 // This determines which move succeeds when multiple units move to the same destination.
+// DATC 5.B.6: If PATH fails, prevent strength is 0
 func (adj *Adjudicator) calculatePreventStrength(order *Order, optimistic bool) int {
 	if order.Type != Move {
 		return 0
 	}
 
-	// Prevent strength is the same as attack strength
-	return adj.calculateAttackStrength(order, optimistic)
+	// DATC 5.B.6: If the PATH of the move order fails, then the PREVENT STRENGTH is 0
+	if !adj.hasValidPath(order, optimistic) {
+		fmt.Printf("  🚫 PATH invalid for %s, prevent strength = 0\\n", order.String())
+		return 0
+	}
+
+	// Prevent strength is the same as attack strength (when PATH is valid)
+	strength := 1 // Base strength
+
+	// Add support from other units
+	for _, otherOrder := range adj.orders {
+		if otherOrder.Type == Support && adj.isSupporting(otherOrder, order) {
+			// Support succeeds if we resolve it optimistically (good for us)
+			if adj.resolve(otherOrder, optimistic) {
+				strength++
+			}
+		}
+	}
+
+	return strength
 }
 
 // isSupporting checks if a support order is supporting a specific move.

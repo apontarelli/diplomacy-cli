@@ -351,7 +351,7 @@ func convertToResolutionOrder(order *game.Order) resolution.Order {
 		auxiliary = order.SupportTarget
 		// Support orders don't move, so no destination
 	case game.Convoy:
-		auxiliary = order.ConvoyTarget
+		auxiliary = order.ConvoyTarget + " -> " + order.To
 		// Convoy orders don't move, so no destination
 	case game.Hold:
 		// Hold orders don't move, so no destination
@@ -414,10 +414,12 @@ func (tp *TurnProcessor) applyResults(
 		}
 
 		result := results[i]
+		fmt.Printf("🔄 Processing order %d: %s %s %s->%s, result: %s\n",
+			i, order.Owner, order.UnitType, order.From, order.To, result.Result)
 
 		switch order.Type {
 		case game.Move:
-			if err := tp.applyMoveResult(newState, order, result, &dislodgedUnits); err != nil {
+			if err := tp.applyMoveResult(newState, order, result, &dislodgedUnits, orders); err != nil {
 				return nil, err
 			}
 		case game.Hold:
@@ -431,9 +433,7 @@ func (tp *TurnProcessor) applyResults(
 			// Convoy orders don't directly change unit positions
 			// Results are already captured in the resolution
 		}
-	}
-
-	// Debug: Check final board state before returning
+	} // Debug: Check final board state before returning
 	fmt.Printf("🔍 Final board state before return:\n")
 	for province, unit := range newState.Board.Units {
 		if unit != nil {
@@ -453,6 +453,7 @@ func (tp *TurnProcessor) applyMoveResult(
 	order *game.Order,
 	result resolution.OrderOutcome,
 	dislodgedUnits *[]*game.Unit,
+	allOrders []*game.Order,
 ) error {
 	unit := state.Board.GetUnit(order.From)
 	if unit == nil {
@@ -472,10 +473,39 @@ func (tp *TurnProcessor) applyMoveResult(
 			destination = result.Destination
 		}
 		fmt.Printf("  Moving unit to: %s\n", destination)
+
+		// In circular movement, destination might be occupied by a unit that's also moving
+		// Check if the existing unit at destination is also moving this turn
+		existingUnit := state.Board.GetUnit(destination)
+		if existingUnit != nil {
+			// Check if this unit has a move order in the current turn
+			hasMovingOrder := false
+			for _, checkOrder := range allOrders {
+				if checkOrder.Type == game.Move && checkOrder.From == destination {
+					hasMovingOrder = true
+					break
+				}
+			}
+
+			if hasMovingOrder {
+				fmt.Printf("  🔄 Destination %s occupied by %s %s that's also moving, removing\n",
+					destination, existingUnit.Owner, existingUnit.Type)
+				state.Board.RemoveUnit(destination)
+			} else {
+				// Unit at destination is not moving, this should be a dislodgement
+				fmt.Printf("  ⚔️ Destination %s occupied by %s %s that's not moving\n",
+					destination, existingUnit.Owner, existingUnit.Type)
+				// For now, still remove it - proper dislodgement logic would go here
+				state.Board.RemoveUnit(destination)
+			}
+		}
 		unit.Province = destination
 		unit.Coast = order.ToCoast
 		fmt.Printf("  Unit after move: %+v\n", unit)
-		state.Board.PlaceUnit(unit)
+
+		if err := state.Board.PlaceUnit(unit); err != nil {
+			return fmt.Errorf("failed to place unit at %s: %w", destination, err)
+		}
 		fmt.Printf("  Unit placed. Board now has at %s: %+v\n", destination, state.Board.GetUnit(destination))
 	case resolution.MoveBounced:
 		// Move bounced - unit stays in place

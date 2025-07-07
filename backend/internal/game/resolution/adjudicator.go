@@ -114,10 +114,14 @@ func (adj *Adjudicator) resolve(order *Order, optimistic bool) bool {
 	// If both runs agree, we have a definitive result
 	if optResult == pesResult {
 		order.setResolution(optResult)
-
+		fmt.Printf("🔍 Applying %s: %s (opt=%t, pes=%t)\n",
+			map[bool]string{true: "MoveSuccess", false: "MoveFailed"}[optResult], order.String(), optResult, pesResult)
 		// Clean up cycle data from this branch
 		adj.cycle = adj.cycle[:oldCycleLen]
 		adj.recursionHits = oldRecursionHits
+
+		// Reset visited flag
+		order.isVisited = false
 		return order.resolution
 	}
 
@@ -149,6 +153,83 @@ func (adj *Adjudicator) resolve(order *Order, optimistic bool) bool {
 
 	// Default to optimistic for uncertain outcomes
 	return optimistic
+}
+
+// hasValidPath checks if a move order has a valid path to its destination.
+// According to DATC 5.B.4: PATH is successful when the unit can directly move
+// to the destination OR is convoyed and there is a chain of adjacent fleets
+// from origin to destination each with a matching and successful CONVOY order.
+func (adj *Adjudicator) hasValidPath(order *Order, optimistic bool) bool {
+	if order.Type != Move {
+		return false
+	}
+
+	fmt.Printf("🛤️ hasValidPath: checking %s\n", order.String())
+
+	// Check if this is a convoy move by looking for convoy orders
+	convoyOrders := adj.findConvoyOrders(order.Source, order.Destination)
+
+	if len(convoyOrders) == 0 {
+		// No convoy orders - this should be a direct move
+		// For now, assume direct moves are valid (adjacency was checked during parsing)
+		fmt.Printf("  ✅ Direct move, PATH valid\n")
+		return true
+	}
+
+	// This is a convoy move - validate the convoy chain
+	result := adj.validateConvoyChain(order.Source, order.Destination, convoyOrders, optimistic)
+	fmt.Printf("  🚢 Convoy move, PATH valid: %t\n", result)
+	return result
+}
+
+// findConvoyOrders finds all convoy orders that could support a move from source to destination.
+func (adj *Adjudicator) findConvoyOrders(source, destination string) []*Order {
+	var convoyOrders []*Order
+
+	fmt.Printf("🔍 findConvoyOrders: looking for convoy from %s to %s\n", source, destination)
+	for _, order := range adj.orders {
+		if order.Type == Convoy {
+			fmt.Printf("  Found convoy order: %s (auxiliary: '%s')\n", order.String(), order.Auxiliary)
+			// Parse convoy auxiliary field: "source -> destination"
+			// Expected format: "bulgaria -> trieste" or similar
+			if order.Auxiliary == source+" -> "+destination {
+				fmt.Printf("  ✅ Convoy matches!\n")
+				convoyOrders = append(convoyOrders, order)
+			}
+		}
+	}
+
+	fmt.Printf("🔍 Found %d convoy orders for %s -> %s\n", len(convoyOrders), source, destination)
+	return convoyOrders
+}
+
+// validateConvoyChain validates that there is a valid chain of convoy fleets.
+// For now, we implement a simplified version: if any convoy order succeeds, the path is valid.
+// A full implementation would need to check fleet adjacency and build a proper chain.
+func (adj *Adjudicator) validateConvoyChain(source, destination string, convoyOrders []*Order, optimistic bool) bool {
+	if len(convoyOrders) == 0 {
+		fmt.Printf("    ❌ No convoy orders\n")
+		return false
+	}
+
+	fmt.Printf("    🔍 Checking %d convoy orders\n", len(convoyOrders))
+
+	// Check if at least one convoy order succeeds
+	// In a full implementation, we'd need to validate the actual chain of adjacent fleets
+	for i, convoyOrder := range convoyOrders {
+		success := adj.resolve(convoyOrder, optimistic)
+		fmt.Printf("    Convoy %d (%s): %t\n", i, convoyOrder.String(), success)
+		if success {
+			// At least one convoy is successful, so path is valid
+			// TODO: Implement proper chain validation for complex convoy routes
+			fmt.Printf("    ✅ At least one convoy succeeds, PATH valid\n")
+			return true
+		}
+	}
+
+	// No successful convoy orders
+	fmt.Printf("    ❌ No successful convoy orders, PATH invalid\n")
+	return false
 }
 
 // adjudicate contains the specific Diplomacy rules for each order type.
