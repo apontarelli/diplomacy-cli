@@ -348,7 +348,13 @@ func convertToResolutionOrder(order *game.Order) resolution.Order {
 	case game.Move:
 		destination = order.To
 	case game.Support:
-		auxiliary = order.SupportTarget
+		if order.SupportDestination != "" {
+			// Support move: "A Berlin S A Munich -> Silesia"
+			auxiliary = order.SupportTarget + " -> " + order.SupportDestination
+		} else {
+			// Support hold: "A Berlin S A Munich"
+			auxiliary = order.SupportTarget
+		}
 		// Support orders don't move, so no destination
 	case game.Convoy:
 		auxiliary = order.ConvoyTarget + " -> " + order.To
@@ -418,42 +424,31 @@ func (tp *TurnProcessor) applyResults(
 	}
 
 	// FIXED: Apply moves in two phases to prevent order-dependent board corruption
-	// Phase 1: Remove all units that are moving successfully
-	var successfulMoves []struct {
+	// Phase 1: Collect all moves (successful and failed) for atomic processing
+	var allMoves []struct {
 		order  *game.Order
 		result resolution.OrderOutcome
 		unit   *game.Unit
 	}
 
+	// First pass: collect all move orders and their results
 	for i, order := range orders {
 		if i >= len(results) {
 			continue
 		}
 
 		result := results[i]
-		fmt.Printf("🔄 Processing order %d: %s %s %s->%s, result: %s\n",
-			i, order.Owner, order.UnitType, order.From, order.To, result.Result)
 
 		switch order.Type {
 		case game.Move:
-			if result.Result == resolution.MoveSuccess {
-				// Collect successful moves for atomic application
-				unit := originalUnits[order.From]
-				if unit != nil {
-					successfulMoves = append(successfulMoves, struct {
-						order  *game.Order
-						result resolution.OrderOutcome
-						unit   *game.Unit
-					}{order, result, unit})
-					// Remove unit from source immediately
-					newState.Board.RemoveUnit(order.From)
-					fmt.Printf("  🔄 Removed unit from %s for successful move\n", order.From)
-				}
-			} else {
-				// Handle non-successful moves (bounced, etc.)
-				if err := tp.applyMoveResultWithOriginalUnits(newState, order, result, &dislodgedUnits, orders, originalUnits); err != nil {
-					return nil, err
-				}
+			// Collect ALL moves (successful and failed) for atomic processing
+			unit := originalUnits[order.From]
+			if unit != nil {
+				allMoves = append(allMoves, struct {
+					order  *game.Order
+					result resolution.OrderOutcome
+					unit   *game.Unit
+				}{order, result, unit})
 			}
 		case game.Hold:
 			if err := tp.applyHoldResult(newState, order, result, &dislodgedUnits); err != nil {
@@ -468,27 +463,42 @@ func (tp *TurnProcessor) applyResults(
 		}
 	}
 
-	// Phase 2: Place all successfully moving units at their destinations
-	for _, move := range successfulMoves {
-		destination := move.order.To
-		if move.result.Destination != "" {
-			destination = move.result.Destination
+	// Phase 2: Remove all units that are moving successfully from their sources
+	for _, move := range allMoves {
+		if move.result.Result == resolution.MoveSuccess {
+			newState.Board.RemoveUnit(move.order.From)
 		}
+	}
 
-		// Update unit location
-		move.unit.Province = destination
-		move.unit.Coast = move.order.ToCoast
+	// Phase 3: Place all successfully moving units at their destinations
+	for _, move := range allMoves {
+		if move.result.Result == resolution.MoveSuccess {
+			destination := move.order.To
+			if move.result.Destination != "" {
+				destination = move.result.Destination
+			}
 
-		// Place unit at destination
-		if err := newState.Board.PlaceUnit(move.unit); err != nil {
-			return nil, fmt.Errorf("failed to place unit at %s: %w", destination, err)
-		}
-		fmt.Printf("  ✅ Placed %s %s at %s\n", move.unit.Owner, move.unit.Type, destination)
-	} // Debug: Check final board state before returning
-	fmt.Printf("🔍 Final board state before return:\n")
-	for province, unit := range newState.Board.Units {
-		if unit != nil {
-			fmt.Printf("  %s: %s %s\n", province, unit.Owner, unit.Type)
+			// Update unit location
+			move.unit.Province = destination
+			move.unit.Coast = move.order.ToCoast
+
+			// Place unit at destination
+			if err := newState.Board.PlaceUnit(move.unit); err != nil {
+				return nil, fmt.Errorf("failed to place unit at %s: %w", destination, err)
+			}
+		} else {
+			// Handle failed moves: unit stays in place
+			// For failed moves, the unit should already be in its original position
+			// We just need to ensure it's there and handle any dislodgement logic
+
+			// Ensure the unit is at its original position (it should be unless removed by successful move)
+			if newState.Board.GetUnit(move.order.From) == nil {
+				// Unit was removed (shouldn't happen for failed moves), put it back
+				unitCopy := *move.unit // Create a copy
+				if err := newState.Board.PlaceUnit(&unitCopy); err != nil {
+					return nil, fmt.Errorf("failed to restore unit at %s: %w", move.order.From, err)
+				}
+			}
 		}
 	}
 

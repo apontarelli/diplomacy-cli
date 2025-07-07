@@ -153,7 +153,7 @@ func TestDATCFormatParsing(t *testing.T) {
 		{
 			name:        "DATC standard move format",
 			input:       "F North Sea - Picardy",
-			expectError: true, // Should fail due to adjacency, but parsing should work
+			expectError: false, // Parsing should succeed (adjacency checked in semantic validation)
 			description: "DATC format with multi-word province names",
 		},
 		{

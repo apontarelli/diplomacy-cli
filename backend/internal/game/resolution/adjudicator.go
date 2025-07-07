@@ -2,6 +2,7 @@ package resolution
 
 import (
 	"fmt"
+	"strings"
 )
 
 // Adjudicator holds the state for a single turn's resolution using the
@@ -368,8 +369,23 @@ func (adj *Adjudicator) wouldHelpDislodgeOwnUnit(supportOrder *Order) bool {
 
 	// Find the move being supported
 	var supportedMove *Order
+
+	// Parse the auxiliary field to extract the source location
+	// Auxiliary format: "source -> destination" for support move, or just "source" for support hold
+	var supportedSource string
+	if strings.Contains(supportOrder.Auxiliary, " -> ") {
+		// Support move: "bulgaria -> constantinople"
+		parts := strings.Split(supportOrder.Auxiliary, " -> ")
+		if len(parts) >= 1 {
+			supportedSource = strings.TrimSpace(parts[0])
+		}
+	} else {
+		// Support hold: "bulgaria"
+		supportedSource = strings.TrimSpace(supportOrder.Auxiliary)
+	}
+
 	for _, order := range adj.orders {
-		if order.Type == Move && order.Source == supportOrder.Auxiliary {
+		if order.Type == Move && order.Source == supportedSource {
 			supportedMove = order
 			break
 		}
