@@ -50,15 +50,29 @@ func (adj *Adjudicator) calculateHoldStrength(territory string, optimistic bool)
 		// Use opposite optimism for move success (pessimistic for hold strength calculation)
 		moveSucceeds := false
 
-		// Prevent infinite recursion by checking if we're already resolving this order
+		// FIXED: Prevent infinite recursion by checking if we're already resolving this order
 		if !occupyingOrder.isVisited {
 			fmt.Printf("    🔄 Hold strength calling resolve on %s (optimistic=%t)\n", occupyingOrder.String(), !optimistic)
 			moveSucceeds = adj.resolve(occupyingOrder, !optimistic)
 		} else {
-			// If we're in a cycle, use optimistic assumption for now
-			// The cycle detection will handle this properly
-			fmt.Printf("    🔄 Hold strength: %s already visited, using optimistic=%t\n", occupyingOrder.String(), optimistic)
+			// FIXED: If we're in a cycle, mark as uncertain and add to cycle if not already there
+			fmt.Printf("    🔄 Hold strength: %s already visited, cycle detected\n", occupyingOrder.String())
 			adj.uncertain = true // Mark as uncertain due to cycle
+
+			// Add to cycle if not already present
+			alreadyInCycle := false
+			for _, cycleOrder := range adj.cycle {
+				if cycleOrder == occupyingOrder {
+					alreadyInCycle = true
+					break
+				}
+			}
+			if !alreadyInCycle {
+				adj.cycle = append(adj.cycle, occupyingOrder)
+				adj.recursionHits++
+				fmt.Printf("    🔄 Added %s to cycle (length: %d)\n", occupyingOrder.String(), len(adj.cycle))
+			}
+
 			moveSucceeds = optimistic
 		}
 

@@ -407,7 +407,24 @@ func (tp *TurnProcessor) applyResults(
 	// Track dislodged units for phase advancement
 	var dislodgedUnits []*game.Unit
 
-	// Apply order results - our recursive adjudicator handles everything correctly
+	// FIXED: Capture all units before applying moves to handle circular movement correctly
+	originalUnits := make(map[string]*game.Unit)
+	for province, unit := range oldState.Board.Units {
+		if unit != nil {
+			// Create a copy of the unit
+			unitCopy := *unit
+			originalUnits[province] = &unitCopy
+		}
+	}
+
+	// FIXED: Apply moves in two phases to prevent order-dependent board corruption
+	// Phase 1: Remove all units that are moving successfully
+	var successfulMoves []struct {
+		order  *game.Order
+		result resolution.OrderOutcome
+		unit   *game.Unit
+	}
+
 	for i, order := range orders {
 		if i >= len(results) {
 			continue
@@ -419,8 +436,24 @@ func (tp *TurnProcessor) applyResults(
 
 		switch order.Type {
 		case game.Move:
-			if err := tp.applyMoveResult(newState, order, result, &dislodgedUnits, orders); err != nil {
-				return nil, err
+			if result.Result == resolution.MoveSuccess {
+				// Collect successful moves for atomic application
+				unit := originalUnits[order.From]
+				if unit != nil {
+					successfulMoves = append(successfulMoves, struct {
+						order  *game.Order
+						result resolution.OrderOutcome
+						unit   *game.Unit
+					}{order, result, unit})
+					// Remove unit from source immediately
+					newState.Board.RemoveUnit(order.From)
+					fmt.Printf("  🔄 Removed unit from %s for successful move\n", order.From)
+				}
+			} else {
+				// Handle non-successful moves (bounced, etc.)
+				if err := tp.applyMoveResultWithOriginalUnits(newState, order, result, &dislodgedUnits, orders, originalUnits); err != nil {
+					return nil, err
+				}
 			}
 		case game.Hold:
 			if err := tp.applyHoldResult(newState, order, result, &dislodgedUnits); err != nil {
@@ -433,6 +466,24 @@ func (tp *TurnProcessor) applyResults(
 			// Convoy orders don't directly change unit positions
 			// Results are already captured in the resolution
 		}
+	}
+
+	// Phase 2: Place all successfully moving units at their destinations
+	for _, move := range successfulMoves {
+		destination := move.order.To
+		if move.result.Destination != "" {
+			destination = move.result.Destination
+		}
+
+		// Update unit location
+		move.unit.Province = destination
+		move.unit.Coast = move.order.ToCoast
+
+		// Place unit at destination
+		if err := newState.Board.PlaceUnit(move.unit); err != nil {
+			return nil, fmt.Errorf("failed to place unit at %s: %w", destination, err)
+		}
+		fmt.Printf("  ✅ Placed %s %s at %s\n", move.unit.Owner, move.unit.Type, destination)
 	} // Debug: Check final board state before returning
 	fmt.Printf("🔍 Final board state before return:\n")
 	for province, unit := range newState.Board.Units {
@@ -447,7 +498,25 @@ func (tp *TurnProcessor) applyResults(
 	return newState, nil
 }
 
-// applyMoveResult applies the result of a move order
+// applyMoveResultWithOriginalUnits applies the result of a move order using original unit positions
+func (tp *TurnProcessor) applyMoveResultWithOriginalUnits(
+	state *game.GameState,
+	order *game.Order,
+	result resolution.OrderOutcome,
+	dislodgedUnits *[]*game.Unit,
+	allOrders []*game.Order,
+	originalUnits map[string]*game.Unit,
+) error {
+	// FIXED: Use original unit from before any moves were applied
+	unit := originalUnits[order.From]
+	if unit == nil {
+		return fmt.Errorf("unit not found at %s for move order", order.From)
+	}
+
+	return tp.applyMoveResultInternal(state, order, result, dislodgedUnits, allOrders, unit)
+}
+
+// applyMoveResult applies the result of a move order (legacy function for non-circular moves)
 func (tp *TurnProcessor) applyMoveResult(
 	state *game.GameState,
 	order *game.Order,
@@ -459,6 +528,19 @@ func (tp *TurnProcessor) applyMoveResult(
 	if unit == nil {
 		return fmt.Errorf("unit not found at %s for move order", order.From)
 	}
+
+	return tp.applyMoveResultInternal(state, order, result, dislodgedUnits, allOrders, unit)
+}
+
+// applyMoveResultInternal contains the actual move application logic
+func (tp *TurnProcessor) applyMoveResultInternal(
+	state *game.GameState,
+	order *game.Order,
+	result resolution.OrderOutcome,
+	dislodgedUnits *[]*game.Unit,
+	allOrders []*game.Order,
+	unit *game.Unit,
+) error {
 
 	switch result.Result {
 	case resolution.MoveSuccess:

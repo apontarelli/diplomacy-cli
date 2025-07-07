@@ -7,12 +7,15 @@ import (
 // Adjudicator holds the state for a single turn's resolution using the
 // recursive dependency resolution algorithm from the adjudication article.
 type Adjudicator struct {
-	orders        map[string]*Order // Map from unit location to its order
-	orderedOrders []*Order          // Orders in their original input order
-	cycle         []*Order          // Tracks orders in a potential dependency cycle
-	recursionHits int               // Number of times we've hit recursion
-	uncertain     bool              // Whether the current resolution path is uncertain
+	orders         map[string]*Order // Map from unit location to its order
+	orderedOrders  []*Order          // Orders in their original input order
+	cycle          []*Order          // Tracks orders in a potential dependency cycle
+	recursionHits  int               // Number of times we've hit recursion
+	uncertain      bool              // Whether the current resolution path is uncertain
+	recursionDepth int               // Current recursion depth (safety limit)
 }
+
+const maxRecursionDepth = 100 // Safety limit to prevent infinite recursion
 
 // NewAdjudicator creates a new adjudicator for a set of orders.
 func NewAdjudicator(orders []Order) *Adjudicator {
@@ -48,6 +51,7 @@ func (adj *Adjudicator) ResolveAll() []AdjudicationResult {
 			adj.cycle = adj.cycle[:0]
 			adj.recursionHits = 0
 			adj.uncertain = false
+			adj.recursionDepth = 0 // Reset recursion depth
 
 			adj.resolve(order, true) // Start with optimistic resolution
 		}
@@ -67,6 +71,16 @@ func (adj *Adjudicator) ResolveAll() []AdjudicationResult {
 // resolve is the core recursive resolution function implementing the
 // partial information algorithm from the adjudication article.
 func (adj *Adjudicator) resolve(order *Order, optimistic bool) bool {
+	// Safety check: prevent infinite recursion
+	adj.recursionDepth++
+	defer func() { adj.recursionDepth-- }()
+
+	if adj.recursionDepth > maxRecursionDepth {
+		fmt.Printf("⚠️ Maximum recursion depth exceeded for %s, returning optimistic=%t\n", order.String(), optimistic)
+		adj.uncertain = true
+		return optimistic
+	}
+
 	// If already resolved, return cached result
 	if order.isResolved {
 		return order.resolution
@@ -80,13 +94,14 @@ func (adj *Adjudicator) resolve(order *Order, optimistic bool) bool {
 		}
 	}
 
-	// Check for cycle detection
+	// Check for cycle detection - FIXED: Prevent infinite recursion
 	if order.isVisited {
 		// We've found a cycle!
-		fmt.Printf("🔄 Cycle detected at %s\n", order.String())
+		fmt.Printf("🔄 Cycle detected at %s (cycle length: %d)\n", order.String(), len(adj.cycle))
 		adj.cycle = append(adj.cycle, order)
 		adj.recursionHits++
 		adj.uncertain = true
+		// CRITICAL FIX: Return immediately to prevent infinite recursion
 		return optimistic
 	}
 
@@ -101,14 +116,15 @@ func (adj *Adjudicator) resolve(order *Order, optimistic bool) bool {
 	adj.uncertain = false
 	optResult := adj.adjudicate(order, true)
 
-	// Pessimistic run (only if optimistic was uncertain and succeeded)
+	// Pessimistic run (only if optimistic was uncertain)
 	pesResult := optResult
-	if adj.uncertain && optResult {
+	if adj.uncertain {
 		adj.uncertain = false // Reset for pessimistic run
 		pesResult = adj.adjudicate(order, false)
+		fmt.Printf("    Pessimistic result: %t\n", pesResult)
 	}
 
-	// Backtrack
+	// Backtrack - ALWAYS reset visited flag
 	order.isVisited = false
 
 	// If both runs agree, we have a definitive result
@@ -119,9 +135,6 @@ func (adj *Adjudicator) resolve(order *Order, optimistic bool) bool {
 		// Clean up cycle data from this branch
 		adj.cycle = adj.cycle[:oldCycleLen]
 		adj.recursionHits = oldRecursionHits
-
-		// Reset visited flag
-		order.isVisited = false
 		return order.resolution
 	}
 
@@ -138,12 +151,20 @@ func (adj *Adjudicator) resolve(order *Order, optimistic bool) bool {
 
 	// If we've retreated to the ancestor of the whole cycle, apply backup rules
 	if adj.recursionHits == oldRecursionHits {
+		fmt.Printf("🔧 Applying backup rules (recursionHits: %d, oldRecursionHits: %d)\n", adj.recursionHits, oldRecursionHits)
 		// Apply backup rule on all orders in the cycle
 		adj.applyBackupRule()
 		adj.cycle = adj.cycle[:oldCycleLen]
 
-		// The backup rule might not have resolved this order, so try again
-		return adj.resolve(order, optimistic)
+		// FIXED: Don't recurse again - backup rule has resolved the orders
+		// Return the resolution that was set by the backup rule
+		if order.isResolved {
+			fmt.Printf("🔧 Order %s resolved by backup rule: %t\n", order.String(), order.resolution)
+			return order.resolution
+		}
+		// If backup rule didn't resolve this specific order, use optimistic default
+		fmt.Printf("🔧 Order %s not resolved by backup rule, using optimistic: %t\n", order.String(), optimistic)
+		return optimistic
 	}
 
 	// We're returning from recursion but not at the cycle ancestor yet
