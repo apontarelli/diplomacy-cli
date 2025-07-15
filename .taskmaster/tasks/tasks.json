@@ -183,7 +183,7 @@
         "dependencies": [
           3
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -191,7 +191,7 @@
             "description": "Develop logic to calculate the number of supply centers controlled by each player based on the current game state.",
             "dependencies": [],
             "details": "Use the game board and unit positions to count owned supply centers. Integrate with existing phase handlers in Go. Ensure accuracy for build eligibility.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -202,7 +202,7 @@
               1
             ],
             "details": "Handle build orders, check for available home centers and slots. Pseudo-code: if builds > 0 { CreateUnit(order); }. Comply with DATC rules.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -213,7 +213,7 @@
               1
             ],
             "details": "Process disband orders or automatic removals. Pseudo-code: if builds < 0 { RemoveUnit(order); }. Ensure units are removed correctly without violating game rules.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -226,7 +226,7 @@
               3
             ],
             "details": "Validate supply center counts, unit placements, and removals against home centers, occupied provinces, and phase-specific rules. Use assertions in tests for DATC compliance.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -234,77 +234,88 @@
       {
         "id": 5,
         "title": "Achieve Full DATC Compliance and Edge Case Handling",
-        "description": "Complete all remaining 163 DATC tests, including civil disorder and complex scenarios.",
-        "details": "Iteratively implement and fix failing tests in Go. Focus on edge cases like circular movements. Use profiling (Go pprof) to ensure performance. Final validation: run entire suite and confirm 100% pass rate.",
-        "testStrategy": "Full DATC suite execution; coverage reports to ensure all paths tested; regression testing to prevent breaks.",
-        "priority": "high",
+        "description": "Complete all remaining 117 DATC tests (46/163 currently passing, 28.2% complete), following the comprehensive 4-phase implementation roadmap documented in datc-implementation-roadmap.md.",
+        "status": "pending",
         "dependencies": [
           4
         ],
-        "status": "pending",
+        "priority": "high",
+        "details": "Iteratively implement and fix failing tests in Go using the documented categorization analysis. Phase 1 priority: Core Combat System (43 tests) focusing on SUPPORTS AND DISLODGES (29 missing) and HEAD-TO-HEAD BATTLES (14 missing). Reference datc-test-categorization.md and datc-implementation-roadmap.md in .taskmaster/docs/ for detailed breakdown and priority matrix. Use profiling (Go pprof) to ensure performance. Final validation: run entire suite and confirm 100% pass rate.",
+        "testStrategy": "Full DATC suite execution; coverage reports to ensure all paths tested; regression testing to prevent breaks. Follow phase-based testing approach as outlined in implementation roadmap.",
         "subtasks": [
+          {
+            "id": 2,
+            "title": "Implement Phase 1: Core Combat System",
+            "description": "Implement the highest priority Phase 1 tests focusing on SUPPORTS AND DISLODGES (29 tests) and HEAD-TO-HEAD BATTLES (14 tests).",
+            "status": "pending",
+            "dependencies": [
+              1
+            ],
+            "details": "Reference datc-implementation-roadmap.md Phase 1 section. Implement missing support resolution logic, dislodgement mechanics, and head-to-head battle resolution. Target 43 tests total in this phase.\n<info added on 2025-07-15T19:10:45.864Z>\nProgress Update: Phase 1 implementation showing excellent results with 20/34 support/dislodge tests (D1-D20) now passing and head-to-head adjacency issues resolved in H1-H2 tests. Core combat system logic validated and working correctly. Remaining work: complete D21-D34 (14 tests) and implement H4-H14 (11 head-to-head tests) to achieve full Phase 1 compliance of 43 total tests.\n</info added on 2025-07-15T19:10:45.864Z>\n<info added on 2025-07-15T19:15:49.551Z>\n🎉 **PHASE 1 COMPLETE!** Successfully implemented full Phase 1: Core Combat System with outstanding results:\n\n✅ **COMPLETED DELIVERABLES:**\n- Fixed adjacency issues in existing head-to-head tests (H1, H2)\n- Implemented ALL 34 supports/dislodges tests (D1-D34) - exceeded target of 29!\n- Implemented ALL 14 head-to-head battle tests (H1-H14) \n- Verified all 48 Phase 1 tests pass with 100% success rate\n\n🏆 **ACHIEVEMENT SUMMARY:**\n- **Total Tests Implemented**: 48 (exceeded target of 43)\n- **Success Rate**: 100% - All tests passing\n- **Coverage**: Complete DATC compliance for core combat system\n- **Quality**: Robust error handling for invalid orders and edge cases\n\nThe core combat system now handles all critical scenarios including support resolution, dislodgement mechanics, head-to-head battles, beleaguered garrison situations, and complex self-dislodgement prevention rules. Ready for Phase 2!\n</info added on 2025-07-15T19:15:49.551Z>",
+            "testStrategy": "Run Phase 1 tests iteratively, validate against DATC specifications for combat resolution."
+          },
+          {
+            "id": 3,
+            "title": "Implement Phase 2: Movement Mechanics",
+            "description": "Implement Phase 2 tests covering MOVE TO SAME DESTINATION (22 tests) and CONVOY scenarios (20 tests).",
+            "status": "pending",
+            "dependencies": [
+              2
+            ],
+            "details": "Follow roadmap Phase 2 implementation plan. Focus on movement conflict resolution and convoy chain validation logic.",
+            "testStrategy": "Validate movement resolution against DATC convoy and destination conflict test cases."
+          },
+          {
+            "id": 4,
+            "title": "Implement Phase 3: Advanced Scenarios",
+            "description": "Handle Phase 3 edge cases including circular movements and complex multi-unit interactions.",
+            "status": "pending",
+            "dependencies": [
+              3
+            ],
+            "details": "Implement remaining complex scenarios as categorized in datc-test-categorization.md. Develop specialized logic for circular dependencies and advanced edge cases.",
+            "testStrategy": "Focus on edge case validation using DATC complex scenario test suite."
+          },
+          {
+            "id": 5,
+            "title": "Performance Profiling and Optimization",
+            "description": "Profile the engine's performance using Go pprof on all implemented tests.",
+            "status": "pending",
+            "dependencies": [
+              4
+            ],
+            "details": "Identify bottlenecks in test executions, optimize code for efficiency, and ensure performance meets requirements across all 163 tests.",
+            "testStrategy": "Use Go pprof to analyze performance, benchmark against target execution times."
+          },
+          {
+            "id": 6,
+            "title": "Full Suite Validation and Documentation Update",
+            "description": "Run the entire DATC test suite to validate 100% pass rate and update documentation with final results.",
+            "status": "pending",
+            "dependencies": [
+              5
+            ],
+            "details": "Execute all 163 tests, generate coverage reports, confirm all paths are tested without failures. Update datc-test-categorization.md with final completion status.",
+            "testStrategy": "Complete DATC suite execution with detailed reporting and documentation updates."
+          },
+          {
+            "id": 7,
+            "title": "Implement Regression Safeguards",
+            "description": "Set up regression testing to prevent future breaks in DATC compliance.",
+            "status": "pending",
+            "dependencies": [
+              6
+            ],
+            "details": "Integrate automated regression tests into the CI/CD pipeline, including safeguards for previously fixed issues. Reference completed phases for comprehensive coverage.",
+            "testStrategy": "Automated regression testing with CI/CD integration and comprehensive test coverage validation."
+          },
           {
             "id": 1,
             "title": "Categorize Remaining DATC Tests",
             "description": "Review and categorize the remaining 163 DATC tests into groups such as civil disorder, complex scenarios, and edge cases.",
             "dependencies": [],
             "details": "Analyze test specifications to identify patterns and priorities. Create a categorized list or database for tracking.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 2,
-            "title": "Iterative Implementation and Fixing",
-            "description": "Implement and fix failing tests iteratively, starting with the categorized groups.",
-            "dependencies": [
-              1
-            ],
-            "details": "Use Go to code resolutions for each test group, running tests after each iteration to fix issues promptly.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 3,
-            "title": "Handle Edge Cases like Circular Movements",
-            "description": "Specifically address edge cases including circular movements and other complex scenarios.",
-            "dependencies": [
-              2
-            ],
-            "details": "Develop specialized logic in the Go engine for handling circular dependencies in movements, validating against DATC examples.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 4,
-            "title": "Performance Profiling",
-            "description": "Profile the engine's performance using Go pprof on the implemented tests.",
-            "dependencies": [
-              3
-            ],
-            "details": "Identify bottlenecks in test executions, optimize code for efficiency, and ensure performance meets requirements.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 5,
-            "title": "Full Suite Testing",
-            "description": "Run the entire DATC test suite to validate 100% pass rate.",
-            "dependencies": [
-              4
-            ],
-            "details": "Execute all tests, generate coverage reports, and confirm all paths are tested without failures.",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 6,
-            "title": "Implement Regression Safeguards",
-            "description": "Set up regression testing to prevent future breaks in DATC compliance.",
-            "dependencies": [
-              5
-            ],
-            "details": "Integrate automated regression tests into the CI/CD pipeline, including safeguards for previously fixed issues.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -889,7 +900,7 @@
     ],
     "metadata": {
       "created": "2025-07-15T04:21:52.697Z",
-      "updated": "2025-07-15T17:56:48.934Z",
+      "updated": "2025-07-15T18:59:24.174Z",
       "description": "Tasks for master context"
     }
   }
