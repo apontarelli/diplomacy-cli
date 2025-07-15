@@ -87,15 +87,27 @@ The product targets strategy game enthusiasts, AI researchers, and developers in
 
 ## Development Roadmap
 
-### Phase 1: Core Engine (COMPLETED)
+### Phase 1: Core Engine Foundation (COMPLETED)
 **MVP Requirements:**
-- Complete Diplomacy rules engine with DATC compliance
+- Complete Diplomacy rules engine architecture
 - Order validation pipeline (syntax → semantic → resolution)
 - Multi-pass resolution algorithm with convoy/support systems
-- Comprehensive test suite with 43/163 DATC tests passing
 - Integration testing and pipeline orchestration
+- DATC test infrastructure with 43/163 tests passing
 
-**Status**: ✅ COMPLETE - Production-ready engine with complex scenario handling
+**Status**: ✅ COMPLETE - Solid foundation with working engine architecture
+
+### Phase 1.5: Full DATC Compliance (IN PROGRESS)
+**MVP Requirements:**
+- Complete all 163 DATC test cases (currently 43/163 passing)
+- Implement remaining convoy paradox scenarios
+- Add retreat and build phase mechanics
+- Handle civil disorder and complex edge cases
+- Achieve 100% DATC compliance before proceeding
+
+**Status**: 🎯 CURRENT PRIORITY - Must complete before Phase 2
+
+**Rationale**: Full DATC compliance ensures the engine handles all official Diplomacy scenarios correctly. Moving to persistence without complete rule compliance risks building on an incomplete foundation that could require breaking changes later.
 
 ### Phase 2: Persistence Layer
 **MVP Requirements:**
@@ -147,9 +159,10 @@ The product targets strategy game enthusiasts, AI researchers, and developers in
 
 ## Logical Dependency Chain
 
-### Foundation First (Phase 1 → 2)
-- **Core Engine** must be complete before persistence to ensure data model stability
-- **Database Layer** provides foundation for all user-facing features
+### Foundation First (Phase 1 → 1.5 → 2)
+- **Core Engine Architecture** provides the foundation for rule implementation
+- **Full DATC Compliance** ensures complete and correct rule implementation before building on top
+- **Database Layer** provides foundation for all user-facing features only after rules are complete
 - **Authentication** enables secure multi-user gameplay
 
 ### Rapid Prototyping (Phase 3 → 4)
@@ -171,7 +184,7 @@ The product targets strategy game enthusiasts, AI researchers, and developers in
 
 ### Technical Challenges
 **Risk**: DATC compliance complexity with remaining 120 test cases
-**Mitigation**: Incremental implementation with category-by-category validation, comprehensive test infrastructure already established
+**Mitigation**: Incremental implementation with category-by-category validation, comprehensive test infrastructure already established. This is now the mandatory Phase 1.5 before any other development.
 
 **Risk**: Performance bottlenecks in resolution engine
 **Mitigation**: Hybrid architecture already optimized, profiling tools integrated, data-oriented design principles applied
@@ -208,6 +221,7 @@ The product targets strategy game enthusiasts, AI researchers, and developers in
 - **Docker Deployment**: Containerized deployment for consistency and scalability
 
 ### Current Implementation Status
-- **Phase 1**: ✅ COMPLETE (43/163 DATC tests passing, production-ready engine)
-- **Phase 2**: 🎯 NEXT PRIORITY (Database integration and persistence)
-- **Estimated Completion**: 6-8 months for full feature set with single developer
+- **Phase 1**: ✅ COMPLETE (Engine foundation with 43/163 DATC tests passing)
+- **Phase 1.5**: 🎯 CURRENT PRIORITY (Complete remaining 120 DATC tests for full compliance)
+- **Phase 2**: ⏳ BLOCKED (Database integration awaits full DATC compliance)
+- **Estimated Completion**: 8-10 months for full feature set with single developer (extended to ensure quality foundation)

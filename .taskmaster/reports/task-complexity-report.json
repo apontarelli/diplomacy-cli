@@ -1,0 +1,133 @@
+{
+	"meta": {
+		"generatedAt": "2025-07-15T04:24:59.596Z",
+		"tasksAnalyzed": 15,
+		"totalTasks": 15,
+		"analysisCount": 15,
+		"thresholdScore": 5,
+		"projectName": "Taskmaster",
+		"usedResearch": true
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 1,
+			"taskTitle": "Implement Remaining DATC Test Categories for Order Validation",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Expand the task of implementing remaining DATC test categories into subtasks covering lexer expansion, parser updates, semantic validation methods for each category (basic moves, holds, simple supports), integration with existing pipeline, and comprehensive testing.",
+			"reasoning": "High domain complexity due to Diplomacy rules and DATC compliance; builds on existing code but requires precise parsing and validation. Score 7 reflects moderate technical challenge in Go with type-safe methods. 5 subtasks allow modular implementation per category, aligning with best practices in test-driven development."
+		},
+		{
+			"taskId": 2,
+			"taskTitle": "Add Convoy System and Paradox Resolution",
+			"complexityScore": 8,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break down the convoy system implementation into subtasks for graph-based path finding, multi-pass paradox resolution logic, optimization with data-oriented design, and integration testing against DATC cases.",
+			"reasoning": "Involves graph algorithms (BFS) and iterative resolution for paradoxes, which are complex in game adjudication. Score 8 due to performance optimization needs and dependency on task 1. 4 subtasks promote separation of concerns, following industry patterns for game engines."
+		},
+		{
+			"taskId": 3,
+			"taskTitle": "Incorporate Retreat and Dislodgement Mechanics",
+			"complexityScore": 6,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Divide the retreat mechanics task into subtasks for dislodged unit struct design, retreat validation and application logic, and handling of conflicts per DATC rules.",
+			"reasoning": "Extends resolution engine with phase-specific logic; moderate complexity in validation and conflicts. Score 6 as it builds on prior tasks with clear structs. 3 subtasks ensure focused implementation, adhering to modular design standards."
+		},
+		{
+			"taskId": 4,
+			"taskTitle": "Handle Build and Adjustment Phases",
+			"complexityScore": 5,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Expand build phase handling into subtasks for supply center calculation, unit creation logic, unit removal logic, and validation against game rules.",
+			"reasoning": "Involves state calculations and validations; straightforward but requires accuracy. Score 5 reflects dependency chain and standard phase handling patterns. 4 subtasks allow granular breakdown for testing and integration."
+		},
+		{
+			"taskId": 5,
+			"taskTitle": "Achieve Full DATC Compliance and Edge Case Handling",
+			"complexityScore": 9,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Break down full DATC compliance into subtasks for categorizing remaining tests, iterative implementation and fixing, edge case handling (e.g., circular movements), performance profiling, full suite testing, and regression safeguards.",
+			"reasoning": "Broad scope covering 163 tests with complex edges; requires profiling and iteration. Score 9 due to comprehensive nature and risk of regressions. 6 subtasks support incremental progress, aligning with agile testing practices."
+		},
+		{
+			"taskId": 6,
+			"taskTitle": "Design Database Schema for Game State",
+			"complexityScore": 4,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Divide database schema design into subtasks for defining core tables (Games, Units, Orders), ensuring relationships and ACID compliance, and integrating with GORM ORM.",
+			"reasoning": "Standard schema design with ORM; low complexity but needs relational integrity. Score 4 as it follows common database patterns. 3 subtasks for clear separation of design elements."
+		},
+		{
+			"taskId": 7,
+			"taskTitle": "Implement Game State Serialization and Deserialization",
+			"complexityScore": 5,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Expand serialization into subtasks for JSON marshaling of structs, database transaction handling, relation management with foreign keys, and round-trip validation.",
+			"reasoning": "Involves JSON handling and DB ops; moderate due to error-prone relations. Score 5 reflects best practices in data persistence. 4 subtasks ensure robust implementation and testing."
+		},
+		{
+			"taskId": 8,
+			"taskTitle": "Add User Management and Authentication in Database",
+			"complexityScore": 4,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down user management into subtasks for schema extension (Users table), implementing CRUD with bcrypt hashing, and preparing for JWT integration.",
+			"reasoning": "Basic auth with hashing; standard security practices. Score 4 as it's foundational and low-risk. 3 subtasks align with CRUD patterns."
+		},
+		{
+			"taskId": 9,
+			"taskTitle": "Develop RESTful API Endpoints for Game Management",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Divide API development into subtasks for setting up Gin router, implementing key endpoints (create/join games, submit orders), adding security middleware, and endpoint testing.",
+			"reasoning": "REST API with Gin; moderate integration with DB. Score 6 due to multiple endpoints and security. 4 subtasks follow API design best practices."
+		},
+		{
+			"taskId": 10,
+			"taskTitle": "Implement JWT-Based Authentication for API",
+			"complexityScore": 5,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Expand JWT authentication into subtasks for token generation and login endpoint, validation middleware, and handling expiration/revocation.",
+			"reasoning": "Standard JWT implementation; builds on user management. Score 5 reflects security considerations. 3 subtasks for focused auth flow."
+		},
+		{
+			"taskId": 11,
+			"taskTitle": "Add Real-Time Updates via WebSockets",
+			"complexityScore": 7,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break down WebSockets integration into subtasks for connection handling with Gorilla, pub/sub broadcasting, update event triggers, and security integration.",
+			"reasoning": "Real-time comms add concurrency challenges. Score 7 due to pub/sub patterns and testing complexity. 4 subtasks ensure scalable design."
+		},
+		{
+			"taskId": 12,
+			"taskTitle": "Build Terminal User Interface with Bubble Tea",
+			"complexityScore": 6,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Divide TUI building into subtasks for core model setup, view rendering (map and inputs), and update handling logic.",
+			"reasoning": "TUI with Bubble Tea; moderate for UI state management. Score 6 as it's terminal-based but requires interactive patterns. 3 subtasks for MVC-like structure."
+		},
+		{
+			"taskId": 13,
+			"taskTitle": "Implement Order Input and Validation Feedback in TUI",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Expand TUI order input into subtasks for input field integration, real-time validation calls, error display with suggestions, and submission handling.",
+			"reasoning": "Integrates UI with backend validation; moderate complexity in real-time feedback. Score 6 reflects UX considerations. 4 subtasks for iterative UI development."
+		},
+		{
+			"taskId": 14,
+			"taskTitle": "Develop Tactical AI in Go",
+			"complexityScore": 8,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break down tactical AI development into subtasks for heuristic design, order generation logic, state evaluation functions, integration with game engine, and scenario-based testing.",
+			"reasoning": "AI heuristics in game context; high complexity for effective decisions. Score 8 due to algorithmic depth. 5 subtasks support iterative AI improvement."
+		},
+		{
+			"taskId": 15,
+			"taskTitle": "Integrate LLM Strategist with Python/DSpy",
+			"complexityScore": 9,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Expand LLM integration into subtasks for Python service setup with DSpy, prompt engineering for diplomacy, API interfacing with Go, mock response handling, and end-to-end testing.",
+			"reasoning": "Cross-language integration with LLM; complex due to AI unpredictability and API calls. Score 9 reflects emerging best practices in AI integration. 5 subtasks for modular rollout."
+		}
+	]
+}

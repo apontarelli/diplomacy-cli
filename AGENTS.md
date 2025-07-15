@@ -39,7 +39,6 @@ To activate the development environment, `cd` into the project directory and all
 ## Best Practices & Conventions
 
 - **Dependency Management:** When adding new dependencies, always search for the latest stable version and pin to it. For Nix packages, prefer stable channels (e.g., `nixos-25.05`) over `nixos-unstable`.
-- **Task Management:** The `TODO.md` file is used to track the current development task. Keep it up to date with the current focus.
 - **Comments:** Use comments sparingly, but when they are necessary, make them clear and concise.
 - **Architecture:**
   - **Data-Oriented Design:** The project prefers a data-oriented approach, keeping data and logic separate. However, this is a guiding principle, not a dogmatic rule.
@@ -47,7 +46,6 @@ To activate the development environment, `cd` into the project directory and all
 - **Code Style:**
   - **Python**: Follow PEP 8, use type hints for all function signatures and complex types.
   - **Go**: Follow standard Go conventions (gofmt, standard project layout). No JSON tags on domain types.
-- **General:**
 
 ## Architecture Decisions
 

@@ -1,0 +1,896 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Implement Remaining DATC Test Categories for Order Validation",
+        "description": "Extend the existing order validation pipeline to handle additional DATC test cases in categories like basic moves, holds, and simple supports, building on the 43 passing tests.",
+        "details": "Using Go 1.23, expand the lexer, parser, and semantic validator structs. For each category, add type-safe methods to check syntax and semantics. Example pseudo-code: func ValidateOrder(order Order) error { tokens := Lexer(order.Text); ast := Parser(tokens); return SemanticCheck(ast, gameState); }. Reference DATC documentation for specific cases. Ensure compliance with official rules for moves and supports.",
+        "testStrategy": "Run automated tests against DATC suite subsets; verify 100% pass rate for implemented categories using Go's testing package with table-driven tests.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Expand Lexer and Update Parser for Remaining DATC Categories",
+            "description": "Extend the lexer to recognize tokens for basic moves, holds, and simple supports, and update the parser to build AST for these order types.",
+            "dependencies": [],
+            "details": "In Go 1.23, modify the Lexer struct to handle new token types based on DATC syntax. Update Parser to parse expressions for moves, holds, and supports. Reference DATC documentation for token patterns.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement Semantic Validation for Basic Moves",
+            "description": "Add type-safe methods to semantically validate basic move orders against game state.",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement func ValidateBasicMove(ast AST, state GameState) error { // check unit position, destination, etc. }. Ensure compliance with Diplomacy rules for moves without support or convoy.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement Semantic Validation for Holds",
+            "description": "Add type-safe methods to semantically validate hold orders.",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement func ValidateHold(ast AST, state GameState) error { // verify unit is holding in its province }. Simple validation as holds do not involve movement.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement Semantic Validation for Simple Supports",
+            "description": "Add type-safe methods to semantically validate simple support orders.",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement func ValidateSimpleSupport(ast AST, state GameState) error { // check supporting unit, supported action, adjacency }. Handle basic support cases without convoys.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Integrate Validations into Existing Pipeline and Perform Comprehensive Testing",
+            "description": "Integrate the new lexer, parser, and validation methods into the order validation pipeline, and add tests for all categories.",
+            "dependencies": [
+              2,
+              3,
+              4
+            ],
+            "details": "Update ValidateOrder to use new components. Use Go's testing package for table-driven tests against DATC subsets. Aim for 100% pass rate on basic moves, holds, and simple supports.",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Add Convoy System and Paradox Resolution",
+        "description": "Implement convoy mechanics including path finding and paradox resolution as per DATC requirements.",
+        "details": "In Go 1.23, use graph algorithms for convoy paths (e.g., BFS for adjacency checks). Handle paradoxes with multi-pass resolution: iterate until stable state. Pseudo-code: func ResolveConvoys(orders []Order, board Board) { for !stable { ApplyPass(orders); CheckParadoxes(); } }. Optimize with arrays for performance as per data-oriented design.",
+        "testStrategy": "Execute DATC convoy-specific tests; use integration tests to simulate full turns and assert expected unit positions.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Graph-Based Path Finding for Convoys",
+            "description": "Develop the mechanism to find valid convoy paths using graph algorithms.",
+            "dependencies": [],
+            "details": "In Go 1.23, use BFS for adjacency checks on the board graph to validate convoy routes.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement Multi-Pass Paradox Resolution Logic",
+            "description": "Create iterative logic to resolve paradoxes in convoy orders.",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement the resolution function with loops until a stable state is reached, following the pseudo-code for ResolveConvoys.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Optimize Convoy System with Data-Oriented Design",
+            "description": "Apply performance optimizations using data-oriented principles.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Refactor path finding and resolution to use arrays for improved cache efficiency and overall performance.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Integration Testing Against DATC Cases",
+            "description": "Develop and execute tests to verify the convoy system against standard cases.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Use DATC convoy-specific tests; simulate full game turns and assert correct unit positions and outcomes.",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Incorporate Retreat and Dislodgement Mechanics",
+        "description": "Add support for retreat phases, including dislodged unit handling and retreat order validation.",
+        "details": "Extend the resolution engine in Go to include retreat phase logic. Use structs for DislodgedUnit with possible retreat provinces. Pseudo-code: func ProcessRetreats(dislodged []Unit) { for each unit { ValidateRetreatOptions(unit); ApplyRetreat(order); } }. Ensure DATC compliance for retreat conflicts.",
+        "testStrategy": "Test with DATC retreat cases; mock game states and verify retreat outcomes match expected results.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Dislodged Unit Struct",
+            "description": "Create a struct for handling dislodged units, including possible retreat provinces.",
+            "dependencies": [],
+            "details": "Define a Go struct DislodgedUnit with fields for the unit, dislodger, and list of valid retreat destinations based on game rules.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement Retreat Validation and Application Logic",
+            "description": "Develop logic to validate retreat orders and apply them to the game state.",
+            "dependencies": [
+              1
+            ],
+            "details": "Extend the resolution engine with functions to validate retreat options for dislodged units and apply successful retreat orders, ensuring compliance with basic retreat rules.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Handle Retreat Conflicts per DATC Rules",
+            "description": "Implement conflict resolution for competing retreat orders according to DATC specifications.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Add logic to detect and resolve conflicts in retreat phases, such as when multiple units attempt to retreat to the same province, following DATC guidelines for dislodgement and standoffs.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Handle Build and Adjustment Phases",
+        "description": "Implement build phase mechanics for unit creation and removal, including supply center calculations.",
+        "details": "In the Go engine, add phase handlers for builds. Calculate supply centers from game state. Pseudo-code: func AdjustUnits(player Player, builds int) { if builds > 0 { CreateUnit(order); } else { RemoveUnit(order); } }. Validate against home centers and available slots.",
+        "testStrategy": "Use DATC build tests; assert correct unit counts and positions post-adjustment.",
+        "priority": "high",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Supply Center Calculation",
+            "description": "Develop logic to calculate the number of supply centers controlled by each player based on the current game state.",
+            "dependencies": [],
+            "details": "Use the game board and unit positions to count owned supply centers. Integrate with existing phase handlers in Go. Ensure accuracy for build eligibility.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement Unit Creation Logic",
+            "description": "Add functionality for creating new units during the build phase, based on available builds from supply center calculations.",
+            "dependencies": [
+              1
+            ],
+            "details": "Handle build orders, check for available home centers and slots. Pseudo-code: if builds > 0 { CreateUnit(order); }. Comply with DATC rules.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement Unit Removal Logic",
+            "description": "Add functionality for removing units during the adjustment phase when supply centers are insufficient.",
+            "dependencies": [
+              1
+            ],
+            "details": "Process disband orders or automatic removals. Pseudo-code: if builds < 0 { RemoveUnit(order); }. Ensure units are removed correctly without violating game rules.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement Validation Against Game Rules",
+            "description": "Add validation checks to ensure all build and adjustment actions comply with Diplomacy game rules.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Validate supply center counts, unit placements, and removals against home centers, occupied provinces, and phase-specific rules. Use assertions in tests for DATC compliance.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Achieve Full DATC Compliance and Edge Case Handling",
+        "description": "Complete all remaining 163 DATC tests, including civil disorder and complex scenarios.",
+        "details": "Iteratively implement and fix failing tests in Go. Focus on edge cases like circular movements. Use profiling (Go pprof) to ensure performance. Final validation: run entire suite and confirm 100% pass rate.",
+        "testStrategy": "Full DATC suite execution; coverage reports to ensure all paths tested; regression testing to prevent breaks.",
+        "priority": "high",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Categorize Remaining DATC Tests",
+            "description": "Review and categorize the remaining 163 DATC tests into groups such as civil disorder, complex scenarios, and edge cases.",
+            "dependencies": [],
+            "details": "Analyze test specifications to identify patterns and priorities. Create a categorized list or database for tracking.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Iterative Implementation and Fixing",
+            "description": "Implement and fix failing tests iteratively, starting with the categorized groups.",
+            "dependencies": [
+              1
+            ],
+            "details": "Use Go to code resolutions for each test group, running tests after each iteration to fix issues promptly.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Handle Edge Cases like Circular Movements",
+            "description": "Specifically address edge cases including circular movements and other complex scenarios.",
+            "dependencies": [
+              2
+            ],
+            "details": "Develop specialized logic in the Go engine for handling circular dependencies in movements, validating against DATC examples.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Performance Profiling",
+            "description": "Profile the engine's performance using Go pprof on the implemented tests.",
+            "dependencies": [
+              3
+            ],
+            "details": "Identify bottlenecks in test executions, optimize code for efficiency, and ensure performance meets requirements.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Full Suite Testing",
+            "description": "Run the entire DATC test suite to validate 100% pass rate.",
+            "dependencies": [
+              4
+            ],
+            "details": "Execute all tests, generate coverage reports, and confirm all paths are tested without failures.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Implement Regression Safeguards",
+            "description": "Set up regression testing to prevent future breaks in DATC compliance.",
+            "dependencies": [
+              5
+            ],
+            "details": "Integrate automated regression tests into the CI/CD pipeline, including safeguards for previously fixed issues.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Design Database Schema for Game State",
+        "description": "Create SQLite schema for persisting game states, orders, and board data using GORM with proper model definitions and relationships.",
+        "status": "pending",
+        "dependencies": [
+          5
+        ],
+        "priority": "medium",
+        "details": "Using SQLite 3.46.0 and GORM v1.25.5, define core tables for Diplomacy game: Games (with gorm.Model, Name, Phase, Year, Status), Players (GameID, UserID, Nation), Units (GameID, PlayerID, Type, Province, Coast), Orders (GameID, PlayerID, UnitID, Type, Target, Resolved). Use gorm.Model for standard fields (ID, CreatedAt, UpdatedAt, DeletedAt). Implement proper associations (has many, belongs to) with foreign key constraints using 'constraint:OnUpdate:CASCADE,OnDelete:SET NULL'. Ensure ACID compliance with db.Transaction() for data integrity. Use AutoMigrate for schema management and create appropriate indexes for frequently queried fields.",
+        "testStrategy": "Schema validation tests using GORM's Migrator; insert sample game data and verify relationships work correctly; test foreign key constraints and cascading behavior; validate transaction rollback scenarios.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define GORM Model Structs for Core Tables",
+            "description": "Create GORM model structs for Game, Player, Unit, and Order with proper field types and gorm.Model embedding.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "Define structs using gorm.Model for standard fields. Game struct with Name, Phase (spring/fall/retreat/build), Year, Status (waiting/active/finished). Player with GameID, UserID, Nation. Unit with GameID, PlayerID, Type (army/fleet), Province, Coast. Order with GameID, PlayerID, UnitID, Type (move/hold/support/convoy), Target, Resolved boolean.",
+            "testStrategy": "Validate struct tags and field types; test model instantiation"
+          },
+          {
+            "id": 2,
+            "title": "Configure GORM Associations and Foreign Key Constraints",
+            "description": "Set up proper GORM associations between models with foreign key constraints and cascading behavior.",
+            "status": "pending",
+            "dependencies": [
+              1
+            ],
+            "details": "Configure has many/belongs to relationships: Game has many Players, Units, Orders. Player belongs to Game and User. Use gorm tags for foreign keys with 'constraint:OnUpdate:CASCADE,OnDelete:SET NULL'. Set up proper association tags like 'foreignKey:GameID'.",
+            "testStrategy": "Test association queries; verify foreign key constraint behavior with cascading updates and deletes"
+          },
+          {
+            "id": 3,
+            "title": "Implement Auto-Migration and Database Initialization",
+            "description": "Set up GORM auto-migration and database initialization with proper indexing and constraints.",
+            "status": "pending",
+            "dependencies": [
+              2
+            ],
+            "details": "Use db.AutoMigrate(&Game{}, &Player{}, &Unit{}, &Order{}) for schema creation. Create indexes on frequently queried fields (GameID, PlayerID). Use db.Migrator().CreateConstraint() for additional foreign key constraints. Implement database initialization function with proper error handling.",
+            "testStrategy": "Test migration execution; verify indexes are created; test constraint creation and enforcement"
+          },
+          {
+            "id": 4,
+            "title": "Implement Transaction Wrapper for Game Operations",
+            "description": "Create transaction wrapper functions for game state operations to ensure ACID compliance.",
+            "status": "pending",
+            "dependencies": [
+              3
+            ],
+            "details": "Implement db.Transaction() wrapper for multi-table operations like game creation, order submission, and game state updates. Create helper functions for common transactional operations with proper error handling and rollback mechanisms.",
+            "testStrategy": "Test transaction rollback scenarios; verify data consistency during concurrent operations; test error handling in transactions"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Implement Game State Serialization and Deserialization",
+        "description": "Add functions to save and load game states to/from the database.",
+        "details": "In Go, use JSON marshaling for complex structs, store in DB. Pseudo-code: func SaveState(game Game) { tx := db.Begin(); defer tx.Commit(); // insert/update records }. Handle relations with foreign keys.",
+        "testStrategy": "Round-trip tests: save state, load, compare equality; error handling for corruption.",
+        "priority": "medium",
+        "dependencies": [
+          6
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement JSON Marshaling for Game Structs",
+            "description": "Develop functions to marshal and unmarshal game state structs to and from JSON format.",
+            "dependencies": [],
+            "details": "Use Go's encoding/json package to handle complex structs like Game, Board, Units, and Orders. Ensure custom marshaling for any non-standard types.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement Database Transaction Handling",
+            "description": "Create transactional database operations for saving and loading game states.",
+            "dependencies": [
+              1
+            ],
+            "details": "Use GORM or sql package to begin, commit, or rollback transactions. Pseudo-code: tx := db.Begin(); // insert data; tx.Commit(); Handle errors appropriately.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Manage Relations with Foreign Keys",
+            "description": "Handle relational data management including foreign key constraints for game entities.",
+            "dependencies": [
+              2
+            ],
+            "details": "Define database schemas with foreign keys for relations like units to players, orders to units. Implement cascading inserts/updates within transactions.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement Round-Trip Validation",
+            "description": "Add validation tests to ensure saved and loaded game states match.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Write tests that save a game state, load it back, and compare for equality. Include error handling for corrupted data or invalid JSON.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Add User Management and Authentication in Database",
+        "description": "Extend schema for users and implement basic CRUD for user accounts.",
+        "details": "Add Users table (id, username, password_hash). Use bcrypt for hashing. In Go, implement RegisterUser and Authenticate functions. Prepare for JWT integration.",
+        "testStrategy": "Unit tests for user creation, auth success/failure; integration with DB.",
+        "priority": "medium",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Extend Database Schema for Users Table",
+            "description": "Add the Users table to the existing database schema.",
+            "dependencies": [],
+            "details": "Define Users table with fields: id, username, password_hash. Use GORM for schema migration.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement CRUD Operations with Bcrypt Hashing",
+            "description": "Develop create, read, update, and delete functions for user management, incorporating bcrypt for password hashing.",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement RegisterUser function using bcrypt for hashing. Ensure CRUD operations handle database interactions securely.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement Authentication and Prepare for JWT Integration",
+            "description": "Create authentication functions and set up necessary components for future JWT integration.",
+            "dependencies": [
+              2
+            ],
+            "details": "Develop Authenticate function to verify credentials. Prepare structures and helpers for JWT token generation and validation.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Develop RESTful API Endpoints for Game Management",
+        "description": "Create API routes for creating/joining games and submitting orders.",
+        "details": "Use Gin v1.10.0 in Go for router. Endpoints: POST /games, POST /games/:id/join, POST /games/:id/orders. Secure with middleware.",
+        "testStrategy": "API tests with httptest; mock DB and assert responses match expected JSON.",
+        "priority": "medium",
+        "dependencies": [
+          8
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set Up Gin Router",
+            "description": "Initialize and configure the Gin router for the RESTful API.",
+            "dependencies": [],
+            "details": "Use Gin v1.10.0 in Go to set up the main router instance and basic configuration.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement Key Endpoints",
+            "description": "Develop the core API endpoints for creating games, joining games, and submitting orders.",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement POST /games, POST /games/:id/join, and POST /games/:id/orders, integrating with the database as needed.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Add Security Middleware",
+            "description": "Incorporate security middleware to protect the API endpoints.",
+            "dependencies": [
+              2
+            ],
+            "details": "Add middleware for authentication and authorization, ensuring secure access to the endpoints.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Test API Endpoints",
+            "description": "Create and run tests for the implemented API endpoints.",
+            "dependencies": [
+              3
+            ],
+            "details": "Use httptest for API testing, mock the database, and assert that responses match expected JSON structures.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Implement JWT-Based Authentication for API",
+        "description": "Add authentication endpoints and JWT token management.",
+        "details": "Use github.com/golang-jwt/jwt v5.2.1. Endpoints: POST /login returns JWT. Middleware to validate tokens on protected routes.",
+        "testStrategy": "Test token generation, validation, expiration; unauthorized access rejection.",
+        "priority": "medium",
+        "dependencies": [
+          9
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Token Generation and Login Endpoint",
+            "description": "Develop the login endpoint to generate JWT tokens upon successful user authentication.",
+            "dependencies": [],
+            "details": "Use github.com/golang-jwt/jwt v5.2.1 to create signed tokens with user claims. Endpoint: POST /login that verifies credentials and returns JWT.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Create Validation Middleware",
+            "description": "Build middleware to validate JWT tokens on protected API routes.",
+            "dependencies": [
+              1
+            ],
+            "details": "Parse and verify JWT signatures, check claims, and reject unauthorized requests. Integrate with API router for protected endpoints.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Handle Token Expiration and Revocation",
+            "description": "Implement mechanisms for handling JWT expiration and revocation.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Configure token expiration in claims. For revocation, use a blacklist or short-lived tokens with refresh mechanism. Handle expired tokens in validation middleware.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "title": "Add Real-Time Updates via WebSockets",
+        "description": "Integrate WebSockets for live game state changes.",
+        "details": "Use Gorilla WebSocket v1.5.3 in Go. Broadcast updates on channels like game state changes. Pseudo-code: func HandleWS(conn *websocket.Conn) { // subscribe to pubsub, send updates }.",
+        "testStrategy": "Simulate connections, trigger events, verify received messages match expected.",
+        "priority": "medium",
+        "dependencies": [
+          10
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement WebSocket Connection Handling with Gorilla",
+            "description": "Set up WebSocket connections using Gorilla WebSocket library to handle client connections for real-time updates.",
+            "dependencies": [],
+            "details": "Use Gorilla WebSocket v1.5.3 to upgrade HTTP connections to WebSockets. Implement a handler function to manage incoming connections and maintain a list of active clients.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Set Up Pub/Sub Broadcasting Mechanism",
+            "description": "Integrate a publish-subscribe pattern to broadcast game state updates to connected clients.",
+            "dependencies": [
+              1
+            ],
+            "details": "Utilize Go channels or a library like Redis for pub/sub. Subscribe clients to relevant channels (e.g., game-specific) and broadcast messages upon state changes.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Integrate Update Event Triggers",
+            "description": "Add triggers for game events that initiate WebSocket broadcasts, such as state changes or orders.",
+            "dependencies": [
+              2
+            ],
+            "details": "Hook into the game engine's event system (e.g., after order resolution or phase changes) to publish updates to the pub/sub system, ensuring real-time notifications.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Add Security Integration for WebSockets",
+            "description": "Implement security measures for WebSocket connections, including authentication and message validation.",
+            "dependencies": [
+              1,
+              3
+            ],
+            "details": "Integrate JWT or session-based authentication to secure connections. Validate incoming messages and prevent unauthorized access, ensuring compliance with overall app security.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "title": "Build Terminal User Interface with Bubble Tea",
+        "description": "Create TUI for game visualization and interaction using Bubble Tea.",
+        "details": "Use Bubble Tea v0.26.6. Models for map view, order input. Pseudo-code: type Model struct { // state }; func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) { // handle inputs }.",
+        "testStrategy": "Manual testing in terminal; automated snapshot tests for views if possible.",
+        "priority": "medium",
+        "dependencies": [
+          11
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set Up Core Model for TUI",
+            "description": "Initialize the main model structure with essential state for game visualization and user interaction using Bubble Tea.",
+            "dependencies": [],
+            "details": "Use Bubble Tea v0.26.6. Define a Model struct including fields for game state, current view mode, and input handling.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement View Rendering for Map and Inputs",
+            "description": "Develop the view function to render the game map and interactive input elements in the terminal.",
+            "dependencies": [
+              1
+            ],
+            "details": "Utilize Bubble Tea's View method to generate string representations of the map using ASCII art or lipgloss styling, and display input forms for orders.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement Update Handling Logic",
+            "description": "Create the update function to manage user inputs, state transitions, and message handling for the TUI.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "In the Update method, handle tea.Msg types such as key presses for navigation, order submission, and integration with game logic.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 13,
+        "title": "Implement Order Input and Validation Feedback in TUI",
+        "description": "Add interactive order submission with real-time validation in the terminal interface.",
+        "details": "Extend Bubble Tea model with input fields and validation calls to backend. Display errors with suggestions.",
+        "testStrategy": "Simulate user inputs, assert validation messages and successful submissions.",
+        "priority": "medium",
+        "dependencies": [
+          12
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Integrate Input Fields into TUI",
+            "description": "Extend the Bubble Tea model to include interactive input fields for order submission in the terminal interface.",
+            "dependencies": [],
+            "details": "Modify the existing TUI structure to add text input components for users to enter orders, ensuring compatibility with the current model.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement Real-Time Validation Calls",
+            "description": "Add functionality to make real-time calls to the backend for validating user inputs as they type.",
+            "dependencies": [
+              1
+            ],
+            "details": "Integrate API calls within the input handling loop to send partial orders for validation, using the backend services established in prior tasks.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Handle Error Display with Suggestions",
+            "description": "Display validation errors and provide suggestions in the TUI based on backend responses.",
+            "dependencies": [
+              2
+            ],
+            "details": "Update the TUI view to render error messages and suggested corrections dynamically, enhancing user experience with immediate feedback.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Manage Order Submission Handling",
+            "description": "Implement the submission logic for validated orders, including success handling and integration with game state.",
+            "dependencies": [
+              3
+            ],
+            "details": "Add event handlers for submitting complete and validated orders, updating the game state and TUI accordingly upon successful submission.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 14,
+        "title": "Develop Tactical AI in Go",
+        "description": "Create basic AI for move calculation integrated with the engine.",
+        "details": "Implement heuristic-based tactical decisions. Pseudo-code: func GenerateOrders(aiPlayer Player, state GameState) []Order { // evaluate positions, return best moves }.",
+        "testStrategy": "Test against predefined scenarios; measure win rates in simulated games.",
+        "priority": "low",
+        "dependencies": [
+          13
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design AI Heuristics",
+            "description": "Develop heuristics for tactical decision-making in the game, focusing on effective AI behaviors.",
+            "dependencies": [],
+            "details": "Research and define key heuristic rules based on game rules and strategies, such as unit positioning and threat assessment.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement State Evaluation Functions",
+            "description": "Create functions to evaluate the current game state for AI decision-making.",
+            "dependencies": [
+              1
+            ],
+            "details": "Develop evaluation metrics including score calculations for positions, units, and potential moves, integrated with heuristics.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Develop Order Generation Logic",
+            "description": "Implement logic for generating orders based on heuristics and state evaluations.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Write the core function like GenerateOrders that uses evaluations to produce optimal moves, following pseudo-code in task context.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Integrate AI with Game Engine",
+            "description": "Integrate the tactical AI components into the existing game engine.",
+            "dependencies": [
+              3
+            ],
+            "details": "Ensure seamless interaction with game state, order validation, and resolution mechanics from dependent tasks.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Conduct Scenario-Based Testing",
+            "description": "Test the AI using predefined scenarios and simulated games.",
+            "dependencies": [
+              4
+            ],
+            "details": "Measure win rates and effectiveness against DATC-inspired tests, iterating on improvements based on results.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 15,
+        "title": "Integrate LLM Strategist with Python/DSpy",
+        "description": "Add Python-based LLM for diplomatic reasoning, interfacing with Go backend using DSpy framework.",
+        "status": "pending",
+        "dependencies": [
+          14
+        ],
+        "priority": "low",
+        "details": "Use DSpy framework with OpenAI gpt-4o-mini model. Implement diplomacy-specific signatures for game state analysis and negotiation. Create DiplomacyStrategist module with ChainOfThought reasoning. Communicate via FastAPI/Flask service with JSON API endpoints from Go backend.",
+        "testStrategy": "Mock LLM responses using DSpy testing utilities; end-to-end tests for AI decisions in full games with caching validation.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Setup Python Service with DSpy Framework",
+            "description": "Initialize Python service using DSpy framework with proper LM configuration and FastAPI/Flask setup.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "Install DSpy and configure with dspy.configure(lm=dspy.LM('openai/gpt-4o-mini')). Set up FastAPI/Flask service structure with async processing capabilities for LLM calls.",
+            "testStrategy": "Test LM configuration and basic API endpoint responses"
+          },
+          {
+            "id": 2,
+            "title": "Implement Diplomacy-Specific DSpy Signatures",
+            "description": "Create DSpy signatures for game state analysis and diplomatic negotiation with proper input/output field definitions.",
+            "status": "pending",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement AnalyzeGameState and NegotiateWithPlayer signatures with structured input fields for game_state, player_nation, game_context, target_player, and negotiation_goal. Define clear output fields for strategic_analysis and diplomatic messages.",
+            "testStrategy": "Unit tests for signature validation and field type checking"
+          },
+          {
+            "id": 3,
+            "title": "Develop DiplomacyStrategist Module",
+            "description": "Create the main DiplomacyStrategist module using DSpy ChainOfThought for strategic reasoning.",
+            "status": "pending",
+            "dependencies": [
+              2
+            ],
+            "details": "Implement DiplomacyStrategist class inheriting from dspy.Module with analyzer and negotiator components using dspy.ChainOfThought. Include forward method for processing game states and generating strategic analysis.",
+            "testStrategy": "Test module initialization and forward method with sample game states"
+          },
+          {
+            "id": 4,
+            "title": "Implement JSON API Endpoints for Go Integration",
+            "description": "Create FastAPI/Flask endpoints for receiving strategy requests from Go backend with proper JSON handling.",
+            "status": "pending",
+            "dependencies": [
+              3
+            ],
+            "details": "Define API endpoints for strategy analysis and negotiation requests. Implement async handlers that process JSON inputs, call DiplomacyStrategist module, and return structured responses. Include error handling and request validation.",
+            "testStrategy": "API endpoint testing with mock requests and response validation"
+          },
+          {
+            "id": 5,
+            "title": "Add Caching and Mock Response System",
+            "description": "Implement caching for repeated game states and mock response generators for testing without API calls.",
+            "status": "pending",
+            "dependencies": [
+              4
+            ],
+            "details": "Create caching mechanism for game state analysis to avoid redundant LLM calls. Develop mock response generators that simulate DSpy module outputs for testing scenarios. Integrate caching with API endpoints.",
+            "testStrategy": "Test cache hit/miss scenarios and mock response accuracy"
+          },
+          {
+            "id": 6,
+            "title": "Integrate DSpy Optimizers for Strategy Improvement",
+            "description": "Implement DSpy optimizers like BootstrapFewShot to improve strategy quality through examples.",
+            "status": "pending",
+            "dependencies": [
+              5
+            ],
+            "details": "Set up dspy.BootstrapFewShot optimizer with diplomacy game examples. Create training data from successful game scenarios. Integrate optimizer into DiplomacyStrategist for improved strategic reasoning.",
+            "testStrategy": "Compare strategy quality before and after optimization with test scenarios"
+          },
+          {
+            "id": 7,
+            "title": "Conduct End-to-End Integration Testing",
+            "description": "Perform comprehensive testing of the complete LLM integration with Go backend in full game simulations.",
+            "status": "pending",
+            "dependencies": [
+              6
+            ],
+            "details": "Set up test environments simulating complete game flows from Go backend to Python service. Test API communication, DSpy module responses, caching behavior, and error handling in realistic diplomacy scenarios.",
+            "testStrategy": "Full game simulation tests with AI decision validation and performance benchmarking"
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "created": "2025-07-15T04:21:52.697Z",
+      "updated": "2025-07-15T07:36:23.022Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
