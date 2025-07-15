@@ -23,6 +23,17 @@ func NewTurnProcessor() *TurnProcessor {
 
 // ProcessTurn executes the complete pipeline: raw orders → parsed orders → resolution → new state
 func (tp *TurnProcessor) ProcessTurn(gameState *game.GameState) (*game.GameState, error) {
+	// Handle different phases
+	switch gameState.Phase {
+	case game.WinterBuild:
+		return tp.processBuildPhase(gameState)
+	default:
+		return tp.processMovementPhase(gameState)
+	}
+}
+
+// processMovementPhase handles movement and retreat phases
+func (tp *TurnProcessor) processMovementPhase(gameState *game.GameState) (*game.GameState, error) {
 	// Initialize resolver and semantic validator with current board state
 	tp.resolver = validation.NewProvinceResolver(gameState.Board)
 	tp.semanticValidator = validation.NewSemanticValidator(gameState.Board)
@@ -52,6 +63,119 @@ func (tp *TurnProcessor) ProcessTurn(gameState *game.GameState) (*game.GameState
 	}
 
 	return newState, nil
+}
+
+// processBuildPhase handles winter build/adjustment phase
+func (tp *TurnProcessor) processBuildPhase(gameState *game.GameState) (*game.GameState, error) {
+	// Initialize resolver for parsing
+	tp.resolver = validation.NewProvinceResolver(gameState.Board)
+
+	// Step 1: Parse all raw orders
+	parsedOrders, syntaxErrors := tp.parseAllOrders(gameState)
+	if len(syntaxErrors) > 0 {
+		return nil, fmt.Errorf("syntax errors: %v", syntaxErrors)
+	}
+
+	// Step 2: Validate build orders
+	validatedOrders, validationErrors := tp.validateBuildOrders(parsedOrders, gameState)
+	if len(validationErrors) > 0 {
+		return nil, fmt.Errorf("validation errors: %v", validationErrors)
+	}
+
+	// Step 3: Process build orders
+	newState, err := tp.processBuildOrders(gameState, validatedOrders)
+	if err != nil {
+		return nil, fmt.Errorf("build processing failed: %w", err)
+	}
+
+	return newState, nil
+}
+
+// validateBuildOrders validates build/disband orders
+func (tp *TurnProcessor) validateBuildOrders(orders []*game.Order, gameState *game.GameState) ([]*game.Order, []error) {
+	var validOrders []*game.Order
+	var errors []error
+
+	for _, order := range orders {
+		if err := tp.validateBuildOrder(order, gameState); err != nil {
+			errors = append(errors, fmt.Errorf("order %s: %w", order.ID, err))
+			continue
+		}
+		validOrders = append(validOrders, order)
+	}
+
+	return validOrders, errors
+}
+
+// processBuildOrders processes validated build/disband orders
+func (tp *TurnProcessor) processBuildOrders(gameState *game.GameState, orders []*game.Order) (*game.GameState, error) {
+	buildProcessor := resolution.NewBuildProcessor(gameState.Board)
+	newState := gameState.Clone()
+
+	for _, order := range orders {
+		switch order.Type {
+		case game.Move:
+			// Build order
+			buildOrder := resolution.BuildOrder{
+				Nation:   order.Owner,
+				UnitType: order.UnitType,
+				Province: order.To,
+				Coast:    order.ToCoast,
+			}
+			result := buildProcessor.ProcessBuildOrder(buildOrder, newState)
+			if !result.Success {
+				return nil, fmt.Errorf("build order failed: %s", result.Reason)
+			}
+
+		case game.Hold:
+			// Disband order
+			disbandOrder := resolution.DisbandOrder{
+				Nation:   order.Owner,
+				Province: order.From,
+			}
+			result := buildProcessor.ProcessDisbandOrder(disbandOrder, newState)
+			if !result.Success {
+				return nil, fmt.Errorf("disband order failed: %s", result.Reason)
+			}
+		}
+	}
+
+	// Update supply center ownership after builds/disbands
+	tp.updateSupplyCenterOwnership(newState)
+
+	// Advance to next phase
+	newState.AdvanceToNextPhase([]*game.Unit{}) // No dislodged units in build phase
+
+	return newState, nil
+}
+
+// updateSupplyCenterOwnership updates the supply center ownership in game state
+func (tp *TurnProcessor) updateSupplyCenterOwnership(gameState *game.GameState) {
+	// Clear existing supply center assignments
+	gameState.SupplyCenters = make(map[game.Nation][]string)
+	// Assign supply centers based on unit control
+	for provinceName, province := range gameState.Board.Provinces {
+		if province.SupplyCenter {
+			unit := gameState.Board.GetUnit(provinceName)
+			if unit != nil {
+				if gameState.SupplyCenters[unit.Owner] == nil {
+					gameState.SupplyCenters[unit.Owner] = make([]string, 0)
+				}
+				gameState.SupplyCenters[unit.Owner] = append(gameState.SupplyCenters[unit.Owner], provinceName)
+			}
+		}
+	}
+
+	// Ensure all nations have an entry (even if empty)
+	nations := []game.Nation{
+		game.Austria, game.England, game.France, game.Germany,
+		game.Italy, game.Russia, game.Turkey,
+	}
+	for _, nation := range nations {
+		if gameState.SupplyCenters[nation] == nil {
+			gameState.SupplyCenters[nation] = make([]string, 0)
+		}
+	}
 }
 
 // parseAllOrders converts raw order strings to parsed Order objects
@@ -199,8 +323,30 @@ func (tp *TurnProcessor) validateRetreatOrder(order *game.Order, dislodgedUnit r
 
 // validateBuildOrder validates orders during build phases
 func (tp *TurnProcessor) validateBuildOrder(order *game.Order, gameState *game.GameState) error {
-	// Build/disband validation logic would go here
-	return nil
+	buildProcessor := resolution.NewBuildProcessor(gameState.Board)
+
+	switch order.Type {
+	case game.Move:
+		// In build phase, move orders represent build orders (unit creation)
+		buildOrder := resolution.BuildOrder{
+			Nation:   order.Owner,
+			UnitType: order.UnitType,
+			Province: order.To, // Build destination
+			Coast:    order.ToCoast,
+		}
+		return buildProcessor.ValidateBuildOrder(buildOrder, gameState)
+
+	case game.Hold:
+		// In build phase, hold orders represent disband orders
+		disbandOrder := resolution.DisbandOrder{
+			Nation:   order.Owner,
+			Province: order.From,
+		}
+		return buildProcessor.ValidateDisbandOrder(disbandOrder, gameState)
+
+	default:
+		return fmt.Errorf("invalid order type %s for build phase", order.Type)
+	}
 }
 
 // resolveOrders executes the recursive resolution algorithm
