@@ -6,8 +6,8 @@ import (
 	"diplomacy-cli/backend/internal/game"
 )
 
-// Test 6.H.1: DISLOGED UNIT HAS NO EFFECT ON ATTACKERS AREA
-func TestDATCH1_DislogedUnitHasNoEffectOnAttackersArea(t *testing.T) {
+// Test 6.E.1: DISLOGED UNIT HAS NO EFFECT ON ATTACKERS AREA
+func TestDATCE1_DislogedUnitHasNoEffectOnAttackersArea(t *testing.T) {
 	gameState := CreateDATCGameState(t)
 
 	// Add units based on test case
@@ -40,11 +40,11 @@ func TestDATCH1_DislogedUnitHasNoEffectOnAttackersArea(t *testing.T) {
 	result := ProcessDATCTest(t, gameState)
 
 	// Expected: German army succeeds with support, Russian army is dislodged
-	ValidateExpectedOutcome(t, result, "German army succeeds with support, Russian army is dislodged.", "6.H.1")
+	ValidateExpectedOutcome(t, result, "German army succeeds with support, Russian army is dislodged.", "6.E.1")
 }
 
-// Test 6.H.2: NO SELF DISLODGEMENT
-func TestDATCH2_NoSelfDislodgement(t *testing.T) {
+// Test 6.E.2: NO SELF DISLODGEMENT
+func TestDATCE2_NoSelfDislodgement(t *testing.T) {
 	gameState := CreateDATCGameState(t)
 
 	// Add units based on test case
@@ -75,11 +75,11 @@ func TestDATCH2_NoSelfDislodgement(t *testing.T) {
 	result := ProcessDATCTest(t, gameState)
 
 	// Expected: No units move (self-dislodgement not allowed)
-	ValidateExpectedOutcome(t, result, "No units move (self-dislodgement not allowed).", "6.H.2")
+	ValidateExpectedOutcome(t, result, "No units move (self-dislodgement not allowed).", "6.E.2")
 }
 
-// Test 6.H.3: NO HELP IN DISLODGING OWN UNIT
-func TestDATCH3_NoHelpInDislodgingOwnUnit(t *testing.T) {
+// Test 6.E.3: NO HELP IN DISLODGING OWN UNIT
+func TestDATCE3_NoHelpInDislodgingOwnUnit(t *testing.T) {
 	gameState := CreateDATCGameState(t)
 
 	// Add units based on test case
@@ -112,11 +112,11 @@ func TestDATCH3_NoHelpInDislodgingOwnUnit(t *testing.T) {
 	result := ProcessDATCTest(t, gameState)
 
 	// Expected: Austrian attack fails (German unit cannot help dislodge its own unit)
-	ValidateExpectedOutcome(t, result, "Austrian attack fails (German unit cannot help dislodge its own unit).", "6.H.3")
+	ValidateExpectedOutcome(t, result, "Austrian attack fails (German unit cannot help dislodge its own unit).", "6.E.3")
 }
 
-// Test 6.H.4: NO SELF DISLODGEMENT IN HEAD-TO-HEAD BATTLE (E.2)
-func TestDATCH4_NoSelfDislodgementInHeadToHeadBattle(t *testing.T) {
+// Test 6.E.4: NO SELF DISLODGEMENT IN HEAD-TO-HEAD BATTLE (E.2)
+func TestDATCE4_NoSelfDislodgementInHeadToHeadBattle(t *testing.T) {
 	gameState := CreateDATCGameState(t)
 
 	// Add units based on test case
@@ -147,11 +147,11 @@ func TestDATCH4_NoSelfDislodgementInHeadToHeadBattle(t *testing.T) {
 	result := ProcessDATCTest(t, gameState)
 
 	// Expected: No unit will move
-	ValidateExpectedOutcome(t, result, "No unit will move.", "6.H.4")
+	ValidateExpectedOutcome(t, result, "No unit will move.", "6.E.4")
 }
 
-// Test 6.H.5: NO HELP IN DISLODGING OWN UNIT IN HEAD-TO-HEAD (E.3)
-func TestDATCH5_NoHelpInDislodgingOwnUnitInHeadToHead(t *testing.T) {
+// Test 6.E.5: NO HELP IN DISLODGING OWN UNIT IN HEAD-TO-HEAD (E.3)
+func TestDATCE5_NoHelpInDislodgingOwnUnitInHeadToHead(t *testing.T) {
 	gameState := CreateDATCGameState(t)
 
 	// Add units based on test case
@@ -184,11 +184,11 @@ func TestDATCH5_NoHelpInDislodgingOwnUnitInHeadToHead(t *testing.T) {
 	result := ProcessDATCTest(t, gameState)
 
 	// Expected: No unit will move
-	ValidateExpectedOutcome(t, result, "No unit will move.", "6.H.5")
+	ValidateExpectedOutcome(t, result, "No unit will move.", "6.E.5")
 }
 
-// Test 6.H.6: NON-DISLODGED LOSER STILL HAS EFFECT (E.4)
-func TestDATCH6_NonDislodgedLoserStillHasEffect(t *testing.T) {
+// Test 6.E.6: NON-DISLODGED LOSER STILL HAS EFFECT (E.4)
+func TestDATCE6_NonDislodgedLoserStillHasEffect(t *testing.T) {
 	gameState := CreateDATCGameState(t)
 
 	// Add units based on test case
@@ -253,11 +253,11 @@ func TestDATCH6_NonDislodgedLoserStillHasEffect(t *testing.T) {
 	result := ProcessDATCTest(t, gameState)
 
 	// Expected: German fleet succeeds, French fleet bounces but prevents English fleet
-	ValidateExpectedOutcome(t, result, "The German fleet in Holland will dislodge the French fleet in North Sea. The French fleet will not advance to Holland. The English fleet in Norwegian Sea will bounce on the French fleet in North Sea and will not advance to North Sea.", "6.H.6")
+	ValidateExpectedOutcome(t, result, "The German fleet in Holland will dislodge the French fleet in North Sea. The French fleet will not advance to Holland. The English fleet in Norwegian Sea will bounce on the French fleet in North Sea and will not advance to North Sea.", "6.E.6")
 }
 
-// Test 6.H.7: LOSER DISLODGED BY ANOTHER ARMY STILL HAS EFFECT (E.5)
-func TestDATCH7_LoserDislodgedByAnotherArmyStillHasEffect(t *testing.T) {
+// Test 6.E.7: LOSER DISLODGED BY ANOTHER ARMY STILL HAS EFFECT (E.5)
+func TestDATCE7_LoserDislodgedByAnotherArmyStillHasEffect(t *testing.T) {
 	gameState := CreateDATCGameState(t)
 
 	// Add units based on test case
@@ -328,11 +328,11 @@ func TestDATCH7_LoserDislodgedByAnotherArmyStillHasEffect(t *testing.T) {
 	result := ProcessDATCTest(t, gameState)
 
 	// Expected: German fleet succeeds, French fleet is dislodged, English fleet bounces
-	ValidateExpectedOutcome(t, result, "The German fleet in Holland will dislodge the French fleet in North Sea. The French fleet will not advance to Holland. The English fleet in Norwegian Sea will bounce on the French fleet in North Sea and will not advance to North Sea.", "6.H.7")
+	ValidateExpectedOutcome(t, result, "The German fleet in Holland will dislodge the French fleet in North Sea. The French fleet will not advance to Holland. The English fleet in Norwegian Sea will bounce on the French fleet in North Sea and will not advance to North Sea.", "6.E.7")
 }
 
-// Test 6.H.8: NOT DISLODGE BECAUSE OF OWN SUPPORT STILL HAS EFFECT (E.6)
-func TestDATCH8_NotDislodgeBecauseOfOwnSupportStillHasEffect(t *testing.T) {
+// Test 6.E.8: NOT DISLODGE BECAUSE OF OWN SUPPORT STILL HAS EFFECT (E.6)
+func TestDATCE8_NotDislodgeBecauseOfOwnSupportStillHasEffect(t *testing.T) {
 	gameState := CreateDATCGameState(t)
 
 	// Add units based on test case
@@ -385,11 +385,11 @@ func TestDATCH8_NotDislodgeBecauseOfOwnSupportStillHasEffect(t *testing.T) {
 	result := ProcessDATCTest(t, gameState)
 
 	// Expected: No unit moves due to self-support prevention
-	ValidateExpectedOutcome(t, result, "The French fleet in North Sea is not dislodged because the support from English Channel is not allowed (supporting attack on own unit). The German fleet in Holland will not advance to North Sea. The Austrian army in Vienna will move to Tyrolia.", "6.H.8")
+	ValidateExpectedOutcome(t, result, "The French fleet in North Sea is not dislodged because the support from English Channel is not allowed (supporting attack on own unit). The German fleet in Holland will not advance to North Sea. The Austrian army in Vienna will move to Tyrolia.", "6.E.8")
 }
 
-// Test 6.H.9: NO SELF DISLODGEMENT WITH BELEAGUERED GARRISON (E.7)
-func TestDATCH9_NoSelfDislodgementWithBeleagueredGarrison(t *testing.T) {
+// Test 6.E.9: NO SELF DISLODGEMENT WITH BELEAGUERED GARRISON (E.7)
+func TestDATCE9_NoSelfDislodgementWithBeleagueredGarrison(t *testing.T) {
 	gameState := CreateDATCGameState(t)
 
 	// Add units based on test case
@@ -442,11 +442,11 @@ func TestDATCH9_NoSelfDislodgementWithBeleagueredGarrison(t *testing.T) {
 	result := ProcessDATCTest(t, gameState)
 
 	// Expected: Russian fleet succeeds, English fleet holds
-	ValidateExpectedOutcome(t, result, "Although the Russians beat the Germans with a score of 2 to 1, the Russians will not dislodge the English fleet in the North Sea. This is because the English fleet supports the Russian attack. Since the English fleet is not dislodged, the Germans will not advance to the North Sea either.", "6.H.9")
+	ValidateExpectedOutcome(t, result, "Although the Russians beat the Germans with a score of 2 to 1, the Russians will not dislodge the English fleet in the North Sea. This is because the English fleet supports the Russian attack. Since the English fleet is not dislodged, the Germans will not advance to the North Sea either.", "6.E.9")
 }
 
-// Test 6.H.10: NO SELF DISLODGEMENT WITH BELEAGUERED GARRISON AND HEAD-TO-HEAD BATTLE (E.8)
-func TestDATCH10_NoSelfDislodgementWithBeleagueredGarrisonAndHeadToHeadBattle(t *testing.T) {
+// Test 6.E.10: NO SELF DISLODGEMENT WITH BELEAGUERED GARRISON AND HEAD-TO-HEAD BATTLE (E.8)
+func TestDATCE10_NoSelfDislodgementWithBeleagueredGarrisonAndHeadToHeadBattle(t *testing.T) {
 	gameState := CreateDATCGameState(t)
 
 	// Add units based on test case
@@ -499,11 +499,11 @@ func TestDATCH10_NoSelfDislodgementWithBeleagueredGarrisonAndHeadToHeadBattle(t 
 	result := ProcessDATCTest(t, gameState)
 
 	// Expected: None of the units move
-	ValidateExpectedOutcome(t, result, "Again, none of the units move.", "6.H.10")
+	ValidateExpectedOutcome(t, result, "Again, none of the units move.", "6.E.10")
 }
 
-// Test 6.H.11: ALMOST SELF DISLODGEMENT WITH BELEAGUERED GARRISON (E.9)
-func TestDATCH11_AlmostSelfDislodgementWithBeleagueredGarrison(t *testing.T) {
+// Test 6.E.11: ALMOST SELF DISLODGEMENT WITH BELEAGUERED GARRISON (E.9)
+func TestDATCE11_AlmostSelfDislodgementWithBeleagueredGarrison(t *testing.T) {
 	gameState := CreateDATCGameState(t)
 
 	// Add units based on test case
@@ -556,11 +556,11 @@ func TestDATCH11_AlmostSelfDislodgementWithBeleagueredGarrison(t *testing.T) {
 	result := ProcessDATCTest(t, gameState)
 
 	// Expected: Both fleets move successfully
-	ValidateExpectedOutcome(t, result, "Both the fleet in the North Sea and the fleet in Norway will move.", "6.H.11")
+	ValidateExpectedOutcome(t, result, "Both the fleet in the North Sea and the fleet in Norway will move.", "6.E.11")
 }
 
-// Test 6.H.12: ALMOST CIRCULAR MOVEMENT WITH NO SELF DISLODGEMENT WITH BELEAGUERED GARRISON (E.10)
-func TestDATCH12_AlmostCircularMovementWithNoSelfDislodgementWithBeleagueredGarrison(t *testing.T) {
+// Test 6.E.12: ALMOST CIRCULAR MOVEMENT WITH NO SELF DISLODGEMENT WITH BELEAGUERED GARRISON (E.10)
+func TestDATCE12_AlmostCircularMovementWithNoSelfDislodgementWithBeleagueredGarrison(t *testing.T) {
 	gameState := CreateDATCGameState(t)
 
 	// Add units based on test case
@@ -619,11 +619,11 @@ func TestDATCH12_AlmostCircularMovementWithNoSelfDislodgementWithBeleagueredGarr
 	result := ProcessDATCTest(t, gameState)
 
 	// Expected: No unit moves
-	ValidateExpectedOutcome(t, result, "No unit will move.", "6.H.12")
+	ValidateExpectedOutcome(t, result, "No unit will move.", "6.E.12")
 }
 
-// Test 6.H.13: SUPPORT ON ATTACK ON OWN UNIT CAN BE USED FOR OTHER MEANS (E.12)
-func TestDATCH13_SupportOnAttackOnOwnUnitCanBeUsedForOtherMeans(t *testing.T) {
+// Test 6.E.13: SUPPORT ON ATTACK ON OWN UNIT CAN BE USED FOR OTHER MEANS (E.12)
+func TestDATCE13_SupportOnAttackOnOwnUnitCanBeUsedForOtherMeans(t *testing.T) {
 	gameState := CreateDATCGameState(t)
 
 	// Add units based on test case
@@ -670,11 +670,11 @@ func TestDATCH13_SupportOnAttackOnOwnUnitCanBeUsedForOtherMeans(t *testing.T) {
 	result := ProcessDATCTest(t, gameState)
 
 	// Expected: Support prevents Russian attack
-	ValidateExpectedOutcome(t, result, "The support of Serbia on the Italian army prevents that the Russian army in Galicia will dislodge the Austrian army in Budapest. The Austrian army in Budapest will not move to Rumania.", "6.H.13")
+	ValidateExpectedOutcome(t, result, "The support of Serbia on the Italian army prevents that the Russian army in Galicia will dislodge the Austrian army in Budapest. The Austrian army in Budapest will not move to Rumania.", "6.E.13")
 }
 
-// Test 6.H.14: THREE WAY BELEAGUERED GARRISON (E.13)
-func TestDATCH14_ThreeWayBeleagueredGarrison(t *testing.T) {
+// Test 6.E.14: THREE WAY BELEAGUERED GARRISON (E.13)
+func TestDATCE14_ThreeWayBeleagueredGarrison(t *testing.T) {
 	gameState := CreateDATCGameState(t)
 
 	// Add units based on test case
@@ -735,5 +735,5 @@ func TestDATCH14_ThreeWayBeleagueredGarrison(t *testing.T) {
 	result := ProcessDATCTest(t, gameState)
 
 	// Expected: None of the attacks succeed
-	ValidateExpectedOutcome(t, result, "None of the attacks succeed. The fleet in the North Sea is not dislodged.", "6.H.14")
+	ValidateExpectedOutcome(t, result, "None of the attacks succeed. The fleet in the North Sea is not dislodged.", "6.E.14")
 }
