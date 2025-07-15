@@ -8,12 +8,13 @@ import (
 // Adjudicator holds the state for a single turn's resolution using the
 // recursive dependency resolution algorithm from the adjudication article.
 type Adjudicator struct {
-	orders         map[string]*Order // Map from unit location to its order
-	orderedOrders  []*Order          // Orders in their original input order
-	cycle          []*Order          // Tracks orders in a potential dependency cycle
-	recursionHits  int               // Number of times we've hit recursion
-	uncertain      bool              // Whether the current resolution path is uncertain
-	recursionDepth int               // Current recursion depth (safety limit)
+	orders           map[string]*Order // Map from unit location to its order
+	orderedOrders    []*Order          // Orders in their original input order
+	cycle            []*Order          // Tracks orders in a potential dependency cycle
+	recursionHits    int               // Number of times we've hit recursion
+	uncertain        bool              // Whether the current resolution path is uncertain
+	recursionDepth   int               // Current recursion depth (safety limit)
+	convoyPathFinder *ConvoyPathFinder // Graph-based convoy path finder
 }
 
 const maxRecursionDepth = 100 // Safety limit to prevent infinite recursion
@@ -226,32 +227,10 @@ func (adj *Adjudicator) findConvoyOrders(source, destination string) []*Order {
 }
 
 // validateConvoyChain validates that there is a valid chain of convoy fleets.
-// For now, we implement a simplified version: if any convoy order succeeds, the path is valid.
-// A full implementation would need to check fleet adjacency and build a proper chain.
+// Uses graph-based pathfinding to find valid convoy routes.
 func (adj *Adjudicator) validateConvoyChain(source, destination string, convoyOrders []*Order, optimistic bool) bool {
-	if len(convoyOrders) == 0 {
-		fmt.Printf("    ❌ No convoy orders\n")
-		return false
-	}
-
-	fmt.Printf("    🔍 Checking %d convoy orders\n", len(convoyOrders))
-
-	// Check if at least one convoy order succeeds
-	// In a full implementation, we'd need to validate the actual chain of adjacent fleets
-	for i, convoyOrder := range convoyOrders {
-		success := adj.resolve(convoyOrder, optimistic)
-		fmt.Printf("    Convoy %d (%s): %t\n", i, convoyOrder.String(), success)
-		if success {
-			// At least one convoy is successful, so path is valid
-			// TODO: Implement proper chain validation for complex convoy routes
-			fmt.Printf("    ✅ At least one convoy succeeds, PATH valid\n")
-			return true
-		}
-	}
-
-	// No successful convoy orders
-	fmt.Printf("    ❌ No successful convoy orders, PATH invalid\n")
-	return false
+	// Use enhanced convoy chain validation
+	return adj.validateConvoyChainEnhanced(source, destination, convoyOrders, optimistic)
 }
 
 // adjudicate contains the specific Diplomacy rules for each order type.
