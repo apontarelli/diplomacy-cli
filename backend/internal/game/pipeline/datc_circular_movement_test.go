@@ -138,10 +138,17 @@ func TestDATCC4_CircularMovementWithAttackedConvoy(t *testing.T) {
 	// Expected: Circular movement succeeds despite convoy attack
 	// The convoy attack should be resolved before circular movement calculation
 	finalState := result.NewGameState
-	if finalState.Board.GetUnit("bulgaria") == nil || finalState.Board.GetUnit("bulgaria").Owner != game.Austria {
+	if finalState == nil {
+		t.Fatalf("❌ 6.C.4: Processing failed: %v", result.ProcessError)
+	}
+
+	bulgUnit := finalState.Board.GetUnit("bulgaria")
+	if bulgUnit == nil || bulgUnit.Owner != game.Austria {
 		t.Errorf("❌ 6.C.4: Austrian army should have moved to Bulgaria")
 	}
-	if finalState.Board.GetUnit("trieste") == nil || finalState.Board.GetUnit("trieste").Owner != game.Turkey {
+
+	triesteUnit := finalState.Board.GetUnit("trieste")
+	if triesteUnit == nil || triesteUnit.Owner != game.Turkey {
 		t.Errorf("❌ 6.C.4: Turkish army should have moved to Trieste")
 	}
 	t.Logf("✅ 6.C.4: Circular movement with attacked convoy succeeded")
@@ -212,6 +219,10 @@ func TestDATCC6_TwoArmiesWithTwoConvoys(t *testing.T) {
 	// Expected: Both convoys should succeed (unit swap via convoy)
 	// Debug: Check what units are actually on the board
 	finalState := result.NewGameState
+	if finalState == nil {
+		t.Fatalf("❌ 6.C.6: Processing failed: %v", result.ProcessError)
+	}
+
 	t.Logf("🔍 6.C.6 Debug - Units after processing:")
 	for province, unit := range finalState.Board.Units {
 		if unit != nil {

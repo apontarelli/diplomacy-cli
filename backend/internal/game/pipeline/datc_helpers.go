@@ -53,7 +53,7 @@ func ProcessDATCTest(t *testing.T, gameState *game.GameState) *DATCTestResult {
 	}
 
 	return &DATCTestResult{
-		NewGameState: result,
+		NewGameState: result, // Can be nil if processing failed
 		SyntaxErrors: syntaxErrors,
 		ProcessError: err,
 	}

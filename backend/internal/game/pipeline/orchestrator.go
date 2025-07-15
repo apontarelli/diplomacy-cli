@@ -9,8 +9,9 @@ import (
 
 // TurnProcessor orchestrates the complete pipeline from raw orders to new game state
 type TurnProcessor struct {
-	resolver *validation.ProvinceResolver
-	registry *validation.OrderParserRegistry
+	resolver          *validation.ProvinceResolver
+	registry          *validation.OrderParserRegistry
+	semanticValidator *validation.SemanticValidator
 }
 
 // NewTurnProcessor creates a new turn processor
@@ -22,8 +23,9 @@ func NewTurnProcessor() *TurnProcessor {
 
 // ProcessTurn executes the complete pipeline: raw orders → parsed orders → resolution → new state
 func (tp *TurnProcessor) ProcessTurn(gameState *game.GameState) (*game.GameState, error) {
-	// Initialize resolver with current board state
+	// Initialize resolver and semantic validator with current board state
 	tp.resolver = validation.NewProvinceResolver(gameState.Board)
+	tp.semanticValidator = validation.NewSemanticValidator(gameState.Board)
 
 	// Step 1: Syntax Validation - Parse all raw orders
 	parsedOrders, syntaxErrors := tp.parseAllOrders(gameState)
@@ -84,15 +86,16 @@ func (tp *TurnProcessor) validateOrders(orders []*game.Order, gameState *game.Ga
 	var errors []error
 
 	for _, order := range orders {
-		// Semantic validation checks:
-		// 1. Unit exists at the specified location
-		// 2. Unit belongs to the nation giving the order
-		// 3. Order is valid for the current game phase
-		// 4. Move destinations are adjacent (for moves)
-		// 5. Support/convoy targets exist and are valid
-
-		if err := tp.validateOrder(order, gameState); err != nil {
+		// Use the new semantic validator (includes unit existence, ownership, adjacency, etc.)
+		if err := tp.semanticValidator.ValidateOrder(order, "", gameState); err != nil {
 			errors = append(errors, fmt.Errorf("order %s: %w", order.ID, err))
+			continue
+		}
+
+		// Additional ownership validation (semantic validator checks unit existence but not ownership)
+		unit := gameState.Board.GetUnit(order.From)
+		if unit != nil && unit.Owner != order.Owner {
+			errors = append(errors, fmt.Errorf("order %s: unit at %s belongs to %s, not %s", order.ID, order.From, unit.Owner, order.Owner))
 			continue
 		}
 
@@ -102,128 +105,31 @@ func (tp *TurnProcessor) validateOrders(orders []*game.Order, gameState *game.Ga
 	return validOrders, errors
 }
 
-// validateOrder performs semantic validation on a single order
-func (tp *TurnProcessor) validateOrder(order *game.Order, gameState *game.GameState) error {
-	// Check if unit exists at the specified location
+// Note: validateOrder and validateMovementOrder removed - now handled by semantic validator
+
+// Note: areAdjacent method removed - now handled by semantic validator
+
+// validateMoveAdjacency validates move adjacency with convoy awareness
+// This is used by convoy logic and will be replaced when convoy system is implemented
+func (tp *TurnProcessor) validateMoveAdjacency(order *game.Order, gameState *game.GameState) error {
+	// Use semantic validator's adjacency logic
 	unit := gameState.Board.GetUnit(order.From)
 	if unit == nil {
 		return fmt.Errorf("no unit found at %s", order.From)
 	}
 
-	// Check if unit belongs to the nation giving the order
-	if unit.Owner != order.Owner {
-		return fmt.Errorf("unit at %s belongs to %s, not %s", order.From, unit.Owner, order.Owner)
-	}
-
-	// Check if unit type matches (if specified in order)
-	if order.UnitType != "" && unit.Type != order.UnitType {
-		return fmt.Errorf("unit at %s is %s, not %s", order.From, unit.Type, order.UnitType)
-	}
-
-	// Phase-specific validation
-	switch gameState.Phase {
-	case game.SpringMovement, game.FallMovement:
-		return tp.validateMovementOrder(order, gameState)
-	case game.SpringRetreat, game.FallRetreat:
-		return tp.validateRetreatOrder(order, gameState)
-	case game.WinterBuild:
-		return tp.validateBuildOrder(order, gameState)
-	default:
-		return fmt.Errorf("unknown phase: %s", gameState.Phase)
-	}
-}
-
-// validateMovementOrder validates orders during movement phases
-func (tp *TurnProcessor) validateMovementOrder(order *game.Order, gameState *game.GameState) error {
-	switch order.Type {
-	case game.Move:
-		// Check if unit is trying to move to its own location
-		if order.From == order.To {
-			return fmt.Errorf("unit cannot move to its own location")
-		}
-		// Convoy-aware adjacency validation
-		if err := tp.validateMoveAdjacency(order, gameState); err != nil {
-			return err
-		}
-	case game.Hold:
-		// Hold orders are always valid if unit exists
-		return nil
-	case game.Support:
-		// Validate support target exists
-		if order.SupportTarget == "" {
-			return fmt.Errorf("support order missing target")
-		}
-		// Check for self-support (unit cannot support itself)
-		if order.From == order.SupportTarget {
-			return fmt.Errorf("unit cannot support itself")
-		}
-		// For support move orders, validate that the supporting unit can reach the destination
-		if order.SupportDestination != "" { // This is a support move order
-			unit := gameState.Board.GetUnit(order.From)
-			if !tp.areAdjacent(order.From, order.SupportDestination, unit.Type, gameState.Board) {
-				return fmt.Errorf("supporting unit cannot reach destination %s", order.SupportDestination)
-			}
-		}
-		// Additional support validation would go here
-	case game.Convoy:
-		// Validate convoy is by fleet
-		unit := gameState.Board.GetUnit(order.From)
-		if unit.Type != game.Fleet {
-			return fmt.Errorf("convoy orders can only be given by fleets")
-		}
-		// Additional convoy validation would go here
-	}
-
-	return nil
-}
-
-// areAdjacent checks if two provinces are adjacent for the given unit type
-func (tp *TurnProcessor) areAdjacent(from, to string, unitType game.UnitType, board *game.Board) bool {
-	fromProvince := board.GetProvince(from)
-	if fromProvince == nil {
-		return false
-	}
-
-	switch unitType {
-	case game.Army:
-		for _, neighbor := range fromProvince.ArmyNeighbors {
-			if neighbor == to {
-				return true
-			}
-		}
-	case game.Fleet:
-		for _, neighbor := range fromProvince.FleetNeighbors {
-			if neighbor == to {
-				return true
-			}
-		}
-		// Also check coast neighbors
-		for _, neighbors := range fromProvince.CoastNeighbors {
-			for _, neighbor := range neighbors {
-				if neighbor == to {
-					return true
-				}
-			}
-		}
-	}
-
-	return false
-}
-
-// validateMoveAdjacency validates move adjacency with convoy awareness
-func (tp *TurnProcessor) validateMoveAdjacency(order *game.Order, gameState *game.GameState) error {
 	// For fleets, always check normal adjacency (fleets cannot be convoyed)
-	if order.UnitType == game.Fleet {
-		if !tp.areAdjacent(order.From, order.To, order.UnitType, gameState.Board) {
-			return fmt.Errorf("cannot move from %s to %s: not adjacent (unit type: %v)", order.From, order.To, order.UnitType)
+	if unit.Type == game.Fleet {
+		if err := tp.semanticValidator.ValidateAdjacency(order.From, order.To, order.FromCoast, order.ToCoast, unit.Type); err != nil {
+			return fmt.Errorf("cannot move from %s to %s: %v", order.From, order.To, err)
 		}
 		return nil
 	}
 
 	// For armies, check if convoy orders exist that could enable this move
-	if order.UnitType == game.Army {
+	if unit.Type == game.Army {
 		// First check normal adjacency
-		if tp.areAdjacent(order.From, order.To, order.UnitType, gameState.Board) {
+		if err := tp.semanticValidator.ValidateAdjacency(order.From, order.To, order.FromCoast, order.ToCoast, unit.Type); err == nil {
 			return nil // Adjacent move is always valid
 		}
 
@@ -233,11 +139,11 @@ func (tp *TurnProcessor) validateMoveAdjacency(order *game.Order, gameState *gam
 		}
 
 		// No convoy orders and not adjacent
-		return fmt.Errorf("cannot move from %s to %s: not adjacent and no convoy orders (unit type: %v)", order.From, order.To, order.UnitType)
+		return fmt.Errorf("cannot move from %s to %s: not adjacent and no convoy orders", order.From, order.To)
 	}
 
 	// Unknown unit type
-	return fmt.Errorf("unknown unit type: %v", order.UnitType)
+	return fmt.Errorf("unknown unit type: %v", unit.Type)
 }
 
 // hasConvoyOrders checks if there are convoy orders that could enable the given army move
@@ -439,7 +345,23 @@ func (tp *TurnProcessor) applyResults(
 		}
 	}
 
-	// FIXED: Apply moves in two phases to prevent order-dependent board corruption
+	// FIXED: Apply moves in three phases to prevent order-dependent board corruption
+	// Phase 0: Handle dislodgements from successful moves first
+	for i, order := range orders {
+		if i >= len(results) {
+			continue
+		}
+		result := results[i]
+		if order.Type == game.Move && result.Result == resolution.MoveSuccess {
+			// Check if there's a unit at the destination that gets dislodged
+			targetUnit := newState.Board.GetUnit(order.To)
+			if targetUnit != nil {
+				dislodgedUnits = append(dislodgedUnits, targetUnit)
+				newState.Board.RemoveUnit(order.To)
+			}
+		}
+	}
+
 	// Phase 1: Collect all moves (successful and failed) for atomic processing
 	var allMoves []struct {
 		order  *game.Order
@@ -471,11 +393,23 @@ func (tp *TurnProcessor) applyResults(
 				return nil, err
 			}
 		case game.Support:
-			// Support orders don't directly change unit positions
-			// Results are already captured in the resolution
+			// Support orders don't directly change unit positions, but can be dislodged
+			if result.Dislodged {
+				unit := newState.Board.GetUnit(order.From)
+				if unit != nil {
+					dislodgedUnits = append(dislodgedUnits, unit)
+					newState.Board.RemoveUnit(order.From)
+				}
+			}
 		case game.Convoy:
-			// Convoy orders don't directly change unit positions
-			// Results are already captured in the resolution
+			// Convoy orders don't directly change unit positions, but can be dislodged
+			if result.Dislodged {
+				unit := newState.Board.GetUnit(order.From)
+				if unit != nil {
+					dislodgedUnits = append(dislodgedUnits, unit)
+					newState.Board.RemoveUnit(order.From)
+				}
+			}
 		}
 	}
 
