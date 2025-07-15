@@ -1,7 +1,6 @@
 package resolution
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -78,7 +77,6 @@ func (adj *Adjudicator) resolve(order *Order, optimistic bool) bool {
 	defer func() { adj.recursionDepth-- }()
 
 	if adj.recursionDepth > maxRecursionDepth {
-		fmt.Printf("⚠️ Maximum recursion depth exceeded for %s, returning optimistic=%t\n", order.String(), optimistic)
 		adj.uncertain = true
 		return optimistic
 	}
@@ -99,7 +97,6 @@ func (adj *Adjudicator) resolve(order *Order, optimistic bool) bool {
 	// Check for cycle detection - FIXED: Prevent infinite recursion
 	if order.isVisited {
 		// We've found a cycle!
-		fmt.Printf("🔄 Cycle detected at %s (cycle length: %d)\n", order.String(), len(adj.cycle))
 		adj.cycle = append(adj.cycle, order)
 		adj.recursionHits++
 		adj.uncertain = true
@@ -123,7 +120,6 @@ func (adj *Adjudicator) resolve(order *Order, optimistic bool) bool {
 	if adj.uncertain {
 		adj.uncertain = false // Reset for pessimistic run
 		pesResult = adj.adjudicate(order, false)
-		fmt.Printf("    Pessimistic result: %t\n", pesResult)
 	}
 
 	// Backtrack - ALWAYS reset visited flag
@@ -132,8 +128,6 @@ func (adj *Adjudicator) resolve(order *Order, optimistic bool) bool {
 	// If both runs agree, we have a definitive result
 	if optResult == pesResult {
 		order.setResolution(optResult)
-		fmt.Printf("🔍 Applying %s: %s (opt=%t, pes=%t)\n",
-			map[bool]string{true: "MoveSuccess", false: "MoveFailed"}[optResult], order.String(), optResult, pesResult)
 		// Clean up cycle data from this branch
 		adj.cycle = adj.cycle[:oldCycleLen]
 		adj.recursionHits = oldRecursionHits
@@ -153,7 +147,6 @@ func (adj *Adjudicator) resolve(order *Order, optimistic bool) bool {
 
 	// If we've retreated to the ancestor of the whole cycle, apply backup rules
 	if adj.recursionHits == oldRecursionHits {
-		fmt.Printf("🔧 Applying backup rules (recursionHits: %d, oldRecursionHits: %d)\n", adj.recursionHits, oldRecursionHits)
 		// Apply backup rule on all orders in the cycle
 		adj.applyBackupRule()
 		adj.cycle = adj.cycle[:oldCycleLen]
@@ -161,11 +154,9 @@ func (adj *Adjudicator) resolve(order *Order, optimistic bool) bool {
 		// FIXED: Don't recurse again - backup rule has resolved the orders
 		// Return the resolution that was set by the backup rule
 		if order.isResolved {
-			fmt.Printf("🔧 Order %s resolved by backup rule: %t\n", order.String(), order.resolution)
 			return order.resolution
 		}
 		// If backup rule didn't resolve this specific order, use optimistic default
-		fmt.Printf("🔧 Order %s not resolved by backup rule, using optimistic: %t\n", order.String(), optimistic)
 		return optimistic
 	}
 
@@ -187,21 +178,17 @@ func (adj *Adjudicator) hasValidPath(order *Order, optimistic bool) bool {
 		return false
 	}
 
-	fmt.Printf("🛤️ hasValidPath: checking %s\n", order.String())
-
 	// Check if this is a convoy move by looking for convoy orders
 	convoyOrders := adj.findConvoyOrders(order.Source, order.Destination)
 
 	if len(convoyOrders) == 0 {
 		// No convoy orders - this should be a direct move
 		// For now, assume direct moves are valid (adjacency was checked during parsing)
-		fmt.Printf("  ✅ Direct move, PATH valid\n")
 		return true
 	}
 
 	// This is a convoy move - validate the convoy chain
 	result := adj.validateConvoyChain(order.Source, order.Destination, convoyOrders, optimistic)
-	fmt.Printf("  🚢 Convoy move, PATH valid: %t\n", result)
 	return result
 }
 
@@ -209,20 +196,16 @@ func (adj *Adjudicator) hasValidPath(order *Order, optimistic bool) bool {
 func (adj *Adjudicator) findConvoyOrders(source, destination string) []*Order {
 	var convoyOrders []*Order
 
-	fmt.Printf("🔍 findConvoyOrders: looking for convoy from %s to %s\n", source, destination)
 	for _, order := range adj.orders {
 		if order.Type == Convoy {
-			fmt.Printf("  Found convoy order: %s (auxiliary: '%s')\n", order.String(), order.Auxiliary)
 			// Parse convoy auxiliary field: "source -> destination"
 			// Expected format: "bulgaria -> trieste" or similar
 			if order.Auxiliary == source+" -> "+destination {
-				fmt.Printf("  ✅ Convoy matches!\n")
 				convoyOrders = append(convoyOrders, order)
 			}
 		}
 	}
 
-	fmt.Printf("🔍 Found %d convoy orders for %s -> %s\n", len(convoyOrders), source, destination)
 	return convoyOrders
 }
 
@@ -259,12 +242,6 @@ func (adj *Adjudicator) adjudicateMove(order *Order, optimistic bool) bool {
 	attackStrength := adj.calculateAttackStrength(order, optimistic)
 	holdStrength := adj.calculateHoldStrength(order.Destination, !optimistic)
 
-	// Debug output for circular movement
-	if len(adj.cycle) > 0 {
-		fmt.Printf("🔍 Move %s: attack=%d, hold=%d, optimistic=%t\n",
-			order.String(), attackStrength, holdStrength, optimistic)
-	}
-
 	// Check if we can overcome the hold strength
 	if attackStrength <= holdStrength {
 		return false
@@ -288,7 +265,6 @@ func (adj *Adjudicator) adjudicateSupport(order *Order, optimistic bool) bool {
 	// First check: Self-dislodgement prevention
 	// A support order fails if it would help dislodge the supporting player's own unit
 	if adj.wouldHelpDislodgeOwnUnit(order) {
-		fmt.Printf("  ❌ Support cut: would help dislodge own unit\n")
 		return false
 	}
 
@@ -379,8 +355,6 @@ func (adj *Adjudicator) wouldHelpDislodgeOwnUnit(supportOrder *Order) bool {
 	for _, order := range adj.orders {
 		// Look for a unit at the target location that belongs to the same owner as the supporter
 		if order.Source == targetLocation && order.Owner == supportOrder.Owner {
-			fmt.Printf("  🚫 Support from %s would help dislodge own unit at %s\n",
-				supportOrder.Source, targetLocation)
 			return true
 		}
 	}

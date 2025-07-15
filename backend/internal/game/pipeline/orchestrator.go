@@ -148,7 +148,6 @@ func (tp *TurnProcessor) validateMoveAdjacency(order *game.Order, gameState *gam
 
 // hasConvoyOrders checks if there are convoy orders that could enable the given army move
 func (tp *TurnProcessor) hasConvoyOrders(from, to string, gameState *game.GameState) bool {
-	fmt.Printf("🔍 hasConvoyOrders checking for convoy from %s to %s\n", from, to)
 	for _, orders := range gameState.RawOrders {
 		for _, rawOrder := range orders {
 			// Parse the order to check if it's a convoy for this move
@@ -157,34 +156,25 @@ func (tp *TurnProcessor) hasConvoyOrders(from, to string, gameState *game.GameSt
 				continue
 			}
 
-			fmt.Printf("  Checking order: %s (tokens: %d)\n", rawOrder, len(tokens))
-			for i, token := range tokens {
-				fmt.Printf("    [%d]: %s\n", i, token.Value)
-			}
-
 			// Check for convoy order format: "f province c from - to"
 			if len(tokens) >= 6 &&
 				(tokens[1].Value == "c" || tokens[1].Value == "convoy" || tokens[1].Value == "convoys") &&
 				tokens[2].Value == from && tokens[4].Value == to {
-				fmt.Printf("  ✅ Found convoy match (format 1)\n")
 				return true
 			}
 			if len(tokens) >= 7 &&
 				(tokens[2].Value == "c" || tokens[2].Value == "convoy" || tokens[2].Value == "convoys") &&
 				tokens[3].Value == from && tokens[5].Value == to {
-				fmt.Printf("  ✅ Found convoy match (format 2)\n")
 				return true
 			}
 			// Check for format: "f province1 province2 convoys a from - to"
 			if len(tokens) >= 8 &&
 				(tokens[3].Value == "c" || tokens[3].Value == "convoy" || tokens[3].Value == "convoys") &&
 				tokens[5].Value == from && tokens[7].Value == to {
-				fmt.Printf("  ✅ Found convoy match (format 3)\n")
 				return true
 			}
 		}
 	}
-	fmt.Printf("  ❌ No convoy orders found for %s to %s\n", from, to)
 	return false
 }
 
@@ -202,25 +192,6 @@ func (tp *TurnProcessor) validateBuildOrder(order *game.Order, gameState *game.G
 
 // resolveOrders executes the recursive resolution algorithm
 func (tp *TurnProcessor) resolveOrders(orders []*game.Order, board *game.Board) ([]resolution.OrderOutcome, error) {
-	fmt.Printf("🔍 Resolving %d orders\n", len(orders))
-	for i, order := range orders {
-		switch order.Type {
-		case game.Move:
-			fmt.Printf("  %d: %s %s %s -> %s\n", i, order.Owner, order.UnitType, order.From, order.To)
-		case game.Convoy:
-			fmt.Printf("  %d: %s %s %s C %s -> %s\n", i, order.Owner, order.UnitType, order.From, order.ConvoyTarget, order.To)
-		case game.Support:
-			if order.SupportDestination != "" {
-				fmt.Printf("  %d: %s %s %s S %s -> %s\n", i, order.Owner, order.UnitType, order.From, order.SupportTarget, order.SupportDestination)
-			} else {
-				fmt.Printf("  %d: %s %s %s S %s\n", i, order.Owner, order.UnitType, order.From, order.SupportTarget)
-			}
-		case game.Hold:
-			fmt.Printf("  %d: %s %s %s H\n", i, order.Owner, order.UnitType, order.From)
-		default:
-			fmt.Printf("  %d: %s %s %s (unknown)\n", i, order.Owner, order.UnitType, order.From)
-		}
-	}
 
 	// Convert game.Order to resolution.Order
 	resolutionOrders := make([]resolution.Order, len(orders))
@@ -240,7 +211,6 @@ func (tp *TurnProcessor) resolveOrders(orders []*game.Order, board *game.Board) 
 			Dislodged:   result.Dislodged,
 			Destination: result.Destination,
 		}
-		fmt.Printf("  %d: %s\n", i, outcomes[i].Result)
 	}
 
 	return outcomes, nil
@@ -414,16 +384,6 @@ func (tp *TurnProcessor) applyResults(
 	}
 
 	// Phase 2: Remove all units that are moving successfully from their sources
-	fmt.Printf("🔍 Removing units from sources\n")
-	for _, move := range allMoves {
-		if move.result.Result == resolution.MoveSuccess {
-			fmt.Printf("  ✅ %s %s: %s -> %s\n", move.order.Owner, move.order.UnitType, move.order.From, move.order.To)
-			newState.Board.RemoveUnit(move.order.From)
-		}
-	}
-
-	// Phase 3: Place all successfully moving units at their destinations
-	fmt.Printf("🔍 Placing units at destinations\n")
 	for _, move := range allMoves {
 		if move.result.Result == resolution.MoveSuccess {
 			destination := move.order.To
@@ -437,10 +397,8 @@ func (tp *TurnProcessor) applyResults(
 
 			// Place unit at destination
 			if err := newState.Board.PlaceUnit(move.unit); err != nil {
-				fmt.Printf("  ❌ Failed to place %s %s at %s: %v\n", move.unit.Owner, move.unit.Type, destination, err)
 				return nil, fmt.Errorf("failed to place unit at %s: %w", destination, err)
 			}
-			fmt.Printf("  ✅ Placed %s %s at %s\n", move.unit.Owner, move.unit.Type, destination)
 		} else {
 			// Handle failed moves: unit stays in place
 			// For failed moves, the unit should already be in its original position
@@ -510,16 +468,12 @@ func (tp *TurnProcessor) applyMoveResultInternal(
 	switch result.Result {
 	case resolution.MoveSuccess:
 		// Move succeeded - relocate unit
-		fmt.Printf("🔍 Applying MoveSuccess: %s %s %s->%s, result.Destination=%s\n",
-			unit.Owner, unit.Type, order.From, order.To, result.Destination)
-		fmt.Printf("  Unit before move: %+v\n", unit)
 		state.Board.RemoveUnit(order.From)
 		// Use Destination from result if set (for circular movements), otherwise use original To
 		destination := order.To
 		if result.Destination != "" {
 			destination = result.Destination
 		}
-		fmt.Printf("  Moving unit to: %s\n", destination)
 
 		// In circular movement, destination might be occupied by a unit that's also moving
 		// Check if the existing unit at destination is also moving this turn
@@ -535,25 +489,19 @@ func (tp *TurnProcessor) applyMoveResultInternal(
 			}
 
 			if hasMovingOrder {
-				fmt.Printf("  🔄 Destination %s occupied by %s %s that's also moving, removing\n",
-					destination, existingUnit.Owner, existingUnit.Type)
 				state.Board.RemoveUnit(destination)
 			} else {
 				// Unit at destination is not moving, this should be a dislodgement
-				fmt.Printf("  ⚔️ Destination %s occupied by %s %s that's not moving\n",
-					destination, existingUnit.Owner, existingUnit.Type)
 				// For now, still remove it - proper dislodgement logic would go here
 				state.Board.RemoveUnit(destination)
 			}
 		}
 		unit.Province = destination
 		unit.Coast = order.ToCoast
-		fmt.Printf("  Unit after move: %+v\n", unit)
 
 		if err := state.Board.PlaceUnit(unit); err != nil {
 			return fmt.Errorf("failed to place unit at %s: %w", destination, err)
 		}
-		fmt.Printf("  Unit placed. Board now has at %s: %+v\n", destination, state.Board.GetUnit(destination))
 	case resolution.MoveBounced:
 		// Move bounced - unit stays in place
 		// No action needed

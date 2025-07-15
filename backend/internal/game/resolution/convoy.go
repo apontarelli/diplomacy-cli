@@ -1,9 +1,5 @@
 package resolution
 
-import (
-	"fmt"
-)
-
 // ConvoyPath represents a valid convoy path from source to destination
 type ConvoyPath struct {
 	Source      string   // Starting province for the army
@@ -50,13 +46,11 @@ func NewConvoyPathFinder() *ConvoyPathFinder {
 func (cpf *ConvoyPathFinder) InitializeFromBoard(provinces map[string]interface{}) {
 	// TODO: This will need to be implemented once we have access to the board structure
 	// For now, we'll use a simplified approach in the adjudicator
-	fmt.Printf("🗺️ ConvoyPathFinder: Board initialization not yet implemented\n")
 }
 
 // FindConvoyPaths finds all possible convoy paths from source to destination
 // using optimized BFS with data-oriented design
 func (cpf *ConvoyPathFinder) FindConvoyPaths(source, destination string, convoyOrders []*Order) []ConvoyPath {
-	fmt.Printf("🔍 FindConvoyPaths: %s -> %s with %d convoy orders\n", source, destination, len(convoyOrders))
 
 	if len(convoyOrders) == 0 {
 		return nil
@@ -65,7 +59,6 @@ func (cpf *ConvoyPathFinder) FindConvoyPaths(source, destination string, convoyO
 	// Check cache first for performance
 	cacheKey := source + "->" + destination
 	if cachedPaths, exists := cpf.pathCache[cacheKey]; exists {
-		fmt.Printf("  📋 Using cached paths for %s\n", cacheKey)
 		return cachedPaths
 	}
 
@@ -82,7 +75,6 @@ func (cpf *ConvoyPathFinder) FindConvoyPaths(source, destination string, convoyO
 				Source:     source,
 				Dest:       destination,
 			})
-			fmt.Printf("  Available convoy fleet: %s\n", order.Source)
 		}
 	}
 
@@ -92,7 +84,6 @@ func (cpf *ConvoyPathFinder) FindConvoyPaths(source, destination string, convoyO
 	// Cache the result for future use
 	cpf.pathCache[cacheKey] = paths
 
-	fmt.Printf("🔍 Found %d potential convoy paths\n", len(paths))
 	return paths
 }
 
@@ -107,7 +98,7 @@ func (cpf *ConvoyPathFinder) bfsConvoyPathsOptimized(source, destination string,
 	expectedAux := source + " -> " + destination
 
 	// Use array iteration for better cache performance
-	for i, fleetProvince := range cpf.convoyFleets {
+	for _, fleetProvince := range cpf.convoyFleets {
 		// Find the corresponding order using linear search (optimized for small arrays)
 		var matchingOrder *Order
 		for _, order := range convoyOrders {
@@ -126,7 +117,6 @@ func (cpf *ConvoyPathFinder) bfsConvoyPathsOptimized(source, destination string,
 				Valid:       true,
 			}
 			validPaths = append(validPaths, path)
-			fmt.Printf("  ✅ Optimized convoy path: %s via fleet[%d]=%s\n", expectedAux, i, fleetProvince)
 		}
 	}
 
@@ -153,11 +143,9 @@ func (cpf *ConvoyPathFinder) bfsConvoyPaths(source, destination string, convoyFl
 // Optimized with early exit and reduced allocations
 func (adj *Adjudicator) ValidateConvoyPath(path ConvoyPath, optimistic bool) bool {
 	fleetCount := len(path.FleetChain)
-	fmt.Printf("🔍 ValidateConvoyPath: checking path with %d fleets\n", fleetCount)
 
 	// Early exit for empty paths
 	if fleetCount == 0 {
-		fmt.Printf("  ❌ Empty fleet chain\n")
 		return false
 	}
 
@@ -168,27 +156,22 @@ func (adj *Adjudicator) ValidateConvoyPath(path ConvoyPath, optimistic bool) boo
 
 		// Fast path: check order existence and type in one condition
 		if convoyOrder == nil || convoyOrder.Type != Convoy {
-			fmt.Printf("  ❌ No convoy order for fleet at %s\n", fleetProvince)
 			return false
 		}
 
 		// Check if this convoy order succeeds - early exit on failure
 		if !adj.resolve(convoyOrder, optimistic) {
-			fmt.Printf("  ❌ Convoy order at %s fails\n", fleetProvince)
 			return false
 		}
 	}
 
-	fmt.Printf("  ✅ All %d fleets in convoy chain succeed\n", fleetCount)
 	return true
 }
 
 // Enhanced convoy chain validation using graph-based pathfinding
 func (adj *Adjudicator) validateConvoyChainEnhanced(source, destination string, convoyOrders []*Order, optimistic bool) bool {
-	fmt.Printf("🚢 validateConvoyChainEnhanced: %s -> %s\n", source, destination)
 
 	if len(convoyOrders) == 0 {
-		fmt.Printf("    ❌ No convoy orders\n")
 		return false
 	}
 
@@ -201,7 +184,6 @@ func (adj *Adjudicator) validateConvoyChainEnhanced(source, destination string, 
 	paths := adj.convoyPathFinder.FindConvoyPaths(source, destination, convoyOrders)
 
 	if len(paths) == 0 {
-		fmt.Printf("    ❌ No valid convoy paths found\n")
 		return false
 	}
 
@@ -211,12 +193,10 @@ func (adj *Adjudicator) validateConvoyChainEnhanced(source, destination string, 
 
 // resolveConvoyParadox implements multi-pass paradox resolution for convoy chains
 func (adj *Adjudicator) resolveConvoyParadox(paths []ConvoyPath, optimistic bool) bool {
-	fmt.Printf("🔄 resolveConvoyParadox: checking %d paths with multi-pass resolution\n", len(paths))
 
 	maxPasses := 3 // Limit iterations to prevent infinite loops
 
 	for pass := 1; pass <= maxPasses; pass++ {
-		fmt.Printf("  🔄 Pass %d: evaluating convoy paths\n", pass)
 
 		validPaths := 0
 		stableState := true
@@ -236,21 +216,16 @@ func (adj *Adjudicator) resolveConvoyParadox(paths []ConvoyPath, optimistic bool
 			// Check if state changed from previous pass
 			if wasValid != isValid {
 				stableState = false
-				fmt.Printf("    🔄 Path %d changed validity: %t -> %t\n", i, wasValid, isValid)
 			}
 		}
 
-		fmt.Printf("  📊 Pass %d: %d valid paths, stable: %t\n", pass, validPaths, stableState)
-
 		// If we have valid paths and state is stable, we're done
 		if validPaths > 0 && stableState {
-			fmt.Printf("  ✅ Stable state reached with %d valid paths\n", validPaths)
 			return true
 		}
 
 		// If no valid paths and state is stable, convoy fails
 		if validPaths == 0 && stableState {
-			fmt.Printf("  ❌ Stable state reached with no valid paths\n")
 			return false
 		}
 
@@ -258,13 +233,11 @@ func (adj *Adjudicator) resolveConvoyParadox(paths []ConvoyPath, optimistic bool
 	}
 
 	// If we didn't reach a stable state, apply backup rules
-	fmt.Printf("  🔧 Multi-pass resolution didn't converge, applying backup rules\n")
 	return adj.applyConvoyBackupRules(paths, optimistic)
 }
 
 // applyConvoyBackupRules applies backup rules when multi-pass resolution doesn't converge
 func (adj *Adjudicator) applyConvoyBackupRules(paths []ConvoyPath, optimistic bool) bool {
-	fmt.Printf("🔧 applyConvoyBackupRules: applying backup rules for convoy paradox\n")
 
 	// DATC backup rule for convoy paradoxes:
 	// If a convoy paradox cannot be resolved through normal means,
@@ -303,17 +276,13 @@ func (adj *Adjudicator) applyConvoyBackupRules(paths []ConvoyPath, optimistic bo
 		}
 	}
 
-	fmt.Printf("  📊 Backup rules: %d paths would be valid under optimistic assumptions\n", optimisticValidPaths)
-
 	// If there would be valid paths under optimistic assumptions,
 	// but we have a paradox, apply the standard backup rule
 	if optimisticValidPaths > 0 {
 		// Standard DATC backup rule: convoy paradoxes resolve in favor of the convoy
 		// This matches the behavior expected in DATC test 6.F.14
-		fmt.Printf("  ✅ Backup rule: convoy paradox resolves in favor of convoy\n")
 		return true
 	}
 
-	fmt.Printf("  ❌ Backup rule: no valid convoy paths even under optimistic assumptions\n")
 	return false
 }

@@ -1,7 +1,5 @@
 package resolution
 
-import "fmt"
-
 // strength.go implements the four types of strength calculations
 // from the adjudication article: Attack, Hold, Defend, and Prevent.
 
@@ -15,7 +13,6 @@ func (adj *Adjudicator) calculateAttackStrength(order *Order, optimistic bool) i
 
 	// DATC 5.B.8: If the PATH of the move order fails, then the ATTACK STRENGTH is zero
 	if !adj.hasValidPath(order, optimistic) {
-		fmt.Printf("  🚫 PATH invalid for %s, attack strength = 0\\n", order.String())
 		return 0
 	}
 
@@ -52,11 +49,9 @@ func (adj *Adjudicator) calculateHoldStrength(territory string, optimistic bool)
 
 		// FIXED: Prevent infinite recursion by checking if we're already resolving this order
 		if !occupyingOrder.isVisited {
-			fmt.Printf("    🔄 Hold strength calling resolve on %s (optimistic=%t)\n", occupyingOrder.String(), !optimistic)
 			moveSucceeds = adj.resolve(occupyingOrder, !optimistic)
 		} else {
 			// FIXED: If we're in a cycle, mark as uncertain and add to cycle if not already there
-			fmt.Printf("    🔄 Hold strength: %s already visited, cycle detected\n", occupyingOrder.String())
 			adj.uncertain = true // Mark as uncertain due to cycle
 
 			// Add to cycle if not already present
@@ -70,7 +65,6 @@ func (adj *Adjudicator) calculateHoldStrength(territory string, optimistic bool)
 			if !alreadyInCycle {
 				adj.cycle = append(adj.cycle, occupyingOrder)
 				adj.recursionHits++
-				fmt.Printf("    🔄 Added %s to cycle (length: %d)\n", occupyingOrder.String(), len(adj.cycle))
 			}
 
 			moveSucceeds = optimistic
@@ -78,14 +72,10 @@ func (adj *Adjudicator) calculateHoldStrength(territory string, optimistic bool)
 
 		var strength int
 		if moveSucceeds {
-			fmt.Printf("  🏃 Unit in %s successfully moves to %s, provides 0 hold strength\n",
-				territory, occupyingOrder.Destination)
 			strength = 0 // Moving unit provides no hold strength
 		} else {
-			fmt.Printf("  🛡️ Unit in %s fails to move, stays and provides base strength 1\n", territory)
 			strength = 1 // Failed move means unit stays and provides hold strength
 		}
-
 		// Add support for holding (regardless of whether unit is moving or staying)
 		for _, otherOrder := range adj.orders {
 			if otherOrder.Type == Support && adj.isSupportingHold(otherOrder, territory) {
@@ -99,7 +89,6 @@ func (adj *Adjudicator) calculateHoldStrength(territory string, optimistic bool)
 	}
 
 	// Unit is holding (not moving), provides base strength of 1
-	fmt.Printf("  🛡️  Unit in %s is holding, provides base strength 1\n", territory)
 	strength := 1 // Base strength for holding unit
 
 	// Add support for the holding unit
@@ -136,7 +125,6 @@ func (adj *Adjudicator) calculatePreventStrength(order *Order, optimistic bool) 
 
 	// DATC 5.B.6: If the PATH of the move order fails, then the PREVENT STRENGTH is 0
 	if !adj.hasValidPath(order, optimistic) {
-		fmt.Printf("  🚫 PATH invalid for %s, prevent strength = 0\\n", order.String())
 		return 0
 	}
 
