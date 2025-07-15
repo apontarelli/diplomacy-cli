@@ -247,7 +247,22 @@ func parseSupportMove(tokens []Token, resolver *ProvinceResolver) (*game.Order, 
 	var unitType game.UnitType
 	var fromToken, supportFromToken, supportToToken Token
 
-	if len(tokens) == 6 && tokens[0].Type == UNIT_TYPE && tokens[1].Type == PROVINCE &&
+	if len(tokens) == 7 && tokens[0].Type == UNIT_TYPE && tokens[1].Type == PROVINCE &&
+		tokens[2].Type == SUPPORT && tokens[3].Type == UNIT_TYPE && tokens[4].Type == PROVINCE &&
+		tokens[5].Type == DASH && tokens[6].Type == PROVINCE {
+		// Format with unit type in supported order: "A Bur Supports A Pic - Bel"
+		switch tokens[0].Value {
+		case "army", "a":
+			unitType = game.Army
+		case "fleet", "f":
+			unitType = game.Fleet
+		default:
+			return nil, fmt.Errorf("invalid unit type: %s", tokens[0].Value)
+		}
+		fromToken = tokens[1]
+		supportFromToken = tokens[4]
+		supportToToken = tokens[6]
+	} else if len(tokens) == 6 && tokens[0].Type == UNIT_TYPE && tokens[1].Type == PROVINCE &&
 		tokens[2].Type == SUPPORT && tokens[3].Type == PROVINCE &&
 		tokens[4].Type == DASH && tokens[5].Type == PROVINCE {
 
