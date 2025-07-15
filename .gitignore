@@ -42,3 +42,9 @@ node_modules/
 # Task files
 # tasks.json
 # tasks/ 
+
+# Go profiling and testing files
+*.prof
+*.test
+coverage.html
+coverage.out
