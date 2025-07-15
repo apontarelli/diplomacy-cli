@@ -178,10 +178,23 @@ func (tp *TurnProcessor) hasConvoyOrders(from, to string, gameState *game.GameSt
 	return false
 }
 
-// validateRetreatOrder validates orders during retreat phases
-func (tp *TurnProcessor) validateRetreatOrder(order *game.Order, gameState *game.GameState) error {
-	// Retreat validation logic would go here
-	return nil
+// validateRetreatOrder validates retreat orders against actual dislodged units
+// This should only be called during retreat phase processing, not during initial validation
+func (tp *TurnProcessor) validateRetreatOrder(order *game.Order, dislodgedUnit resolution.DislodgedUnit) error {
+	// Create retreat processor
+	retreatProcessor := resolution.NewRetreatProcessor(nil) // Board not needed for validation
+
+	// Convert game.Order to resolution.RetreatOrder
+	retreatOrder := resolution.RetreatOrder{
+		Unit:        fmt.Sprintf("%s %s", order.UnitType, order.From),
+		From:        order.From,
+		Destination: order.To,
+		Coast:       order.ToCoast,
+		Owner:       string(order.Owner),
+	}
+
+	// Validate the retreat order against the actual dislodged unit
+	return retreatProcessor.ValidateRetreatOrder(retreatOrder, dislodgedUnit)
 }
 
 // validateBuildOrder validates orders during build phases
@@ -417,6 +430,55 @@ func (tp *TurnProcessor) applyResults(
 
 	// Advance to next phase based on dislodged units
 	newState.AdvanceToNextPhase(dislodgedUnits)
+
+	return newState, nil
+}
+
+// processRetreatPhase handles retreat orders for dislodged units
+func (tp *TurnProcessor) processRetreatPhase(
+	gameState *game.GameState,
+	orders []*game.Order,
+	dislodgedUnits []*game.Unit,
+	attackerOrigins map[string]string, // map of dislodged unit province -> attacker origin
+) (*game.GameState, error) {
+
+	// Create retreat processor
+	retreatProcessor := resolution.NewRetreatProcessor(gameState.Board)
+
+	// Convert dislodged units to DislodgedUnit structs
+	dislodgedUnitStructs := make([]resolution.DislodgedUnit, 0, len(dislodgedUnits))
+	for _, unit := range dislodgedUnits {
+		attackerOrigin := attackerOrigins[unit.Province]
+		dislodgedUnit := retreatProcessor.CreateDislodgedUnit(unit, attackerOrigin, gameState)
+		dislodgedUnitStructs = append(dislodgedUnitStructs, dislodgedUnit)
+	}
+
+	// Convert game orders to retreat orders
+	retreatOrders := make([]resolution.RetreatOrder, 0, len(orders))
+	for _, order := range orders {
+		if order.Type == game.Move { // Retreat orders are represented as moves in retreat phase
+			retreatOrder := resolution.RetreatOrder{
+				Unit:        fmt.Sprintf("%s %s", order.UnitType, order.From),
+				From:        order.From,
+				Destination: order.To,
+				Coast:       order.ToCoast,
+				Owner:       string(order.Owner),
+			}
+			retreatOrders = append(retreatOrders, retreatOrder)
+		}
+	}
+
+	// Process retreats
+	results := retreatProcessor.ProcessRetreats(dislodgedUnitStructs, retreatOrders)
+
+	// Clone game state for modifications
+	newState := gameState.Clone()
+
+	// Apply retreat results to the board
+	retreatProcessor.ApplyRetreatResults(results)
+
+	// Advance to next phase (no more dislodged units after retreats)
+	newState.AdvanceToNextPhase([]*game.Unit{})
 
 	return newState, nil
 }

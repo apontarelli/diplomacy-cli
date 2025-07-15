@@ -137,7 +137,7 @@
         "dependencies": [
           2
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -145,7 +145,7 @@
             "description": "Create a struct for handling dislodged units, including possible retreat provinces.",
             "dependencies": [],
             "details": "Define a Go struct DislodgedUnit with fields for the unit, dislodger, and list of valid retreat destinations based on game rules.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -156,7 +156,7 @@
               1
             ],
             "details": "Extend the resolution engine with functions to validate retreat options for dislodged units and apply successful retreat orders, ensuring compliance with basic retreat rules.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -168,7 +168,7 @@
               2
             ],
             "details": "Add logic to detect and resolve conflicts in retreat phases, such as when multiple units attempt to retreat to the same province, following DATC guidelines for dislodgement and standoffs.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -889,7 +889,7 @@
     ],
     "metadata": {
       "created": "2025-07-15T04:21:52.697Z",
-      "updated": "2025-07-15T07:36:23.022Z",
+      "updated": "2025-07-15T17:56:48.934Z",
       "description": "Tasks for master context"
     }
   }

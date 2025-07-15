@@ -8,6 +8,7 @@ const (
 	Support
 	Convoy
 	Hold
+	Retreat
 )
 
 // Order represents a single unit's order with resolution state.
@@ -43,15 +44,18 @@ type OrderOutcome struct {
 
 // Order result constants for compatibility
 const (
-	MoveSuccess     string = "move_success"
-	MoveBounced     string = "move_bounced"
-	MoveNoConvoy    string = "move_no_convoy"
-	SupportSuccess  string = "support_success"
-	SupportCut      string = "support_cut"
-	ConvoySuccess   string = "convoy_success"
-	ConvoyDisrupted string = "convoy_disrupted"
-	HoldSuccess     string = "hold_success"
-	Dislodged       string = "dislodged"
+	MoveSuccess      string = "move_success"
+	MoveBounced      string = "move_bounced"
+	MoveNoConvoy     string = "move_no_convoy"
+	SupportSuccess   string = "support_success"
+	SupportCut       string = "support_cut"
+	ConvoySuccess    string = "convoy_success"
+	ConvoyDisrupted  string = "convoy_disrupted"
+	HoldSuccess      string = "hold_success"
+	Dislodged        string = "dislodged"
+	RetreatSuccess   string = "retreat_success"
+	RetreatFailed    string = "retreat_failed"
+	RetreatDisbanded string = "retreat_disbanded"
 )
 
 // String returns a human-readable representation of the order.
@@ -65,6 +69,8 @@ func (o Order) String() string {
 		return o.Unit + " C " + o.Auxiliary
 	case Hold:
 		return o.Unit + " H"
+	case Retreat:
+		return o.Unit + " R " + o.Destination
 	default:
 		return o.Unit + " (unknown order)"
 	}
@@ -91,4 +97,30 @@ func (o *Order) reset() {
 	o.isResolved = false
 	o.resolution = false
 	o.isVisited = false
+}
+
+// DislodgedUnit represents a unit that has been dislodged and needs to retreat
+type DislodgedUnit struct {
+	Unit             string   // e.g., "A Berlin"
+	Owner            string   // Nation that owns this unit
+	DislodgedFrom    string   // Province where unit was dislodged
+	AttackerOrigin   string   // Province the successful attacker came from
+	PossibleRetreats []string // Valid retreat destinations
+}
+
+// RetreatOrder represents a retreat order for a dislodged unit
+type RetreatOrder struct {
+	Unit        string // e.g., "A Berlin"
+	From        string // Province retreating from
+	Destination string // Province retreating to
+	Coast       string // Coast specification for coastal retreats
+	Owner       string // Nation that owns this unit
+}
+
+// RetreatResult represents the outcome of a retreat order
+type RetreatResult struct {
+	Order     RetreatOrder
+	Success   bool
+	Reason    string // Human-readable explanation
+	Disbanded bool   // True if unit was disbanded instead of retreating
 }
