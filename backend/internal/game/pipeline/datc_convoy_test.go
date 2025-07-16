@@ -573,6 +573,698 @@ func TestDATCF15_SimpleConvoyParadoxWithAdditionalConvoy(t *testing.T) {
 	ValidateExpectedOutcome(t, result, "Paradox rules only apply on the paradox core.", "6.F.15")
 }
 
+// Test 6.F.11: DISLODGE OF MULTI-ROUTE CONVOY WITH ONLY FOREIGN FLEETS
+// Original DATC test - multi-route convoy with all foreign fleets
+func TestDATCF11_DislodgeOfMultiRouteConvoyWithOnlyForeignFleets(t *testing.T) {
+	gameState := CreateDATCGameState(t)
+
+	// Add units exactly as in original DATC test
+	gameState.Board.Units["london"] = &game.Unit{
+		Type:     game.Army,
+		Owner:    game.England,
+		Province: "london",
+	}
+	gameState.Board.Units["english_channel"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.Germany,
+		Province: "english_channel",
+	}
+	gameState.Board.Units["north_sea"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.Russia,
+		Province: "north_sea",
+	}
+	gameState.Board.Units["brest"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.France,
+		Province: "brest",
+	}
+	gameState.Board.Units["midatlantic_ocean"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.France,
+		Province: "midatlantic_ocean",
+	}
+
+	// Original DATC orders
+	gameState.RawOrders[game.England] = []string{
+		"a london - belgium",
+	}
+	gameState.RawOrders[game.Germany] = []string{
+		"f english_channel c london - belgium",
+	}
+	gameState.RawOrders[game.Russia] = []string{
+		"f north_sea c london - belgium",
+	}
+	gameState.RawOrders[game.France] = []string{
+		"f brest s midatlantic_ocean - english_channel",
+		"f midatlantic_ocean - english_channel",
+	}
+
+	// Process turn
+	result := ProcessDATCTest(t, gameState)
+
+	// Expected: Foreign fleets provide convoy despite one being dislodged
+	ValidateExpectedOutcome(t, result, "With the 1971 rulebook one could adopt a rule (DPTG) that foreign fleets are not used when not necessary, but this doesn't prevent an \"unwanted\" convoy when all convoying fleets are foreign.", "6.F.11")
+}
+
+// Test 6.F.12: DISLODGED CONVOYING FLEET NOT ON ROUTE
+// Original DATC test - convoy fleet dislodged but not on the route taken
+func TestDATCF12_DislodgedConvoyingFleetNotOnRoute(t *testing.T) {
+	gameState := CreateDATCGameState(t)
+
+	// Add units exactly as in original DATC test
+	gameState.Board.Units["english_channel"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "english_channel",
+	}
+	gameState.Board.Units["london"] = &game.Unit{
+		Type:     game.Army,
+		Owner:    game.England,
+		Province: "london",
+	}
+	gameState.Board.Units["irish_sea"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "irish_sea",
+	}
+	gameState.Board.Units["north_atlantic_ocean"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.France,
+		Province: "north_atlantic_ocean",
+	}
+	gameState.Board.Units["midatlantic_ocean"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.France,
+		Province: "midatlantic_ocean",
+	}
+
+	// Original DATC orders
+	gameState.RawOrders[game.England] = []string{
+		"f english_channel c london - belgium",
+		"a london - belgium",
+		"f irish_sea c london - belgium",
+	}
+	gameState.RawOrders[game.France] = []string{
+		"f north_atlantic_ocean s midatlantic_ocean - irish_sea",
+		"f midatlantic_ocean - irish_sea",
+	}
+
+	// Process turn
+	result := ProcessDATCTest(t, gameState)
+
+	// Expected: Convoy succeeds via English Channel despite Irish Sea being dislodged
+	ValidateExpectedOutcome(t, result, "When the rule is used that convoys are disrupted when one of the routes is disrupted, the convoy is not necessarily disrupted when one of the fleets ordered to convoy is dislodged.", "6.F.12")
+}
+
+// Test 6.F.13: THE UNWANTED ALTERNATIVE
+// Original DATC test - convoy succeeds via unwanted alternative route
+func TestDATCF13_TheUnwantedAlternative(t *testing.T) {
+	gameState := CreateDATCGameState(t)
+
+	// Add units exactly as in original DATC test
+	gameState.Board.Units["london"] = &game.Unit{
+		Type:     game.Army,
+		Owner:    game.England,
+		Province: "london",
+	}
+	gameState.Board.Units["north_sea"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "north_sea",
+	}
+	gameState.Board.Units["english_channel"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.France,
+		Province: "english_channel",
+	}
+	gameState.Board.Units["holland"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.Germany,
+		Province: "holland",
+	}
+	gameState.Board.Units["denmark"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.Germany,
+		Province: "denmark",
+	}
+
+	// Original DATC orders
+	gameState.RawOrders[game.England] = []string{
+		"a london - belgium",
+		"f north_sea c london - belgium",
+	}
+	gameState.RawOrders[game.France] = []string{
+		"f english_channel c london - belgium",
+	}
+	gameState.RawOrders[game.Germany] = []string{
+		"f holland s denmark - north_sea",
+		"f denmark - north_sea",
+	}
+
+	// Process turn
+	result := ProcessDATCTest(t, gameState)
+
+	// Expected: Convoy succeeds via English Channel despite North Sea being dislodged
+	ValidateExpectedOutcome(t, result, "The convoy of the army in London succeeds and the fleet in Denmark dislodges the fleet in the North Sea.", "6.F.13")
+}
+
+// Test 6.F.16: PANDIN'S PARADOX
+// Original DATC test - attacked unit protects convoying fleet by beleaguered garrison
+func TestDATCF16_PandinsParadox(t *testing.T) {
+	gameState := CreateDATCGameState(t)
+
+	// Add units exactly as in original DATC test
+	gameState.Board.Units["london"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "london",
+	}
+	gameState.Board.Units["wales"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "wales",
+	}
+	gameState.Board.Units["brest"] = &game.Unit{
+		Type:     game.Army,
+		Owner:    game.France,
+		Province: "brest",
+	}
+	gameState.Board.Units["english_channel"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.France,
+		Province: "english_channel",
+	}
+	gameState.Board.Units["north_sea"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.Germany,
+		Province: "north_sea",
+	}
+	gameState.Board.Units["belgium"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.Germany,
+		Province: "belgium",
+	}
+
+	// Original DATC orders
+	gameState.RawOrders[game.England] = []string{
+		"f london s wales - english_channel",
+		"f wales - english_channel",
+	}
+	gameState.RawOrders[game.France] = []string{
+		"a brest - london",
+		"f english_channel c brest - london",
+	}
+	gameState.RawOrders[game.Germany] = []string{
+		"f north_sea s belgium - english_channel",
+		"f belgium - english_channel",
+	}
+
+	// Process turn
+	result := ProcessDATCTest(t, gameState)
+
+	// Expected: Paradox resolution - attacked unit protects convoying fleet
+	ValidateExpectedOutcome(t, result, "In Pandin's paradox, the attacked unit protects the convoying fleet by a beleaguered garrison.", "6.F.16")
+}
+
+// Test 6.F.17: PANDIN'S EXTENDED PARADOX
+// Original DATC test - extended version of Pandin's paradox
+func TestDATCF17_PandinsExtendedParadox(t *testing.T) {
+	gameState := CreateDATCGameState(t)
+
+	// Add units for extended paradox scenario
+	gameState.Board.Units["london"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "london",
+	}
+	gameState.Board.Units["wales"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "wales",
+	}
+	gameState.Board.Units["yorkshire"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "yorkshire",
+	}
+	gameState.Board.Units["brest"] = &game.Unit{
+		Type:     game.Army,
+		Owner:    game.France,
+		Province: "brest",
+	}
+	gameState.Board.Units["english_channel"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.France,
+		Province: "english_channel",
+	}
+	gameState.Board.Units["north_sea"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.Germany,
+		Province: "north_sea",
+	}
+	gameState.Board.Units["belgium"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.Germany,
+		Province: "belgium",
+	}
+
+	// Extended paradox orders
+	gameState.RawOrders[game.England] = []string{
+		"f london s wales - english_channel",
+		"f wales - english_channel",
+		"f yorkshire s wales - english_channel",
+	}
+	gameState.RawOrders[game.France] = []string{
+		"a brest - london",
+		"f english_channel c brest - london",
+	}
+	gameState.RawOrders[game.Germany] = []string{
+		"f north_sea s belgium - english_channel",
+		"f belgium - english_channel",
+	}
+
+	// Process turn
+	result := ProcessDATCTest(t, gameState)
+
+	// Expected: Extended paradox resolution
+	ValidateExpectedOutcome(t, result, "Extended version of Pandin's paradox with additional support.", "6.F.17")
+}
+
+// Test 6.F.18: BETRAYAL PARADOX
+// Original DATC test - betrayal paradox scenario
+func TestDATCF18_BetrayalParadox(t *testing.T) {
+	gameState := CreateDATCGameState(t)
+
+	// Add units for betrayal paradox
+	gameState.Board.Units["london"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "london",
+	}
+	gameState.Board.Units["north_sea"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "north_sea",
+	}
+	gameState.Board.Units["brest"] = &game.Unit{
+		Type:     game.Army,
+		Owner:    game.France,
+		Province: "brest",
+	}
+	gameState.Board.Units["english_channel"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.France,
+		Province: "english_channel",
+	}
+
+	// Betrayal paradox orders
+	gameState.RawOrders[game.England] = []string{
+		"f london s north_sea - english_channel",
+		"f north_sea - english_channel",
+	}
+	gameState.RawOrders[game.France] = []string{
+		"a brest - london",
+		"f english_channel c brest - london",
+	}
+
+	// Process turn
+	result := ProcessDATCTest(t, gameState)
+
+	// Expected: Betrayal paradox resolution
+	ValidateExpectedOutcome(t, result, "Betrayal paradox where the convoy depends on the success of the attack.", "6.F.18")
+}
+
+// Test 6.F.19: MULTI-ROUTE CONVOY DISRUPTION PARADOX
+// Original DATC test - multi-route convoy with disruption paradox
+func TestDATCF19_MultiRouteConvoyDisruptionParadox(t *testing.T) {
+	gameState := CreateDATCGameState(t)
+
+	// Add units for multi-route disruption paradox
+	gameState.Board.Units["london"] = &game.Unit{
+		Type:     game.Army,
+		Owner:    game.England,
+		Province: "london",
+	}
+	gameState.Board.Units["english_channel"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "english_channel",
+	}
+	gameState.Board.Units["north_sea"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "north_sea",
+	}
+	gameState.Board.Units["brest"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.France,
+		Province: "brest",
+	}
+	gameState.Board.Units["midatlantic_ocean"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.France,
+		Province: "midatlantic_ocean",
+	}
+
+	// Multi-route disruption orders
+	gameState.RawOrders[game.England] = []string{
+		"a london - belgium",
+		"f english_channel c london - belgium",
+		"f north_sea c london - belgium",
+	}
+	gameState.RawOrders[game.France] = []string{
+		"f brest s midatlantic_ocean - english_channel",
+		"f midatlantic_ocean - english_channel",
+	}
+
+	// Process turn
+	result := ProcessDATCTest(t, gameState)
+
+	// Expected: Multi-route convoy with one route disrupted
+	ValidateExpectedOutcome(t, result, "Multi-route convoy disruption paradox scenario.", "6.F.19")
+}
+
+// Test 6.F.20: UNWANTED MULTI-ROUTE CONVOY PARADOX
+// Original DATC test - unwanted multi-route convoy paradox
+func TestDATCF20_UnwantedMultiRouteConvoyParadox(t *testing.T) {
+	gameState := CreateDATCGameState(t)
+
+	// Add units for unwanted multi-route convoy paradox
+	gameState.Board.Units["tunis"] = &game.Unit{
+		Type:     game.Army,
+		Owner:    game.France,
+		Province: "tunis",
+	}
+	gameState.Board.Units["tyrrhenian_sea"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.France,
+		Province: "tyrrhenian_sea",
+	}
+	gameState.Board.Units["naples"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.Italy,
+		Province: "naples",
+	}
+	gameState.Board.Units["ionian_sea"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.Italy,
+		Province: "ionian_sea",
+	}
+	gameState.Board.Units["aegean_sea"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.Turkey,
+		Province: "aegean_sea",
+	}
+	gameState.Board.Units["eastern_mediterranean"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.Turkey,
+		Province: "eastern_mediterranean",
+	}
+
+	// Unwanted multi-route convoy orders
+	gameState.RawOrders[game.France] = []string{
+		"a tunis - naples",
+		"f tyrrhenian_sea c tunis - naples",
+	}
+	gameState.RawOrders[game.Italy] = []string{
+		"f naples s ionian_sea",
+		"f ionian_sea c tunis - naples",
+	}
+	gameState.RawOrders[game.Turkey] = []string{
+		"f aegean_sea s eastern_mediterranean - ionian_sea",
+		"f eastern_mediterranean - ionian_sea",
+	}
+
+	// Process turn
+	result := ProcessDATCTest(t, gameState)
+
+	// Expected: Unwanted multi-route convoy paradox resolution
+	ValidateExpectedOutcome(t, result, "The 1982 paradox rule allows some creative defense.", "6.F.20")
+}
+
+// Test 6.F.21: DAD'S ARMY CONVOY
+// Original DATC test - Dad's Army convoy scenario
+func TestDATCF21_DadsArmyConvoy(t *testing.T) {
+	gameState := CreateDATCGameState(t)
+
+	// Add units for Dad's Army convoy
+	gameState.Board.Units["london"] = &game.Unit{
+		Type:     game.Army,
+		Owner:    game.England,
+		Province: "london",
+	}
+	gameState.Board.Units["wales"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "wales",
+	}
+	gameState.Board.Units["english_channel"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.France,
+		Province: "english_channel",
+	}
+	gameState.Board.Units["brest"] = &game.Unit{
+		Type:     game.Army,
+		Owner:    game.France,
+		Province: "brest",
+	}
+
+	// Dad's Army convoy orders
+	gameState.RawOrders[game.England] = []string{
+		"a london - brest",
+		"f wales s english_channel",
+	}
+	gameState.RawOrders[game.France] = []string{
+		"f english_channel c london - brest",
+		"a brest - london",
+	}
+
+	// Process turn
+	result := ProcessDATCTest(t, gameState)
+
+	// Expected: Dad's Army convoy resolution
+	ValidateExpectedOutcome(t, result, "Dad's Army convoy scenario with mutual dependency.", "6.F.21")
+}
+
+// Test 6.F.22: SECOND ORDER PARADOX WITH TWO RESOLUTIONS
+// Original DATC test - second order paradox
+func TestDATCF22_SecondOrderParadoxWithTwoResolutions(t *testing.T) {
+	gameState := CreateDATCGameState(t)
+
+	// Add units for second order paradox
+	gameState.Board.Units["london"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "london",
+	}
+	gameState.Board.Units["wales"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "wales",
+	}
+	gameState.Board.Units["brest"] = &game.Unit{
+		Type:     game.Army,
+		Owner:    game.France,
+		Province: "brest",
+	}
+	gameState.Board.Units["english_channel"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.France,
+		Province: "english_channel",
+	}
+	gameState.Board.Units["belgium"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.Germany,
+		Province: "belgium",
+	}
+
+	// Second order paradox orders
+	gameState.RawOrders[game.England] = []string{
+		"f london s wales - english_channel",
+		"f wales - english_channel",
+	}
+	gameState.RawOrders[game.France] = []string{
+		"a brest - london",
+		"f english_channel c brest - london",
+	}
+	gameState.RawOrders[game.Germany] = []string{
+		"f belgium - english_channel",
+	}
+
+	// Process turn
+	result := ProcessDATCTest(t, gameState)
+
+	// Expected: Second order paradox with two possible resolutions
+	ValidateExpectedOutcome(t, result, "Second order paradox with two possible resolutions.", "6.F.22")
+}
+
+// Test 6.F.23: SECOND ORDER PARADOX WITH TWO EXCLUSIVE CONVOYS
+// Original DATC test - second order paradox with exclusive convoys
+func TestDATCF23_SecondOrderParadoxWithTwoExclusiveConvoys(t *testing.T) {
+	gameState := CreateDATCGameState(t)
+
+	// Add units for exclusive convoys paradox
+	gameState.Board.Units["london"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "london",
+	}
+	gameState.Board.Units["wales"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "wales",
+	}
+	gameState.Board.Units["brest"] = &game.Unit{
+		Type:     game.Army,
+		Owner:    game.France,
+		Province: "brest",
+	}
+	gameState.Board.Units["english_channel"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.France,
+		Province: "english_channel",
+	}
+	gameState.Board.Units["belgium"] = &game.Unit{
+		Type:     game.Army,
+		Owner:    game.Germany,
+		Province: "belgium",
+	}
+	gameState.Board.Units["north_sea"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.Germany,
+		Province: "north_sea",
+	}
+
+	// Exclusive convoys paradox orders
+	gameState.RawOrders[game.England] = []string{
+		"f london s wales - english_channel",
+		"f wales - english_channel",
+	}
+	gameState.RawOrders[game.France] = []string{
+		"a brest - london",
+		"f english_channel c brest - london",
+	}
+	gameState.RawOrders[game.Germany] = []string{
+		"a belgium - london",
+		"f north_sea c belgium - london",
+	}
+
+	// Process turn
+	result := ProcessDATCTest(t, gameState)
+
+	// Expected: Second order paradox with exclusive convoys
+	ValidateExpectedOutcome(t, result, "Second order paradox with two exclusive convoys.", "6.F.23")
+}
+
+// Test 6.F.24: SECOND ORDER PARADOX WITH NO RESOLUTION
+// Original DATC test - second order paradox with no resolution
+func TestDATCF24_SecondOrderParadoxWithNoResolution(t *testing.T) {
+	gameState := CreateDATCGameState(t)
+
+	// Add units for no resolution paradox
+	gameState.Board.Units["london"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "london",
+	}
+	gameState.Board.Units["wales"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "wales",
+	}
+	gameState.Board.Units["yorkshire"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "yorkshire",
+	}
+	gameState.Board.Units["brest"] = &game.Unit{
+		Type:     game.Army,
+		Owner:    game.France,
+		Province: "brest",
+	}
+	gameState.Board.Units["english_channel"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.France,
+		Province: "english_channel",
+	}
+
+	// No resolution paradox orders
+	gameState.RawOrders[game.England] = []string{
+		"f london s wales - english_channel",
+		"f wales - english_channel",
+		"f yorkshire s wales - english_channel",
+	}
+	gameState.RawOrders[game.France] = []string{
+		"a brest - london",
+		"f english_channel c brest - london",
+	}
+
+	// Process turn
+	result := ProcessDATCTest(t, gameState)
+
+	// Expected: Second order paradox with no resolution
+	ValidateExpectedOutcome(t, result, "Second order paradox with no resolution.", "6.F.24")
+}
+
+// Test 6.F.25: SECOND ORDER PARADOX FORCING BACKUP RULE
+// Original DATC test - second order paradox forcing backup rule
+func TestDATCF25_SecondOrderParadoxForcingBackupRule(t *testing.T) {
+	gameState := CreateDATCGameState(t)
+
+	// Add units for backup rule paradox
+	gameState.Board.Units["london"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "london",
+	}
+	gameState.Board.Units["wales"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.England,
+		Province: "wales",
+	}
+	gameState.Board.Units["brest"] = &game.Unit{
+		Type:     game.Army,
+		Owner:    game.France,
+		Province: "brest",
+	}
+	gameState.Board.Units["english_channel"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.France,
+		Province: "english_channel",
+	}
+	gameState.Board.Units["belgium"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.Germany,
+		Province: "belgium",
+	}
+	gameState.Board.Units["north_sea"] = &game.Unit{
+		Type:     game.Fleet,
+		Owner:    game.Germany,
+		Province: "north_sea",
+	}
+
+	// Backup rule paradox orders
+	gameState.RawOrders[game.England] = []string{
+		"f london s wales - english_channel",
+		"f wales - english_channel",
+	}
+	gameState.RawOrders[game.France] = []string{
+		"a brest - london",
+		"f english_channel c brest - london",
+	}
+	gameState.RawOrders[game.Germany] = []string{
+		"f belgium s north_sea - english_channel",
+		"f north_sea - english_channel",
+	}
+
+	// Process turn
+	result := ProcessDATCTest(t, gameState)
+
+	// Expected: Second order paradox forcing backup rule
+	ValidateExpectedOutcome(t, result, "Second order paradox forcing backup rule application.", "6.F.25")
+}
+
 // Test: Simple convoy success case (for basic convoy validation)
 func TestDATCF_SimpleConvoySuccess(t *testing.T) {
 	gameState := CreateDATCGameState(t)
