@@ -53,12 +53,13 @@ type Order struct {
 }
 
 type GameState struct {
-	Board         *Board
-	Phase         Phase
-	Year          int
-	RawOrders     map[Nation][]string
-	SupplyCenters map[Nation][]string
-	CreatedAt     time.Time
+	Board          *Board
+	Phase          Phase
+	Year           int
+	RawOrders      map[Nation][]string
+	SupplyCenters  map[Nation][]string
+	DislodgedUnits []*Unit // Units that have been dislodged and need to retreat
+	CreatedAt      time.Time
 }
 
 type Game struct {
@@ -222,12 +223,25 @@ func (gs *GameState) Clone() *GameState {
 		copy(newSupplyCenters[nation], centers)
 	}
 
+	newDislodgedUnits := make([]*Unit, len(gs.DislodgedUnits))
+	for i, unit := range gs.DislodgedUnits {
+		if unit != nil {
+			newDislodgedUnits[i] = &Unit{
+				Type:     unit.Type,
+				Owner:    unit.Owner,
+				Province: unit.Province,
+				Coast:    unit.Coast,
+			}
+		}
+	}
+
 	return &GameState{
-		Board:         newBoard,
-		Phase:         gs.Phase,
-		Year:          gs.Year,
-		RawOrders:     newRawOrders,
-		SupplyCenters: newSupplyCenters,
-		CreatedAt:     gs.CreatedAt,
+		Board:          newBoard,
+		Phase:          gs.Phase,
+		Year:           gs.Year,
+		RawOrders:      newRawOrders,
+		SupplyCenters:  newSupplyCenters,
+		DislodgedUnits: newDislodgedUnits,
+		CreatedAt:      gs.CreatedAt,
 	}
 }
