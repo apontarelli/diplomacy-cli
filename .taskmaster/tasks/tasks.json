@@ -965,7 +965,7 @@
         "id": 17,
         "title": "Implement Resolution Engine Interface",
         "description": "Create the clean ResolutionEngine interface and basic DATCCompliantEngine implementation structure with order validation capabilities based on current adjudicator.go analysis and DATC research findings",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           16
         ],
@@ -978,7 +978,7 @@
         "id": 18,
         "title": "Implement Core Move Resolution Algorithm",
         "description": "Build the core resolution algorithm focusing on move orders, head-to-head conflicts, and basic support resolution with rich outcome tracking using multi-pass resolution patterns and strength calculation algorithms",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           17
         ],
@@ -990,7 +990,7 @@
             "id": 1,
             "title": "Implement Multi-Pass Resolution Framework",
             "description": "Create the iterative resolution framework that processes orders in multiple passes until reaching a stable state",
-            "status": "pending",
+            "status": "done",
             "dependencies": [],
             "details": "",
             "testStrategy": ""
@@ -999,7 +999,7 @@
             "id": 2,
             "title": "Implement Strength Calculation Algorithm",
             "description": "Build the core strength calculation logic that computes unit strength including support contributions and cut support detection",
-            "status": "pending",
+            "status": "done",
             "dependencies": [],
             "details": "",
             "testStrategy": ""
@@ -1008,7 +1008,7 @@
             "id": 3,
             "title": "Implement Move Conflict Resolution",
             "description": "Create conflict detection and resolution logic for competing moves to the same province using strength comparison",
-            "status": "pending",
+            "status": "done",
             "dependencies": [],
             "details": "",
             "testStrategy": ""
@@ -1017,7 +1017,7 @@
             "id": 4,
             "title": "Implement Head-to-Head Resolution",
             "description": "Build specific logic for head-to-head conflicts where units attack each other's provinces",
-            "status": "pending",
+            "status": "done",
             "dependencies": [],
             "details": "",
             "testStrategy": ""
@@ -1026,7 +1026,7 @@
             "id": 5,
             "title": "Integrate with ResolutionResult Tracking",
             "description": "Ensure all resolution decisions are captured in ResolutionResult with complete reasoning chains and outcome details",
-            "status": "pending",
+            "status": "done",
             "dependencies": [],
             "details": "",
             "testStrategy": ""
@@ -1035,7 +1035,7 @@
             "id": 6,
             "title": "Add DATC Compliance Testing",
             "description": "Implement comprehensive testing using DATC test cases to verify correct resolution behavior for all core scenarios",
-            "status": "pending",
+            "status": "done",
             "dependencies": [],
             "details": "",
             "testStrategy": ""
@@ -1246,7 +1246,7 @@
     ],
     "metadata": {
       "created": "2025-07-15T04:21:52.697Z",
-      "updated": "2025-07-16T16:01:47.168Z",
+      "updated": "2025-07-16T16:50:22.294Z",
       "description": "Tasks for master context"
     }
   }

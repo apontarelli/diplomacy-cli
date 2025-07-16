@@ -41,10 +41,43 @@ type ResolutionDecision struct {
 func (cr *DetailedConflictResolver) AnalyzeConflicts(optimistic bool) []ConflictAnalysis {
 	conflicts := make([]ConflictAnalysis, 0)
 
-	// Group moves by destination
-	movesByDestination := make(map[string][]*Order)
+	// First, identify all move orders
+	var moveOrders []*Order
 	for _, order := range cr.adjudicator.orders {
 		if order.Type == Move {
+			moveOrders = append(moveOrders, order)
+		}
+	}
+
+	// Check for head-to-head battles first (across all moves)
+	processedOrders := make(map[*Order]bool)
+	for i, order1 := range moveOrders {
+		if processedOrders[order1] {
+			continue
+		}
+
+		for j, order2 := range moveOrders {
+			if i >= j || processedOrders[order2] {
+				continue
+			}
+
+			if cr.adjudicator.wouldCreateHeadToHead(order1, order2) {
+				// Create head-to-head conflict analysis
+				analysis := cr.analyzeHeadToHeadBattle(order1, order2, optimistic)
+				conflicts = append(conflicts, analysis)
+
+				// Mark both orders as processed
+				processedOrders[order1] = true
+				processedOrders[order2] = true
+				break
+			}
+		}
+	}
+
+	// Group remaining moves by destination
+	movesByDestination := make(map[string][]*Order)
+	for _, order := range moveOrders {
+		if !processedOrders[order] {
 			dest := order.Destination
 			movesByDestination[dest] = append(movesByDestination[dest], order)
 		}
@@ -203,6 +236,69 @@ func (cr *DetailedConflictResolver) findHeadToHeadBattles(competitors []*Order) 
 	}
 
 	return pairs
+}
+
+func (cr *DetailedConflictResolver) analyzeHeadToHeadBattle(order1, order2 *Order, optimistic bool) ConflictAnalysis {
+	analysis := ConflictAnalysis{
+		Province:     order1.Destination, // Use first destination as primary
+		Competitors:  []*Order{order1, order2},
+		Strengths:    make(map[string]StrengthCalculation),
+		ConflictType: HeadToHead,
+		Resolution: ResolutionDecision{
+			Reasoning:    make([]string, 0),
+			DATCRules:    []string{"DATC 6.A.1: Head-to-head battles"},
+			IsHeadToHead: true,
+		},
+	}
+
+	analysis.Resolution.Reasoning = append(analysis.Resolution.Reasoning,
+		fmt.Sprintf("Head-to-head battle: %s -> %s vs %s -> %s",
+			order1.Source, order1.Destination, order2.Source, order2.Destination))
+
+	// Calculate attack vs defend strengths for both orders
+	attack1 := cr.adjudicator.calculateAttackStrengthDetailed(order1, optimistic)
+	defend2 := cr.adjudicator.calculateDefendStrengthDetailed(order2, !optimistic)
+
+	attack2 := cr.adjudicator.calculateAttackStrengthDetailed(order2, optimistic)
+	defend1 := cr.adjudicator.calculateDefendStrengthDetailed(order1, !optimistic)
+
+	// Store both attack and defend strengths, but also store the primary attack strength
+	// for compatibility with the result building logic
+	analysis.Strengths[order1.Source+"_attack"] = attack1
+	analysis.Strengths[order1.Source+"_defend"] = defend1
+	analysis.Strengths[order2.Source+"_attack"] = attack2
+	analysis.Strengths[order2.Source+"_defend"] = defend2
+
+	// Also store the primary attack strength for each unit (for result building)
+	analysis.Strengths[order1.Source] = attack1
+	analysis.Strengths[order2.Source] = attack2
+
+	analysis.Resolution.Reasoning = append(analysis.Resolution.Reasoning,
+		fmt.Sprintf("Head-to-head: %s attack %d vs %s defend %d",
+			order1.Source, attack1.TotalStrength, order2.Source, defend2.TotalStrength))
+	analysis.Resolution.Reasoning = append(analysis.Resolution.Reasoning,
+		fmt.Sprintf("Head-to-head: %s attack %d vs %s defend %d",
+			order2.Source, attack2.TotalStrength, order1.Source, defend1.TotalStrength))
+
+	// Determine winner based on attack vs defend comparison
+	order1Succeeds := attack1.TotalStrength > defend2.TotalStrength
+	order2Succeeds := attack2.TotalStrength > defend1.TotalStrength
+
+	if order1Succeeds && !order2Succeeds {
+		analysis.Winner = order1
+		analysis.Resolution.Decision = fmt.Sprintf("Head-to-head: %s -> %s succeeds", order1.Source, order1.Destination)
+	} else if order2Succeeds && !order1Succeeds {
+		analysis.Winner = order2
+		analysis.Resolution.Decision = fmt.Sprintf("Head-to-head: %s -> %s succeeds", order2.Source, order2.Destination)
+	} else {
+		// Both succeed or both fail - still head-to-head, but standoff result
+		analysis.Resolution.IsStandoff = true
+		analysis.Resolution.Decision = "Head-to-head standoff - both moves fail"
+		analysis.Resolution.DATCRules = append(analysis.Resolution.DATCRules, "DATC 6.A.3: Head-to-head standoff")
+	}
+
+	analysis.Explanation = analysis.Resolution.Decision
+	return analysis
 }
 
 // resolveHeadToHeadConflict resolves head-to-head battles using defend strength

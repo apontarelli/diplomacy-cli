@@ -11,6 +11,24 @@ const (
 	Retreat
 )
 
+// String returns the string representation of an OrderType
+func (ot OrderType) String() string {
+	switch ot {
+	case Move:
+		return "Move"
+	case Support:
+		return "Support"
+	case Convoy:
+		return "Convoy"
+	case Hold:
+		return "Hold"
+	case Retreat:
+		return "Retreat"
+	default:
+		return "Unknown"
+	}
+}
+
 // Order represents a single unit's order with resolution state.
 type Order struct {
 	Unit        string // e.g., "A Berlin"
