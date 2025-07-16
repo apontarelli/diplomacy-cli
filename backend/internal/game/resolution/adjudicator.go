@@ -260,6 +260,31 @@ func (adj *Adjudicator) adjudicateMove(order *Order, optimistic bool) bool {
 	return true
 }
 
+// adjudicateMoveDetailed provides detailed move adjudication with full reasoning
+func (adj *Adjudicator) adjudicateMoveDetailed(order *Order, optimistic bool) (bool, ConflictAnalysis) {
+	resolver := NewDetailedConflictResolver(adj)
+
+	// Find all moves to the same destination
+	competitors := []*Order{order}
+	for _, otherOrder := range adj.orders {
+		if otherOrder != order && otherOrder.Type == Move && otherOrder.Destination == order.Destination {
+			competitors = append(competitors, otherOrder)
+		}
+	}
+
+	// Analyze the conflict
+	var analysis ConflictAnalysis
+	if len(competitors) > 1 {
+		analysis = resolver.analyzeProvinceConflict(order.Destination, competitors, optimistic)
+	} else {
+		analysis = resolver.analyzeSingleMove(order.Destination, order, optimistic)
+	}
+
+	// Determine if this specific order succeeds
+	success := analysis.Winner != nil && analysis.Winner == order
+	return success, analysis
+}
+
 // adjudicateSupport determines if a support order succeeds.
 func (adj *Adjudicator) adjudicateSupport(order *Order, optimistic bool) bool {
 	// First check: Self-dislodgement prevention

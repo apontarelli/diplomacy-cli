@@ -258,12 +258,112 @@ func (engine *DATCCompliantEngine) convertToResolutionOrders(orders []game.Order
 	return resolutionOrders
 }
 
-// buildResolutionResult converts adjudication results to ResolutionResult
+// buildResolutionResult converts adjudication results to ResolutionResult with detailed analysis
 func (engine *DATCCompliantEngine) buildResolutionResult(adjResults []AdjudicationResult, originalOrders []game.Order, board *game.Board) *ResolutionResult {
-	// For now, create a basic result structure
-	// This would be expanded to include all the rich domain model information
 	result := NewResolutionResult(1, game.SpringMovement) // TODO: Get actual turn/phase
 
+	// Create adjudicator for detailed analysis
+	resolutionOrders := engine.convertToResolutionOrders(originalOrders)
+	adjudicator := NewAdjudicator(resolutionOrders)
+	resolver := NewDetailedConflictResolver(adjudicator)
+
+	// Analyze all conflicts for detailed tracking
+	conflicts := resolver.AnalyzeConflicts(true) // Use optimistic for final analysis
+
+	// Convert conflicts to domain model
+	for _, conflictAnalysis := range conflicts {
+		conflict := Conflict{
+			province:    conflictAnalysis.Province,
+			competitors: make([]UnitID, 0),
+			resolution:  conflictAnalysis.ConflictType,
+			explanation: conflictAnalysis.Explanation,
+			strengths:   make(map[UnitID]int),
+		}
+
+		// Convert competitors to UnitIDs
+		for _, competitor := range conflictAnalysis.Competitors {
+			unitID := UnitID{
+				Type:     game.UnitType(competitor.Unit[:1]), // Extract unit type from "A Munich" format
+				Owner:    game.Nation(competitor.Owner),
+				Province: competitor.Source,
+			}
+			conflict.competitors = append(conflict.competitors, unitID)
+
+			// Add strength information
+			if strengthCalc, exists := conflictAnalysis.Strengths[competitor.Source]; exists {
+				conflict.strengths[unitID] = strengthCalc.TotalStrength
+			}
+		}
+
+		// Set winner if exists
+		if conflictAnalysis.Winner != nil {
+			winnerID := UnitID{
+				Type:     game.UnitType(conflictAnalysis.Winner.Unit[:1]),
+				Owner:    game.Nation(conflictAnalysis.Winner.Owner),
+				Province: conflictAnalysis.Winner.Source,
+			}
+			conflict.winner = &winnerID
+		}
+
+		result.AddConflict(conflict)
+	}
+
+	// Track support outcomes
+	for _, order := range originalOrders {
+		if order.Type == game.Support {
+			supportingUnitID := UnitID{
+				Type:     order.UnitType,
+				Owner:    order.Owner,
+				Province: order.From,
+			}
+
+			// Find supported unit
+			supportedUnitID := UnitID{
+				Type:     game.Army,   // TODO: Determine actual unit type
+				Owner:    order.Owner, // TODO: Get actual owner of supported unit
+				Province: order.SupportTarget,
+			}
+
+			supportID := SupportID{
+				SupportingUnit: supportingUnitID,
+				SupportTarget:  supportedUnitID,
+			}
+
+			// Determine support type
+			var supportType SupportType
+			if order.SupportDestination != "" {
+				supportType = MoveSupport
+			} else {
+				supportType = HoldSupport
+			}
+
+			// Find corresponding adjudication result
+			var isSuccessful bool
+			var reason string
+			for j, adjResult := range adjResults {
+				if j < len(originalOrders) && originalOrders[j].From == order.From {
+					isSuccessful = adjResult.Success
+					reason = adjResult.Reason
+					break
+				}
+			}
+
+			supportOutcome := SupportOutcome{
+				supportingUnit: supportingUnitID,
+				supportedUnit:  supportedUnitID,
+				supportType:    supportType,
+				isSuccessful:   isSuccessful,
+				isCut:          !isSuccessful,
+				cutBy:          make([]UnitID, 0), // TODO: Track what cut the support
+				reason:         reason,
+				strength:       1, // Support provides 1 strength when successful
+			}
+
+			result.AddSupportOutcome(supportID, supportOutcome)
+		}
+	}
+
+	// Build unit outcomes with enhanced reasoning
 	for i, adjResult := range adjResults {
 		if i < len(originalOrders) {
 			unitID := UnitID{
@@ -272,8 +372,32 @@ func (engine *DATCCompliantEngine) buildResolutionResult(adjResults []Adjudicati
 				Province: originalOrders[i].From,
 			}
 
+			// Determine final status with more detail
 			var finalStatus UnitStatus
 			var toProvince *string
+			var strength int
+			var supportCount int
+			reason := adjResult.Reason
+
+			// Find detailed analysis for this unit
+			for _, conflictAnalysis := range conflicts {
+				for _, competitor := range conflictAnalysis.Competitors {
+					if competitor.Source == originalOrders[i].From {
+						if strengthCalc, exists := conflictAnalysis.Strengths[competitor.Source]; exists {
+							strength = strengthCalc.TotalStrength
+							supportCount = strengthCalc.SupportStrength
+
+							// Enhanced reasoning from detailed analysis
+							if len(strengthCalc.Reasoning) > 0 {
+								reason = fmt.Sprintf("%s. %s", adjResult.Reason,
+									strengthCalc.Reasoning[len(strengthCalc.Reasoning)-1])
+							}
+						}
+						break
+					}
+				}
+			}
+
 			if adjResult.Success {
 				if originalOrders[i].Type == game.Move {
 					finalStatus = UnitMoved
@@ -282,7 +406,11 @@ func (engine *DATCCompliantEngine) buildResolutionResult(adjResults []Adjudicati
 					finalStatus = UnitHeld
 				}
 			} else {
-				finalStatus = UnitBounced
+				if originalOrders[i].Type == game.Move {
+					finalStatus = UnitBounced
+				} else {
+					finalStatus = UnitHeld
+				}
 			}
 
 			outcome := UnitOutcome{
@@ -295,10 +423,23 @@ func (engine *DATCCompliantEngine) buildResolutionResult(adjResults []Adjudicati
 				finalStatus:  finalStatus,
 				fromProvince: originalOrders[i].From,
 				toProvince:   toProvince,
-				reason:       adjResult.Reason,
+				reason:       reason,
+				strength:     strength,
+				supportCount: supportCount,
 			}
 
 			result.AddUnitOutcome(unitID, outcome)
+
+			// Add resolution step for detailed logging
+			step := ResolutionStep{
+				stepNumber:   i + 1,
+				description:  fmt.Sprintf("Resolved %s order", originalOrders[i].Type),
+				unitID:       unitID,
+				action:       string(originalOrders[i].Type),
+				result:       reason,
+				dependencies: make([]UnitID, 0), // TODO: Track actual dependencies
+			}
+			result.AddResolutionStep(step)
 		}
 	}
 
