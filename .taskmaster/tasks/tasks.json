@@ -256,7 +256,7 @@
             "id": 8,
             "title": "Complete Remaining Coastal Issues Tests (6.B.5-6.B.15)",
             "description": "Implement the 11 missing coastal specification edge case tests to complete the Coastal Issues category.",
-            "status": "pending",
+            "status": "done",
             "dependencies": [
               6
             ],
@@ -267,7 +267,7 @@
             "id": 9,
             "title": "Complete Remaining Convoy Tests (6.F.11-6.F.13, 6.F.16-6.F.25)",
             "description": "Implement the 12 missing complex convoy scenario tests to complete the Convoys category.",
-            "status": "pending",
+            "status": "done",
             "dependencies": [
               8
             ],
@@ -278,7 +278,7 @@
             "id": 10,
             "title": "Complete Adjacent Convoy Tests (6.G.2-6.G.20)",
             "description": "Implement the 19 missing adjacent convoy tests to complete the Adjacent Convoys category.",
-            "status": "pending",
+            "status": "done",
             "dependencies": [
               9
             ],
@@ -289,7 +289,7 @@
             "id": 11,
             "title": "Implement Civil Disorder Tests (6.J.1-6.J.11)",
             "description": "Implement all 11 civil disorder tests covering unit disbanding and distance calculations.",
-            "status": "pending",
+            "status": "done",
             "dependencies": [
               10
             ],
@@ -300,7 +300,7 @@
             "id": 12,
             "title": "Final Validation - Achieve True 100% DATC Compliance",
             "description": "Execute final validation to confirm all 163 DATC tests pass and achieve true 100% compliance.",
-            "status": "pending",
+            "status": "done",
             "dependencies": [
               11
             ],
@@ -949,11 +949,304 @@
             "testStrategy": "Full game simulation tests with AI decision validation and performance benchmarking"
           }
         ]
+      },
+      {
+        "id": 16,
+        "title": "Design Rich Domain Models",
+        "description": "Create comprehensive domain models for ResolutionResult, UnitOutcome, Conflict, and related structures to capture all resolution information needed for DATC compliance, following Go domain modeling best practices and integrating with existing codebase structures",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "details": "Implement the core domain models based on research findings and current codebase analysis:\n\n**Integration Points:**\n- Leverage existing game/board.go Province and Unit types\n- Integrate with game/state.go GameState structure\n- Ensure compatibility with current Order and Phase definitions\n\n**Immutability Patterns (Go Best Practices):**\n- Use unexported fields with exported getter methods\n- Implement builder pattern for complex construction\n- Return copies for mutable field access\n- Use functional options for optional parameters\n\n**Core Domain Models:**\n\n```go\ntype ResolutionResult struct {\n    turnNumber     int\n    phase          Phase\n    unitOutcomes   map[UnitID]UnitOutcome\n    conflicts      []Conflict\n    supportResults map[SupportID]SupportOutcome\n    convoyResults  map[ConvoyID]ConvoyOutcome\n    resolutionLog  []ResolutionStep\n}\n\n// Immutable accessors\nfunc (r *ResolutionResult) TurnNumber() int { return r.turnNumber }\nfunc (r *ResolutionResult) UnitOutcomes() map[UnitID]UnitOutcome {\n    result := make(map[UnitID]UnitOutcome, len(r.unitOutcomes))\n    for k, v := range r.unitOutcomes {\n        result[k] = v\n    }\n    return result\n}\n\ntype UnitOutcome struct {\n    unit         Unit\n    orderGiven   Order\n    finalStatus  UnitStatus  // Moved, Held, Dislodged, Bounced\n    fromProvince Province\n    toProvince   *Province\n    dislodgedBy  *UnitID\n    reason       string\n    strength     int\n}\n\ntype Conflict struct {\n    province     Province\n    competitors  []UnitID\n    winner       *UnitID\n    resolution   ConflictType\n    explanation  string\n}\n```\n\n**Builder Pattern Implementation:**\n```go\ntype ResolutionResultBuilder struct {\n    result *ResolutionResult\n}\n\nfunc NewResolutionResultBuilder(turn int, phase Phase) *ResolutionResultBuilder\nfunc (b *ResolutionResultBuilder) WithUnitOutcome(unitID UnitID, outcome UnitOutcome) *ResolutionResultBuilder\nfunc (b *ResolutionResultBuilder) Build() (*ResolutionResult, error)\n```\n\n**Validation Methods:**\n- Implement Validate() methods for each domain model\n- Use Go's error wrapping for detailed validation messages\n- Ensure all required fields are present and valid\n\n**Documentation Requirements:**\n- Comprehensive godoc comments for all public APIs\n- Usage examples in documentation\n- Integration examples with existing codebase",
+        "testStrategy": "Create comprehensive unit tests covering: construction validation using builder patterns, immutability guarantees (verify mutations don't affect original), edge cases (nil values, empty collections), integration with existing game/board.go and game/state.go types, serialization/deserialization compatibility, and validation method behavior. Test with complex DATC scenarios to ensure all necessary resolution information can be captured and accessed immutably.",
+        "subtasks": []
+      },
+      {
+        "id": 17,
+        "title": "Implement Resolution Engine Interface",
+        "description": "Create the clean ResolutionEngine interface and basic DATCCompliantEngine implementation structure with order validation capabilities based on current adjudicator.go analysis and DATC research findings",
+        "status": "pending",
+        "dependencies": [
+          16
+        ],
+        "priority": "high",
+        "details": "Implement the ResolutionEngine interface based on research findings from adjudicator.go analysis and DATC validation patterns:\n\n```go\ntype ResolutionEngine interface {\n    Resolve(orders []Order, board *Board) (*ResolutionResult, error)\n    ValidateOrders(orders []Order, board *Board) ([]ValidationError, error)\n    GetEngineInfo() EngineInfo\n}\n\ntype DATCCompliantEngine struct {\n    validator    *OrderValidator\n    resolver     *ConflictResolver\n    convoyEngine *ConvoyEngine\n    config       EngineConfig\n}\n\ntype EngineConfig struct {\n    StrictDATCCompliance bool\n    ParadoxResolution    ParadoxResolutionMode\n    ValidationLevel      ValidationLevel\n}\n```\n\n**Implementation Requirements:**\n\n1. **Order Validation Pipeline** (based on DATC patterns):\n   - Syntax validation: Order format, unit type matching, province names\n   - Semantic validation: Unit existence, target province validity, adjacency rules\n   - Game rule validation: Legal moves, support targets, convoy requirements\n   - Context validation: Phase-appropriate orders, ownership verification\n\n2. **Validation Error Types**:\n```go\ntype ValidationError struct {\n    OrderIndex int\n    ErrorType  ValidationErrorType\n    Message    string\n    Context    map[string]interface{}\n}\n\ntype ValidationErrorType int\nconst (\n    SyntaxError ValidationErrorType = iota\n    SemanticError\n    GameRuleError\n    ContextError\n)\n```\n\n3. **Integration with Existing Resolution Package**:\n   - Leverage existing adjudicator.go conflict resolution patterns\n   - Maintain compatibility with current Board and Order structures\n   - Use established province adjacency and unit movement validation\n   - Integrate with convoy system from Task 2 (already completed)\n\n4. **Resolution Algorithm Foundation**:\n   - Multi-pass resolution structure for paradox handling\n   - Strength calculation framework for move conflicts\n   - Support for rich outcome tracking and decision reasoning\n   - Extensible design for convoy integration (Task 19)\n\n**Error Handling Strategy:**\n- Comprehensive error messages with order context\n- Structured error types for programmatic handling\n- Debug information for resolution tracing\n- Graceful degradation for partial validation failures",
+        "testStrategy": "Test order validation with DATC-compliant scenarios including valid and invalid orders, edge cases, and complex multi-order interactions. Verify error messages provide actionable debugging information with proper context. Test interface compliance and basic resolution structure integration with existing resolution package. Validate performance with large order sets and ensure compatibility with convoy system from completed Task 2.",
+        "subtasks": []
+      },
+      {
+        "id": 18,
+        "title": "Implement Core Move Resolution Algorithm",
+        "description": "Build the core resolution algorithm focusing on move orders, head-to-head conflicts, and basic support resolution with rich outcome tracking using multi-pass resolution patterns and strength calculation algorithms",
+        "status": "pending",
+        "dependencies": [
+          17
+        ],
+        "priority": "high",
+        "details": "Implement the core resolution logic based on research findings and existing adjudicator.go patterns:\n\n1. **Multi-Pass Resolution Architecture**:\n   - Implement iterative resolution passes until stable state\n   - Use dependency tracking between orders for efficient resolution\n   - Apply resolution phases: validation → strength calculation → conflict resolution → outcome determination\n   - Integrate with existing adjudicator.go resolution patterns\n\n2. **Strength Calculation Algorithm**:\n   ```go\n   func CalculateUnitStrength(unit Unit, orders []Order, board *Board) int {\n       baseStrength := 1\n       supportStrength := 0\n       \n       for _, order := range orders {\n           if order.Type == Support && order.Target == unit.Province {\n               if !IsSupportCut(order, orders) {\n                   supportStrength++\n               }\n           }\n       }\n       return baseStrength + supportStrength\n   }\n   ```\n\n3. **Move Resolution Logic**:\n   - Calculate unit strengths including valid support\n   - Resolve head-to-head conflicts using strength comparison\n   - Handle bounces when equal strengths compete\n   - Track all decision reasoning in ResolutionResult\n   - Implement move validation against board topology\n\n4. **Support Resolution Integration**:\n   - Validate support targets and legality per DATC rules\n   - Calculate support strength contributions to target moves\n   - Handle cut support scenarios (attacking supporter)\n   - Record support outcomes with detailed reasoning\n\n5. **Conflict Resolution Engine**:\n   - Identify competing units for provinces using conflict detection\n   - Apply strength calculations with support resolution\n   - Determine winners or bounces based on comparative strength\n   - Generate detailed explanations for each resolution decision\n   - Integrate with existing ConflictResolver patterns\n\n6. **Integration with Existing Systems**:\n   - Build upon OrderValidator from task 17\n   - Use Board topology validation methods\n   - Integrate with ResolutionResult structure for outcome tracking\n   - Maintain compatibility with existing adjudicator.go interfaces\n\nEnsure all outcomes are captured in ResolutionResult with complete reasoning chains. Focus on correctness and DATC compliance over performance initially.",
+        "testStrategy": "Test with progressively complex scenarios using DATC test cases: simple moves, head-to-head conflicts, supported attacks, bounces, and cut support scenarios. Validate that ResolutionResult contains complete information and reasoning for each scenario. Test multi-pass resolution convergence with complex interdependent orders. Verify integration with existing adjudicator.go test patterns and OrderValidator from task 17.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Multi-Pass Resolution Framework",
+            "description": "Create the iterative resolution framework that processes orders in multiple passes until reaching a stable state",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement Strength Calculation Algorithm",
+            "description": "Build the core strength calculation logic that computes unit strength including support contributions and cut support detection",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement Move Conflict Resolution",
+            "description": "Create conflict detection and resolution logic for competing moves to the same province using strength comparison",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement Head-to-Head Resolution",
+            "description": "Build specific logic for head-to-head conflicts where units attack each other's provinces",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Integrate with ResolutionResult Tracking",
+            "description": "Ensure all resolution decisions are captured in ResolutionResult with complete reasoning chains and outcome details",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Add DATC Compliance Testing",
+            "description": "Implement comprehensive testing using DATC test cases to verify correct resolution behavior for all core scenarios",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 19,
+        "title": "Implement Convoy Resolution with Paradox Handling",
+        "description": "Add convoy order resolution including complex paradox scenarios and circular dependency detection, building upon existing convoy system from Task 2 with BFS pathfinding and Szykman rule implementation",
+        "status": "pending",
+        "dependencies": [
+          18
+        ],
+        "priority": "medium",
+        "details": "Implement convoy resolution covering:\n\n1. **Basic Convoy Logic** (building on Task 2 foundation):\n   - Integrate with existing convoy system pathfinding algorithms\n   - Implement BFS-based convoy chain validation for continuous fleet paths\n   - Calculate convoy strength and disruption using multi-pass resolution patterns\n   - Handle successful and failed convoys with detailed outcome tracking\n\n2. **Paradox Resolution** (enhanced with research findings):\n   - Implement circular dependency detection using graph traversal algorithms\n   - Apply Szykman rule for paradox resolution per DATC specifications\n   - Handle self-dislodging scenarios with iterative resolution passes\n   - Detect and resolve convoy paradoxes using stable state convergence\n\n3. **Complex Scenarios**:\n   - Multiple convoy routes with BFS pathfinding optimization\n   - Convoy disruption by attacks with strength calculation integration\n   - Mixed land/sea movement conflicts using resolution engine algorithms\n   - Performance optimization for large convoy chains using array-based data structures\n\n4. **Integration with Resolution Engine**:\n   - Integrate convoy resolution with core move resolution algorithm from Task 18\n   - Use multi-pass resolution architecture for convoy paradox handling\n   - Apply dependency tracking between convoy orders for efficient resolution\n   - Ensure convoy outcomes are properly tracked in ResolutionResult\n\n```go\ntype ConvoyOutcome struct {\n    ConvoyID          ConvoyID\n    Route             []Province\n    Success           bool\n    FailureReason     string\n    ParadoxResolution *ParadoxResult\n    PathfindingResult *BFSResult\n    CircularDeps      []ConvoyID\n    SzykmanApplied    bool\n}\n\ntype ConvoyResolver struct {\n    pathfinder    *BFSPathfinder\n    paradoxEngine *ParadoxEngine\n    validator     *ConvoyValidator\n}\n\nfunc (cr *ConvoyResolver) ResolveConvoys(\n    orders []Order, \n    board *Board,\n    resolutionContext *ResolutionContext,\n) ([]ConvoyOutcome, error)\n```\n\nEnsure all convoy decisions are fully explained in ResolutionResult with complete reasoning chains.",
+        "testStrategy": "Test with DATC convoy test cases including: basic convoys, disrupted convoys, paradox scenarios, and complex multi-route situations. Verify paradox resolution matches DATC specifications exactly using Szykman rule implementation. Test performance with large convoy chains using BFS optimization. Validate integration with existing convoy system from Task 2 and resolution engine from Task 18. Test circular dependency detection accuracy and stable state convergence.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement BFS-based convoy pathfinding integration",
+            "description": "Integrate with existing convoy system from Task 2 and implement BFS pathfinding for convoy chain validation",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement circular dependency detection algorithm",
+            "description": "Create graph traversal algorithm to detect circular dependencies in convoy chains using research findings",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement Szykman rule for paradox resolution",
+            "description": "Apply Szykman rule implementation for convoy paradox resolution per DATC specifications",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Integrate convoy resolution with multi-pass resolution engine",
+            "description": "Connect convoy resolution with core resolution algorithm from Task 18 using iterative resolution passes",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Implement convoy disruption and strength calculation",
+            "description": "Handle convoy disruption by attacks using strength calculation algorithms from resolution engine research",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Optimize performance for large convoy chains",
+            "description": "Apply array-based data structures and BFS optimization for performance with complex convoy scenarios",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 20,
+        "title": "Add Retreat and Build Phase Support",
+        "description": "Extend the resolution engine to handle retreat orders and build/disband phases with proper validation and outcome tracking",
+        "details": "Implement support for non-movement phases:\n\n1. **Retreat Phase**:\n   - Validate retreat destinations (no enemy units, not origin)\n   - Handle multiple retreats to same province (all disband)\n   - Support retreat to home centers\n   - Track retreat outcomes and disbands\n\n2. **Build Phase**:\n   - Validate build locations (home centers, unoccupied)\n   - Handle build/disband decisions\n   - Enforce supply center limits\n   - Support civil disorder rules\n\n3. **Phase Transitions**:\n   - Proper sequencing between phases\n   - State validation between phases\n   - Error handling for invalid phase transitions\n\n```go\ntype RetreatOutcome struct {\n    Unit         Unit\n    Destination  *Province  // nil if disbanded\n    Success      bool\n    Reason       string\n}\n\ntype BuildOutcome struct {\n    Action       BuildAction  // Build, Disband, None\n    Unit         *Unit       // for builds\n    Province     Province\n    Success      bool\n}\n```",
+        "testStrategy": "Test retreat validation, multiple retreats to same province, build/disband logic, and civil disorder scenarios. Verify phase transitions work correctly and all outcomes are properly tracked. Use DATC test cases for retreat and build phases.",
+        "priority": "medium",
+        "dependencies": [
+          19
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 21,
+        "title": "Build DATC Validation Framework",
+        "description": "Create comprehensive DATC test validation framework that can parse expected outcomes and validate against ResolutionResult data",
+        "status": "pending",
+        "dependencies": [
+          20
+        ],
+        "priority": "high",
+        "details": "Implement DATC validation system based on official DATC specification research:\n\n1. **DATC Test Case Parser**:\n   - Parse official DATC test format (163 tests from datc.zine.net)\n   - Extract test metadata: ID, description, variant, phase\n   - Parse initial game state: unit positions, supply centers\n   - Extract order specifications and expected outcomes\n   - Handle DATC-specific notation (A/F prefixes, parenthetical clarifications)\n   - Support all test categories: basic moves, convoys, retreats, builds\n\n```go\ntype DATCTestCase struct {\n    ID          string\n    Description string\n    Variant     string\n    Phase       string\n    PreState    GameState\n    Orders      []Order\n    Expected    ExpectedOutcome\n}\n\ntype ExpectedOutcome struct {\n    UnitPositions map[string]string  // \"A Par\" -> \"Par\" or \"BOUNCE\"\n    OrderResults  map[string]string  // Order -> \"SUCCESS\", \"FAIL\", \"CUT\"\n    Retreats      []string           // Required retreat orders\n    Builds        map[string]int     // Country -> build count\n}\n```\n\n2. **DATC Validation Engine**:\n```go\ntype DATCValidator struct {\n    testCases   map[string]DATCTestCase\n    gameEngine  *GameEngine\n}\n\nfunc (v *DATCValidator) ValidateTest(\n    testID string,\n    result *ResolutionResult,\n) ValidationResult {\n    expected := v.testCases[testID].Expected\n    \n    // Validate unit final positions\n    positionDiffs := v.comparePositions(expected.UnitPositions, result.FinalState)\n    \n    // Validate order resolution outcomes\n    orderDiffs := v.compareOrderResults(expected.OrderResults, result.OrderResults)\n    \n    // Generate detailed discrepancy report\n    return ValidationResult{\n        TestID:      testID,\n        Passed:      len(positionDiffs) == 0 && len(orderDiffs) == 0,\n        Expected:    expected,\n        Actual:      v.extractActualOutcome(result),\n        Differences: append(positionDiffs, orderDiffs...),\n        Explanation: v.generateExplanation(positionDiffs, orderDiffs),\n    }\n}\n\ntype ValidationResult struct {\n    TestID      string\n    Passed      bool\n    Expected    ExpectedOutcome\n    Actual      ActualOutcome\n    Differences []Difference\n    Explanation string\n    Timestamp   time.Time\n}\n\ntype Difference struct {\n    Type        string  // \"POSITION\", \"ORDER_RESULT\", \"RETREAT\", \"BUILD\"\n    Unit        string  // \"A Par\", \"F Lon\", etc.\n    Expected    string\n    Actual      string\n    Severity    string  // \"CRITICAL\", \"MINOR\"\n}\n```\n\n3. **DATC Test Runner & Reporting**:\n   - Execute all 163 DATC tests in sequence\n   - Generate comprehensive HTML/JSON reports\n   - Support filtering by test category or failure type\n   - Performance benchmarking for resolution speed\n   - Regression testing against previous runs\n   - Integration with CI/CD pipeline\n\n```go\ntype DATCTestRunner struct {\n    validator *DATCValidator\n    reporter  *TestReporter\n}\n\nfunc (r *DATCTestRunner) RunAllTests() TestSuiteResult {\n    results := make([]ValidationResult, 0, 163)\n    \n    for testID, testCase := range r.validator.testCases {\n        // Set up game state\n        game := NewGame(testCase.PreState)\n        \n        // Execute orders through resolution engine\n        result := game.ResolveOrders(testCase.Orders)\n        \n        // Validate against expected outcomes\n        validation := r.validator.ValidateTest(testID, result)\n        results = append(results, validation)\n    }\n    \n    return r.reporter.GenerateReport(results)\n}\n```\n\n4. **Integration Points**:\n   - Load DATC test cases from embedded resources or external files\n   - Interface with existing GameEngine and ResolutionResult structures\n   - Support for custom test case additions beyond official DATC\n   - Export validation results for external analysis tools",
+        "testStrategy": "Validate framework with known passing and failing scenarios from DATC specification. Test parser with complex DATC test descriptions including edge cases and ambiguous notation. Ensure validation catches all types of discrepancies (unit positions, order outcomes, retreat requirements, build counts). Verify all 163 official DATC tests can be loaded, parsed, and executed. Test regression detection by comparing results across engine changes. Benchmark validation performance to ensure sub-second execution of full test suite.",
+        "subtasks": []
+      },
+      {
+        "id": 22,
+        "title": "Implement State Transition Simplification",
+        "description": "Create simplified state transition logic that applies ResolutionResult to GameState without complex reconstruction using immutable state patterns and domain modeling principles",
+        "status": "pending",
+        "dependencies": [
+          21
+        ],
+        "priority": "medium",
+        "details": "Implement clean state application based on Go domain modeling research and immutable state patterns:\n\n```go\nfunc ApplyResolution(\n    gameState *GameState, \n    result *ResolutionResult,\n) *GameState {\n    // Create immutable copy using value semantics\n    newState := gameState.DeepCopy()\n    \n    // Apply unit outcomes directly from ResolutionResult\n    for unitID, outcome := range result.UnitOutcomes {\n        switch outcome.FinalStatus {\n        case UnitStatusMoved:\n            newState.MoveUnit(unitID, outcome.ToProvince)\n        case UnitStatusDislodged:\n            newState.DislodgeUnit(unitID, outcome.DislodgedTo)\n        case UnitStatusDestroyed:\n            newState.RemoveUnit(unitID)\n        case UnitStatusHeld:\n            // Unit stays in place - no action needed\n        case UnitStatusBounced:\n            // Unit bounced back - stays in original position\n        }\n    }\n    \n    // Apply supply center changes from resolution\n    for province, owner := range result.SupplyCenterChanges {\n        newState.SetSupplyCenterOwner(province, owner)\n    }\n    \n    // Update phase and turn information\n    newState.Phase = result.NextPhase\n    newState.TurnNumber = result.TurnNumber\n    if result.NextPhase == PhaseAdjustment {\n        newState.Season = result.NextSeason\n        newState.Year = result.NextYear\n    }\n    \n    return newState\n}\n```\n\n**Domain Modeling Principles**:\n- Use value semantics for immutable state transitions\n- Apply functional composition patterns for state updates\n- Leverage Go's struct embedding for clean state representation\n- Implement copy-on-write semantics for performance optimization\n\n**Integration with ResolutionResult**:\n- Direct mapping from ResolutionResult outcomes to state changes\n- No intermediate reconstruction or complex state building\n- Preserve all resolution context and reasoning in the result\n- Support rollback capabilities through immutable state chains\n\n**Simplified Transition Logic**:\n- Single-pass application of all outcomes\n- Atomic state transitions with validation\n- Clear separation between resolution logic and state application\n- Consistent error handling for invalid state transitions\n\n**State Consistency Validation**:\n- Validate unit positions after application\n- Ensure supply center ownership consistency\n- Check for orphaned or duplicate units\n- Verify phase transition validity",
+        "testStrategy": "Test state application with comprehensive ResolutionResult scenarios using domain modeling patterns. Verify immutable state transitions preserve original GameState. Test with complex scenarios (multiple dislodgements, convoy outcomes, supply center changes). Validate state consistency after each transition. Test performance with copy-on-write optimization. Ensure backward compatibility with existing GameState interface and serialization. Test rollback capabilities through state chains.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement immutable GameState.DeepCopy() method",
+            "description": "Create efficient deep copy method using Go value semantics and struct embedding patterns",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement state mutation methods (MoveUnit, DislodgeUnit, RemoveUnit)",
+            "description": "Create clean state mutation methods that work with immutable state patterns and validate transitions",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement supply center management in state transitions",
+            "description": "Add SetSupplyCenterOwner method and integrate supply center changes from ResolutionResult",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Add state consistency validation",
+            "description": "Implement validation methods to ensure state consistency after applying resolution outcomes",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Implement phase and turn progression logic",
+            "description": "Handle phase transitions, season changes, and year progression based on ResolutionResult",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Add comprehensive error handling for invalid state transitions",
+            "description": "Implement robust error handling for edge cases and invalid resolution outcomes",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 23,
+        "title": "Achieve Full DATC Compliance",
+        "description": "Run all 163 official DATC tests and fix any compliance issues to achieve 100% test passage with specific outcome validation",
+        "details": "Complete DATC compliance implementation:\n\n1. **Test Execution**:\n   - Run all 163 official DATC tests (171 total test functions)\n   - Identify failing tests and root causes\n   - Fix resolution logic for edge cases\n   - Validate complex scenarios (paradoxes, circular movement)\n\n2. **Edge Case Handling**:\n   - Szykman rule applications\n   - Complex convoy paradoxes\n   - Multiple unit interactions\n   - Civil disorder scenarios\n   - Retreat and build edge cases\n\n3. **Compliance Verification**:\n   - Automated test suite running all DATC tests\n   - Detailed failure analysis and reporting\n   - Performance benchmarking on complex scenarios\n   - Regression test protection\n\n4. **Documentation**:\n   - Document any DATC rule interpretations\n   - Explain complex resolution decisions\n   - Provide debugging guides for failed tests\n\n**Success Criteria**: 163/163 DATC tests passing with specific outcome validation (not just \"no crash\")",
+        "testStrategy": "Systematic execution of all DATC tests with detailed failure analysis. Create regression test suite to prevent future compliance breaks. Benchmark performance on complex scenarios. Validate that all test failures are due to incorrect resolution logic, not framework issues.",
+        "priority": "high",
+        "dependencies": [
+          22
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 24,
+        "title": "Performance Optimization and Benchmarking",
+        "description": "Optimize resolution engine performance to match or exceed current implementation while maintaining rich data output",
+        "details": "Performance optimization focus areas:\n\n1. **Benchmarking Framework**:\n   - Create comprehensive benchmarks for various game scenarios\n   - Compare against current implementation baseline\n   - Track memory usage and allocation patterns\n   - Test with large games (7 players, many units)\n\n2. **Optimization Strategies**:\n   - Lazy evaluation for expensive calculations\n   - Efficient data structures for conflict resolution\n   - Memory pool usage for frequent allocations\n   - Parallel processing for independent calculations\n\n3. **Hot Path Optimization**:\n   - Profile resolution algorithm execution\n   - Optimize strength calculation loops\n   - Reduce string allocations in explanations\n   - Cache expensive computations\n\n4. **Memory Management**:\n   - Minimize garbage collection pressure\n   - Reuse data structures where possible\n   - Optimize ResolutionResult construction\n\n**Performance Targets**:\n- Resolution time ≤ current implementation\n- Memory usage within 20% of current implementation\n- Scalable to complex scenarios",
+        "testStrategy": "Benchmark against current implementation with identical scenarios. Test performance regression with automated benchmarks. Validate that optimizations don't affect correctness by running full DATC suite. Profile memory usage and garbage collection impact.",
+        "priority": "medium",
+        "dependencies": [
+          23
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 25,
+        "title": "Integration and Production Deployment",
+        "description": "Integrate the new resolution engine with existing pipeline, ensure backward compatibility, and deploy to production with comprehensive monitoring",
+        "details": "Production integration tasks:\n\n1. **Pipeline Integration**:\n   - Replace existing resolution engine calls\n   - Ensure backward compatibility with Order and GameState interfaces\n   - Update existing tests to use rich validation\n   - Maintain current game serialization format\n\n2. **Migration Strategy**:\n   - Feature flag for gradual rollout\n   - A/B testing framework for validation\n   - Rollback procedures for issues\n   - Data migration for existing games\n\n3. **Monitoring and Observability**:\n   - Performance metrics and alerting\n   - Resolution outcome logging\n   - Error tracking and debugging tools\n   - DATC compliance monitoring\n\n4. **Documentation and Training**:\n   - API documentation updates\n   - Developer guides for new features\n   - Debugging runbooks\n   - Performance tuning guides\n\n5. **Production Validation**:\n   - Canary deployment with monitoring\n   - Production DATC test execution\n   - Performance validation under load\n   - User acceptance testing",
+        "testStrategy": "Comprehensive integration testing with existing codebase. Validate backward compatibility with existing tests. Test production deployment in staging environment. Monitor key metrics during rollout. Validate DATC compliance in production environment.",
+        "priority": "high",
+        "dependencies": [
+          24
+        ],
+        "status": "pending",
+        "subtasks": []
       }
     ],
     "metadata": {
       "created": "2025-07-15T04:21:52.697Z",
-      "updated": "2025-07-15T22:30:26.839Z",
+      "updated": "2025-07-16T16:01:47.168Z",
       "description": "Tasks for master context"
     }
   }

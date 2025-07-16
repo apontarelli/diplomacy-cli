@@ -105,20 +105,6 @@ type DisbandOrder struct {
 	Province string
 }
 
-// BuildResult represents the outcome of a build order
-type BuildResult struct {
-	Order   BuildOrder
-	Success bool
-	Reason  string
-}
-
-// DisbandResult represents the outcome of a disband order
-type DisbandResult struct {
-	Order   DisbandOrder
-	Success bool
-	Reason  string
-}
-
 // ValidateBuildOrder validates a build order against game rules
 func (bp *BuildProcessor) ValidateBuildOrder(order BuildOrder, gameState *game.GameState) error {
 	// Check if the nation has builds available

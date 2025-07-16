@@ -98,29 +98,3 @@ func (o *Order) reset() {
 	o.resolution = false
 	o.isVisited = false
 }
-
-// DislodgedUnit represents a unit that has been dislodged and needs to retreat
-type DislodgedUnit struct {
-	Unit             string   // e.g., "A Berlin"
-	Owner            string   // Nation that owns this unit
-	DislodgedFrom    string   // Province where unit was dislodged
-	AttackerOrigin   string   // Province the successful attacker came from
-	PossibleRetreats []string // Valid retreat destinations
-}
-
-// RetreatOrder represents a retreat order for a dislodged unit
-type RetreatOrder struct {
-	Unit        string // e.g., "A Berlin"
-	From        string // Province retreating from
-	Destination string // Province retreating to
-	Coast       string // Coast specification for coastal retreats
-	Owner       string // Nation that owns this unit
-}
-
-// RetreatResult represents the outcome of a retreat order
-type RetreatResult struct {
-	Order     RetreatOrder
-	Success   bool
-	Reason    string // Human-readable explanation
-	Disbanded bool   // True if unit was disbanded instead of retreating
-}
