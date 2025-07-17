@@ -17,6 +17,8 @@ type DATCEngine struct {
 	recursionDepth int                        // Current recursion depth (safety limit)
 	convoyResolver *ConvoyResolver            // Enhanced convoy resolution system
 	convoyOutcomes map[ConvoyID]ConvoyOutcome // Cached convoy resolution results
+	pool           *ObjectPool                // Memory pool for frequent allocations
+	strengthCache  *StrengthCache             // Cache for expensive strength calculations
 }
 
 // NewDATCEngine creates a new DATC-compliant resolution engine
@@ -30,18 +32,46 @@ func NewDATCEngine(orders []Order) *DATCEngine {
 		orderedOrders[i] = order
 	}
 
+	pool := GetGlobalPool()
 	return &DATCEngine{
 		orders:         orderMap,
 		orderedOrders:  orderedOrders,
-		cycle:          make([]*Order, 0),
+		cycle:          pool.GetOrderSlice(),
 		convoyResolver: NewConvoyResolver(),
 		convoyOutcomes: make(map[ConvoyID]ConvoyOutcome),
+		pool:           pool,
+		strengthCache:  NewStrengthCache(),
+	}
+}
+
+// NewDATCEngineWithPool creates a new DATC-compliant resolution engine with a custom pool
+func NewDATCEngineWithPool(orders []Order, pool *ObjectPool) *DATCEngine {
+	orderMap := make(map[string]*Order)
+	orderedOrders := make([]*Order, len(orders))
+
+	for i := range orders {
+		order := &orders[i]
+		orderMap[order.Source] = order
+		orderedOrders[i] = order
+	}
+
+	return &DATCEngine{
+		orders:         orderMap,
+		orderedOrders:  orderedOrders,
+		cycle:          pool.GetOrderSlice(),
+		convoyResolver: NewConvoyResolver(),
+		convoyOutcomes: make(map[ConvoyID]ConvoyOutcome),
+		pool:           pool,
+		strengthCache:  NewStrengthCache(),
 	}
 }
 
 // ResolveAll resolves all orders using the DATC partial information algorithm
 func (engine *DATCEngine) ResolveAll() []AdjudicationResult {
 	results := make([]AdjudicationResult, 0, len(engine.orderedOrders))
+
+	// Clear caches before resolution
+	engine.strengthCache.Clear()
 
 	// Reset all orders before resolution
 	for _, order := range engine.orderedOrders {
@@ -76,6 +106,15 @@ func (engine *DATCEngine) ResolveAll() []AdjudicationResult {
 	}
 
 	return results
+}
+
+// Cleanup returns pooled objects back to their pools
+// This should be called when the engine is no longer needed
+func (engine *DATCEngine) Cleanup() {
+	if engine.pool != nil && engine.cycle != nil {
+		engine.pool.PutOrderSlice(engine.cycle)
+		engine.cycle = nil
+	}
 }
 
 // resolveAllConvoys pre-resolves all convoy operations using the enhanced convoy system
@@ -410,24 +449,34 @@ func (engine *DATCEngine) calculateAttackStrength(order *Order, optimistic bool)
 		return 0
 	}
 
-	// DATC 5.B.8: If PATH fails, attack strength is 0
-	if !engine.hasValidPath(order, optimistic) {
-		return 0
+	// Use cache for expensive strength calculations
+	cacheKey := order.Source + "->" + order.Destination
+	if optimistic {
+		cacheKey += ":opt"
+	} else {
+		cacheKey += ":pes"
 	}
 
-	strength := 1 // Base attack strength
+	return engine.strengthCache.GetAttackStrength(cacheKey, func() int {
+		// DATC 5.B.8: If PATH fails, attack strength is 0
+		if !engine.hasValidPath(order, optimistic) {
+			return 0
+		}
 
-	// Add support
-	for _, otherOrder := range engine.orderedOrders {
-		if otherOrder.Type == Support && engine.isSupporting(otherOrder, order) {
-			// Support succeeds if we resolve it optimistically (good for attack)
-			if engine.resolve(otherOrder, optimistic) {
-				strength++
+		strength := 1 // Base attack strength
+
+		// Add support
+		for _, otherOrder := range engine.orderedOrders {
+			if otherOrder.Type == Support && engine.isSupporting(otherOrder, order) {
+				// Support succeeds if we resolve it optimistically (good for attack)
+				if engine.resolve(otherOrder, optimistic) {
+					strength++
+				}
 			}
 		}
-	}
 
-	return strength
+		return strength
+	})
 }
 
 // calculateHoldStrength calculates hold strength per DATC specification
@@ -601,13 +650,15 @@ func (engine *DATCEngine) isConvoyingMove(convoyOrder *Order, moveOrder *Order) 
 
 // getCompetingMoves returns all moves targeting the same destination
 func (engine *DATCEngine) getCompetingMoves(destination string) []*Order {
-	var competitors []*Order
-	for _, order := range engine.orderedOrders {
-		if order.Type == Move && order.Destination == destination {
-			competitors = append(competitors, order)
+	return engine.strengthCache.GetCompetingMoves(destination, func() []*Order {
+		var competitors []*Order
+		for _, order := range engine.orderedOrders {
+			if order.Type == Move && order.Destination == destination {
+				competitors = append(competitors, order)
+			}
 		}
-	}
-	return competitors
+		return competitors
+	})
 }
 
 // getAttackersOf returns all moves targeting a specific province

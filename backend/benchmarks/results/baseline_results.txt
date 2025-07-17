@@ -1,0 +1,36 @@
+goos: darwin
+goarch: arm64
+pkg: diplomacy-cli/backend/internal/game/pipeline
+cpu: Apple M2 Max
+BenchmarkBaseline-12    	  765417	     47790 ns/op	   58225 B/op	     430 allocs/op
+--- BENCH: BenchmarkBaseline-12
+    benchmark_enhanced_test.go:303: BASELINE: 87875 ns/op, 431 allocs/op, 27520 bytes/op
+    benchmark_enhanced_test.go:303: BASELINE: 50508 ns/op, 430 allocs/op, 27520 bytes/op
+    benchmark_enhanced_test.go:303: BASELINE: 47040 ns/op, 430 allocs/op, 27776 bytes/op
+    benchmark_enhanced_test.go:303: BASELINE: 47790 ns/op, 430 allocs/op, 27520 bytes/op
+BenchmarkBaseline-12    	  733166	     48738 ns/op	   58341 B/op	     430 allocs/op
+--- BENCH: BenchmarkBaseline-12
+    benchmark_enhanced_test.go:303: BASELINE: 132208 ns/op, 431 allocs/op, 27520 bytes/op
+    benchmark_enhanced_test.go:303: BASELINE: 48715 ns/op, 430 allocs/op, 27520 bytes/op
+    benchmark_enhanced_test.go:303: BASELINE: 49107 ns/op, 430 allocs/op, 27648 bytes/op
+    benchmark_enhanced_test.go:303: BASELINE: 48738 ns/op, 430 allocs/op, 27520 bytes/op
+BenchmarkBaseline-12    	  749164	     49034 ns/op	   58314 B/op	     430 allocs/op
+--- BENCH: BenchmarkBaseline-12
+    benchmark_enhanced_test.go:303: BASELINE: 94000 ns/op, 431 allocs/op, 27520 bytes/op
+    benchmark_enhanced_test.go:303: BASELINE: 48773 ns/op, 430 allocs/op, 27520 bytes/op
+    benchmark_enhanced_test.go:303: BASELINE: 48058 ns/op, 430 allocs/op, 27520 bytes/op
+    benchmark_enhanced_test.go:303: BASELINE: 49034 ns/op, 431 allocs/op, 27520 bytes/op
+BenchmarkBaseline-12    	  738949	     48287 ns/op	   58254 B/op	     430 allocs/op
+--- BENCH: BenchmarkBaseline-12
+    benchmark_enhanced_test.go:303: BASELINE: 142208 ns/op, 430 allocs/op, 27520 bytes/op
+    benchmark_enhanced_test.go:303: BASELINE: 49810 ns/op, 430 allocs/op, 27520 bytes/op
+    benchmark_enhanced_test.go:303: BASELINE: 48723 ns/op, 430 allocs/op, 27520 bytes/op
+    benchmark_enhanced_test.go:303: BASELINE: 48287 ns/op, 430 allocs/op, 27520 bytes/op
+BenchmarkBaseline-12    	  755214	     47963 ns/op	   58183 B/op	     430 allocs/op
+--- BENCH: BenchmarkBaseline-12
+    benchmark_enhanced_test.go:303: BASELINE: 97833 ns/op, 430 allocs/op, 27520 bytes/op
+    benchmark_enhanced_test.go:303: BASELINE: 54203 ns/op, 430 allocs/op, 27520 bytes/op
+    benchmark_enhanced_test.go:303: BASELINE: 47673 ns/op, 430 allocs/op, 27520 bytes/op
+    benchmark_enhanced_test.go:303: BASELINE: 47963 ns/op, 431 allocs/op, 27520 bytes/op
+PASS
+ok  	diplomacy-cli/backend/internal/game/pipeline	183.858s
