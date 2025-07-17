@@ -220,6 +220,26 @@ func NewResolutionResult(turn int, phase game.Phase) *ResolutionResult {
 	}
 }
 
+// NewConvoyOutcome creates a new ConvoyOutcome with the given parameters
+func NewConvoyOutcome(convoyingFleet, convoyTarget UnitID, successful bool, disrupted bool, reason string, path []string, disruptedBy []UnitID) ConvoyOutcome {
+	// Make defensive copies of slices
+	pathCopy := make([]string, len(path))
+	copy(pathCopy, path)
+
+	disruptedByCopy := make([]UnitID, len(disruptedBy))
+	copy(disruptedByCopy, disruptedBy)
+
+	return ConvoyOutcome{
+		convoyingFleet: convoyingFleet,
+		convoyTarget:   convoyTarget,
+		isSuccessful:   successful,
+		isDisrupted:    disrupted,
+		disruptedBy:    disruptedByCopy,
+		reason:         reason,
+		path:           pathCopy,
+	}
+}
+
 // Immutable accessors for ResolutionResult
 
 // TurnNumber returns the turn number for this resolution

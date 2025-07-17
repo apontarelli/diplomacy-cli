@@ -42,6 +42,14 @@ type Order struct {
 	isResolved bool
 	resolution bool // true for success, false for failure
 	isVisited  bool // for cycle detection
+
+	// Swap detection state
+	isSwap      bool   // true if this order is part of a unit swap
+	swapPartner *Order // pointer to the other order in the swap
+
+	// Circular movement detection state
+	isCircular    bool     // true if this order is part of a circular movement
+	circularGroup []*Order // all orders in the same circular movement
 }
 
 // AdjudicationResult represents the outcome of an order after adjudication.
@@ -115,4 +123,6 @@ func (o *Order) reset() {
 	o.isResolved = false
 	o.resolution = false
 	o.isVisited = false
+	o.isCircular = false
+	o.circularGroup = nil
 }
