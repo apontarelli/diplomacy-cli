@@ -235,7 +235,7 @@
         "id": 5,
         "title": "Achieve Full DATC Compliance and Edge Case Handling",
         "description": "Complete all remaining 46 DATC tests (117/163 currently passing, 71.8% complete), following the comprehensive 4-phase implementation roadmap documented in datc-implementation-roadmap.md.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           4
         ],
@@ -1120,14 +1120,14 @@
         "dependencies": [
           19
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
         "id": 21,
         "title": "Build DATC Validation Framework",
         "description": "Create comprehensive DATC test validation framework that can parse expected outcomes and validate against ResolutionResult data",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           20
         ],
@@ -1140,7 +1140,7 @@
         "id": 22,
         "title": "Implement State Transition Simplification",
         "description": "Create simplified state transition logic that applies ResolutionResult to GameState without complex reconstruction using immutable state patterns and domain modeling principles",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           21
         ],
@@ -1152,7 +1152,7 @@
             "id": 1,
             "title": "Implement immutable GameState.DeepCopy() method",
             "description": "Create efficient deep copy method using Go value semantics and struct embedding patterns",
-            "status": "pending",
+            "status": "done",
             "dependencies": [],
             "details": "",
             "testStrategy": ""
@@ -1161,7 +1161,7 @@
             "id": 2,
             "title": "Implement state mutation methods (MoveUnit, DislodgeUnit, RemoveUnit)",
             "description": "Create clean state mutation methods that work with immutable state patterns and validate transitions",
-            "status": "pending",
+            "status": "done",
             "dependencies": [],
             "details": "",
             "testStrategy": ""
@@ -1170,7 +1170,7 @@
             "id": 3,
             "title": "Implement supply center management in state transitions",
             "description": "Add SetSupplyCenterOwner method and integrate supply center changes from ResolutionResult",
-            "status": "pending",
+            "status": "done",
             "dependencies": [],
             "details": "",
             "testStrategy": ""
@@ -1179,7 +1179,7 @@
             "id": 4,
             "title": "Add state consistency validation",
             "description": "Implement validation methods to ensure state consistency after applying resolution outcomes",
-            "status": "pending",
+            "status": "done",
             "dependencies": [],
             "details": "",
             "testStrategy": ""
@@ -1188,7 +1188,7 @@
             "id": 5,
             "title": "Implement phase and turn progression logic",
             "description": "Handle phase transitions, season changes, and year progression based on ResolutionResult",
-            "status": "pending",
+            "status": "done",
             "dependencies": [],
             "details": "",
             "testStrategy": ""
@@ -1197,7 +1197,7 @@
             "id": 6,
             "title": "Add comprehensive error handling for invalid state transitions",
             "description": "Implement robust error handling for edge cases and invalid resolution outcomes",
-            "status": "pending",
+            "status": "done",
             "dependencies": [],
             "details": "",
             "testStrategy": ""
@@ -1214,7 +1214,7 @@
         "dependencies": [
           22
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -1228,7 +1228,99 @@
           23
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Enhanced Benchmarking Framework Setup",
+            "description": "Create comprehensive benchmarking framework with various game scenarios, baseline comparisons, and memory tracking capabilities",
+            "dependencies": [],
+            "details": "Implement benchmarking framework that tests various game scenarios (7 players, many units), compares against current implementation baseline, tracks memory usage and allocation patterns, and provides detailed performance metrics for optimization validation",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Memory Pool Implementation for Frequent Allocations",
+            "description": "Implement memory pool system for frequently allocated objects to reduce garbage collection pressure",
+            "dependencies": [
+              1
+            ],
+            "details": "Create memory pools for Order objects, ResolutionResult structures, and other frequently allocated data structures. Implement pool management with proper lifecycle handling and memory reuse patterns to minimize allocation overhead",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Hot Path Profiling and Strength Calculation Optimization",
+            "description": "Profile hot paths in resolution engine and optimize strength calculation algorithms for performance",
+            "dependencies": [
+              1
+            ],
+            "details": "Use Go pprof to identify performance bottlenecks in strength calculation and conflict resolution. Optimize critical paths with efficient algorithms, reduce redundant calculations, and implement caching for expensive operations",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Lazy Evaluation Implementation for Expensive Operations",
+            "description": "Implement lazy evaluation patterns for expensive calculations and operations that may not always be needed",
+            "dependencies": [
+              3
+            ],
+            "details": "Implement lazy evaluation for complex convoy calculations, support strength computations, and detailed resolution reasoning. Use deferred computation patterns to avoid unnecessary work in resolution paths",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "String Allocation Reduction and Memory Usage Optimization",
+            "description": "Optimize string handling and reduce memory allocations throughout the resolution engine",
+            "dependencies": [
+              2
+            ],
+            "details": "Implement string interning for common values, use string builders for concatenation, optimize error message generation, and reduce temporary string allocations in hot paths. Focus on memory-efficient data structures",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Profiling Integration and Performance Monitoring",
+            "description": "Integrate profiling tools and performance monitoring into the resolution engine for continuous optimization",
+            "dependencies": [
+              3,
+              4
+            ],
+            "details": "Embed pprof endpoints, implement performance metrics collection, create monitoring dashboards for key performance indicators, and establish alerting for performance regressions in production",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "Performance Regression Testing Framework",
+            "description": "Implement automated performance regression testing to prevent performance degradation",
+            "dependencies": [
+              1,
+              6
+            ],
+            "details": "Create automated benchmarks that run on CI/CD pipeline, establish performance baselines, implement regression detection algorithms, and create alerts for performance degradation beyond acceptable thresholds",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 8,
+            "title": "DATC Re-testing and Performance Validation",
+            "description": "Validate that all optimizations maintain DATC compliance and achieve performance targets",
+            "dependencies": [
+              2,
+              4,
+              5,
+              7
+            ],
+            "details": "Run complete DATC test suite with optimized engine, validate performance improvements meet targets, ensure correctness is maintained, and benchmark against original implementation to confirm optimization success",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 25,
@@ -1246,7 +1338,7 @@
     ],
     "metadata": {
       "created": "2025-07-15T04:21:52.697Z",
-      "updated": "2025-07-16T18:31:16.941Z",
+      "updated": "2025-07-17T19:42:50.679Z",
       "description": "Tasks for master context"
     }
   }

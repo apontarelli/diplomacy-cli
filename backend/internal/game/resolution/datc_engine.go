@@ -2,6 +2,7 @@ package resolution
 
 import (
 	"fmt"
+	"sync"
 )
 
 const maxRecursionDepth = 100 // Safety limit for recursion depth
@@ -72,6 +73,7 @@ func (engine *DATCEngine) ResolveAll() []AdjudicationResult {
 
 	// Clear caches before resolution
 	engine.strengthCache.Clear()
+	engine.convoyResolver.ClearCache()
 
 	// Reset all orders before resolution
 	for _, order := range engine.orderedOrders {
@@ -601,27 +603,11 @@ func (engine *DATCEngine) isDirectlyAdjacent(source, destination string) bool {
 	return true
 }
 
-// hasValidConvoyPath checks if there's a valid convoy path for the move
+// hasValidConvoyPath checks if there's a valid convoy path for the move using lazy evaluation
 func (engine *DATCEngine) hasValidConvoyPath(order *Order, optimistic bool) bool {
-	// Look for convoy orders that could support this move
-	var convoyingFleets []*Order
-
-	for _, otherOrder := range engine.orderedOrders {
-		if otherOrder.Type == Convoy && engine.isConvoyingMove(otherOrder, order) {
-			// Check if the convoy succeeds (using optimistic evaluation for convoy success)
-			if engine.resolve(otherOrder, optimistic) {
-				convoyingFleets = append(convoyingFleets, otherOrder)
-			}
-		}
-	}
-	// If we have convoying fleets, check if they form a valid path
-	if len(convoyingFleets) > 0 {
-		// For now, assume any convoy order makes the path valid
-		// TODO: Implement proper convoy path validation using BFS
-		return true
-	}
-
-	return false
+	// Use lazy convoy path evaluation to avoid expensive calculations unless needed
+	lazyPath := engine.convoyResolver.GetLazyConvoyPath(order.Source, order.Destination, engine.orderedOrders, engine)
+	return lazyPath.IsValid(optimistic)
 }
 
 // isConvoyingMove checks if a convoy order is convoying a specific move
@@ -726,16 +712,144 @@ func (engine *DATCEngine) applyBackupRule(cycleOrders []*Order) {
 	}
 }
 
-// getResolutionReason provides human-readable reason for resolution
-func (engine *DATCEngine) getResolutionReason(order *Order) string {
-	if order.IsResolved() {
+// LazyReasonGenerator provides lazy evaluation for resolution reasoning
+type LazyReasonGenerator struct {
+	order     *Order
+	engine    *DATCEngine
+	evaluated bool
+	reason    string
+	mu        sync.RWMutex
+}
+
+// GetReason lazily evaluates and returns the resolution reason
+func (lrg *LazyReasonGenerator) GetReason() string {
+	lrg.mu.RLock()
+	if lrg.evaluated {
+		result := lrg.reason
+		lrg.mu.RUnlock()
+		return result
+	}
+	lrg.mu.RUnlock()
+
+	lrg.mu.Lock()
+	defer lrg.mu.Unlock()
+
+	// Double-check after acquiring write lock
+	if lrg.evaluated {
+		return lrg.reason
+	}
+
+	lrg.reason = lrg.generateDetailedReason()
+	lrg.evaluated = true
+	return lrg.reason
+}
+
+// generateDetailedReason creates a detailed human-readable reason for resolution
+func (lrg *LazyReasonGenerator) generateDetailedReason() string {
+	order := lrg.order
+
+	if !order.IsResolved() {
+		return "Order resolution uncertain"
+	}
+
+	switch order.Type {
+	case Move:
+		return lrg.generateMoveReason()
+	case Support:
+		return lrg.generateSupportReason()
+	case Convoy:
+		return lrg.generateConvoyReason()
+	case Hold:
+		return lrg.generateHoldReason()
+	default:
 		if order.Resolution() {
 			return fmt.Sprintf("%s order succeeded", order.Type.String())
 		} else {
 			return fmt.Sprintf("%s order failed", order.Type.String())
 		}
 	}
-	return "Order resolution uncertain"
+}
+
+// generateMoveReason creates detailed reasoning for move orders
+func (lrg *LazyReasonGenerator) generateMoveReason() string {
+	order := lrg.order
+
+	if order.Resolution() {
+		// Move succeeded
+		if order.isSwap {
+			return fmt.Sprintf("Move succeeded as part of unit swap with %s", order.swapPartner.Source)
+		} else if order.isCircular {
+			return fmt.Sprintf("Move succeeded as part of circular movement involving %d units", len(order.circularGroup))
+		} else {
+			attackStrength := lrg.engine.calculateAttackStrength(order, true)
+			return fmt.Sprintf("Move succeeded with attack strength %d", attackStrength)
+		}
+	} else {
+		// Move failed
+		if !lrg.engine.hasValidPath(order, true) {
+			return "Move failed: no valid path to destination"
+		}
+
+		competitors := lrg.engine.getCompetingMoves(order.Destination)
+		if len(competitors) > 1 {
+			return fmt.Sprintf("Move failed: bounced with %d other moves to same destination", len(competitors)-1)
+		} else {
+			holdStrength := lrg.engine.calculateHoldStrength(order.Destination, false)
+			attackStrength := lrg.engine.calculateAttackStrength(order, true)
+			return fmt.Sprintf("Move failed: attack strength %d insufficient against hold strength %d", attackStrength, holdStrength)
+		}
+	}
+}
+
+// generateSupportReason creates detailed reasoning for support orders
+func (lrg *LazyReasonGenerator) generateSupportReason() string {
+	order := lrg.order
+
+	if order.Resolution() {
+		return "Support succeeded: not cut by successful attack"
+	} else {
+		attackers := lrg.engine.getAttackersOf(order.Source)
+		for _, attacker := range attackers {
+			if lrg.engine.resolve(attacker, false) {
+				return fmt.Sprintf("Support cut by successful attack from %s", attacker.Source)
+			}
+		}
+		return "Support failed: unknown reason"
+	}
+}
+
+// generateConvoyReason creates detailed reasoning for convoy orders
+func (lrg *LazyReasonGenerator) generateConvoyReason() string {
+	order := lrg.order
+
+	if order.Resolution() {
+		return "Convoy succeeded: not disrupted by successful attack"
+	} else {
+		attackers := lrg.engine.getAttackersOf(order.Source)
+		for _, attacker := range attackers {
+			if lrg.engine.resolve(attacker, false) {
+				return fmt.Sprintf("Convoy disrupted by successful attack from %s", attacker.Source)
+			}
+		}
+		return "Convoy failed: unknown reason"
+	}
+}
+
+// generateHoldReason creates detailed reasoning for hold orders
+func (lrg *LazyReasonGenerator) generateHoldReason() string {
+	return "Hold order succeeded (hold orders always succeed)"
+}
+
+// getResolutionReason provides human-readable reason for resolution using lazy evaluation
+func (engine *DATCEngine) getResolutionReason(order *Order) string {
+	// Create a lazy reason generator for expensive detailed reasoning
+	reasonGen := &LazyReasonGenerator{
+		order:  order,
+		engine: engine,
+	}
+
+	// Only generate detailed reason if needed (lazy evaluation)
+	return reasonGen.GetReason()
 }
 
 // detectAndMarkSwaps identifies unit swaps and circular movements
