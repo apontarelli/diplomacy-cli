@@ -358,9 +358,9 @@ func (tp *TurnProcessor) resolveOrders(orders []*game.Order, board *game.Board) 
 		resolutionOrders[i] = convertToResolutionOrder(order)
 	}
 
-	// Create adjudicator and resolve
-	adj := resolution.NewAdjudicator(resolutionOrders)
-	adjResults := adj.ResolveAll()
+	// Create DATC engine and resolve
+	engine := resolution.NewDATCEngine(resolutionOrders)
+	adjResults := engine.ResolveAll()
 
 	// Convert results to OrderOutcome for pipeline compatibility
 	outcomes := make([]resolution.OrderOutcome, len(adjResults))
@@ -408,8 +408,9 @@ func convertToResolutionOrder(order *game.Order) resolution.Order {
 		}
 		// Support orders don't move, so no destination
 	case game.Convoy:
-		auxiliary = order.ConvoyTarget + " -> " + order.To
-		// Convoy orders don't move, so no destination
+		// For convoy orders, auxiliary should contain the full move being convoyed
+		auxiliary = order.ConvoyTarget + " - " + order.To
+		destination = order.To
 	case game.Hold:
 		// Hold orders don't move, so no destination
 	}
