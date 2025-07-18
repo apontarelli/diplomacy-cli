@@ -377,7 +377,7 @@
         "id": 6,
         "title": "Design Database Schema for Game State",
         "description": "Create SQLite schema for persisting game states, orders, and board data using GORM with proper model definitions and relationships.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           5
         ],
@@ -389,7 +389,7 @@
             "id": 1,
             "title": "Define GORM Model Structs for Core Tables",
             "description": "Create GORM model structs for Game, Player, Unit, and Order with proper field types and gorm.Model embedding.",
-            "status": "pending",
+            "status": "done",
             "dependencies": [],
             "details": "Define structs using gorm.Model for standard fields. Game struct with Name, Phase (spring/fall/retreat/build), Year, Status (waiting/active/finished). Player with GameID, UserID, Nation. Unit with GameID, PlayerID, Type (army/fleet), Province, Coast. Order with GameID, PlayerID, UnitID, Type (move/hold/support/convoy), Target, Resolved boolean.",
             "testStrategy": "Validate struct tags and field types; test model instantiation"
@@ -398,7 +398,7 @@
             "id": 2,
             "title": "Configure GORM Associations and Foreign Key Constraints",
             "description": "Set up proper GORM associations between models with foreign key constraints and cascading behavior.",
-            "status": "pending",
+            "status": "done",
             "dependencies": [
               1
             ],
@@ -409,7 +409,7 @@
             "id": 3,
             "title": "Implement Auto-Migration and Database Initialization",
             "description": "Set up GORM auto-migration and database initialization with proper indexing and constraints.",
-            "status": "pending",
+            "status": "done",
             "dependencies": [
               2
             ],
@@ -420,7 +420,7 @@
             "id": 4,
             "title": "Implement Transaction Wrapper for Game Operations",
             "description": "Create transaction wrapper functions for game state operations to ensure ACID compliance.",
-            "status": "pending",
+            "status": "done",
             "dependencies": [
               3
             ],
@@ -1338,7 +1338,7 @@
     ],
     "metadata": {
       "created": "2025-07-15T04:21:52.697Z",
-      "updated": "2025-07-18T05:54:48.674Z",
+      "updated": "2025-07-18T06:04:46.895Z",
       "description": "Tasks for master context"
     }
   }
