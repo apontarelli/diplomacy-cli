@@ -27,10 +27,14 @@ func NewDATCEngine(orders []Order) *DATCEngine {
 	orderMap := make(map[string]*Order)
 	orderedOrders := make([]*Order, len(orders))
 
+	// Create defensive copies to avoid modifying input slice and ensure thread safety
 	for i := range orders {
-		order := &orders[i]
-		orderMap[order.Source] = order
-		orderedOrders[i] = order
+		// Create a copy of the order to avoid modifying the input slice
+		orderCopy := orders[i]
+		// Intern all string fields for memory efficiency
+		orderCopy.InternStrings()
+		orderedOrders[i] = &orderCopy
+		orderMap[orderCopy.Source] = &orderCopy
 	}
 
 	pool := GetGlobalPool()
@@ -83,9 +87,6 @@ func (engine *DATCEngine) ResolveAll() []AdjudicationResult {
 	// Pre-process swaps to avoid circular dependencies
 	engine.detectAndMarkSwaps()
 
-	// Pre-resolve all convoy operations using the enhanced convoy system
-	engine.resolveAllConvoys()
-
 	// Resolve each order in original input order
 	for _, order := range engine.orderedOrders {
 		if !order.IsResolved() {
@@ -117,13 +118,6 @@ func (engine *DATCEngine) Cleanup() {
 		engine.pool.PutOrderSlice(engine.cycle)
 		engine.cycle = nil
 	}
-}
-
-// resolveAllConvoys pre-resolves all convoy operations using the enhanced convoy system
-func (engine *DATCEngine) resolveAllConvoys() {
-	// For now, skip the complex convoy resolution and let individual convoy orders resolve normally
-	// This ensures we don't break the existing flow while we debug
-	return
 }
 
 // resolve implements the DATC partial information algorithm exactly as specified
@@ -451,13 +445,9 @@ func (engine *DATCEngine) calculateAttackStrength(order *Order, optimistic bool)
 		return 0
 	}
 
-	// Use cache for expensive strength calculations
-	cacheKey := order.Source + "->" + order.Destination
-	if optimistic {
-		cacheKey += ":opt"
-	} else {
-		cacheKey += ":pes"
-	}
+	// Use cache for expensive strength calculations with optimized key building
+	baseKey := BuildArrowKey(InternTerritory(order.Source), InternTerritory(order.Destination))
+	cacheKey := BuildOptimisticKey(baseKey, optimistic)
 
 	return engine.strengthCache.GetAttackStrength(cacheKey, func() int {
 		// DATC 5.B.8: If PATH fails, attack strength is 0
@@ -617,13 +607,44 @@ func (engine *DATCEngine) isConvoyingMove(convoyOrder *Order, moveOrder *Order) 
 	}
 
 	// For convoy orders, auxiliary contains the full move description like "A Norway - Sweden"
-	// Check if the auxiliary field matches this move
-	expectedFormats := []string{
-		fmt.Sprintf("A %s - %s", moveOrder.Source, moveOrder.Destination),
-		fmt.Sprintf("F %s - %s", moveOrder.Source, moveOrder.Destination),
-		fmt.Sprintf("%s -> %s", moveOrder.Source, moveOrder.Destination),
-		fmt.Sprintf("%s - %s", moveOrder.Source, moveOrder.Destination),
-	}
+	// Check if the auxiliary field matches this move using optimized string building
+	source := InternTerritory(moveOrder.Source)
+	destination := InternTerritory(moveOrder.Destination)
+
+	// Build expected formats efficiently
+	sb := GetStringBuilder()
+	defer PutStringBuilder(sb)
+
+	expectedFormats := make([]string, 4)
+
+	// "A source - destination"
+	sb.WriteString("A ")
+	sb.WriteString(source)
+	sb.WriteString(DashSeparator)
+	sb.WriteString(destination)
+	expectedFormats[0] = InternString(sb.String())
+	sb.Reset()
+
+	// "F source - destination"
+	sb.WriteString("F ")
+	sb.WriteString(source)
+	sb.WriteString(DashSeparator)
+	sb.WriteString(destination)
+	expectedFormats[1] = InternString(sb.String())
+	sb.Reset()
+
+	// "source -> destination"
+	sb.WriteString(source)
+	sb.WriteString(ArrowSeparator)
+	sb.WriteString(destination)
+	expectedFormats[2] = InternString(sb.String())
+	sb.Reset()
+
+	// "source - destination"
+	sb.WriteString(source)
+	sb.WriteString(DashSeparator)
+	sb.WriteString(destination)
+	expectedFormats[3] = InternString(sb.String())
 
 	for _, format := range expectedFormats {
 		if convoyOrder.Auxiliary == format {
@@ -770,74 +791,110 @@ func (lrg *LazyReasonGenerator) generateDetailedReason() string {
 	}
 }
 
-// generateMoveReason creates detailed reasoning for move orders
+// generateMoveReason creates detailed reasoning for move orders using optimized string building
 func (lrg *LazyReasonGenerator) generateMoveReason() string {
 	order := lrg.order
+	sb := GetStringBuilder()
+	defer PutStringBuilder(sb)
 
 	if order.Resolution() {
 		// Move succeeded
 		if order.isSwap {
-			return fmt.Sprintf("Move succeeded as part of unit swap with %s", order.swapPartner.Source)
+			sb.WriteString(MoveSucceededPrefix)
+			sb.WriteString(" as part of unit swap with ")
+			sb.WriteString(InternTerritory(order.swapPartner.Source))
 		} else if order.isCircular {
-			return fmt.Sprintf("Move succeeded as part of circular movement involving %d units", len(order.circularGroup))
+			sb.WriteString(MoveSucceededPrefix)
+			sb.WriteString(" as part of circular movement involving ")
+			sb.WriteString(fmt.Sprintf("%d", len(order.circularGroup)))
+			sb.WriteString(" units")
 		} else {
 			attackStrength := lrg.engine.calculateAttackStrength(order, true)
-			return fmt.Sprintf("Move succeeded with attack strength %d", attackStrength)
+			sb.WriteString(MoveSucceededPrefix)
+			sb.WriteString(" with attack strength ")
+			sb.WriteString(fmt.Sprintf("%d", attackStrength))
 		}
 	} else {
 		// Move failed
 		if !lrg.engine.hasValidPath(order, true) {
-			return "Move failed: no valid path to destination"
+			sb.WriteString(MoveFailedPrefix)
+			sb.WriteString(": no valid path to destination")
+			return InternString(sb.String())
 		}
 
 		competitors := lrg.engine.getCompetingMoves(order.Destination)
 		if len(competitors) > 1 {
-			return fmt.Sprintf("Move failed: bounced with %d other moves to same destination", len(competitors)-1)
+			sb.WriteString(MoveFailedPrefix)
+			sb.WriteString(": bounced with ")
+			sb.WriteString(fmt.Sprintf("%d", len(competitors)-1))
+			sb.WriteString(" other moves to same destination")
 		} else {
 			holdStrength := lrg.engine.calculateHoldStrength(order.Destination, false)
 			attackStrength := lrg.engine.calculateAttackStrength(order, true)
-			return fmt.Sprintf("Move failed: attack strength %d insufficient against hold strength %d", attackStrength, holdStrength)
+			sb.WriteString(MoveFailedPrefix)
+			sb.WriteString(": attack strength ")
+			sb.WriteString(fmt.Sprintf("%d", attackStrength))
+			sb.WriteString(" insufficient against hold strength ")
+			sb.WriteString(fmt.Sprintf("%d", holdStrength))
 		}
 	}
+
+	return InternString(sb.String())
 }
 
-// generateSupportReason creates detailed reasoning for support orders
+// generateSupportReason creates detailed reasoning for support orders using optimized string building
 func (lrg *LazyReasonGenerator) generateSupportReason() string {
 	order := lrg.order
+	sb := GetStringBuilder()
+	defer PutStringBuilder(sb)
 
 	if order.Resolution() {
-		return "Support succeeded: not cut by successful attack"
+		sb.WriteString("Support succeeded: not cut by successful attack")
 	} else {
 		attackers := lrg.engine.getAttackersOf(order.Source)
 		for _, attacker := range attackers {
 			if lrg.engine.resolve(attacker, false) {
-				return fmt.Sprintf("Support cut by successful attack from %s", attacker.Source)
+				sb.WriteString(SupportCutPrefix)
+				sb.WriteString(InternTerritory(attacker.Source))
+				return InternString(sb.String())
 			}
 		}
-		return "Support failed: unknown reason"
+		sb.WriteString("Support failed: unknown reason")
 	}
+
+	return InternString(sb.String())
 }
 
-// generateConvoyReason creates detailed reasoning for convoy orders
+// generateConvoyReason creates detailed reasoning for convoy orders using optimized string building
 func (lrg *LazyReasonGenerator) generateConvoyReason() string {
 	order := lrg.order
+	sb := GetStringBuilder()
+	defer PutStringBuilder(sb)
 
 	if order.Resolution() {
-		return "Convoy succeeded: not disrupted by successful attack"
+		sb.WriteString("Convoy succeeded: not disrupted by successful attack")
 	} else {
 		attackers := lrg.engine.getAttackersOf(order.Source)
 		for _, attacker := range attackers {
 			if lrg.engine.resolve(attacker, false) {
-				return fmt.Sprintf("Convoy disrupted by successful attack from %s", attacker.Source)
+				sb.WriteString(ConvoyDisruptedPrefix)
+				sb.WriteString(InternTerritory(attacker.Source))
+				return InternString(sb.String())
 			}
 		}
-		return "Convoy failed: unknown reason"
+		sb.WriteString("Convoy failed: unknown reason")
 	}
+
+	return InternString(sb.String())
 }
 
-// generateHoldReason creates detailed reasoning for hold orders
+// generateHoldReason creates detailed reasoning for hold orders using optimized string building
 func (lrg *LazyReasonGenerator) generateHoldReason() string {
-	return "Hold order succeeded (hold orders always succeed)"
+	sb := GetStringBuilder()
+	defer PutStringBuilder(sb)
+
+	sb.WriteString("Hold order succeeded (hold orders always succeed)")
+	return InternString(sb.String())
 }
 
 // getResolutionReason provides human-readable reason for resolution using lazy evaluation
@@ -1068,21 +1125,6 @@ func (engine *DATCEngine) hasValidPathForSwap(order *Order) bool {
 	for _, otherOrder := range engine.orderedOrders {
 		if otherOrder.Type == Convoy && engine.isConvoyingMove(otherOrder, order) {
 			return true // Convoy exists, assume valid for swap detection
-		}
-	}
-
-	return false
-}
-
-// hasSupport checks if a move order has any support
-func (engine *DATCEngine) hasSupport(order *Order) bool {
-	if order.Type != Move {
-		return false
-	}
-
-	for _, otherOrder := range engine.orderedOrders {
-		if otherOrder.Type == Support && engine.isSupporting(otherOrder, order) {
-			return true
 		}
 	}
 

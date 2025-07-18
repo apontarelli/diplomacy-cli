@@ -11,21 +11,21 @@ const (
 	Retreat
 )
 
-// String returns the string representation of an OrderType
+// String returns the string representation of an OrderType using interned strings
 func (ot OrderType) String() string {
 	switch ot {
 	case Move:
-		return "Move"
+		return MoveString
 	case Support:
-		return "Support"
+		return SupportString
 	case Convoy:
-		return "Convoy"
+		return ConvoyString
 	case Hold:
-		return "Hold"
+		return HoldString
 	case Retreat:
-		return "Retreat"
+		return RetreatString
 	default:
-		return "Unknown"
+		return UnknownString
 	}
 }
 
@@ -125,4 +125,25 @@ func (o *Order) reset() {
 	o.isVisited = false
 	o.isCircular = false
 	o.circularGroup = nil
+}
+
+// NewOrder creates a new order with interned strings for memory efficiency
+func NewOrder(unit, source, destination, auxiliary, owner string, orderType OrderType) Order {
+	return Order{
+		Unit:        InternUnit(unit),
+		Type:        orderType,
+		Source:      InternTerritory(source),
+		Destination: InternTerritory(destination),
+		Auxiliary:   InternString(auxiliary),
+		Owner:       InternOwner(owner),
+	}
+}
+
+// InternStrings interns all string fields in the order for memory efficiency
+func (o *Order) InternStrings() {
+	o.Unit = InternUnit(o.Unit)
+	o.Source = InternTerritory(o.Source)
+	o.Destination = InternTerritory(o.Destination)
+	o.Auxiliary = InternString(o.Auxiliary)
+	o.Owner = InternOwner(o.Owner)
 }
