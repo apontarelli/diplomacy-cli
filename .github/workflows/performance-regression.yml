@@ -1,0 +1,323 @@
+name: Performance Regression Testing
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/performance-regression.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'backend/**'
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      save_baseline:
+        description: 'Save results as new baseline'
+        required: false
+        default: 'false'
+        type: boolean
+      benchmark_time:
+        description: 'Benchmark duration (e.g., 30s)'
+        required: false
+        default: '10s'
+        type: string
+
+env:
+  GO_VERSION: '1.21'
+  BENCHMARK_TIMEOUT: '15m'
+
+jobs:
+  performance-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Need full history for baseline comparison
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: ${{ env.GO_VERSION }}
+        cache: true
+        cache-dependency-path: backend/go.sum
+    
+    - name: Create benchmark directories
+      run: |
+        mkdir -p backend/benchmarks/{results,reports}
+        mkdir -p backend/benchmarks/ci-artifacts
+    
+    - name: Download baseline from cache
+      uses: actions/cache@v3
+      with:
+        path: backend/benchmarks/results/baseline.json
+        key: performance-baseline-${{ runner.os }}-go${{ env.GO_VERSION }}
+        restore-keys: |
+          performance-baseline-${{ runner.os }}-
+    
+    - name: Install dependencies
+      working-directory: backend
+      run: go mod download
+    
+    - name: Warm up Go build cache
+      working-directory: backend
+      run: go build -v ./...
+    
+    - name: Run performance benchmarks
+      working-directory: backend
+      run: |
+        # Set benchmark configuration
+        BENCH_TIME="${{ github.event.inputs.benchmark_time || '10s' }}"
+        SAVE_BASELINE="${{ github.event.inputs.save_baseline || 'false' }}"
+        
+        # Create benchmark runner script
+        cat > run_benchmarks.go << 'EOF'
+        package main
+        
+        import (
+          "context"
+          "fmt"
+          "log"
+          "os"
+          "path/filepath"
+          "strconv"
+          "time"
+          
+          "github.com/diplomacy-cli/backend/internal/game/pipeline"
+        )
+        
+        func main() {
+          projectRoot, _ := os.Getwd()
+          runner := pipeline.NewBenchmarkRunner(projectRoot)
+          
+          // Configure for CI environment
+          config := pipeline.DefaultBenchmarkConfig()
+          config.BenchTime = os.Getenv("BENCH_TIME")
+          if config.BenchTime == "" {
+            config.BenchTime = "10s"
+          }
+          config.Count = 5  // More runs for statistical significance
+          config.CPUProfile = true
+          config.MemProfile = true
+          config.TraceProfile = false  // Skip trace in CI to save time
+          config.Timeout = "15m"
+          config.Verbose = true
+          
+          // Check if we should save baseline
+          if saveBaseline, _ := strconv.ParseBool(os.Getenv("SAVE_BASELINE")); saveBaseline {
+            config.SaveBaseline = true
+            config.SkipBaseline = true  // Don't compare when saving new baseline
+          }
+          
+          runner.SetConfig(config)
+          
+          ctx, cancel := context.WithTimeout(context.Background(), 15*time.Minute)
+          defer cancel()
+          
+          fmt.Println("Starting performance regression testing...")
+          report, err := runner.RunBenchmarks(ctx)
+          if err != nil {
+            log.Fatalf("Benchmark execution failed: %v", err)
+          }
+          
+          fmt.Printf("Benchmark completed successfully. %d benchmarks executed.\n", len(report.Results))
+          
+          // Output summary for GitHub Actions
+          if len(report.Comparison) > 0 {
+            var improved, degraded, stable int
+            var majorDegradations []string
+            
+            for _, result := range report.Comparison {
+              switch result.Status {
+              case "improved":
+                improved++
+              case "degraded":
+                degraded++
+                if result.Significance == "major" {
+                  majorDegradations = append(majorDegradations, 
+                    fmt.Sprintf("%s (%.1f%% slower)", result.BenchmarkName, (result.PerformanceRatio-1)*100))
+                }
+              case "stable":
+                stable++
+              }
+            }
+            
+            fmt.Printf("\n=== Performance Summary ===\n")
+            fmt.Printf("Improved: %d | Degraded: %d | Stable: %d\n", improved, degraded, stable)
+            
+            if len(majorDegradations) > 0 {
+              fmt.Printf("\n⚠️ Major Performance Regressions:\n")
+              for _, degradation := range majorDegradations {
+                fmt.Printf("  - %s\n", degradation)
+              }
+              
+              // Set exit code for CI failure
+              if len(majorDegradations) > 0 {
+                fmt.Printf("\nFailing CI due to major performance regressions.\n")
+                os.Exit(1)
+              }
+            }
+          }
+        }
+        EOF
+        
+        # Run the benchmarks
+        BENCH_TIME="$BENCH_TIME" SAVE_BASELINE="$SAVE_BASELINE" go run run_benchmarks.go
+    
+    - name: Generate performance report
+      if: always()
+      working-directory: backend
+      run: |
+        # Find the latest report
+        LATEST_REPORT=$(ls -t benchmarks/reports/benchmark_report_*.md 2>/dev/null | head -1)
+        
+        if [ -n "$LATEST_REPORT" ]; then
+          echo "## 📊 Performance Regression Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cat "$LATEST_REPORT" >> $GITHUB_STEP_SUMMARY
+          
+          # Copy report for artifact upload
+          cp "$LATEST_REPORT" benchmarks/ci-artifacts/performance-report.md
+          
+          # Also copy JSON report if it exists
+          JSON_REPORT="${LATEST_REPORT%.md}.json"
+          JSON_REPORT="${JSON_REPORT/benchmark_report_/benchmark_report_}"
+          if [ -f "$JSON_REPORT" ]; then
+            cp "$JSON_REPORT" benchmarks/ci-artifacts/performance-report.json
+          fi
+        else
+          echo "⚠️ No performance report generated" >> $GITHUB_STEP_SUMMARY
+        fi
+    
+    - name: Upload benchmark artifacts
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: performance-benchmarks-${{ github.run_number }}
+        path: |
+          backend/benchmarks/ci-artifacts/
+          backend/benchmarks/results/*.prof
+        retention-days: 30
+    
+    - name: Comment PR with performance results
+      if: github.event_name == 'pull_request' && always()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          
+          try {
+            const reportPath = 'backend/benchmarks/ci-artifacts/performance-report.md';
+            if (fs.existsSync(reportPath)) {
+              const report = fs.readFileSync(reportPath, 'utf8');
+              
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `## 🚀 Performance Regression Test Results\n\n${report}\n\n---\n*Generated by [Performance Regression Testing](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})*`
+              });
+            }
+          } catch (error) {
+            console.log('Could not post performance results to PR:', error.message);
+          }
+    
+    - name: Update baseline cache
+      if: github.event.inputs.save_baseline == 'true' || (github.ref == 'refs/heads/main' && github.event_name == 'push')
+      uses: actions/cache@v3
+      with:
+        path: backend/benchmarks/results/baseline.json
+        key: performance-baseline-${{ runner.os }}-go${{ env.GO_VERSION }}-${{ github.sha }}
+    
+    - name: Notify on performance degradation
+      if: failure() && (github.ref == 'refs/heads/main' || github.event_name == 'schedule')
+      uses: actions/github-script@v6
+      with:
+        script: |
+          await github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: `🚨 Performance Regression Detected - ${new Date().toISOString().split('T')[0]}`,
+            body: `## Performance Regression Alert
+            
+            A significant performance regression has been detected in the resolution engine.
+            
+            **Details:**
+            - **Commit:** ${context.sha}
+            - **Branch:** ${context.ref}
+            - **Workflow:** [${context.workflow}](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
+            - **Triggered by:** ${context.eventName}
+            
+            Please review the benchmark results and investigate the performance impact.
+            
+            **Next Steps:**
+            1. Review the detailed performance report in the workflow artifacts
+            2. Identify the root cause of the regression
+            3. Implement performance fixes
+            4. Re-run benchmarks to validate improvements
+            
+            ---
+            *This issue was automatically created by the Performance Regression Testing workflow.*`,
+            labels: ['performance', 'regression', 'high-priority']
+          });
+
+  benchmark-comparison:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    timeout-minutes: 20
+    
+    steps:
+    - name: Checkout PR branch
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.head_ref }}
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: ${{ env.GO_VERSION }}
+        cache: true
+        cache-dependency-path: backend/go.sum
+    
+    - name: Run PR benchmarks
+      working-directory: backend
+      run: |
+        mkdir -p benchmarks/results
+        go test -bench=. -benchmem -count=3 -benchtime=5s ./internal/game/pipeline/ > benchmarks/results/pr_results.txt
+    
+    - name: Checkout base branch
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.base_ref }}
+        clean: false
+    
+    - name: Run base benchmarks
+      working-directory: backend
+      run: |
+        go test -bench=. -benchmem -count=3 -benchtime=5s ./internal/game/pipeline/ > benchmarks/results/base_results.txt
+    
+    - name: Compare benchmarks
+      working-directory: backend
+      run: |
+        # Install benchcmp if not available
+        go install golang.org/x/tools/cmd/benchcmp@latest
+        
+        # Compare results
+        echo "## 📈 Benchmark Comparison (PR vs Base)" > benchmarks/results/comparison.md
+        echo "" >> benchmarks/results/comparison.md
+        echo "\`\`\`" >> benchmarks/results/comparison.md
+        benchcmp benchmarks/results/base_results.txt benchmarks/results/pr_results.txt >> benchmarks/results/comparison.md || true
+        echo "\`\`\`" >> benchmarks/results/comparison.md
+    
+    - name: Upload comparison results
+      uses: actions/upload-artifact@v3
+      with:
+        name: benchmark-comparison-${{ github.run_number }}
+        path: backend/benchmarks/results/
+        retention-days: 7

@@ -1,0 +1,50 @@
+{
+  "thresholds": {
+    "minor_improvement": 0.95,
+    "major_improvement": 0.80,
+    "minor_degradation": 1.05,
+    "major_degradation": 1.20,
+    "critical_degradation": 1.50
+  },
+  "benchmark_config": {
+    "default_bench_time": "10s",
+    "default_count": 3,
+    "ci_bench_time": "30s",
+    "ci_count": 5,
+    "timeout": "15m"
+  },
+  "alert_config": {
+    "enable_alerts": true,
+    "alert_on_major_degradation": true,
+    "alert_on_critical_degradation": true,
+    "notification_channels": [
+      "github_issues",
+      "slack"
+    ]
+  },
+  "baseline_config": {
+    "auto_update_baseline": false,
+    "baseline_retention_days": 30,
+    "require_manual_approval": true
+  },
+  "reporting": {
+    "generate_markdown": true,
+    "generate_json": true,
+    "include_profiling_data": true,
+    "retention_days": 90
+  },
+  "benchmarks": {
+    "patterns": [
+      "BenchmarkBaseline",
+      "BenchmarkDATCByCategory",
+      "BenchmarkComplexityScenarios",
+      "BenchmarkResolutionEngineComponents",
+      "BenchmarkMemoryUsage",
+      "BenchmarkConcurrentResolution"
+    ],
+    "critical_benchmarks": [
+      "BenchmarkBaseline",
+      "BenchmarkComplexityScenarios"
+    ]
+  }
+}

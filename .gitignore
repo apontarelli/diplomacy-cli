@@ -48,3 +48,18 @@ node_modules/
 *.test
 coverage.html
 coverage.out
+
+# Benchmark results and temporary files
+backend/benchmarks/results/*.txt
+backend/benchmarks/results/*.prof
+backend/benchmarks/results/benchmark_*.json
+backend/benchmarks/reports/benchmark_report_*.md
+backend/benchmarks/reports/benchmark_report_*.json
+backend/benchmarks/ci-artifacts/
+backend/benchmarks/history/*.json
+backend/benchmarks/alerts/history.json
+
+# Keep baseline and configuration files
+!backend/benchmarks/results/baseline.json
+!backend/benchmarks/performance-config.json
+!backend/benchmarks/README.md
