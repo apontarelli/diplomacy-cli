@@ -1,6 +1,7 @@
 package resolution
 
 import (
+	"context"
 	"fmt"
 	"sync"
 )
@@ -73,6 +74,11 @@ func NewDATCEngineWithPool(orders []Order, pool *ObjectPool) *DATCEngine {
 
 // ResolveAll resolves all orders using the DATC partial information algorithm
 func (engine *DATCEngine) ResolveAll() []AdjudicationResult {
+	// Start performance monitoring
+	monitor := GetGlobalPerformanceMonitor()
+	timer := monitor.StartResolution(context.Background(), len(engine.orderedOrders))
+	defer timer.Finish()
+
 	results := make([]AdjudicationResult, 0, len(engine.orderedOrders))
 
 	// Clear caches before resolution
@@ -450,6 +456,9 @@ func (engine *DATCEngine) calculateAttackStrength(order *Order, optimistic bool)
 	cacheKey := BuildOptimisticKey(baseKey, optimistic)
 
 	return engine.strengthCache.GetAttackStrength(cacheKey, func() int {
+		// Record strength calculation for performance monitoring
+		GetGlobalPerformanceMonitor().RecordStrengthCalculation()
+
 		// DATC 5.B.8: If PATH fails, attack strength is 0
 		if !engine.hasValidPath(order, optimistic) {
 			return 0
@@ -748,9 +757,12 @@ func (lrg *LazyReasonGenerator) GetReason() string {
 	if lrg.evaluated {
 		result := lrg.reason
 		lrg.mu.RUnlock()
+		GetGlobalPerformanceMonitor().RecordLazyEvaluationSkipped()
 		return result
 	}
 	lrg.mu.RUnlock()
+
+	GetGlobalPerformanceMonitor().RecordLazyEvaluationForced()
 
 	lrg.mu.Lock()
 	defer lrg.mu.Unlock()

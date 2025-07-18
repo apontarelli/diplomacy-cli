@@ -94,9 +94,12 @@ func (sc *StrengthCache) GetAttackStrength(key string, calculator func() int) in
 	sc.mu.RLock()
 	if lazyCalc, exists := sc.attackStrengthCache[key]; exists {
 		sc.mu.RUnlock()
+		GetGlobalPerformanceMonitor().RecordCacheHit()
 		return lazyCalc.Calculate()
 	}
 	sc.mu.RUnlock()
+
+	GetGlobalPerformanceMonitor().RecordCacheMiss()
 
 	sc.mu.Lock()
 	// Double-check after acquiring write lock

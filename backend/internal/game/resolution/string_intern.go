@@ -64,6 +64,7 @@ func (si *StringInterner) Intern(s string) string {
 	// Store the string and return it
 	si.strings[s] = s
 	si.updateAccessLog(s)
+	GetGlobalPerformanceMonitor().RecordStringInterned()
 	return s
 }
 
@@ -237,6 +238,7 @@ func GetStringBuilder() *strings.Builder {
 // PutStringBuilder returns a string builder to the global pool
 func PutStringBuilder(sb *strings.Builder) {
 	globalBuilderPool.Put(sb)
+	GetGlobalPerformanceMonitor().RecordStringBuilderReuse()
 }
 
 // BuildCacheKey efficiently builds cache keys using string builder and interning with validation
