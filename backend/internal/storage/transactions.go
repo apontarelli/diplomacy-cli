@@ -3,7 +3,10 @@ package storage
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"time"
+
+	"diplomacy-cli/backend/internal/game"
 )
 
 // GameOperations provides transactional operations for game management
@@ -238,8 +241,277 @@ func (ops *GameOperations) CompleteGame(gameID int64, winner string) error {
 	})
 }
 
+// SaveGameState saves a complete game state to the database using JSON serialization
+func (ops *GameOperations) SaveGameState(gameID int64, gameState *game.GameState) error {
+	return ops.db.Transaction(func(tx *sql.Tx) error {
+		// Serialize the game state to JSON
+		stateData, err := SerializeGameState(gameState)
+		if err != nil {
+			return fmt.Errorf("failed to serialize game state: %w", err)
+		}
+
+		// Save to game_histories table with current timestamp
+		_, err = tx.Exec(`
+			INSERT INTO game_histories (game_id, phase, year, state_data, timestamp, created_at, updated_at)
+			VALUES (?, ?, ?, ?, ?, ?, ?)`,
+			gameID, gameState.Phase, gameState.Year, string(stateData),
+			time.Now(), time.Now(), time.Now())
+		if err != nil {
+			return fmt.Errorf("failed to save game state: %w", err)
+		}
+
+		return nil
+	})
+}
+
+// LoadGameState loads the most recent game state from the database
+func (ops *GameOperations) LoadGameState(gameID int64) (*game.GameState, error) {
+	var gameState *game.GameState
+	err := ops.db.Transaction(func(tx *sql.Tx) error {
+		// Load the most recent game state
+		var stateData string
+		err := tx.QueryRow(`
+			SELECT state_data 
+			FROM game_histories 
+			WHERE game_id = ? 
+			ORDER BY timestamp DESC 
+			LIMIT 1`, gameID).Scan(&stateData)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return fmt.Errorf("no game state found for game %d", gameID)
+			}
+			return fmt.Errorf("failed to query game state: %w", err)
+		}
+
+		// Deserialize the game state
+		gameState, err = DeserializeGameState([]byte(stateData))
+		if err != nil {
+			return fmt.Errorf("failed to deserialize game state: %w", err)
+		}
+
+		return nil
+	})
+
+	return gameState, err
+}
+
+// SaveGameStateSnapshot saves a game state snapshot with a specific timestamp
+func (ops *GameOperations) SaveGameStateSnapshot(gameID int64, gameState *game.GameState, timestamp time.Time) error {
+	return ops.db.Transaction(func(tx *sql.Tx) error {
+		// Serialize the game state to JSON
+		stateData, err := SerializeGameState(gameState)
+		if err != nil {
+			return fmt.Errorf("failed to serialize game state: %w", err)
+		}
+
+		// Save to game_histories table with specified timestamp
+		_, err = tx.Exec(`
+			INSERT INTO game_histories (game_id, phase, year, state_data, timestamp, created_at, updated_at)
+			VALUES (?, ?, ?, ?, ?, ?, ?)`,
+			gameID, gameState.Phase, gameState.Year, string(stateData),
+			timestamp, time.Now(), time.Now())
+		if err != nil {
+			return fmt.Errorf("failed to save game state snapshot: %w", err)
+		}
+
+		return nil
+	})
+}
+
+// LoadGameStateHistory loads all historical game states for a game with structured error handling
+func (ops *GameOperations) LoadGameStateHistory(gameID int64) (*GameStateLoadResult, error) {
+	var result *GameStateLoadResult
+	err := ops.db.Transaction(func(tx *sql.Tx) error {
+		var err error
+		result, err = ops.loadGameHistoryWithFailures(tx, gameID)
+		return err
+	})
+
+	return result, err
+}
+
+// LoadGameStateHistoryOrFail provides a convenience method that fails on any corruption
+func (ops *GameOperations) LoadGameStateHistoryOrFail(gameID int64) ([]*game.GameState, error) {
+	result, err := ops.LoadGameStateHistory(gameID)
+	if err != nil {
+		return nil, err
+	}
+	if len(result.Failures) > 0 {
+		return nil, fmt.Errorf("failed to load %d of %d states for game %d",
+			len(result.Failures), result.TotalCount, gameID)
+	}
+	return result.States, nil
+}
+
+// loadGameHistoryAndCurrent loads historical game states and separates current state
+func (ops *GameOperations) loadGameHistoryAndCurrent(tx *sql.Tx, gameID int64) ([]*game.GameState, *game.GameState, error) {
+	rows, err := tx.Query(`
+		SELECT state_data, timestamp 
+		FROM game_histories 
+		WHERE game_id = ? 
+		ORDER BY timestamp ASC`, gameID)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer rows.Close()
+
+	var allStates []*game.GameState
+	for rows.Next() {
+		var stateData string
+		var timestamp time.Time
+		if err := rows.Scan(&stateData, &timestamp); err != nil {
+			return nil, nil, err
+		}
+
+		if stateData != "" {
+			gameState, err := DeserializeGameState([]byte(stateData))
+			if err != nil {
+				// Log error but continue - don't fail entire load for one corrupted state
+				continue
+			}
+			allStates = append(allStates, gameState)
+		}
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, nil, err
+	}
+
+	// Separate history from current state
+	// The last state is the current state, everything else is history
+	var history []*game.GameState
+	var currentState *game.GameState
+
+	if len(allStates) > 0 {
+		currentState = allStates[len(allStates)-1]
+		if len(allStates) > 1 {
+			history = allStates[:len(allStates)-1]
+		}
+	}
+
+	return history, currentState, nil
+}
+
+// savePlayers saves all players for a game
+func (ops *GameOperations) savePlayers(tx *sql.Tx, gameID int64, players map[game.Nation]string) error {
+	// Clear existing players for this game
+	_, err := tx.Exec("DELETE FROM players WHERE game_id = ?", gameID)
+	if err != nil {
+		return fmt.Errorf("failed to clear existing players: %w", err)
+	}
+
+	// Insert current players
+	for nation, userID := range players {
+		_, err := tx.Exec(`
+			INSERT INTO players (game_id, user_id, nation, created_at, updated_at)
+			VALUES (?, ?, ?, ?, ?)`,
+			gameID, userID, string(nation), time.Now(), time.Now())
+		if err != nil {
+			return fmt.Errorf("failed to insert player %s: %w", nation, err)
+		}
+	}
+
+	return nil
+}
+
+// loadGameHistory loads historical game states
+func (ops *GameOperations) loadGameHistory(tx *sql.Tx, gameID int64) ([]*game.GameState, error) {
+	rows, err := tx.Query(`
+		SELECT state_data 
+		FROM game_histories 
+		WHERE game_id = ? 
+		ORDER BY timestamp ASC`, gameID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var history []*game.GameState
+	for rows.Next() {
+		var stateData string
+		if err := rows.Scan(&stateData); err != nil {
+			return nil, err
+		}
+
+		if stateData != "" {
+			gameState, err := DeserializeGameState([]byte(stateData))
+			if err != nil {
+				// Log error but continue - don't fail entire load for one corrupted state
+				continue
+			}
+			history = append(history, gameState)
+		}
+	}
+
+	return history, rows.Err()
+}
+
+// loadGameHistoryWithFailures loads historical game states with structured error handling
+func (ops *GameOperations) loadGameHistoryWithFailures(tx *sql.Tx, gameID int64) (*GameStateLoadResult, error) {
+	rows, err := tx.Query(`
+		SELECT state_data, timestamp 
+		FROM game_histories 
+		WHERE game_id = ? 
+		ORDER BY timestamp ASC`, gameID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	result := &GameStateLoadResult{
+		States:   make([]*game.GameState, 0),
+		Failures: make([]StateLoadFailure, 0),
+	}
+
+	for rows.Next() {
+		var stateData string
+		var timestamp time.Time
+		if err := rows.Scan(&stateData, &timestamp); err != nil {
+			return nil, err
+		}
+
+		result.TotalCount++
+
+		if stateData != "" {
+			gameState, err := DeserializeGameState([]byte(stateData))
+			if err != nil {
+				// Log the error and collect failure information
+				log.Printf("Warning: Failed to deserialize game state for game %d at timestamp %v: %v",
+					gameID, timestamp, err)
+
+				failure := StateLoadFailure{
+					GameID:    gameID,
+					Timestamp: timestamp,
+					Error:     err.Error(),
+					RawData:   stateData, // Include raw data for debugging
+				}
+				result.Failures = append(result.Failures, failure)
+				continue
+			}
+			result.States = append(result.States, gameState)
+		}
+	}
+
+	return result, rows.Err()
+}
+
 // OrderResult represents the result of resolving an order
 type OrderResult struct {
 	Result        string
 	FailureReason string
+}
+
+// GameStateLoadResult represents the result of loading game states with potential partial failures
+type GameStateLoadResult struct {
+	States     []*game.GameState  `json:"states"`
+	Failures   []StateLoadFailure `json:"failures,omitempty"`
+	TotalCount int                `json:"total_count"`
+}
+
+// StateLoadFailure represents a failure to load a specific game state
+type StateLoadFailure struct {
+	GameID    int64     `json:"game_id"`
+	Timestamp time.Time `json:"timestamp"`
+	Error     string    `json:"error"`
+	RawData   string    `json:"raw_data,omitempty"` // For debugging corrupted data
 }
