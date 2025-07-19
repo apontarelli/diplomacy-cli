@@ -31,6 +31,9 @@ var DefaultRateLimitConfigs = map[string]RateLimitConfig{
 	"POST /api/games":             {RequestsPerMinute: 5, WindowDuration: time.Minute},
 	"POST /api/games/{id}/join":   {RequestsPerMinute: 10, WindowDuration: time.Minute},
 	"POST /api/games/{id}/orders": {RequestsPerMinute: 30, WindowDuration: time.Minute},
+	"POST /api/auth/login":        {RequestsPerMinute: 5, WindowDuration: time.Minute},
+	"POST /api/auth/register":     {RequestsPerMinute: 3, WindowDuration: time.Minute},
+	"POST /api/auth/refresh":      {RequestsPerMinute: 10, WindowDuration: time.Minute},
 	"default":                     {RequestsPerMinute: 60, WindowDuration: time.Minute},
 }
 

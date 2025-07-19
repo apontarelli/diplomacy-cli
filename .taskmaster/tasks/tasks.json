@@ -564,7 +564,7 @@
         "dependencies": [
           8
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -572,7 +572,7 @@
             "description": "Initialize and configure the Gin router for the RESTful API.",
             "dependencies": [],
             "details": "Use Gin v1.10.0 in Go to set up the main router instance and basic configuration.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -583,7 +583,7 @@
               1
             ],
             "details": "Implement POST /games, POST /games/:id/join, and POST /games/:id/orders, integrating with the database as needed.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -594,7 +594,7 @@
               2
             ],
             "details": "Add middleware for authentication and authorization, ensuring secure access to the endpoints.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -605,7 +605,7 @@
               3
             ],
             "details": "Use httptest for API testing, mock the database, and assert that responses match expected JSON structures.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -620,7 +620,7 @@
         "dependencies": [
           9
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -628,7 +628,7 @@
             "description": "Develop the login endpoint to generate JWT tokens upon successful user authentication.",
             "dependencies": [],
             "details": "Use github.com/golang-jwt/jwt v5.2.1 to create signed tokens with user claims. Endpoint: POST /login that verifies credentials and returns JWT.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -639,7 +639,7 @@
               1
             ],
             "details": "Parse and verify JWT signatures, check claims, and reject unauthorized requests. Integrate with API router for protected endpoints.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -651,7 +651,7 @@
               2
             ],
             "details": "Configure token expiration in claims. For revocation, use a blacklist or short-lived tokens with refresh mechanism. Handle expired tokens in validation middleware.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -1360,7 +1360,7 @@
     ],
     "metadata": {
       "created": "2025-07-15T04:21:52.697Z",
-      "updated": "2025-07-19T01:18:31.660Z",
+      "updated": "2025-07-19T04:25:24.568Z",
       "description": "Tasks for master context"
     }
   }

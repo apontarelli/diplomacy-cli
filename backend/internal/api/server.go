@@ -31,12 +31,37 @@ func (s *Server) Handler() http.Handler {
 	// Initialize handlers
 	gameHandler := handlers.NewGameHandler(s.db)
 	orderHandler := handlers.NewOrderHandler(s.db)
+	authHandler := handlers.NewAuthHandler(s.authService)
 
 	// Initialize middleware
 	authMiddleware := middleware.NewAuthMiddleware(s.authService)
 
 	// Health check endpoint (no auth required)
 	mux.HandleFunc("GET /health", s.handleHealth)
+
+	// Authentication endpoints (no auth required for login/register)
+	mux.Handle("POST /api/auth/login",
+		s.rateLimiter.RateLimit("POST /api/auth/login")(
+			http.HandlerFunc(authHandler.Login)))
+
+	mux.Handle("POST /api/auth/register",
+		s.rateLimiter.RateLimit("POST /api/auth/register")(
+			http.HandlerFunc(authHandler.Register)))
+
+	mux.Handle("POST /api/auth/refresh",
+		s.rateLimiter.RateLimit("POST /api/auth/refresh")(
+			http.HandlerFunc(authHandler.RefreshToken)))
+
+	mux.HandleFunc("GET /api/auth/token-info", authHandler.GetTokenInfo)
+
+	// Protected authentication endpoints (require auth)
+	mux.Handle("GET /api/auth/profile",
+		authMiddleware.RequireAuth(
+			http.HandlerFunc(authHandler.GetProfile)))
+
+	mux.Handle("POST /api/auth/logout",
+		authMiddleware.RequireAuth(
+			http.HandlerFunc(authHandler.Logout)))
 
 	// Game endpoints (auth required)
 	mux.Handle("POST /api/games",
