@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Diplomacy Game - Turn-based strategy game with real-time updates">
+    <title>{{.Title}} - Diplomacy Game</title>
+    <link rel="stylesheet" href="/assets/index-Cr5_r80f.css">
+    <script src="https://unpkg.com/htmx.org@2.0.6"></script>
+    <script src="/js/ws.js"></script>
+</head>
+<body>
+    <!-- Connection Status Indicator -->
+    <div id="connection-status" class="connection-status disconnected">Disconnected</div>
+    
+    <!-- Main Application -->
+    <div id="app">
+        <header class="header">
+            <div class="container">
+                <h1>Diplomacy Game</h1>
+                <nav>
+                    <a href="/games" class="btn btn-secondary" hx-get="/games" hx-target="#main-content" hx-push-url="true">
+                        Games
+                    </a>
+                    <a href="/profile" class="btn btn-secondary" hx-get="/profile" hx-target="#main-content" hx-push-url="true">
+                        Profile
+                    </a>
+                </nav>
+            </div>
+        </header>
+
+        <main id="main-content" class="container">
+            {{if .Games}}
+                {{template "games-content" .}}
+            {{else}}
+                <div class="loading-placeholder">
+                    <h2>Welcome to Diplomacy</h2>
+                    <p>Loading game interface...</p>
+                    <div class="htmx-indicator">Loading...</div>
+                </div>
+            {{end}}
+        </main>
+    </div>
+
+    <!-- WebSocket Connection for Real-time Updates -->
+    <div hx-ws="connect:/ws/game" hx-swap="none" style="display: none;"></div>
+    
+    <script type="module" src="/assets/index-CN4fcRWe.js"></script>
+    <script>
+        // Initialize HTMX configuration
+        htmx.config.globalViewTransitions = true;
+        htmx.config.scrollBehavior = 'smooth';
+        htmx.config.defaultSwapStyle = 'innerHTML';
+        htmx.config.defaultSwapDelay = 0;
+        htmx.config.defaultSettleDelay = 20;
+        
+        // Global error handling
+        document.addEventListener('htmx:responseError', function(event) {
+            console.error('HTMX Response Error:', event.detail);
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-toast';
+            errorDiv.textContent = 'Something went wrong. Please try again.';
+            document.body.appendChild(errorDiv);
+            
+            setTimeout(() => errorDiv.remove(), 5000);
+        });
+        
+        // WebSocket connection status
+        document.addEventListener('htmx:wsOpen', function(event) {
+            console.log('WebSocket connected:', event.detail);
+            updateConnectionStatus('connected');
+        });
+        
+        document.addEventListener('htmx:wsClose', function(event) {
+            console.log('WebSocket disconnected:', event.detail);
+            updateConnectionStatus('disconnected');
+        });
+        
+        document.addEventListener('htmx:wsError', function(event) {
+            console.error('WebSocket error:', event.detail);
+            updateConnectionStatus('error');
+        });
+        
+        function updateConnectionStatus(status) {
+            const statusElement = document.getElementById('connection-status');
+            if (statusElement) {
+                statusElement.className = `connection-status ${status}`;
+                statusElement.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -44,9 +44,16 @@ func (s *Server) Handler() http.Handler {
 	gameHandler := handlers.NewGameHandler(s.db, s.wsHandler)
 	orderHandler := handlers.NewOrderHandler(s.db, s.wsHandler)
 	authHandler := handlers.NewAuthHandler(s.authService)
+	templateHandler := handlers.NewTemplateHandler(s.db)
 
 	// Initialize middleware
 	authMiddleware := middleware.NewAuthMiddleware(s.authService)
+
+	// Serve static files from frontend dist
+	fileServer := http.FileServer(http.Dir("../frontend/dist/"))
+	mux.Handle("/assets/", http.StripPrefix("/", fileServer))
+	mux.Handle("/js/", http.StripPrefix("/", fileServer))
+	mux.Handle("/vite.svg", http.StripPrefix("/", fileServer))
 
 	// Health check endpoint (no auth required)
 	mux.HandleFunc("GET /health", s.handleHealth)
@@ -93,6 +100,18 @@ func (s *Server) Handler() http.Handler {
 		authMiddleware.RequireAuth(
 			s.rateLimiter.RateLimit("POST /api/games/{id}/orders")(
 				http.HandlerFunc(orderHandler.SubmitOrders))))
+
+	// HTML/HTMX endpoints
+	mux.HandleFunc("GET /games", templateHandler.GameListPage)
+	mux.HandleFunc("GET /games/{id}", templateHandler.GamePage)
+	mux.HandleFunc("GET /games/{id}/board", templateHandler.GameBoardPartial)
+	mux.HandleFunc("GET /games/{id}/orders", templateHandler.OrderFormPartial)
+	mux.HandleFunc("GET /province-details", templateHandler.ProvinceDetailsPartial)
+
+	// Root redirect to games
+	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/games", http.StatusFound)
+	})
 
 	return mux
 }

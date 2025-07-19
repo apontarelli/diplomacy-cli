@@ -1,0 +1,131 @@
+{{define "games-content"}}
+<div class="games-container">
+    <div class="games-header">
+        <h2>Available Games</h2>
+        <button class="btn btn-primary" hx-post="/api/games" hx-target="#games-list" hx-swap="afterbegin">
+            Create New Game
+        </button>
+    </div>
+    
+    <div id="games-list" class="games-list">
+        {{template "game-list.html" .}}
+    </div>
+</div>
+
+<style>
+.games-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.games-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.games-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.game-card {
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.game-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.game-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+}
+
+.game-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.game-status.active {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.game-status.waiting {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.game-status.completed {
+    background-color: #f3f4f6;
+    color: #374151;
+}
+
+.game-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.game-detail {
+    display: flex;
+    flex-direction: column;
+}
+
+.game-detail-label {
+    font-size: 0.75rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+
+.game-detail-value {
+    font-weight: 500;
+    color: #1e293b;
+}
+
+.game-players {
+    margin-bottom: 1rem;
+}
+
+.players-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.player-badge {
+    padding: 0.25rem 0.5rem;
+    background-color: #f1f5f9;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    color: #475569;
+}
+
+.game-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+</style>
+{{end}}

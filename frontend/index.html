@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Diplomacy Game - Turn-based strategy game with real-time updates" />
+    <title>Diplomacy Game</title>
+  </head>
+  <body>
+    <!-- Connection Status Indicator -->
+    <div id="connection-status" class="connection-status disconnected">Disconnected</div>
+    
+    <!-- Main Application -->
+    <div id="app">
+      <header class="header">
+        <div class="container">
+          <h1>Diplomacy Game</h1>
+          <nav>
+            <a href="/games" class="btn btn-secondary" hx-get="/games" hx-target="#main-content" hx-push-url="true">
+              Games
+            </a>
+            <a href="/profile" class="btn btn-secondary" hx-get="/profile" hx-target="#main-content" hx-push-url="true">
+              Profile
+            </a>
+          </nav>
+        </div>
+      </header>
+
+      <main id="main-content" class="container">
+        <!-- Content will be loaded here via HTMX -->
+        <div class="loading-placeholder">
+          <h2>Welcome to Diplomacy</h2>
+          <p>Loading game interface...</p>
+          <div class="htmx-indicator">Loading...</div>
+        </div>
+      </main>
+    </div>
+
+    <!-- WebSocket Connection for Real-time Updates -->
+    <div hx-ws="connect:/ws/game" hx-swap="none" style="display: none;"></div>
+    
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

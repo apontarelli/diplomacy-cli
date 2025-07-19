@@ -1,0 +1,48 @@
+{{range .Games}}
+<div class="game-card">
+    <div class="game-header">
+        <h3 class="game-title">{{.Name}}</h3>
+        <span class="game-status {{.Status}}">{{.Status}}</span>
+    </div>
+    
+    <div class="game-info">
+        <div class="game-detail">
+            <span class="game-detail-label">Phase</span>
+            <span class="game-detail-value">{{.Phase}}</span>
+        </div>
+        <div class="game-detail">
+            <span class="game-detail-label">Year</span>
+            <span class="game-detail-value">{{.Year}}</span>
+        </div>
+    </div>
+    
+    <div class="game-players">
+        <span class="game-detail-label">Players ({{len .Players}}/7)</span>
+        <div class="players-list">
+            {{range .Players}}
+            <span class="player-badge">{{.Name}} ({{.Nation}})</span>
+            {{end}}
+        </div>
+    </div>
+    
+    <div class="game-actions">
+        <a href="/games/{{.ID}}" class="btn btn-primary" 
+           hx-get="/games/{{.ID}}" hx-target="#main-content" hx-push-url="true">
+            View Game
+        </a>
+        {{if eq .Status "waiting"}}
+        <button class="btn btn-secondary" 
+                hx-post="/api/games/{{.ID}}/join" 
+                hx-target="#games-list" 
+                hx-swap="outerHTML">
+            Join Game
+        </button>
+        {{end}}
+    </div>
+</div>
+{{else}}
+<div class="empty-state">
+    <h3>No games available</h3>
+    <p>Create a new game to get started!</p>
+</div>
+{{end}}

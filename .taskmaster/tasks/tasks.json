@@ -1440,11 +1440,181 @@
             "testStrategy": ""
           }
         ]
+      },
+      {
+        "id": 26,
+        "title": "Develop Comprehensive HTMX-Based Web Frontend for Diplomacy Game",
+        "description": "Create a server-driven web interface using HTMX that integrates with the existing Go backend and WebSocket system to provide a complete Diplomacy game experience, including interactive board visualization, order entry, real-time updates via WebSockets, and player management features.",
+        "status": "pending",
+        "dependencies": [
+          9,
+          23
+        ],
+        "priority": "medium",
+        "details": "Implement the web frontend using HTMX 2.0 (latest stable version as of 2024) for a hypermedia-driven architecture, emphasizing server-side rendering with Go templates (integrated with the existing Go HTTP server from Task 9) to minimize client-side JavaScript. Follow best practices from HTMX documentation and community resources (e.g., htmx.org examples, \"Hypermedia Systems\" book patterns): use progressive enhancement for accessibility, semantic HTML5 structure, and ARIA attributes for interactive elements. Leverage the htmx-ws extension (version 1.0+) for seamless WebSocket integration, enabling real-time push updates without custom JS WebSocket handling.\n\nKey components and implementation steps:\n\n1. **Project Setup and Structure** (COMPLETED):\n   - Successfully set up Vite 5.0+ with TypeScript and Bun package manager for fast development.\n   - Organized file structure: src/ for source files, templates/ for Go HTML templates with HTMX attributes, static/ for assets.\n   - Integrated with Go backend: Extended Go standard http.ServeMux to serve HTML templates and handle HTMX requests with unified server on port 8080.\n\n2. **HTMX Integration** (COMPLETED):\n   - Integrated HTMX 2.0.6 with modern configuration including global view transitions, smooth scrolling, and optimized swap settings.\n   - Added comprehensive TypeScript definitions for HTMX events and API.\n   - Implemented base layout template with proper HTMX attributes and error handling with toast notifications.\n\n3. **Game Board Visualization** (IN PROGRESS):\n   - Render the Diplomacy map using SVG (based on standard Diplomacy map assets, e.g., from dpjudge or custom vector graphics).\n   - Make the board interactive: Use HTMX attributes (e.g., hx-get on province clicks to fetch unit details) for server-driven updates. Embed minimal vanilla JS (ES2023 syntax) for client-side state like unit selection (e.g., toggle CSS classes for highlighting, store selection in sessionStorage).\n\n4. **Order Entry System** (PENDING):\n   - Implement form-based order submission with hx-post to /games/:id/orders (from Task 9), including validation feedback via server-rendered error messages.\n   - Use HTMX boosts for AJAX form handling, with hx-swap for inline updates (e.g., confirm order addition without full page reload).\n   - Add JS helpers for UI state: e.g., a simple event listener for unit selection to populate form fields dynamically.\n\n5. **Real-Time Updates and Player Management** (INFRASTRUCTURE READY):\n   - WebSocket infrastructure prepared with htmx-ws extension and connection status indicator.\n   - Server pushes ResolutionResult data (from Tasks 17, 22, 23) as JSON, which HTMX processes to swap HTML partials (e.g., update unit positions, supply centers).\n   - Player features: Pages for game listing (basic implementation complete), joining (hx-post /games/:id/join), and management (e.g., player list with real-time status via WebSockets).\n   - Security: Implement CSRF protection in forms, authenticate via JWT or session cookies tied to backend.\n\n6. **Best Practices and Optimizations** (FOUNDATION COMPLETE):\n   - Performance: Asset pipeline configured with Vite build process generating optimized CSS and JS bundles.\n   - Accessibility: Modern responsive CSS with accessibility features implemented in base templates.\n   - Error Handling: Comprehensive error handling with graceful degradation patterns already implemented.\n   - Responsiveness: CSS with media queries for desktop/mobile views following responsive design patterns.\n\nEnsure compatibility with existing domain models (from Task 16) by mapping backend JSON responses to HTML templates.",
+        "testStrategy": "Conduct comprehensive testing combining automated and manual approaches: Use Playwright (version 1.40+) for end-to-end tests simulating user interactions (e.g., join game, submit orders, verify real-time updates via WebSockets). Write unit tests for vanilla JS components with Jest (version 29+), covering unit selection logic and state management. Perform integration tests by mocking backend APIs (using tools like WireMock) to validate HTMX requests/responses against Task 9 endpoints and ResolutionResult structures (from Task 23). Manually test edge cases: WebSocket disconnections (verify fallback polling), invalid orders (check server-rendered errors), and multi-player scenarios with simulated concurrent updates. Validate accessibility with Lighthouse audits (target AA compliance) and cross-browser testing (Chrome, Firefox, Safari). Ensure 100% DATC-compliant behavior by running frontend against validated backend scenarios from Task 23, asserting correct board states post-resolution.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set Up Project Structure and Build Tools",
+            "description": "Initialize the frontend project with Vite for asset bundling and organize file structure for static assets, templates, and partials.",
+            "status": "done",
+            "dependencies": [],
+            "details": "Use Vite version 5.0+ with TypeScript support. Create directories: static/ for CSS/JS, templates/ for Go HTML templates, partials/ for reusable UI fragments. Ensure hot module replacement for development.",
+            "testStrategy": "Verify setup with Vite build commands and manual checks for file organization and HMR functionality."
+          },
+          {
+            "id": 3,
+            "title": "Implement SVG-Based Game Board Visualization",
+            "description": "Render the Diplomacy map using SVG assets and make it responsive with proper styling integration.",
+            "status": "pending",
+            "dependencies": [
+              2
+            ],
+            "details": "Create SVG-based Diplomacy map using standard assets (e.g., from dpjudge). Integrate with existing responsive CSS framework. Ensure semantic HTML5 structure and proper rendering within the established template system.",
+            "testStrategy": "Manual visual inspections across devices and automated screenshot tests with Playwright to verify map rendering and responsiveness."
+          },
+          {
+            "id": 4,
+            "title": "Add Interactivity to Game Board with HTMX",
+            "description": "Enable interactive elements on the board such as province clicks for unit details using HTMX attributes and minimal vanilla JS.",
+            "status": "pending",
+            "dependencies": [
+              3
+            ],
+            "details": "Use hx-get for fetching unit/province details on clicks. Implement client-side state management with vanilla JS for highlighting selections using sessionStorage. Integrate with existing error handling system.",
+            "testStrategy": "End-to-end tests with Playwright simulating clicks and verifying dynamic updates without full page reloads. Test state persistence across page interactions."
+          },
+          {
+            "id": 5,
+            "title": "Develop Order Entry System with Forms",
+            "description": "Create form-based order submission integrated with backend endpoints, building on existing template and error handling infrastructure.",
+            "status": "pending",
+            "dependencies": [
+              4
+            ],
+            "details": "Use hx-post to /games/:id/orders with validation feedback leveraging existing toast notification system. Implement HTMX boosts for AJAX handling and inline updates using established swap patterns.",
+            "testStrategy": "Unit tests for form validation with Jest on JS helpers; E2E tests for submission and error handling with Playwright, verifying integration with existing error handling."
+          },
+          {
+            "id": 6,
+            "title": "Implement Real-Time WebSocket Game Updates",
+            "description": "Activate the prepared htmx-ws infrastructure for live game updates and OOB swaps.",
+            "status": "pending",
+            "dependencies": [
+              2,
+              5
+            ],
+            "details": "Connect to ws://backend/game/:id/updates using the configured htmx-ws extension. Process ResolutionResult JSON pushes to swap HTML partials for phase changes and order resolutions. Utilize existing connection status indicator.",
+            "testStrategy": "Simulate WebSocket messages in Playwright tests to verify real-time UI updates. Test connection status indicator and fallback behavior."
+          },
+          {
+            "id": 7,
+            "title": "Enhance Player Management Features",
+            "description": "Expand the basic game listing functionality with joining capabilities and real-time player status updates.",
+            "status": "pending",
+            "dependencies": [
+              6
+            ],
+            "details": "Build upon existing games list page to add hx-post for joining games. Implement real-time player list updates via WebSockets. Add security with CSRF protection and JWT authentication integration.",
+            "testStrategy": "E2E tests with Playwright for user flows like joining games and verifying real-time player list updates. Test security features and authentication flows."
+          },
+          {
+            "id": 8,
+            "title": "Apply Performance Optimizations and Advanced Accessibility",
+            "description": "Enhance the existing responsive and accessible foundation with advanced optimizations and comprehensive accessibility features.",
+            "status": "pending",
+            "dependencies": [
+              7
+            ],
+            "details": "Build upon existing responsive CSS and accessibility features. Add lazy loading for map assets, debouncing for JS events, progressive enhancement patterns, and comprehensive ARIA attributes. Ensure full compatibility with domain models from Task 16.",
+            "testStrategy": "Accessibility audits with Lighthouse targeting AA compliance; performance tests with Playwright for load times and error scenarios. Validate domain model compatibility."
+          },
+          {
+            "id": 2,
+            "title": "Integrate Gin Router with HTMX Templates",
+            "description": "Extend the existing Gin router to serve HTML templates and handle HTMX requests for dynamic content.",
+            "status": "done",
+            "dependencies": [
+              1
+            ],
+            "details": "Incorporate Go templates with HTMX attributes (hx-get, hx-post). Integrate with backend from Task 9, ensuring server-side rendering minimizes client-side JS.\n<info added on 2025-07-19T18:57:58.154Z>\nExtend the existing Go standard http.ServeMux to serve HTML templates and handle HTMX requests for dynamic content.\n</info added on 2025-07-19T18:57:58.154Z>",
+            "testStrategy": "Use Go's httptest package to simulate HTMX requests and assert correct template rendering and response handling."
+          }
+        ]
+      },
+      {
+        "id": 27,
+        "title": "Research and Evaluate Client-Side Reactivity Frameworks for HTMX Frontend Enhancement",
+        "description": "Conduct a comprehensive research and evaluation of lightweight client-side reactivity frameworks including Alpine.js, Petite-Vue, Hyperscript, Stimulus, and vanilla JavaScript to enhance the HTMX-based Diplomacy game frontend, focusing on handling complex interactions while preserving the server-driven architecture and recommending optimal approaches for improved user experience.",
+        "details": "Perform in-depth research on current best practices for integrating lightweight client-side frameworks with HTMX (version 2.0+), emphasizing hypermedia-driven applications as per the 'Hypermedia Systems' book and htmx.org guidelines. Focus on maintaining server-side control (e.g., using Go templates with Gin from Task 26) while adding client-side polish for features like dynamic order building (e.g., interactive unit selection and order construction), real-time form validation (e.g., instant feedback on invalid orders), unit selection (e.g., highlighting and tooltips), and interactive game board features (e.g., drag-and-drop unit movements with visual previews).\n\nComparison Criteria:\n- **Integration with HTMX**: Ease of combining with htmx attributes (e.g., hx-get, hx-post) for progressive enhancement, avoiding full client-side state management.\n- **Bundle Size and Performance**: Evaluate minified sizes (Alpine.js ~15KB, Petite-Vue ~6KB, Hyperscript ~10KB, Stimulus ~10KB, vanilla JS ~0KB) and runtime efficiency for mobile/low-bandwidth users, using tools like Lighthouse or WebPageTest.\n- **Learning Curve and Developer Experience**: Assess simplicity for Go developers (e.g., Hyperscript's concise syntax vs. Stimulus's controller-based approach).\n- **Feature Fit for Diplomacy Game**: Suitability for reactivity needs, such as Alpine.js for declarative data binding in order forms, Petite-Vue for Vue-like components in board interactions, Hyperscript for event-driven scripting in real-time updates, Stimulus for modest behaviors like form validation, and vanilla JS for custom minimal implementations.\n- **Community and Ecosystem**: Review adoption (e.g., Alpine.js has strong HTMX community support; Petite-Vue backed by Vue.js team as of 2024), documentation quality, and long-term maintenance.\n- **Preservation of Server-Driven Philosophy**: Ensure recommendations prioritize server-side rendering and logic, using client-side tools only for UX enhancements without shifting business logic (e.g., validate orders server-side via HTMX requests, use client-side for optimistic UI updates).\n\nPros/Cons Summary (based on 2024 research):\n- **Alpine.js (v3.13+)**: Pros - Excellent for reactive UI elements, integrates seamlessly with HTMX; Cons - Slightly larger bundle, may encourage more client-side logic if not careful.\n- **Petite-Vue (v0.4+)**: Pros - Minimal footprint, familiar Vue syntax for components; Cons - Limited scope compared to full Vue, requires Vue knowledge.\n- **Hyperscript (v0.9+)**: Pros - Designed for HTMX, lightweight scripting language; Cons - Unique syntax may have learning curve.\n- **Stimulus (v3.2+)**: Pros - Modest JS enhancement, controller-based; Cons - Less reactive than others, better for simple behaviors.\n- **Vanilla JavaScript (ES2023+)**: Pros - No dependencies, full control; Cons - More boilerplate code, harder to maintain for complex reactivity.\n\nRecommendations: Prioritize Alpine.js or Hyperscript for best HTMX synergy, suggesting prototypes for key features (e.g., dynamic order builder with Alpine.js x-data for state). Provide a detailed report with code examples, such as:\n```html\n<!-- Example: Alpine.js for dynamic order form -->\n<div x-data=\"{ unit: '', action: '' }\">\n  <select x-model=\"unit\" hx-get=\"/units\" hx-trigger=\"load\">\n    <!-- Options loaded via HTMX -->\n  </select>\n  <input x-model=\"action\" placeholder=\"Enter action\">\n  <span x-show=\"action.length > 0\" x-text=\"`Validating...`\"></span> <!-- Client-side validation preview -->\n  <button hx-post=\"/validate-order\" hx-include=\"[name='unit'], [name='action']\">Submit</button>\n</div>\n```\nInclude decision matrix and rationale for final recommendation, ensuring alignment with real-time WebSocket updates from Task 11.",
+        "testStrategy": "Verify task completion by reviewing the research report for completeness: ensure all specified frameworks are compared across defined criteria with up-to-date data (e.g., versions from 2024), pros/cons are balanced, and recommendations include at least 2-3 code prototypes demonstrating integration with HTMX and WebSockets. Conduct peer review to confirm alignment with server-driven principles (e.g., no client-side business logic). Test recommendations by implementing small proof-of-concept demos in a staging environment based on Task 26's frontend, simulating interactions like order validation and board updates; use tools like Playwright (v1.40+) to automate UX tests, measuring performance metrics (e.g., load time < 2s, interactivity score > 90 via Lighthouse). Validate that enhancements do not break existing real-time features from Task 11 by running end-to-end tests with WebSocket simulations.",
+        "status": "pending",
+        "dependencies": [
+          11,
+          26
+        ],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Framework Comparison",
+            "description": "Compare lightweight client-side reactivity frameworks including Alpine.js, Petite-Vue, Hyperscript, Stimulus, and vanilla JavaScript, focusing on their features, ease of use, and alignment with HTMX compatibility and server-driven principles.",
+            "dependencies": [],
+            "details": "Research and document key attributes such as size, reactivity model, community support, and examples of HTMX integrations, referencing htmx.org guidelines and 'Hypermedia Systems' book.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Integration Analysis",
+            "description": "Analyze how each framework integrates with HTMX for enhancing the Diplomacy game frontend while preserving server-driven architecture.",
+            "dependencies": [
+              1
+            ],
+            "details": "Evaluate compatibility with HTMX 2.0+, server-side control using Go templates with Gin, and handling of complex interactions like dynamic order building and real-time form validation.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Prototype Development",
+            "description": "Develop prototypes demonstrating integration of selected frameworks with HTMX for key frontend features.",
+            "dependencies": [
+              2
+            ],
+            "details": "Create 2-3 code prototypes for features such as interactive unit selection and order construction, ensuring they maintain hypermedia-driven principles and server-side dominance.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Performance Evaluation",
+            "description": "Evaluate the performance of the prototypes in terms of load times, responsiveness, and resource usage, emphasizing lightweight options.",
+            "dependencies": [
+              3
+            ],
+            "details": "Use metrics like bundle size, execution speed, and compatibility with server-driven updates, testing against best practices for hypermedia applications.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Recommendation Report",
+            "description": "Compile a report with recommendations on the optimal framework(s) for HTMX enhancement, based on comparison, analysis, prototypes, and evaluations.",
+            "dependencies": [
+              4
+            ],
+            "details": "Include pros/cons, balanced assessments with 2024 data, and suggestions for implementation in the Diplomacy game frontend, prioritizing server-driven principles.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
       }
     ],
     "metadata": {
       "created": "2025-07-15T04:21:52.697Z",
-      "updated": "2025-07-19T17:14:04.567Z",
+      "updated": "2025-07-19T18:49:22.179Z",
       "description": "Tasks for master context"
     }
   }
