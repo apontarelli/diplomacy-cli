@@ -7,17 +7,22 @@ import (
 	"time"
 
 	"diplomacy-cli/backend/internal/api/middleware"
+	"diplomacy-cli/backend/internal/api/websocket"
 	"diplomacy-cli/backend/internal/storage"
 )
 
 // OrderHandler handles order-related HTTP requests
 type OrderHandler struct {
-	db *storage.Database
+	db        *storage.Database
+	wsHandler *websocket.Handler
 }
 
 // NewOrderHandler creates a new order handler
-func NewOrderHandler(db *storage.Database) *OrderHandler {
-	return &OrderHandler{db: db}
+func NewOrderHandler(db *storage.Database, wsHandler *websocket.Handler) *OrderHandler {
+	return &OrderHandler{
+		db:        db,
+		wsHandler: wsHandler,
+	}
 }
 
 // SubmitOrders handles POST /api/games/{id}/orders
@@ -186,6 +191,12 @@ func (oh *OrderHandler) SubmitOrders(w http.ResponseWriter, r *http.Request) {
 			Target:       order.Target,
 			Coast:        order.Coast,
 		})
+	}
+
+	// Broadcast orders submitted event via WebSocket
+	if oh.wsHandler != nil {
+		orderEvent := websocket.NewOrdersSubmittedEvent(gameID, playerID, user.ID, len(submittedOrders), submittedOrders)
+		oh.wsHandler.BroadcastGameUpdate(gameID, websocket.EventOrdersSubmitted, orderEvent)
 	}
 
 	// Create response

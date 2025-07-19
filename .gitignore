@@ -71,3 +71,4 @@ backend/benchmarks/alerts/history.json
 !backend/benchmarks/results/baseline.json
 !backend/benchmarks/performance-config.json
 !backend/benchmarks/README.md
+go.work.sum

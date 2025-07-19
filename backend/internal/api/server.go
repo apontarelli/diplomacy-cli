@@ -5,6 +5,7 @@ import (
 
 	"diplomacy-cli/backend/internal/api/handlers"
 	"diplomacy-cli/backend/internal/api/middleware"
+	"diplomacy-cli/backend/internal/api/websocket"
 	"diplomacy-cli/backend/internal/storage"
 )
 
@@ -13,14 +14,25 @@ type Server struct {
 	db          *storage.Database
 	authService *storage.AuthService
 	rateLimiter *middleware.RateLimiter
+	wsHub       *websocket.Hub
+	wsHandler   *websocket.Handler
 }
 
 // NewServer creates a new API server
 func NewServer(db *storage.Database, authService *storage.AuthService) *Server {
+	// Create WebSocket hub and handler
+	wsHub := websocket.NewHub()
+	wsHandler := websocket.NewHandler(wsHub, authService)
+
+	// Start the hub in a goroutine
+	go wsHub.Run()
+
 	return &Server{
 		db:          db,
 		authService: authService,
 		rateLimiter: middleware.NewRateLimiter(),
+		wsHub:       wsHub,
+		wsHandler:   wsHandler,
 	}
 }
 
@@ -29,8 +41,8 @@ func (s *Server) Handler() http.Handler {
 	mux := http.NewServeMux()
 
 	// Initialize handlers
-	gameHandler := handlers.NewGameHandler(s.db)
-	orderHandler := handlers.NewOrderHandler(s.db)
+	gameHandler := handlers.NewGameHandler(s.db, s.wsHandler)
+	orderHandler := handlers.NewOrderHandler(s.db, s.wsHandler)
 	authHandler := handlers.NewAuthHandler(s.authService)
 
 	// Initialize middleware
@@ -53,6 +65,9 @@ func (s *Server) Handler() http.Handler {
 			http.HandlerFunc(authHandler.RefreshToken)))
 
 	mux.HandleFunc("GET /api/auth/token-info", authHandler.GetTokenInfo)
+
+	// WebSocket endpoints
+	mux.HandleFunc("GET /ws/game/{id}", s.wsHandler.HandleGameWebSocket)
 
 	// Protected authentication endpoints (require auth)
 	mux.Handle("GET /api/auth/profile",
@@ -80,6 +95,11 @@ func (s *Server) Handler() http.Handler {
 				http.HandlerFunc(orderHandler.SubmitOrders))))
 
 	return mux
+}
+
+// GetWebSocketHandler returns the WebSocket handler for broadcasting
+func (s *Server) GetWebSocketHandler() *websocket.Handler {
+	return s.wsHandler
 }
 
 // handleHealth provides a simple health check endpoint

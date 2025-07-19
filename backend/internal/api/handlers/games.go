@@ -7,17 +7,22 @@ import (
 	"time"
 
 	"diplomacy-cli/backend/internal/api/middleware"
+	"diplomacy-cli/backend/internal/api/websocket"
 	"diplomacy-cli/backend/internal/storage"
 )
 
 // GameHandler handles game-related HTTP requests
 type GameHandler struct {
-	db *storage.Database
+	db        *storage.Database
+	wsHandler *websocket.Handler
 }
 
 // NewGameHandler creates a new game handler
-func NewGameHandler(db *storage.Database) *GameHandler {
-	return &GameHandler{db: db}
+func NewGameHandler(db *storage.Database, wsHandler *websocket.Handler) *GameHandler {
+	return &GameHandler{
+		db:        db,
+		wsHandler: wsHandler,
+	}
 }
 
 // CreateGame handles POST /api/games
@@ -198,6 +203,12 @@ func (gh *GameHandler) JoinGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	player.ID = playerID
+
+	// Broadcast player joined event via WebSocket
+	if gh.wsHandler != nil {
+		playerEvent := websocket.NewPlayerJoinedEvent(gameID, player.ID, user.ID, user.Username, req.Nation)
+		gh.wsHandler.BroadcastGameUpdate(gameID, websocket.EventPlayerJoined, playerEvent)
+	}
 
 	// Create response
 	response := middleware.JoinGameResponse{

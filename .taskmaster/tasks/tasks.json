@@ -666,7 +666,7 @@
         "dependencies": [
           10
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -674,7 +674,7 @@
             "description": "Set up WebSocket connections using Gorilla WebSocket library to handle client connections for real-time updates.",
             "dependencies": [],
             "details": "Use Gorilla WebSocket v1.5.3 to upgrade HTTP connections to WebSockets. Implement a handler function to manage incoming connections and maintain a list of active clients.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -685,7 +685,7 @@
               1
             ],
             "details": "Utilize Go channels or a library like Redis for pub/sub. Subscribe clients to relevant channels (e.g., game-specific) and broadcast messages upon state changes.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -696,7 +696,7 @@
               2
             ],
             "details": "Hook into the game engine's event system (e.g., after order resolution or phase changes) to publish updates to the pub/sub system, ensuring real-time notifications.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -708,7 +708,7 @@
               3
             ],
             "details": "Integrate JWT or session-based authentication to secure connections. Validate incoming messages and prevent unauthorized access, ensuring compliance with overall app security.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -1355,12 +1355,96 @@
           24
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Pipeline Integration",
+            "description": "Integrate the new resolution engine with the existing pipeline, ensuring backward compatibility and updating tests.",
+            "dependencies": [],
+            "details": "Replace existing resolution engine calls, ensure compatibility with Order and GameState interfaces, update tests to use rich validation, and maintain current game serialization format.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Migration Strategy",
+            "description": "Develop a migration strategy including feature flags, A/B testing, rollback procedures, and data migration for existing games.",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement feature flag for gradual rollout, set up A/B testing framework, define rollback procedures, and handle data migration while following zero-downtime deployment patterns.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Monitoring and Observability",
+            "description": "Set up comprehensive monitoring and observability for the integrated system.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Configure monitoring tools for key metrics, logging, and alerts in line with DevOps standards, ensuring real-time observability during deployment.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Documentation",
+            "description": "Create detailed documentation for the integration, deployment, and maintenance processes.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Document pipeline changes, migration steps, monitoring setup, and best practices for CI/CD and zero-downtime deployments.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Validation",
+            "description": "Perform validation through integration testing and staging environment checks.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Conduct comprehensive integration testing, validate backward compatibility, test in staging environment, and ensure DATC compliance following test strategy.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Rollback Procedures",
+            "description": "Implement and test rollback mechanisms for safe deployment reversal.",
+            "dependencies": [
+              2,
+              5
+            ],
+            "details": "Develop detailed rollback procedures, test them in staging, and ensure zero-downtime patterns are maintained during potential rollbacks.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "Post-Deployment Support",
+            "description": "Provide post-deployment support including monitoring, issue resolution, and user support.",
+            "dependencies": [
+              3,
+              5,
+              6
+            ],
+            "details": "Set up support protocols, monitor production metrics, handle any issues promptly, and gather feedback for improvements, adhering to DevOps standards.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
       }
     ],
     "metadata": {
       "created": "2025-07-15T04:21:52.697Z",
-      "updated": "2025-07-19T04:25:24.568Z",
+      "updated": "2025-07-19T17:14:04.567Z",
       "description": "Tasks for master context"
     }
   }

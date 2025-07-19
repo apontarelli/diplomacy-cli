@@ -1,7 +1,7 @@
 {
 	"meta": {
-		"generatedAt": "2025-07-16T01:11:43.204Z",
-		"tasksAnalyzed": 21,
+		"generatedAt": "2025-07-19T15:59:24.420Z",
+		"tasksAnalyzed": 6,
 		"totalTasks": 25,
 		"analysisCount": 25,
 		"thresholdScore": 5,
@@ -90,46 +90,6 @@
 			"reasoning": "Moderate for auth integration; recommend 4 subtasks to cover core features and edge cases, following JWT best practices."
 		},
 		{
-			"taskId": 11,
-			"taskTitle": "Add Real-Time Updates via WebSockets",
-			"complexityScore": 7,
-			"recommendedSubtasks": 5,
-			"expansionPrompt": "Decompose WebSocket integration with Gorilla into 5 subtasks: connection handling, pub/sub setup, event triggers, security, and testing, ensuring real-time patterns like broadcasting and scalability in Go.",
-			"reasoning": "Higher complexity due to real-time aspects and concurrency; recommend 5 subtasks for modular implementation, per WebSocket standards."
-		},
-		{
-			"taskId": 12,
-			"taskTitle": "Build Terminal User Interface with Bubble Tea",
-			"complexityScore": 6,
-			"recommendedSubtasks": 4,
-			"expansionPrompt": "Expand TUI development with Bubble Tea into 4 subtasks: model setup, view rendering, update logic, and integration/testing, following Elm architecture patterns for interactive CLIs in Go.",
-			"reasoning": "Medium for TUI design; recommend 4 subtasks to align with Bubble Tea's MVU pattern and testing needs."
-		},
-		{
-			"taskId": 13,
-			"taskTitle": "Implement Order Input and Validation Feedback in TUI",
-			"complexityScore": 6,
-			"recommendedSubtasks": 5,
-			"expansionPrompt": "Divide order input and validation in TUI into 5 subtasks: input integration, real-time validation, error display, submission handling, and testing, emphasizing UX best practices for terminal interfaces.",
-			"reasoning": "Medium complexity with real-time feedback; recommend 5 subtasks for incremental UI enhancements and validation."
-		},
-		{
-			"taskId": 14,
-			"taskTitle": "Develop Tactical AI in Go",
-			"complexityScore": 8,
-			"recommendedSubtasks": 6,
-			"expansionPrompt": "Break down tactical AI development into 6 subtasks: heuristic design, state evaluation, order generation, engine integration, scenario testing, and optimization, drawing from game AI patterns like minimax variants.",
-			"reasoning": "High complexity for AI logic; recommend 6 subtasks to build and test iteratively, per AI development standards."
-		},
-		{
-			"taskId": 15,
-			"taskTitle": "Integrate LLM Strategist with Python/DSpy",
-			"complexityScore": 9,
-			"recommendedSubtasks": 7,
-			"expansionPrompt": "Decompose LLM integration using DSpy into 7 subtasks: service setup, signatures, module development, API endpoints, caching, optimizers, and end-to-end testing, following microservices and AI integration best practices.",
-			"reasoning": "High due to cross-language integration and LLM specifics; recommend 7 subtasks for phased build, aligning with DSpy and API standards."
-		},
-		{
 			"taskId": 16,
 			"taskTitle": "Design Rich Domain Models",
 			"complexityScore": 4,
@@ -202,12 +162,52 @@
 			"reasoning": "High for optimization without breaking correctness; recommend 6 subtasks for methodical improvements."
 		},
 		{
+			"taskId": 11,
+			"taskTitle": "Add Real-Time Updates via WebSockets",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Expand the task 'Add Real-Time Updates via WebSockets' into 5 detailed subtasks, focusing on WebSocket integration with Gorilla in Go, pub/sub broadcasting, event triggers, security, and testing, ensuring compliance with real-time system best practices like connection management and error handling.",
+			"reasoning": "Medium-high complexity due to real-time communication, pub/sub patterns, and security integration in Go; aligns with industry standards for scalable WebSocket services. Existing 4 subtasks are solid, recommend expanding to 5 for better coverage of testing and optimization."
+		},
+		{
+			"taskId": 12,
+			"taskTitle": "Build Terminal User Interface with Bubble Tea",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break down 'Build Terminal User Interface with Bubble Tea' into 4 subtasks, emphasizing model setup, view rendering, update logic, and integration with game state, following Bubble Tea's Elm-like architecture and TUI best practices for usability and performance.",
+			"reasoning": "Moderate complexity involving TUI framework in Go; draws from common patterns in terminal apps. Has 3 subtasks; recommend 4 to include testing and refinement for better user interaction."
+		},
+		{
+			"taskId": 13,
+			"taskTitle": "Implement Order Input and Validation Feedback in TUI",
+			"complexityScore": 6,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Decompose 'Implement Order Input and Validation Feedback in TUI' into 5 subtasks, covering input integration, real-time validation, error handling, submission logic, and UI feedback, adhering to reactive TUI patterns and API integration standards.",
+			"reasoning": "Moderate complexity with real-time validation and UI feedback; builds on Bubble Tea. Existing 4 subtasks; suggest 5 to add accessibility and edge-case handling per UX best practices."
+		},
+		{
+			"taskId": 14,
+			"taskTitle": "Develop Tactical AI in Go",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Expand 'Develop Tactical AI in Go' into 6 subtasks, including heuristic design, state evaluation, order generation, engine integration, testing, and optimization, incorporating AI patterns like minimax variants and performance tuning for game engines.",
+			"reasoning": "High complexity due to AI heuristics and game integration; follows industry standards for tactical AI in strategy games. Has 5 subtasks; recommend 6 to include optimization for efficiency."
+		},
+		{
+			"taskId": 15,
+			"taskTitle": "Integrate LLM Strategist with Python/DSpy",
+			"complexityScore": 9,
+			"recommendedSubtasks": 8,
+			"expansionPrompt": "Divide 'Integrate LLM Strategist with Python/DSpy' into 8 subtasks, detailing setup, signatures, module development, API endpoints, caching, optimization, testing, and deployment, aligning with microservices patterns and LLM integration best practices like prompt engineering and cost management.",
+			"reasoning": "High complexity involving LLM, cross-language integration, and optimization; uses DSpy for structured AI. Existing 7 subtasks; suggest 8 to cover security and scalability per cloud-native standards."
+		},
+		{
 			"taskId": 25,
 			"taskTitle": "Integration and Production Deployment",
-			"complexityScore": 8,
+			"complexityScore": 10,
 			"recommendedSubtasks": 7,
-			"expansionPrompt": "Divide integration and deployment into 7 subtasks: pipeline integration, migration strategy, monitoring setup, documentation, production validation, A/B testing, and rollback planning.",
-			"reasoning": "High due to production risks; recommend 7 subtasks for safe rollout per DevOps standards."
+			"expansionPrompt": "Create 7 subtasks for 'Integration and Production Deployment', addressing pipeline integration, migration strategy, monitoring, documentation, validation, rollback, and post-deployment support, following CI/CD best practices, DevOps standards, and zero-downtime deployment patterns.",
+			"reasoning": "Very high complexity as it involves full integration, migration, and production rollout with monitoring; critical for reliability. No existing subtasks; recommend 7 to comprehensively cover all aspects per industry deployment guidelines."
 		}
 	]
 }
