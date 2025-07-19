@@ -519,7 +519,7 @@
         "dependencies": [
           7
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -538,7 +538,7 @@
               1
             ],
             "details": "Implement RegisterUser function using bcrypt for hashing. Ensure CRUD operations handle database interactions securely.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -549,7 +549,7 @@
               2
             ],
             "details": "Develop Authenticate function to verify credentials. Prepare structures and helpers for JWT token generation and validation.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -1360,7 +1360,7 @@
     ],
     "metadata": {
       "created": "2025-07-15T04:21:52.697Z",
-      "updated": "2025-07-18T22:49:34.828Z",
+      "updated": "2025-07-19T01:18:31.660Z",
       "description": "Tasks for master context"
     }
   }

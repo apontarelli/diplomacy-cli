@@ -49,6 +49,14 @@ node_modules/
 coverage.html
 coverage.out
 
+# Go compiled binaries
+backend/server
+backend/cmd/server/server
+
+# SQLite database files (generated at runtime)
+backend/diplomacy.db
+backend/*.db
+
 # Benchmark results and temporary files
 backend/benchmarks/results/*.txt
 backend/benchmarks/results/*.prof
